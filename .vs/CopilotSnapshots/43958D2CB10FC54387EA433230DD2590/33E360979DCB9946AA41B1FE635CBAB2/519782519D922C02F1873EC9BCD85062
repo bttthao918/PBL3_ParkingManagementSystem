@@ -1,0 +1,69 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Models.ViewModels.Customer;
+
+namespace ParkingManagement.FE.Pages.Customer.Booking
+{
+    public class CreateModel : PageModel
+    {
+        [BindProperty]
+        public BookingCreateViewModel Input { get; set; } = new();
+
+        public List<VehicleProfileViewModel> Profiles { get; set; } = new();
+        public List<ParkingSlotViewModel> Slots { get; set; } = new();
+
+        public void OnGet()
+        {
+            LoadData();
+        }
+
+        public IActionResult OnPost()
+        {
+            LoadData();
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var totalHours = Math.Ceiling((Input.EndTime - Input.StartTime).TotalHours);
+            if (totalHours <= 0)
+            {
+                totalHours = 1;
+            }
+
+            var totalPrice = (decimal)totalHours * 20000;
+
+            var booking = new BookingViewModel
+            {
+                Id = CustomerBookingFakeData.Bookings.Count + 1,
+                Code = $"DC-2024-{CustomerBookingFakeData.Bookings.Count + 1:000000}",
+                CustomerName = Input.CustomerName,
+                Phone = Input.Phone,
+                PlateNumber = Input.PlateNumber,
+                VehicleType = Input.VehicleType,
+                ParkingSlot = Input.ParkingSlot,
+                StartTime = Input.StartTime,
+                EndTime = Input.EndTime,
+                TotalPrice = totalPrice,
+                Status = "Sắp tới"
+            };
+
+            CustomerBookingFakeData.Bookings.Add(booking);
+
+            var slot = CustomerBookingFakeData.Slots.FirstOrDefault(x => x.Code == Input.ParkingSlot);
+            if (slot != null)
+            {
+                slot.Status = "Holding";
+            }
+
+            return RedirectToPage("/Customer/Bookings/Index");
+        }
+
+        private void LoadData()
+        {
+            Profiles = CustomerBookingFakeData.Profiles;
+            Slots = CustomerBookingFakeData.Slots;
+        }
+    }
+}

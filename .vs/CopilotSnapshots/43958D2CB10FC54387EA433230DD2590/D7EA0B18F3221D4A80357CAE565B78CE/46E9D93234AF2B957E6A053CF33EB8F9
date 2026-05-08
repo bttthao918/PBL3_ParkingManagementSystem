@@ -1,0 +1,8 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Employee.RevenueStatisticsModel
+
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+}
+
+<partial name="/Pages/Shared/Statistics/_RevenueStatisticsContent.cshtml" model="Model" />

@@ -1,0 +1,568 @@
+﻿.employee-page {
+    padding-top: 28px;
+}
+
+.employee-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+    .employee-header h2 {
+        font-size: 28px;
+        color: #102033;
+    }
+
+    .employee-header p {
+        color: #66758d;
+        margin-top: 6px;
+    }
+
+.emp-btn-primary,
+.emp-btn-outline,
+.emp-btn-danger {
+    height: 44px;
+    border-radius: 12px;
+    padding: 0 18px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.emp-btn-primary {
+    background: linear-gradient(135deg, #0ea5ff, #005eff);
+    color: white;
+}
+
+.emp-btn-outline {
+    background: white;
+    color: #173b68;
+    border: 1px solid #d7e2f2;
+}
+
+.emp-btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.emp-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.emp-kpi-card {
+    min-height: 126px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+    .emp-kpi-card p {
+        color: #66758d;
+        margin-bottom: 6px;
+    }
+
+    .emp-kpi-card h2 {
+        font-size: 28px;
+    }
+
+    .emp-kpi-card span {
+        color: #66758d;
+        font-size: 14px;
+    }
+
+.emp-kpi-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 23px;
+}
+
+    .emp-kpi-icon.blue {
+        background: linear-gradient(135deg, #0ea5ff, #005eff);
+    }
+
+    .emp-kpi-icon.green {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .emp-kpi-icon.orange {
+        background: linear-gradient(135deg, #ff9f1c, #ff7a00);
+    }
+
+    .emp-kpi-icon.purple {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    }
+
+.emp-filter-card {
+    margin-bottom: 22px;
+}
+
+    .emp-filter-card h3 {
+        margin-bottom: 16px;
+    }
+
+.emp-filter-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1.4fr auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.emp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .emp-field label {
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .emp-field input,
+    .emp-field select {
+        height: 44px;
+        border: 1px solid #d7e2f2;
+        border-radius: 12px;
+        padding: 0 14px;
+        outline: none;
+    }
+
+        .emp-field input:focus,
+        .emp-field select:focus {
+            border-color: #0d8bff;
+        }
+
+.emp-filter-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+}
+
+.employee-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 18px;
+}
+
+.emp-bulk-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 14px 18px;
+}
+
+    .emp-bulk-bar > div:first-child {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: 700;
+        color: #334155;
+    }
+
+.emp-bulk-actions {
+    display: flex;
+    gap: 10px;
+}
+
+    .emp-bulk-actions button {
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid #d7e2f2;
+        background: white;
+        padding: 0 14px;
+        cursor: pointer;
+        font-weight: 700;
+    }
+
+    .emp-bulk-actions .success {
+        color: #15803d;
+        background: #dcfce7;
+    }
+
+    .emp-bulk-actions .danger {
+        color: #dc2626;
+        background: #fee2e2;
+    }
+
+.emp-table-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.emp-table-title {
+    padding: 18px;
+    border-bottom: 1px solid #e3ecf8;
+}
+
+.emp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+}
+
+    .emp-table th {
+        background: #f8fbff;
+        color: #334155;
+        padding: 16px 18px;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    .emp-table td {
+        padding: 14px 18px;
+        border-top: 1px solid #edf2f8;
+        font-size: 14px;
+        color: #334155;
+    }
+
+    .emp-table tbody tr:hover {
+        background: #f8fbff;
+    }
+
+.emp-code {
+    color: #0066ff !important;
+    font-weight: 700;
+}
+
+.emp-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .emp-name-cell img {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+    }
+
+.emp-status {
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+    .emp-status.active {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .emp-status.leave {
+        background: #ffedd5;
+        color: #c2410c;
+    }
+
+    .emp-status.inactive {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .emp-status.disabled {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+.emp-actions {
+    display: flex;
+    gap: 8px;
+}
+
+    .emp-actions button {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid #d7e2f2;
+        background: white;
+        color: #0d8bff;
+        cursor: pointer;
+    }
+
+.emp-pagination {
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    color: #52627a;
+    font-size: 14px;
+}
+
+    .emp-pagination div {
+        display: flex;
+        gap: 8px;
+    }
+
+    .emp-pagination button {
+        width: 38px;
+        height: 38px;
+        border: 1px solid #d7e2f2;
+        background: white;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+        .emp-pagination button.active {
+            background: #0066ff;
+            color: white;
+        }
+
+.emp-detail-panel {
+    position: relative;
+    padding: 20px;
+}
+
+.emp-close {
+    position: absolute;
+    right: 18px;
+    top: 14px;
+    border: none;
+    background: none;
+    font-size: 26px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.emp-profile {
+    text-align: center;
+    padding-top: 18px;
+}
+
+    .emp-profile img {
+        width: 86px;
+        height: 86px;
+        border-radius: 50%;
+        margin-bottom: 12px;
+    }
+
+    .emp-profile h3 {
+        margin-bottom: 8px;
+    }
+
+    .emp-profile p {
+        margin-top: 8px;
+        color: #64748b;
+    }
+
+.emp-detail-tabs {
+    display: flex;
+    margin-top: 22px;
+    border-bottom: 1px solid #e3ecf8;
+}
+
+    .emp-detail-tabs button {
+        flex: 1;
+        height: 46px;
+        border: none;
+        background: white;
+        font-weight: 700;
+        color: #64748b;
+        cursor: pointer;
+    }
+
+        .emp-detail-tabs button.active {
+            color: #0066ff;
+            border-bottom: 3px solid #0066ff;
+        }
+
+.emp-tab-content {
+    display: none;
+    padding-top: 18px;
+}
+
+    .emp-tab-content.active {
+        display: block;
+    }
+
+.emp-detail-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+    .emp-detail-stats div {
+        border: 1px solid #e3ecf8;
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .emp-detail-stats i {
+        color: #0066ff;
+        font-size: 20px;
+    }
+
+    .emp-detail-stats strong {
+        display: block;
+        margin: 8px 0 4px;
+        font-size: 20px;
+    }
+
+    .emp-detail-stats span {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+.emp-info-list {
+    margin-top: 18px;
+}
+
+    .emp-info-list div {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #edf2f8;
+        gap: 16px;
+    }
+
+    .emp-info-list span {
+        color: #64748b;
+    }
+
+    .emp-info-list strong {
+        text-align: right;
+        color: #334155;
+        font-weight: 600;
+    }
+
+.emp-shift-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+    .emp-shift-list div {
+        border: 1px solid #e3ecf8;
+        border-radius: 14px;
+        padding: 14px;
+    }
+
+    .emp-shift-list strong,
+    .emp-shift-list span,
+    .emp-shift-list em {
+        display: block;
+    }
+
+    .emp-shift-list span {
+        margin: 6px 0;
+        color: #64748b;
+    }
+
+    .emp-shift-list em {
+        color: #15803d;
+        font-style: normal;
+        font-weight: 700;
+    }
+
+.emp-detail-actions {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+    .emp-detail-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+.emp-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+}
+
+    .emp-modal.show {
+        display: flex;
+    }
+
+.emp-modal-box {
+    width: 520px;
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 25px 70px rgba(2, 6, 23, 0.25);
+}
+
+.emp-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+    .emp-modal-header button {
+        border: none;
+        background: none;
+        font-size: 26px;
+        cursor: pointer;
+    }
+
+.emp-modal-form {
+    display: grid;
+    gap: 14px;
+}
+
+    .emp-modal-form input,
+    .emp-modal-form select {
+        height: 46px;
+        border: 1px solid #d7e2f2;
+        border-radius: 12px;
+        padding: 0 14px;
+    }
+
+.emp-checkbox {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #334155;
+}
+
+.emp-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+@media (max-width: 1400px) {
+    .employee-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .emp-detail-panel {
+        display: none;
+    }
+}
+
+@media (max-width: 1200px) {
+    .emp-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .emp-filter-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .emp-table-card {
+        overflow-x: auto;
+    }
+
+    .emp-table {
+        min-width: 1100px;
+    }
+}

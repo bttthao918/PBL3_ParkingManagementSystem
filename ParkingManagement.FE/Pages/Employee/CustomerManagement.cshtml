@@ -1,0 +1,478 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Employee.CustomerManagementModel
+
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+    ViewData["Role"] = "Nhân viên";
+    ViewData["UserName"] = "Nguyễn Văn An";
+}
+@section Styles{
+    <link rel="stylesheet" href="/css/employee/customer_manage.css" />
+}
+
+<div class="customer-page">
+
+    <div class="customer-toolbar">
+        <div>
+            <h1>Quản lý khách hàng</h1>
+            <p>Quản lý thông tin, lịch sử gửi xe và khách hàng VIP</p>
+        </div>
+
+        <div class="toolbar-actions">
+            <button class="secondary-btn" type="button">
+                <i class="fa-solid fa-file-export"></i>
+                Xuất Excel
+            </button>
+
+            <button class="primary-btn" type="button">
+                <i class="fa-solid fa-user-plus"></i>
+                Thêm khách hàng
+            </button>
+        </div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <span>Tổng khách hàng</span>
+                <h3>@Model.TotalCustomers</h3>
+                <small>↑ 12.5% tháng này</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon purple"><i class="fa-solid fa-car"></i></div>
+            <div>
+                <span>Đang gửi xe</span>
+                <h3>@Model.ActiveCustomers</h3>
+                <small>↑ 8.2% tháng này</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon gold"><i class="fa-solid fa-crown"></i></div>
+            <div>
+                <span>Khách VIP</span>
+                <h3>@Model.VipCustomers</h3>
+                <small>↑ 5.7% tháng này</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-user-plus"></i></div>
+            <div>
+                <span>Khách mới</span>
+                <h3>@Model.NewCustomers</h3>
+                <small>↑ 15.3% tháng này</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="customer-layout">
+
+        <div class="customer-table-card">
+
+            <form method="get" class="customer-filter-form">
+
+                <div class="filter-top">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input asp-for="Search"
+                               placeholder="Tìm theo tên, SĐT, biển số, mã khách hàng..." />
+                    </div>
+
+                    <button type="submit" class="secondary-btn filter-btn">
+                        <i class="fa-solid fa-filter"></i>
+                        Bộ lọc
+                    </button>
+                </div>
+
+                <div class="filter-bottom">
+                    <select asp-for="StatusFilter">
+                        <option value="">Trạng thái: Tất cả</option>
+                        <option value="Parking">Đang gửi xe</option>
+                        <option value="Left">Đã rời bãi</option>
+                        <option value="Debt">Nợ phí</option>
+                    </select>
+
+                    <select asp-for="VehicleFilter">
+                        <option value="">Loại xe: Tất cả</option>
+                        <option value="Car">Ô tô</option>
+                        <option value="Motorbike">Xe máy</option>
+                    </select>
+
+                    <select asp-for="VipFilter">
+                        <option value="">VIP Level: Tất cả</option>
+                        <option value="Normal">Thường</option>
+                        <option value="Silver">Silver</option>
+                        <option value="Gold">Gold</option>
+                        <option value="Platinum">Platinum</option>
+                    </select>
+
+                    <input asp-for="RegisterDate" type="date" class="date-input" />
+
+                    <a asp-page="./CustomerManagement" class="clear-filter">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Xóa lọc
+                    </a>
+                </div>
+
+            </form>
+
+            <div class="table-wrapper">
+                <table class="customer-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-col">
+                                <input type="checkbox" />
+                            </th>
+                            <th>Khách hàng</th>
+                            <th>SĐT</th>
+                            <th>Xe (biển số)</th>
+                            <th>Loại xe</th>
+                            <th>VIP Level</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Customers)
+                        {
+                            <tr class="@(Model.SelectedCustomer?.Id == item.Id ? "selected" : "")">
+                                <td>
+                                    <input type="checkbox" />
+                                </td>
+
+                                <td>
+                                    <div class="customer-info">
+                                        <div class="avatar">
+                                            @(string.IsNullOrWhiteSpace(item.FullName) ? "?" : item.FullName.Substring(0, 1))
+                                        </div>
+
+                                        <div>
+                                            <strong>@item.FullName</strong>
+                                            <span>@item.CustomerCode</span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>@item.Phone</td>
+
+                                <td>
+                                    <div class="plate-list">
+                                        <span class="plate">@item.MainPlate</span>
+
+                                        @if (item.VehicleCount > 1)
+                                        {
+                                            <span class="more-vehicles" title="@item.VehicleTooltip">
+                                                +@(item.VehicleCount - 1)
+                                            </span>
+                                        }
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="vehicle-type">
+                                        <i class="fa-solid @(item.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                        @item.VehicleType
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="vip-badge @item.VipLevel.ToLower()">
+                                        @if (item.VipLevel != "Thường")
+                                        {
+                                            <i class="fa-solid fa-crown"></i>
+                                        }
+                                        @item.VipLevel
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge @item.StatusClass">
+                                        <i class="fa-solid fa-circle"></i>
+                                        @item.StatusText
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-page="./CustomerManagement"
+                                           asp-route-selectedId="@item.Id"
+                                           class="icon-btn"
+                                           title="Xem chi tiết">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+
+                                        <div class="action-dropdown">
+                                            <button type="button" class="icon-btn" title="Thao tác khác">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+
+                                            <div class="dropdown-menu">
+                                                <a asp-page="./CustomerManagement"
+                                                   asp-route-selectedId="@item.Id">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                    Xem chi tiết
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                                    Lịch sử gửi xe
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-car"></i>
+                                                    Xe của khách
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                    Cập nhật
+                                                </a>
+
+                                                <a href="tel:@item.Phone">
+                                                    <i class="fa-solid fa-phone"></i>
+                                                    Gọi điện
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-row">
+                <span>Hiển thị 1 - @Model.Customers.Count trong @Model.TotalCustomers khách hàng</span>
+
+                <div class="pagination">
+                    <button type="button">‹</button>
+                    <button type="button" class="active">1</button>
+                    <button type="button">2</button>
+                    <button type="button">3</button>
+                    <button type="button">4</button>
+                    <button type="button">...</button>
+                    <button type="button">250</button>
+                    <button type="button">›</button>
+                </div>
+
+                <select>
+                    <option>5 / trang</option>
+                    <option>10 / trang</option>
+                    <option>20 / trang</option>
+                </select>
+            </div>
+        </div>
+
+        @if (Model.SelectedCustomer != null)
+        {
+            <aside class="customer-detail-panel">
+
+                <div class="panel-header">
+                    <h3>Chi tiết khách hàng</h3>
+
+                    <a asp-page="./CustomerManagement" class="close-panel">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                </div>
+
+                <div class="detail-profile">
+                    <div class="avatar large">
+                        @(string.IsNullOrWhiteSpace(Model.SelectedCustomer.FullName) ? "?" : Model.SelectedCustomer.FullName.Substring(0, 1))
+                    </div>
+
+                    <div>
+                        <h2>
+                            @Model.SelectedCustomer.FullName
+
+                            <span class="vip-badge @Model.SelectedCustomer.VipLevel.ToLower()">
+                                @if (Model.SelectedCustomer.VipLevel != "Thường")
+                                {
+                                    <i class="fa-solid fa-crown"></i>
+                                }
+                                @Model.SelectedCustomer.VipLevel
+                            </span>
+                        </h2>
+
+                        <span class="status-badge parking">
+                            <i class="fa-solid fa-circle"></i>
+                            Đang gửi xe
+                        </span>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <a href="tel:@Model.SelectedCustomer.Phone" class="quick-btn">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>Gọi</span>
+                    </a>
+
+                    <button type="button" class="quick-btn">
+                        <i class="fa-solid fa-message"></i>
+                        <span>Nhắn tin</span>
+                    </button>
+
+                    <button type="button" class="quick-btn">
+                        <i class="fa-solid fa-ticket"></i>
+                        <span>Vé xe</span>
+                    </button>
+
+                    <button type="button" class="quick-btn">
+                        <i class="fa-solid fa-car"></i>
+                        <span>Lịch sử</span>
+                    </button>
+
+                    <button type="button" class="quick-btn">
+                        <i class="fa-solid fa-ellipsis"></i>
+                        <span>Khác</span>
+                    </button>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin cơ bản</h4>
+
+                        <button type="button" class="small-icon-btn">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Mã khách hàng</span>
+                        <strong>@Model.SelectedCustomer.CustomerCode</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Số điện thoại</span>
+                        <strong>@Model.SelectedCustomer.Phone</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Email</span>
+                        <strong>@Model.SelectedCustomer.Email</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Địa chỉ</span>
+                        <strong>@Model.SelectedCustomer.Address</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Ngày sinh</span>
+                        <strong>@Model.SelectedCustomer.DateOfBirth</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Ngày đăng ký</span>
+                        <strong>@Model.SelectedCustomer.RegisterDate</strong>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>
+                            <i class="fa-solid fa-crown"></i>
+                            VIP Level: @Model.SelectedCustomer.VipLevel
+                        </h4>
+
+                        <a href="#">Xem quyền lợi</a>
+                    </div>
+
+                    <div class="vip-summary">
+                        <div>
+                            <span>Tổng chi tiêu</span>
+                            <strong>@Model.SelectedCustomer.TotalSpent.ToString("N0") đ</strong>
+                        </div>
+
+                        <div>
+                            <span>Số lượt gửi</span>
+                            <strong>@Model.SelectedCustomer.TotalTickets lượt</strong>
+                        </div>
+
+                        <div>
+                            <span>Giảm phí</span>
+                            <strong class="discount">@Model.SelectedCustomer.DiscountPercent%</strong>
+                        </div>
+                    </div>
+
+                    <div class="progress-title">
+                        <span>Tiến độ lên PLATINUM</span>
+                        <span>Còn @Model.SelectedCustomer.AmountToNextLevel.ToString("N0") đ</span>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div style="width:@Model.SelectedCustomer.VipProgress%">
+                            @Model.SelectedCustomer.VipProgress%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin xe (@Model.SelectedCustomer.Vehicles.Count xe)</h4>
+                        <a href="#">+ Thêm xe</a>
+                    </div>
+
+                    <div class="vehicle-list">
+                        @foreach (var vehicle in Model.SelectedCustomer.Vehicles)
+                        {
+                            <div class="vehicle-item">
+                                <div>
+                                    <strong>
+                                        <i class="fa-solid @(vehicle.Type == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                        @vehicle.PlateNumber
+                                    </strong>
+                                    <span>@vehicle.Type</span>
+                                </div>
+
+                                @if (vehicle.IsActive)
+                                {
+                                    <label>Đang sử dụng</label>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <a href="#" class="view-all-link">Xem tất cả xe</a>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Lịch sử gửi xe</h4>
+                        <a href="#">Xem tất cả</a>
+                    </div>
+
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Phí</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var history in Model.SelectedCustomer.Histories)
+                            {
+                                <tr>
+                                    <td>@history.Date</td>
+                                    <td>@history.CheckIn</td>
+                                    <td>@history.CheckOut</td>
+                                    <td>@history.Fee.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </aside>
+        }
+
+    </div>
+</div>

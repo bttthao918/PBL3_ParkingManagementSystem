@@ -1,0 +1,11 @@
+Database migration was skipped. Check the SQL Server connection before using data endpoints. An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5178
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\1.University\semester-4\PBL3_ParkingManagement\BackendAPI
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.

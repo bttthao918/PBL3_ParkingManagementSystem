@@ -1,0 +1,232 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Admin.TicketManagementModel
+@{
+    Layout = "/Pages/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Quản lý vé";
+    ViewData["UserName"] = "Admin";
+    ViewData["Role"] = "Quản trị hệ thống";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/admin_ticket.css" />
+}
+
+@section Sidebar {
+    <a asp-page="/Admin/Dashboard">
+        <i class="fa-solid fa-house"></i> Tổng quan
+    </a>
+
+    <p>QUẢN LÝ</p>
+    <a asp-page="/Admin/TicketManagement" class="active">
+        <i class="fa-solid fa-ticket"></i> Quản lý vé
+    </a>
+    <a asp-page="/Admin/EmployeeManagement"><i class="fa-solid fa-users"></i> Quản lý nhân viên</a>
+    <a href="#"><i class="fa-solid fa-square-parking"></i> Quản lý chỗ đỗ</a>
+
+    <p>THỐNG KÊ</p>
+    <a href="#"><i class="fa-solid fa-chart-line"></i> Doanh thu</a>
+    <a href="#"><i class="fa-solid fa-user-group"></i> Khách hàng</a>
+    <a href="#"><i class="fa-solid fa-chart-column"></i> Tổng hợp</a>
+
+    <p>TÀI KHOẢN</p>
+    <a href="#"><i class="fa-solid fa-user-gear"></i> Thông tin tài khoản</a>
+    <a href="#"><i class="fa-solid fa-lock"></i> Đổi mật khẩu</a>
+}
+
+<div class="dashboard-content ticket-page">
+
+    <div class="ticket-header">
+        <div>
+            <h2>Quản lý vé</h2>
+            <p>Quản lý danh sách vé, tìm kiếm vé và cấu hình giá vé</p>
+        </div>
+
+        <button class="ticket-btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            Thêm vé mới
+        </button>
+    </div>
+
+    <div class="ticket-kpi-grid">
+        <div class="card ticket-kpi-card">
+            <div class="ticket-kpi-icon blue">
+                <i class="fa-solid fa-ticket"></i>
+            </div>
+            <div>
+                <p>Tổng số vé</p>
+                <h2>2,345</h2>
+                <span>Tất cả vé</span>
+            </div>
+        </div>
+
+        <div class="card ticket-kpi-card">
+            <div class="ticket-kpi-icon green">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p>Vé hoạt động</p>
+                <h2>1,568</h2>
+                <span>67.0%</span>
+            </div>
+        </div>
+
+        <div class="card ticket-kpi-card">
+            <div class="ticket-kpi-icon orange">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+                <p>Vé hết hạn</p>
+                <h2>457</h2>
+                <span>19.5%</span>
+            </div>
+        </div>
+
+        <div class="card ticket-kpi-card">
+            <div class="ticket-kpi-icon red">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <div>
+                <p>Vé đã hủy</p>
+                <h2>320</h2>
+                <span>13.5%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card ticket-search-card">
+        <h3>Tìm kiếm vé</h3>
+
+        <form method="get" class="ticket-filter-grid">
+            <div class="ticket-input-group large">
+                <label>Từ khóa</label>
+                <input type="text" name="keyword" placeholder="Nhập mã vé, biển số xe, tên khách hàng..." />
+            </div>
+
+            <div class="ticket-input-group">
+                <label>Trạng thái</label>
+                <select name="status">
+                    <option value="">Tất cả</option>
+                    <option>Đang hoạt động</option>
+                    <option>Hết hạn</option>
+                    <option>Đã hủy</option>
+                </select>
+            </div>
+
+            <div class="ticket-input-group">
+                <label>Loại vé</label>
+                <select name="type">
+                    <option value="">Tất cả</option>
+                    <option>Vé ngày</option>
+                    <option>Vé tháng</option>
+                </select>
+            </div>
+
+            <div class="ticket-input-group">
+                <label>Từ ngày</label>
+                <input type="date" name="fromDate" />
+            </div>
+
+            <div class="ticket-input-group">
+                <label>Đến ngày</label>
+                <input type="date" name="toDate" />
+            </div>
+
+            <button class="ticket-btn-primary search-btn" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Tìm
+            </button>
+        </form>
+
+        <button class="ticket-btn-outline">
+            <i class="fa-solid fa-filter-circle-xmark"></i>
+            Xóa bộ lọc
+        </button>
+    </div>
+
+    <div class="ticket-toolbar">
+        <div class="ticket-tabs">
+            <button class="active">
+                <i class="fa-solid fa-list"></i>
+                Danh sách vé
+            </button>
+            <button>
+                <i class="fa-solid fa-tag"></i>
+                Giá vé
+            </button>
+        </div>
+
+        <div class="ticket-toolbar-actions">
+            <button class="ticket-btn-outline">
+                <i class="fa-solid fa-file-export"></i>
+                Xuất Excel
+            </button>
+
+            <button class="ticket-btn-primary">
+                <i class="fa-solid fa-plus"></i>
+                Thêm vé mới
+            </button>
+        </div>
+    </div>
+
+    <div class="card ticket-table-card">
+        <table class="ticket-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Mã vé</th>
+                    <th>Biển số xe</th>
+                    <th>Khách hàng</th>
+                    <th>Loại vé</th>
+                    <th>Giá vé</th>
+                    <th>Ngày vào</th>
+                    <th>Ngày hết hạn</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td class="ticket-code">@ticket.Code</td>
+                        <td>@ticket.PlateNumber</td>
+                        <td>@ticket.CustomerName</td>
+                        <td>@ticket.Type</td>
+                        <td>@ticket.Price.ToString("N0") đ</td>
+                        <td>@ticket.StartDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@ticket.EndDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <span class="ticket-status @ticket.StatusClass">
+                                @ticket.Status
+                            </span>
+                        </td>
+                        <td>
+                            <div class="ticket-actions">
+                                <button class="view"><i class="fa-solid fa-eye"></i></button>
+                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
+                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="ticket-pagination">
+            <span>Hiển thị 1 đến 7 trong tổng số 2,345 vé</span>
+
+            <div>
+                <button>‹</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>...</button>
+                <button>335</button>
+                <button>›</button>
+            </div>
+        </div>
+    </div>
+
+</div>

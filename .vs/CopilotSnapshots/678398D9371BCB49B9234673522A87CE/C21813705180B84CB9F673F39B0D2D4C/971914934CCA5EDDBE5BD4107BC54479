@@ -1,0 +1,151 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Services.Implementations;
+using ParkingManagement.BLL.Services.Interfaces;
+using ParkingManagement.DAL.Data;
+using ParkingManagement.Web.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// ─── Logging ──────────────────────────────────────────────
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+// ─── Email / OTP Service ──────────────────────────────────
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+// ─── 3 Lớp: DAL + BLL (Repositories, Validators, Strategies, Services)
+// Tất cả đăng ký tập trung trong DependencyInjectionExtensions.cs
+// Tuân thủ SOLID – Dependency Inversion: luôn inject qua Interface
+builder.Services.AddApplicationServices(builder.Configuration);
+
+// ─── CORS – cho phép Frontend truy cập API ────────────────
+// Cấu hình policy tên "Frontend" dùng cho mọi origin (dev mode)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .AllowAnyHeader()               // Chấp nhận mọi header (Content-Type, Authorization…)
+            .AllowAnyMethod()               // Chấp nhận GET, POST, PUT, DELETE, OPTIONS
+            .AllowCredentials()             // Cho phép gửi cookie / session
+            .SetIsOriginAllowed(_ => true); // Cho phép bất kỳ origin (localhost:3000, 5500, …)
+    });
+});
+
+// ─── Controller JSON Setup ───────────────────────────────────
+// AddControllers: hỗ trợ [ApiController] JSON (thuần API)
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        // Trả về JSON với camelCase (chuẩn JS)
+        opt.JsonSerializerOptions.PropertyNamingPolicy =
+            System.Text.Json.JsonNamingPolicy.CamelCase;
+        // Bỏ qua vòng lặp tham chiếu (circular reference)
+        opt.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
+// ─── JWT Authentication ───────────────────────────────────
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "default_secret_key_needs_to_be_long_enough_for_hmac_sha256";
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "ParkingManagementAPI",
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"] ?? "ParkingManagementClient",
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+// Session: lưu Role, RelatedId sau khi đăng nhập
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(opt =>
+{
+    opt.IdleTimeout        = TimeSpan.FromMinutes(30);
+    opt.Cookie.HttpOnly    = true;
+    opt.Cookie.IsEssential = true;
+    opt.Cookie.SameSite    = SameSiteMode.None;  // cần cho cross-origin cookie
+    opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
+// ─── Swagger (chỉ dùng khi develop) ──────────────────────
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new()
+    {
+        Title       = "Parking Management API",
+        Version     = "v1",
+        Description = "RESTful API – Mô hình 3 lớp | SOLID | Primary Constructor DI"
+    });
+    c.CustomOperationIds(api =>
+        api.ActionDescriptor.RouteValues["controller"] + "_" + api.HttpMethod);
+});
+
+// ═══════════════════════════════════════════════════════════
+var app = builder.Build();
+
+// ─── Auto Migrate Database ────────────────────────────────
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+        Console.WriteLine("✅ Database migrated successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️  Database migration skipped: {ex.Message}");
+    }
+}
+
+// ─── Middleware Pipeline ──────────────────────────────────
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Parking Management API v1");
+        c.RoutePrefix = "swagger"; // Truy cập tại /swagger
+    });
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+// ⚠️ CORS phải đặt SAU UseRouting và TRƯỚC UseAuthorization
+app.UseCors("Frontend");
+
+app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
+
+// ─── Route Mapping ────────────────────────────────────────
+app.MapControllers();                               // API Controllers: /api/**
+
+app.Run();

@@ -1,0 +1,9 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Admin.ParkingSlotManagementModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý chỗ đỗ";
+}
+
+<partial name="/Pages/Shared/ParkingSlotManagement/Index.cshtml" />

@@ -1,0 +1,238 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Employee.PersonalReportModel
+
+@{
+    ViewData["Title"] = "Báo cáo cá nhân";
+    ViewData["Role"] = "Nhân viên";
+    ViewData["UserName"] = "Nguyễn Văn An";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/employee/personal_report.css" />
+}
+
+<div class="report-page">
+
+    <div class="report-header">
+        <div>
+            <h1>Báo cáo cá nhân</h1>
+            <p>Tổng hợp kết quả làm việc của bạn theo ngày, tuần, tháng</p>
+        </div>
+    </div>
+
+    <div class="report-filter">
+        <div class="date-range">
+            <i class="fa-regular fa-calendar"></i>
+            <span>@Model.FromDate - @Model.ToDate</span>
+        </div>
+
+        <a class="filter-btn">Hôm nay</a>
+        <a class="filter-btn">7 ngày</a>
+        <a class="filter-btn active">Tháng này</a>
+
+        <button class="download-btn">
+            <i class="fa-solid fa-download"></i>
+            Tải báo cáo
+        </button>
+    </div>
+
+    <div class="report-layout">
+
+        <section class="report-main">
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon blue">
+                        <i class="fa-solid fa-ticket"></i>
+                    </div>
+                    <div>
+                        <span>Tổng vé xử lý</span>
+                        <h3>@Model.TotalTickets.ToString("N0")</h3>
+                        <small>↑ 12.5% so với kỳ trước</small>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon green">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <span>Doanh thu</span>
+                        <h3>@Model.TotalRevenue.ToString("N0") đ</h3>
+                        <small>↑ 15.3% so với kỳ trước</small>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon purple">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <span>Tổng giờ làm</span>
+                        <h3>@Model.TotalWorkingHours</h3>
+                        <small>↑ 8.7% so với kỳ trước</small>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon orange">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <span>Tổng ca làm</span>
+                        <h3>@Model.TotalShifts ca</h3>
+                        <small>↑ 9.1% so với kỳ trước</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="report-card chart-card">
+                    <div class="card-title">
+                        <h3>Doanh thu theo ngày</h3>
+                        <a>Xem chi tiết</a>
+                    </div>
+
+                    <div class="chart-box">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="report-card chart-card">
+                    <div class="card-title">
+                        <h3>Số vé xử lý theo ngày</h3>
+                        <a>Xem chi tiết</a>
+                    </div>
+
+                    <div class="chart-box">
+                        <canvas id="ticketChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="card-title">
+                    <h3>Danh sách ca làm</h3>
+                </div>
+
+                <table class="shift-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày làm</th>
+                            <th>Ca làm</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Tổng giờ</th>
+                            <th>Số vé xử lý</th>
+                            <th>Doanh thu</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var shift in Model.Shifts)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@shift.WorkDate</strong>
+                                    <span>@shift.DayName</span>
+                                </td>
+                                <td>@shift.ShiftName</td>
+                                <td>@shift.StartTime</td>
+                                <td>@shift.EndTime</td>
+                                <td>@shift.TotalHours</td>
+                                <td>@shift.TicketCount vé</td>
+                                <td>@shift.Revenue.ToString("N0") đ</td>
+                                <td>
+                                    <span class="status-badge">
+                                        @shift.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <aside class="report-side">
+
+            <div class="report-card summary-card">
+                <h3>Tổng kết</h3>
+
+                <div class="summary-row">
+                    <span>Tổng vé xử lý</span>
+                    <strong class="blue">@Model.TotalTickets.ToString("N0") vé</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Doanh thu</span>
+                    <strong class="green">@Model.TotalRevenue.ToString("N0") đ</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Tổng giờ làm</span>
+                    <strong class="purple">@Model.TotalWorkingHours</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Tổng ca làm</span>
+                    <strong class="orange">@Model.TotalShifts ca</strong>
+                </div>
+
+                <hr />
+
+                <div class="summary-row">
+                    <span>Trung bình/ca</span>
+                    <strong>@Model.AverageHoursPerShift giờ</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Trung bình/giờ</span>
+                    <strong>@Model.AverageRevenuePerHour.ToString("N0") đ</strong>
+                </div>
+            </div>
+
+            <div class="report-card calendar-card">
+                <div class="calendar-head">
+                    <h3>Lịch làm việc</h3>
+                    <span>Tháng 5/2024</span>
+                </div>
+
+                <div class="calendar-weekdays">
+                    <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                </div>
+
+                <div class="calendar-grid">
+                    @foreach (var day in Model.CalendarDays)
+                    {
+                        <div class="calendar-day @(day.IsToday ? "today" : "") @(day.HasWorked ? "worked" : "")">
+                            @day.Day
+                        </div>
+                    }
+                </div>
+
+                <div class="calendar-legend">
+                    <span><i class="worked-dot"></i> Đã làm việc</span>
+                    <span><i class="off-dot"></i> Chưa làm việc</span>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+</div>
+
+<script>
+    window.personalReportData = {
+        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels)),
+        revenues: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueChartData)),
+        tickets: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TicketChartData))
+    };
+</script>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/personal_report.js"></script>
+}

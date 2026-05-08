@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ParkingManagement.BE/BackendAPI.csproj" />
+  <Project Path="ParkingManagement.FE/ParkingManagement.FE.csproj" />
+</Solution>

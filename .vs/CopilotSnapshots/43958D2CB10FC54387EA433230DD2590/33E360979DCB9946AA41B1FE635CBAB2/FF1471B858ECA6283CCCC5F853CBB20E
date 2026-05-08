@@ -1,0 +1,317 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Shared.ParkingSlotManagement.ParkingSlotManagementModel
+
+@section Styles {
+    <link rel="stylesheet" href="/css/shared/parkingslot.css" asp-append-version="true" />
+}
+
+<div class="dashboard-content parking-page">
+
+    <div class="parking-header">
+        <div>
+            <h2>Quản lý chỗ đỗ</h2>
+            <p>Theo dõi trạng thái, cập nhật và xem chi tiết từng vị trí đỗ</p>
+        </div>
+
+        <button class="parking-btn-primary">
+            <i class="fa-solid fa-file-export"></i>
+            Xuất báo cáo
+        </button>
+    </div>
+
+    <div class="parking-kpi-grid">
+        <div class="card parking-kpi-card">
+            <div class="parking-kpi-icon blue">
+                <i class="fa-solid fa-square-parking"></i>
+            </div>
+            <div>
+                <p>Tổng chỗ đỗ</p>
+                <h2>120</h2>
+                <span>Khu A 50 · Khu B 50 · Khu C 20</span>
+            </div>
+        </div>
+
+        <div class="card parking-kpi-card">
+            <div class="parking-kpi-icon green">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <p>Đang trống</p>
+                <h2>@Model.AvailableCount</h2>
+                <span>Có thể sử dụng</span>
+            </div>
+        </div>
+
+        <div class="card parking-kpi-card">
+            <div class="parking-kpi-icon orange">
+                <i class="fa-solid fa-car"></i>
+            </div>
+            <div>
+                <p>Đang sử dụng</p>
+                <h2>@Model.UsingCount</h2>
+                <span>Đang có xe</span>
+            </div>
+        </div>
+
+        <div class="card parking-kpi-card">
+            <div class="parking-kpi-icon purple">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div>
+                <p>Đã đặt</p>
+                <h2>@Model.BookedCount</h2>
+                <span>Chờ nhận chỗ</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card parking-filter-card">
+        <div class="parking-filter-grid">
+            <div class="parking-field">
+                <label>Khu vực</label>
+                <select id="zoneFilter">
+                    <option value="A">Khu A - Xe máy</option>
+                    <option value="B">Khu B - Ô tô nhỏ</option>
+                    <option value="C">Khu C - Ô tô lớn</option>
+                </select>
+            </div>
+
+            <div class="parking-field">
+                <label>Trạng thái</label>
+                <select id="statusFilter">
+                    <option value="">Tất cả</option>
+                    <option value="Trống">Trống</option>
+                    <option value="Đang sử dụng">Đang sử dụng</option>
+                    <option value="Đã đặt">Đã đặt</option>
+                    <option value="Bảo trì">Bảo trì</option>
+                    <option value="Sự cố">Sự cố</option>
+                </select>
+            </div>
+
+            <div class="parking-field">
+                <label>Tìm kiếm</label>
+                <input id="slotSearch" type="text" placeholder="Nhập mã chỗ đỗ: A01, B10..." />
+            </div>
+
+            <button class="parking-btn-outline" onclick="resetParkingFilter()">
+                <i class="fa-solid fa-rotate-right"></i>
+                Làm mới
+            </button>
+
+            <button class="parking-btn-primary">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Cập nhật trạng thái
+            </button>
+        </div>
+    </div>
+
+    <div class="parking-main-grid">
+
+        <div class="card parking-map-card">
+
+            <div class="parking-zone-tabs">
+                <button class="active" data-zone="A" onclick="changeZone('A')">
+                    <strong>Khu A</strong>
+                    <span>Xe máy · 50 chỗ</span>
+                </button>
+
+                <button data-zone="B" onclick="changeZone('B')">
+                    <strong>Khu B</strong>
+                    <span>Ô tô nhỏ · 50 chỗ</span>
+                </button>
+
+                <button data-zone="C" onclick="changeZone('C')">
+                    <strong>Khu C</strong>
+                    <span>Ô tô lớn · 20 chỗ</span>
+                </button>
+            </div>
+
+            <div class="parking-legend">
+                <span><i class="legend available"></i> Trống</span>
+                <span><i class="legend using"></i> Đang sử dụng</span>
+                <span><i class="legend booked"></i> Đã đặt</span>
+                <span><i class="legend maintenance"></i> Bảo trì</span>
+                <span><i class="legend error"></i> Sự cố</span>
+            </div>
+
+            <div class="parking-lot">
+                <div class="parking-road road-top"></div>
+                <div id="slotGrid" class="parking-slot-grid zone-a"></div>
+                <div class="parking-road road-bottom"></div>
+            </div>
+
+        </div>
+
+        <aside class="card parking-detail-panel">
+            <button class="parking-close">×</button>
+
+            <div class="parking-detail-header">
+                <div id="detailSlotIcon" class="detail-slot-icon using">A01</div>
+                <div>
+                    <h3 id="detailTitle">Chỗ đỗ A01</h3>
+                    <span id="detailStatus" class="parking-status using">Đang sử dụng</span>
+                </div>
+            </div>
+
+            <div class="parking-info-section">
+                <h4>Thông tin chung</h4>
+
+                <div class="parking-info-row">
+                    <span>Khu vực</span>
+                    <strong id="detailZone">Khu A</strong>
+                </div>
+
+                <div class="parking-info-row">
+                    <span>Loại chỗ đỗ</span>
+                    <strong id="detailVehicleType">Xe máy</strong>
+                </div>
+
+                <div class="parking-info-row">
+                    <span>Vị trí</span>
+                    <strong id="detailLocation">Khu A - Ô 01</strong>
+                </div>
+
+                <div class="parking-info-row">
+                    <span>Cập nhật cuối</span>
+                    <strong id="detailUpdated">10/05/2026 08:23</strong>
+                </div>
+            </div>
+
+            <div class="parking-info-section">
+                <h4>Thông tin sử dụng</h4>
+
+                <div class="parking-info-row">
+                    <span>Biển số xe</span>
+                    <strong>51H-123.45</strong>
+                </div>
+
+                <div class="parking-info-row">
+                    <span>Khách hàng</span>
+                    <strong>Nguyễn Văn A</strong>
+                </div>
+
+                <div class="parking-info-row">
+                    <span>Thời gian vào</span>
+                    <strong>10/05/2026 08:20</strong>
+                </div>
+            </div>
+
+            <div class="parking-detail-actions">
+                <button class="parking-btn-primary">
+                    <i class="fa-solid fa-pen"></i>
+                    Cập nhật trạng thái
+                </button>
+
+                <button class="parking-btn-outline">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    Lịch sử sử dụng
+                </button>
+
+                <button class="parking-btn-danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Báo sự cố
+                </button>
+            </div>
+        </aside>
+
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+    const slots = @Html.Raw(Model.SlotsJson);
+
+    let currentZone = "A";
+
+    function getStatusClass(status) {
+        switch (status) {
+            case "Trống": return "available";
+            case "Đang sử dụng": return "using";
+            case "Đã đặt": return "booked";
+            case "Bảo trì": return "maintenance";
+            case "Sự cố": return "error";
+            default: return "available";
+        }
+    }
+
+    function renderSlots() {
+        const grid = document.getElementById("slotGrid");
+        const statusFilter = document.getElementById("statusFilter").value;
+        const keyword = document.getElementById("slotSearch").value.toLowerCase();
+
+        grid.innerHTML = "";
+        grid.className = currentZone === "C"
+            ? "parking-slot-grid zone-c"
+            : "parking-slot-grid zone-a";
+
+        const filteredSlots = slots.filter(slot => {
+            const matchZone = slot.slotId.startsWith(currentZone);
+            const matchStatus = !statusFilter || slot.status === statusFilter;
+            const matchKeyword = !keyword || slot.slotId.toLowerCase().includes(keyword);
+            return matchZone && matchStatus && matchKeyword;
+        });
+
+        filteredSlots.forEach(slot => {
+            const statusClass = getStatusClass(slot.status);
+
+            const item = document.createElement("button");
+            item.className = `parking-slot ${statusClass}`;
+            item.onclick = () => showDetail(slot);
+
+            item.innerHTML = `
+                <strong>${slot.slotId}</strong>
+                <span>${slot.status}</span>
+                <small>${slot.lastUpdatedText}</small>
+            `;
+
+            grid.appendChild(item);
+        });
+    }
+
+    function changeZone(zone) {
+        currentZone = zone;
+
+        document.getElementById("zoneFilter").value = zone;
+
+        document.querySelectorAll(".parking-zone-tabs button").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        document.querySelector(`.parking-zone-tabs button[data-zone="${zone}"]`).classList.add("active");
+
+        renderSlots();
+    }
+
+    function showDetail(slot) {
+        const statusClass = getStatusClass(slot.status);
+        const zoneName = slot.slotId.startsWith("A") ? "Khu A" : slot.slotId.startsWith("B") ? "Khu B" : "Khu C";
+
+        document.getElementById("detailSlotIcon").textContent = slot.slotId;
+        document.getElementById("detailSlotIcon").className = `detail-slot-icon ${statusClass}`;
+
+        document.getElementById("detailTitle").textContent = `Chỗ đỗ ${slot.slotId}`;
+        document.getElementById("detailStatus").textContent = slot.status;
+        document.getElementById("detailStatus").className = `parking-status ${statusClass}`;
+
+        document.getElementById("detailZone").textContent = zoneName;
+        document.getElementById("detailVehicleType").textContent = slot.vehicleType;
+        document.getElementById("detailLocation").textContent = slot.location;
+        document.getElementById("detailUpdated").textContent = slot.lastUpdatedFull;
+    }
+
+    function resetParkingFilter() {
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("slotSearch").value = "";
+        renderSlots();
+
+    document.getElementById("zoneFilter").addEventListener("change", function () {
+        changeZone(this.value);
+    });
+
+    document.getElementById("statusFilter").addEventListener("change", renderSlots);
+    document.getElementById("slotSearch").addEventListener("input", renderSlots);
+
+    renderSlots();
+</script>
+}

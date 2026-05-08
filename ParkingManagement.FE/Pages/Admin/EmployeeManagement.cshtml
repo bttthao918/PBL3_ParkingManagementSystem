@@ -1,0 +1,369 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Admin.EmployeeManagementModel
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+    ViewData["UserName"] = "Admin";
+    ViewData["Role"] = "Quản trị hệ thống";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/admin/admin_employee.css" />
+}
+
+<div class="dashboard-content employee-page">
+
+    <div class="employee-header">
+        <div>
+            <h2>Quản lý nhân viên</h2>
+            <p>Quản lý thông tin, ca làm việc và hiệu suất nhân viên</p>
+        </div>
+
+        <button class="emp-btn-primary" onclick="openCreateModal()">
+            <i class="fa-solid fa-plus"></i>
+            Thêm nhân viên
+        </button>
+    </div>
+
+    <div class="emp-kpi-grid">
+        <div class="card emp-kpi-card">
+            <div class="emp-kpi-icon blue">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+                <p>Tổng nhân viên</p>
+                <h2>24</h2>
+                <span>Tất cả nhân viên</span>
+            </div>
+        </div>
+
+        <div class="card emp-kpi-card">
+            <div class="emp-kpi-icon green">
+                <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div>
+                <p>Đang làm việc</p>
+                <h2>20</h2>
+                <span>83.3%</span>
+            </div>
+        </div>
+
+        <div class="card emp-kpi-card">
+            <div class="emp-kpi-icon orange">
+                <i class="fa-solid fa-user-clock"></i>
+            </div>
+            <div>
+                <p>Nghỉ phép</p>
+                <h2>4</h2>
+                <span>16.7%</span>
+            </div>
+        </div>
+
+        <div class="card emp-kpi-card">
+            <div class="emp-kpi-icon purple">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <div>
+                <p>Tổng ca hôm nay</p>
+                <h2>32</h2>
+                <span>Ca làm việc</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card emp-filter-card">
+        <h3>Tìm kiếm nhân viên</h3>
+
+        <form method="get" class="emp-filter-grid">
+            <div class="emp-field large">
+                <label>Từ khóa</label>
+                <input type="text" placeholder="Nhập tên, SĐT, email, mã nhân viên..." />
+            </div>
+
+            <div class="emp-field">
+                <label>Phòng ban</label>
+                <select>
+                    <option>Tất cả</option>
+                    <option>Bãi xe A</option>
+                    <option>Bãi xe B</option>
+                    <option>Bãi xe C</option>
+                </select>
+            </div>
+
+            <div class="emp-field">
+                <label>Vị trí</label>
+                <select>
+                    <option>Tất cả</option>
+                    <option>Nhân viên bãi xe</option>
+                    <option>Tổ trưởng</option>
+                </select>
+            </div>
+
+            <div class="emp-field">
+                <label>Trạng thái</label>
+                <select>
+                    <option>Tất cả</option>
+                    <option>Đang làm việc</option>
+                    <option>Nghỉ phép</option>
+                    <option>Tạm nghỉ</option>
+                    <option>Vô hiệu hóa</option>
+                </select>
+            </div>
+
+            <div class="emp-field">
+                <label>Khoảng ngày</label>
+                <input type="text" value="01/05/2024 - 31/05/2024" />
+            </div>
+
+            <button class="emp-btn-primary">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Tìm kiếm
+            </button>
+        </form>
+
+        <div class="emp-filter-actions">
+            <button class="emp-btn-outline">
+                <i class="fa-solid fa-filter-circle-xmark"></i>
+                Xóa bộ lọc
+            </button>
+
+            <button class="emp-btn-outline">
+                <i class="fa-solid fa-download"></i>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <div class="employee-main-grid">
+
+        <div>
+            <div class="card emp-bulk-bar">
+                <div>
+                    <input type="checkbox" checked />
+                    <span>Đã chọn 3 nhân viên</span>
+                </div>
+
+                <div class="emp-bulk-actions">
+                    <button class="success">Kích hoạt</button>
+                    <button class="danger">Vô hiệu hóa</button>
+                    <button>Phân ca</button>
+                    <button>Xuất dữ liệu</button>
+                </div>
+            </div>
+
+            <div class="card emp-table-card">
+                <div class="emp-table-title">
+                    <h3>Danh sách nhân viên (24)</h3>
+                </div>
+
+                <table class="emp-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" /></th>
+                            <th>Mã NV</th>
+                            <th>Họ tên</th>
+                            <th>Vị trí</th>
+                            <th>Phòng ban</th>
+                            <th>SĐT</th>
+                            <th>Tổng vé</th>
+                            <th>Vé xử lý</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var emp in Model.Employees)
+                        {
+                            <tr>
+                                <td><input type="checkbox" /></td>
+                                <td class="emp-code">@emp.Code</td>
+                                <td>
+                                    <div class="emp-name-cell">
+                                        <img src="@emp.Avatar" />
+                                        <span>@emp.Name</span>
+                                    </div>
+                                </td>
+                                <td>@emp.Position</td>
+                                <td>@emp.Department</td>
+                                <td>@emp.Phone</td>
+                                <td>@emp.TotalTickets</td>
+                                <td>@emp.ProcessedTickets</td>
+                                <td>
+                                    <span class="emp-status @emp.StatusClass">
+                                        @emp.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="emp-actions">
+                                        <button><i class="fa-solid fa-eye"></i></button>
+                                        <button><i class="fa-solid fa-pen"></i></button>
+                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="emp-pagination">
+                    <span>Hiển thị 1 đến 8 trong tổng số 24 nhân viên</span>
+
+                    <div>
+                        <button>‹</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <aside class="card emp-detail-panel">
+            <button class="emp-close">×</button>
+
+            <div class="emp-profile">
+                <img src="/images/avatar-demo.jpg" />
+                <h3>Nguyễn Văn An</h3>
+                <span class="emp-status active">Đang làm việc</span>
+                <p>Nhân viên bãi xe · Bãi xe A</p>
+            </div>
+
+            <div class="emp-detail-tabs">
+                <button class="active" onclick="showEmpTab('info')">Thông tin</button>
+                <button onclick="showEmpTab('shift')">Lịch sử ca</button>
+            </div>
+
+            <div id="empInfoTab" class="emp-tab-content active">
+                <div class="emp-detail-stats">
+                    <div>
+                        <i class="fa-solid fa-ticket"></i>
+                        <strong>1,256</strong>
+                        <span>Tổng vé</span>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-circle-check"></i>
+                        <strong>1,198</strong>
+                        <span>Vé xử lý</span>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-calendar"></i>
+                        <strong>45</strong>
+                        <span>Tổng ca</span>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-clock"></i>
+                        <strong>356h</strong>
+                        <span>Giờ làm</span>
+                    </div>
+                </div>
+
+                <div class="emp-info-list">
+                    <div><span>Mã nhân viên</span><strong>NV0001</strong></div>
+                    <div><span>Ngày sinh</span><strong>15/06/1992</strong></div>
+                    <div><span>Giới tính</span><strong>Nam</strong></div>
+                    <div><span>SĐT</span><strong>0901 234 567</strong></div>
+                    <div><span>Email</span><strong>nguyenvanan@gmail.com</strong></div>
+                    <div><span>Địa chỉ</span><strong>123 Đường ABC, Quận 1</strong></div>
+                    <div><span>Ngày vào làm</span><strong>01/03/2023</strong></div>
+                </div>
+            </div>
+
+            <div id="empShiftTab" class="emp-tab-content">
+                <div class="emp-shift-list">
+                    <div>
+                        <strong>01/05/2024</strong>
+                        <span>Ca sáng · 08:00 - 12:00</span>
+                        <em>Hoàn thành</em>
+                    </div>
+                    <div>
+                        <strong>02/05/2024</strong>
+                        <span>Ca chiều · 13:00 - 17:00</span>
+                        <em>Hoàn thành</em>
+                    </div>
+                    <div>
+                        <strong>03/05/2024</strong>
+                        <span>Ca tối · 18:00 - 22:00</span>
+                        <em>Hoàn thành</em>
+                    </div>
+                </div>
+            </div>
+
+            <div class="emp-detail-actions">
+                <button class="emp-btn-primary">Cập nhật thông tin</button>
+                <button class="emp-btn-danger">Vô hiệu hóa tài khoản</button>
+                <button class="emp-btn-outline">Đổi mật khẩu</button>
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+<div id="createEmployeeModal" class="emp-modal">
+    <div class="emp-modal-box">
+        <div class="emp-modal-header">
+            <h3>Thêm nhân viên mới</h3>
+            <button onclick="closeCreateModal()">×</button>
+        </div>
+
+        <form class="emp-modal-form">
+            <input placeholder="Họ và tên" />
+            <input placeholder="Email" />
+            <input placeholder="Số điện thoại" />
+
+            <select>
+                <option>Nhân viên bãi xe</option>
+                <option>Tổ trưởng</option>
+            </select>
+
+            <select>
+                <option>Bãi xe A</option>
+                <option>Bãi xe B</option>
+                <option>Bãi xe C</option>
+            </select>
+
+            <input type="password" placeholder="Mật khẩu cấp tài khoản" />
+
+            <label class="emp-checkbox">
+                <input type="checkbox" checked />
+                Gửi email cấp tài khoản cho nhân viên
+            </label>
+
+            <div class="emp-modal-actions">
+                <button type="button" class="emp-btn-outline" onclick="closeCreateModal()">Hủy</button>
+                <button type="submit" class="emp-btn-primary">Tạo nhân viên</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showEmpTab(tab) {
+            document.getElementById("empInfoTab").classList.remove("active");
+            document.getElementById("empShiftTab").classList.remove("active");
+
+            document.querySelectorAll(".emp-detail-tabs button").forEach(btn => {
+                btn.classList.remove("active");
+            });
+
+            if (tab === "info") {
+                document.getElementById("empInfoTab").classList.add("active");
+                document.querySelectorAll(".emp-detail-tabs button")[0].classList.add("active");
+            } else {
+                document.getElementById("empShiftTab").classList.add("active");
+                document.querySelectorAll(".emp-detail-tabs button")[1].classList.add("active");
+            }
+        }
+
+        function openCreateModal() {
+            document.getElementById("createEmployeeModal").classList.add("show");
+        }
+
+        function closeCreateModal() {
+            document.getElementById("createEmployeeModal").classList.remove("show");
+        }
+    </script>
+}
+
+

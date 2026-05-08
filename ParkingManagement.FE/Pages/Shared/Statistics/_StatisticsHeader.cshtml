@@ -1,0 +1,19 @@
+﻿@model ParkingManagement.FE.Models.ViewModels.StatisticsHeaderViewModel
+
+<div class="stat-header">
+    <div>
+        <h2>@Model.Title</h2>
+        <p>@Model.Description</p>
+    </div>
+
+    <div class="stat-date-filter">
+        <button>
+            <i class="fa-solid fa-calendar-days"></i>
+            @Model.DateRangeText
+        </button>
+        <button>Hôm nay</button>
+        <button>7 ngày</button>
+        <button class="active">30 ngày</button>
+        <button>Tùy chọn <i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+</div>

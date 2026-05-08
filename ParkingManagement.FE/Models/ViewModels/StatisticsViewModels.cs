@@ -1,0 +1,24 @@
+﻿namespace ParkingManagement.FE.Models.ViewModels
+{
+    public class StatisticsKpiCardViewModel
+    {
+        public string Title { get; set; } = "";
+        public string Value { get; set; } = "";
+        public string ChangeText { get; set; } = "";
+        public string Icon { get; set; } = "";
+        public string ColorClass { get; set; } = "blue";
+    }
+
+    public class StatisticsTableViewModel
+    {
+        public List<string> Headers { get; set; } = new();
+        public List<List<string>> Rows { get; set; } = new();
+    }
+
+    public class StatisticsHeaderViewModel
+    {
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string DateRangeText { get; set; } = "";
+    }
+}

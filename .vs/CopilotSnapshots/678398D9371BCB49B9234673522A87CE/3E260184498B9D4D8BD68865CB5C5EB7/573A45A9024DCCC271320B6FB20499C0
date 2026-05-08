@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "/Pages/Shared/_DashboardLayout.cshtml";
+    var currentPath = ViewContext.HttpContext.Request.Path.Value ?? "";
+}
+
+@* Cho phép các trang con nhúng CSS riêng *@
+@section Styles {
+    @RenderSection("Styles", required: false)
+}
+
+@* KHUNG SIDEBAR DÙNG CHUNG CHO TOÀN BỘ ADMIN *@
+@section Sidebar {
+    <a asp-page="/Admin/Dashboard" class="@(currentPath.Equals("/Admin/Dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-house"></i> Tổng quan
+    </a>
+
+    <p>QUẢN LÝ</p>
+    <a asp-page="/Admin/TicketManagement" class="@(currentPath.Contains("/Admin/TicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-ticket"></i> Quản lý vé
+    </a>
+    
+    <a asp-page="/Admin/EmployeeManagement" class="@(currentPath.Contains("/Admin/EmployeeManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-users"></i> Quản lý nhân viên
+    </a>
+    
+    <a href="#">
+        <i class="fa-solid fa-square-parking"></i> Quản lý chỗ đỗ
+    </a>
+
+    <p>THỐNG KÊ</p>
+    <a href="#"><i class="fa-solid fa-chart-line"></i> Doanh thu</a>
+    <a href="#"><i class="fa-solid fa-user-group"></i> Khách hàng</a>
+    <a href="#"><i class="fa-solid fa-chart-column"></i> Tổng hợp</a>
+
+    <p>TÀI KHOẢN</p>
+    <a href="#"><i class="fa-solid fa-user-gear"></i> Thông tin tài khoản</a>
+    <a href="#"><i class="fa-solid fa-lock"></i> Đổi mật khẩu</a>
+}
+
+@* CODE CỦA CÁC TRANG (GIAO DIỆN TỪNG CHỨC NĂNG CHÍNH) SẼ NẰM Ở ĐÂY *@
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

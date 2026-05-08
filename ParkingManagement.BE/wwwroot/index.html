@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parking Management</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">P</span>
+      <span>Parking Management</span>
+    </div>
+    <nav class="nav">
+      <a href="#parking">Bãi xe</a>
+      <a href="#tickets">Vé</a>
+      <a href="/swagger">API</a>
+    </nav>
+  </header>
+
+  <main class="app-shell">
+    <section class="summary-grid" aria-label="Thống kê nhanh">
+      <article class="metric">
+        <span>Vé lượt</span>
+        <strong id="totalLaneTickets">--</strong>
+      </article>
+      <article class="metric">
+        <span>Vé tháng</span>
+        <strong id="totalMonthlyTickets">--</strong>
+      </article>
+      <article class="metric">
+        <span>Sắp hết hạn</span>
+        <strong id="expiringSoon">--</strong>
+      </article>
+      <article class="metric">
+        <span>Doanh thu hôm nay</span>
+        <strong id="todayRevenue">--</strong>
+      </article>
+    </section>
+
+    <section class="workspace" id="parking">
+      <div class="panel">
+        <div class="panel-header">
+          <h1>Check-in xe</h1>
+          <span id="apiState" class="status">Đang tải</span>
+        </div>
+        <form id="checkInForm" class="form-grid">
+          <label>
+            Biển số
+            <input id="licensePlate" name="licensePlate" autocomplete="off" placeholder="43A-12345" required>
+          </label>
+          <label>
+            Loại xe
+            <select id="vehicleType" name="vehicleType" required>
+              <option value="Motorcycle">Xe máy</option>
+              <option value="Car">Ô tô</option>
+              <option value="Truck">Xe tải</option>
+              <option value="Bicycle">Xe đạp</option>
+            </select>
+          </label>
+          <label>
+            Khu
+            <input id="areaId" name="areaId" type="number" min="1" value="1" required>
+          </label>
+          <button type="submit">Check-in</button>
+        </form>
+        <pre id="checkInResult" class="result-box">Chưa có giao dịch.</pre>
+      </div>
+
+      <div class="panel" id="tickets">
+        <div class="panel-header">
+          <h2>Phiên đang gửi</h2>
+          <button id="refreshSessions" type="button" class="icon-button" aria-label="Tải lại">↻</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Biển số</th>
+                <th>Vị trí</th>
+                <th>Giờ vào</th>
+                <th>Thời lượng</th>
+              </tr>
+            </thead>
+            <tbody id="sessionsBody">
+              <tr><td colspan="4">Đang tải dữ liệu...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

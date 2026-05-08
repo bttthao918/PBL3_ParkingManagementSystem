@@ -1,0 +1,13 @@
+﻿@model ParkingManagement.FE.Models.ViewModels.StatisticsKpiCardViewModel
+
+<div class="card stat-kpi-card">
+    <div class="stat-kpi-icon @Model.ColorClass">
+        <i class="@Model.Icon"></i>
+    </div>
+
+    <div>
+        <p>@Model.Title</p>
+        <h2>@Model.Value</h2>
+        <span>@Model.ChangeText</span>
+    </div>
+</div>

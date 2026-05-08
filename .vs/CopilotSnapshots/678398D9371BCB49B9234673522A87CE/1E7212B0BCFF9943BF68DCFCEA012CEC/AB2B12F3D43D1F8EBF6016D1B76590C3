@@ -1,0 +1,79 @@
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+public class AuthenticateModel : PageModel
+{
+    [BindProperty]
+    public LoginInputModel LoginInput { get; set; } = new();
+
+    [BindProperty]
+    public RegisterInputModel RegisterInput { get; set; } = new();
+
+    public void OnGet()
+    {
+    }
+
+    public IActionResult OnPostLogin()
+    {
+        //if (!ModelState.IsValid)
+        //{
+         //   return Page();
+       // }
+
+        // TODO: xử lý đăng nhập tại đây
+        // Ví dụ: kiểm tra tài khoản, password, SignInAsync...
+
+        return RedirectToPage("Ar/Admin/Dashboard");
+    }
+
+    public IActionResult OnPostRegister()
+    {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        // TODO: xử lý đăng ký tại đây
+        // Ví dụ: tạo user, lưu database, đăng nhập sau khi đăng ký...
+
+        return RedirectToPage("/Auth/Authenticate");
+    }
+
+    public class LoginInputModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập hoặc email")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        public string Password { get; set; } = string.Empty;
+
+        public bool RememberMe { get; set; }
+    }
+
+    public class RegisterInputModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập email")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
+        [RegularExpression(@"^(0|\+84)[0-9]{9}$", ErrorMessage = "Số điện thoại không hợp lệ")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        public string Gender { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "Mật khẩu tối thiểu 6 ký tự")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
+    ErrorMessage = "Mật khẩu phải có chữ hoa, chữ thường và số")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập lại mật khẩu")]
+        [Compare(nameof(Password), ErrorMessage = "Mật khẩu nhập lại không khớp")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

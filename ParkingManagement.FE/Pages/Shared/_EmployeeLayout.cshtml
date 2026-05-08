@@ -1,0 +1,62 @@
+﻿@{
+    Layout = "/Pages/Shared/_DashboardLayout.cshtml";
+    var currentPath = ViewContext.HttpContext.Request.Path.Value ?? "";
+}
+
+@section Styles {
+    @RenderSection("Styles", required: false)
+}
+
+@section Sidebar {
+    <a asp-page="/Employee/Dashboard"
+           class="@(currentPath.Equals("/Employee/Dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-house"></i> Tổng quan
+    </a>
+
+    <p>VẬN HÀNH</p>
+
+    <a asp-page="/Employee/CustomerManagement"
+           class="@(currentPath.Equals("/Employee/CustomerManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-users"></i> Quản lý khách hàng
+    </a>
+
+    <a asp-page="/Employee/TicketManagement"
+           class="@(currentPath.Contains("/Employee/TicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-ticket"></i> Quản lý vé
+    </a>
+
+    <a asp-page="/Employee/ParkingSlotManagement"
+           class="@(currentPath.Contains("/Employee/ParkingSlotManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-square-parking"></i> Chỗ đỗ xe
+    </a>
+
+    <p>THỐNG KÊ VÀ BÁO CÁO</p>
+
+    <a asp-page="/Employee/PersonalReport"
+           class="@(currentPath.Contains("/Employee/PersonalReport", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-chart-user"></i> Cá nhân
+    </a>
+
+    <a asp-page="/Employee/RevenueStatistics"
+           class="@(currentPath.Contains("/Employee/RevenueStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-chart-line"></i> Doanh thu
+    </a>
+
+    <p>TÀI KHOẢN</p>
+
+    <a asp-page="/Account/Profile"
+           class="@(currentPath.Contains("/Account/Profile", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-user-gear"></i> Thông tin tài khoản
+    </a>
+
+    <a asp-page="/Account/ChangePassword"
+           class="@(currentPath.Contains("/Account/ChangePassword", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+    </a>
+}
+
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

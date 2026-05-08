@@ -1,0 +1,410 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Employee.TicketManagementModel
+
+@{
+    ViewData["Title"] = "Quản lý vé";
+    ViewData["Role"] = "Nhân viên";
+    ViewData["UserName"] = "Nguyễn Văn An";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/employee/ticket_manage.css" />
+}
+
+<div class="ticket-page">
+
+    <div class="ticket-toolbar">
+        <div>
+            <h1>Quản lý vé</h1>
+            <p>Xem vé, tìm kiếm, check-in, check-out và tính tiền gửi xe</p>
+        </div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-ticket"></i></div>
+            <div>
+                <span>Tất cả vé</span>
+                <h3>@Model.TotalTickets</h3>
+                <small>↑ 12.5% so với hôm qua</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-car"></i></div>
+            <div>
+                <span>Đang gửi xe</span>
+                <h3>@Model.ActiveTickets</h3>
+                <small>↑ 8.2% so với hôm qua</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon purple"><i class="fa-solid fa-circle-check"></i></div>
+            <div>
+                <span>Đã thanh toán</span>
+                <h3>@Model.PaidTickets</h3>
+                <small>↑ 15.3% so với hôm qua</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon orange"><i class="fa-solid fa-clock"></i></div>
+            <div>
+                <span>Quá hạn</span>
+                <h3>@Model.ExpiredTickets</h3>
+                <small>↑ 5.7% so với hôm qua</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div>
+                <span>Đã hủy</span>
+                <h3>@Model.CancelledTickets</h3>
+                <small class="down">↓ 3.2% so với hôm qua</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="ticket-layout @(Model.SelectedTicket != null ? "has-detail" : "full-width")">
+
+        <section class="ticket-table-card">
+
+            <form method="get" class="ticket-filter-form">
+                <div class="filter-top">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input asp-for="Search"
+                               placeholder="Tìm vé theo mã vé, biển số, khách hàng, số điện thoại..." />
+                    </div>
+
+                    <button type="submit" class="secondary-btn">
+                        <i class="fa-solid fa-filter"></i>
+                        Bộ lọc
+                    </button>
+
+                    <button type="button" class="primary-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        Tạo vé mới
+                    </button>
+                </div>
+
+                <div class="filter-bottom">
+                    <select asp-for="StatusFilter">
+                        <option value="">Trạng thái: Tất cả</option>
+                        <option value="Active">Đang gửi</option>
+                        <option value="Paid">Đã thanh toán</option>
+                        <option value="Expired">Quá hạn</option>
+                        <option value="Cancelled">Đã hủy</option>
+                    </select>
+
+                    <select asp-for="VehicleFilter">
+                        <option value="">Loại xe: Tất cả</option>
+                        <option value="Car">Ô tô</option>
+                        <option value="Motorbike">Xe máy</option>
+                    </select>
+
+                    <select asp-for="AreaFilter">
+                        <option value="">Khu vực: Tất cả</option>
+                        <option value="A">Khu A</option>
+                        <option value="B">Khu B</option>
+                    </select>
+
+                    <input asp-for="CreatedDate" type="date" />
+
+                    <a asp-page="./TicketManagement" class="clear-filter">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Xóa lọc
+                    </a>
+                </div>
+            </form>
+
+            <div class="table-wrapper">
+                <table class="ticket-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" /></th>
+                            <th>Mã vé</th>
+                            <th>Khách hàng</th>
+                            <th>Biển số</th>
+                            <th>Loại xe</th>
+                            <th>Khu vực</th>
+                            <th>Check-in</th>
+                            <th>Trạng thái</th>
+                            <th>Tiền phải trả</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Tickets)
+                        {
+                            <tr class="@(Model.SelectedTicket?.Id == item.Id ? "selected" : "")">
+                                <td><input type="checkbox" /></td>
+
+                                <td>
+                                    <strong>@item.TicketCode</strong>
+                                    <span>@item.CreatedAt</span>
+                                </td>
+
+                                <td>
+                                    <div class="customer-info">
+                                        <div class="avatar">
+                                            @(item.CustomerName.Substring(0, 1))
+                                        </div>
+                                        <div>
+                                            <strong>@item.CustomerName</strong>
+                                            <span>@item.Phone</span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>@item.PlateNumber</td>
+
+                                <td>
+                                    <span class="vehicle-type">
+                                        <i class="fa-solid @(item.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                        @item.VehicleType
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="area-dot @item.AreaClass"></span>
+                                    @item.Area
+                                </td>
+
+                                <td>
+                                    <strong>@item.CheckInTime</strong>
+                                    <span>@item.CheckInDate</span>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge @item.StatusClass">
+                                        <i class="fa-solid fa-circle"></i>
+                                        @item.StatusText
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (item.TotalPrice.HasValue)
+                                    {
+                                        <strong>@item.TotalPrice.Value.ToString("N0") đ</strong>
+                                    }
+                                    else
+                                    {
+                                        <span>---</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-page="./TicketManagement"
+                                               asp-route-selectedId="@item.Id"
+                                               class="icon-btn"
+                                               title="Xem chi tiết">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+
+                                        <div class="action-dropdown">
+                                            <button type="button" class="icon-btn">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+
+                                            <div class="dropdown-menu">
+                                                <a asp-page="./TicketManagement" asp-route-selectedId="@item.Id">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                    Xem chi tiết
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-right-to-bracket"></i>
+                                                    Check-in
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                                    Check-out
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-money-bill"></i>
+                                                    Thanh toán
+                                                </a>
+
+                                                <a href="#">
+                                                    <i class="fa-solid fa-ban"></i>
+                                                    Hủy vé
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        @if (Model.SelectedTicket != null)
+        {
+            <aside class="ticket-detail-panel">
+
+                <div class="ticket-panel-head">
+                    <div>
+                        <span class="panel-label">CHI TIẾT VÉ</span>
+                        <h2>@Model.SelectedTicket.TicketCode</h2>
+                    </div>
+
+                    <a asp-page="./TicketManagement" class="close-panel">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                </div>
+
+                <div class="ticket-status-row">
+                    <span class="status-badge @Model.SelectedTicket.StatusClass">
+                        <i class="fa-solid fa-circle"></i>
+                        @Model.SelectedTicket.StatusText
+                    </span>
+
+                    <span class="ticket-created">
+                        @Model.SelectedTicket.CreatedAt
+                    </span>
+                </div>
+
+                <div class="ticket-meta">
+                    <p>
+                        <i class="fa-regular fa-user"></i>
+                        Nhân viên: <strong>@Model.SelectedTicket.EmployeeName</strong>
+                    </p>
+                </div>
+
+                <div class="detail-actions">
+                    <button class="secondary-btn" type="button">
+                        Check-in
+                    </button>
+
+                    <button class="primary-btn" type="button">
+                        Check-out
+                    </button>
+
+                    <button class="danger-btn" type="button">
+                        Hủy vé
+                    </button>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin khách hàng</h4>
+                    </div>
+
+                    <div class="customer-detail-row">
+                        <div class="avatar large">
+                            @(Model.SelectedTicket.CustomerName.Substring(0, 1))
+                        </div>
+
+                        <div>
+                            <strong>@Model.SelectedTicket.CustomerName</strong>
+                            <span>@Model.SelectedTicket.Phone</span>
+                        </div>
+
+                        <a href="tel:@Model.SelectedTicket.Phone" class="icon-btn">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin xe</h4>
+
+                        <button class="small-icon-btn" type="button">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Biển số</span>
+                        <strong>@Model.SelectedTicket.PlateNumber</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Loại xe</span>
+                        <strong>@Model.SelectedTicket.VehicleType</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Màu xe</span>
+                        <strong>@Model.SelectedTicket.VehicleColor</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Nhãn hiệu</span>
+                        <strong>@Model.SelectedTicket.Brand</strong>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin gửi xe</h4>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Khu vực</span>
+                        <strong>@Model.SelectedTicket.Area</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Vị trí</span>
+                        <strong>@Model.SelectedTicket.Position</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Check-in</span>
+                        <strong>@Model.SelectedTicket.CheckInFull</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Thời gian gửi</span>
+                        <strong>@Model.SelectedTicket.DurationText</strong>
+                    </div>
+                </div>
+
+                <div class="detail-card payment-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin thanh toán</h4>
+                        <a href="#">Xem bảng giá</a>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Giá vé cơ bản</span>
+                        <strong>@Model.SelectedTicket.BasePrice.ToString("N0") đ/lượt</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Thời gian gửi</span>
+                        <strong>@Model.SelectedTicket.DurationText</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Phí dịch vụ</span>
+                        <strong>@Model.SelectedTicket.ServiceFee.ToString("N0") đ</strong>
+                    </div>
+
+                    <div class="total-row">
+                        <span>Tổng tiền</span>
+                        <strong>@Model.SelectedTicket.PaymentTotal.ToString("N0") đ</strong>
+                    </div>
+
+                    <button class="pay-btn" type="button">
+                        Thanh toán
+                    </button>
+                </div>
+
+            </aside>
+        }
+
+    </div>
+</div>

@@ -1,0 +1,28 @@
+﻿@model ParkingManagement.FE.Models.ViewModels.StatisticsTableViewModel
+
+<table class="stat-table">
+    <thead>
+        <tr>
+            @foreach (var header in Model.Headers)
+            {
+                <th>@header</th>
+            }
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var row in Model.Rows)
+        {
+            <tr>
+                @foreach (var col in row)
+                {
+                    <td>@col</td>
+                }
+                <td>
+                    <i class="fa-solid fa-eye table-eye"></i>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

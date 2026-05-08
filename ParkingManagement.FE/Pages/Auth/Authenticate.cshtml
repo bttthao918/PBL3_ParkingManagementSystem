@@ -1,0 +1,304 @@
+@page
+@model AuthenticateModel
+@{
+    Layout = null;
+    var activeTab = Model.ActiveTab ?? "login";
+    var errorMessage = Model.ErrorMessage;
+    var successMessage = Model.SuccessMessage;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Xác thực tài khoản - Parking Management System</title>
+    <link rel="stylesheet" href="/css/shared/authenticate.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="dark-overlay"></div>
+
+        <main class="auth-layout">
+
+            <!-- LEFT SIDE -->
+            <section class="left-side">
+                <div class="brand">
+                    <div class="logo">P</div>
+                    <div>
+                        <h3>PARKING</h3>
+                        <span>MANAGEMENT SYSTEM</span>
+                    </div>
+                </div>
+
+                <div class="hero">
+                    <h1>HỆ THỐNG QUẢN LÝ</h1>
+                    <h2>BÃI ĐỖ XE TƯ NHÂN</h2>
+                    <p>Quản lý thông minh – Vận hành hiệu quả – An toàn tuyệt đối</p>
+                </div>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-car"></i></div>
+                        <span>Quản lý hiệu quả</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <span>An toàn & bảo mật</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-chart-column"></i></div>
+                        <span>Báo cáo trực quan</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span>Tiện lợi & nhanh chóng</span>
+                    </div>
+                </div>
+
+                <div class="support-box">
+                    <h3>LIÊN HỆ HỖ TRỢ</h3>
+                    <p>Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
+
+                    <div class="support-grid">
+                        <div class="support-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <strong>Hotline</strong>
+                                <span>1900 1234</span>
+                            </div>
+                        </div>
+
+                        <div class="support-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <strong>Email</strong>
+                                <span>support@parking.vn</span>
+                            </div>
+                        </div>
+
+                        <div class="support-item">
+                            <i class="fa-regular fa-clock"></i>
+                            <div>
+                                <strong>Thời gian hỗ trợ</strong>
+                                <span>07:00 - 22:00 (T2 - CN)</span>
+                            </div>
+                        </div>
+
+                        <div class="support-item">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <strong>Địa chỉ</strong>
+                                <span>Tòa nhà SkyView, 123 Đường ABC,<br />Phường XYZ, Quận 1, TP. HCM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="copyright">
+                    © 2024 Parking Management System. All rights reserved.
+                </p>
+            </section>
+
+            <!-- RIGHT SIDE -->
+            <section class="right-side">
+                <div class="auth-card">
+
+                    <!-- LOGIN PANEL -->
+                    <div class="auth-panel" id="loginPanel">
+                        <div class="top-icon">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+
+                        <h2>Đăng nhập</h2>
+                        <p class="subtitle">Đăng nhập để tiếp tục sử dụng hệ thống</p>
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-error">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                @errorMessage
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="alert alert-success">
+                                <i class="fa-solid fa-circle-check"></i>
+                                @successMessage
+                            </div>
+                        }
+
+                        <form method="post" asp-page-handler="Login">
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-regular fa-envelope"></i>
+                                    <input asp-for="LoginInput.Email" placeholder="Email" type="email" />
+                                </div>
+                                <span asp-validation-for="LoginInput.Email" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input asp-for="LoginInput.Password" type="password" placeholder="Mật khẩu" />
+                                    <i class="fa-regular fa-eye eye-icon" data-target="loginPassword"></i>
+                                </div>
+                                <span asp-validation-for="LoginInput.Password" class="field-error"></span>
+                            </div>
+
+                            <div class="form-options">
+                                <label>
+                                    <input asp-for="LoginInput.RememberMe" type="checkbox" />
+                                    <span>Ghi nhớ đăng nhập</span>
+                                </label>
+
+                                <a href="#">Quên mật khẩu?</a>
+                            </div>
+
+                            <button type="submit" class="main-btn">
+                                <i class="fa-solid fa-lock"></i>
+                                Đăng nhập
+                            </button>
+                        </form>
+
+                        <div class="divider">
+                            <span></span>
+                            <p>hoặc</p>
+                            <span></span>
+                        </div>
+
+                        <button type="button" class="switch-card" data-tab="register">
+                            <i class="fa-regular fa-user"></i>
+                            <strong>Đăng ký tài khoản</strong>
+                            <small>Dành cho khách hàng mới</small>
+                        </button>
+                    </div>
+
+                    <!-- REGISTER PANEL -->
+                    <div class="auth-panel" id="registerPanel">
+                        <div class="top-icon">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+
+                        <h2>Đăng ký tài khoản</h2>
+                        <p class="subtitle">Dành cho khách hàng sử dụng bãi đỗ xe</p>
+
+                        @if (!string.IsNullOrEmpty(errorMessage) && activeTab == "register")
+                        {
+                            <div class="alert alert-error">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                @errorMessage
+                            </div>
+                        }
+
+                        <form method="post" asp-page-handler="Register">
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-regular fa-user"></i>
+                                    <input asp-for="RegisterInput.FullName" placeholder="Họ và tên" />
+                                </div>
+                                <span asp-validation-for="RegisterInput.FullName" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-regular fa-envelope"></i>
+                                    <input asp-for="RegisterInput.Email" placeholder="Email" />
+                                </div>
+                                <span asp-validation-for="RegisterInput.Email" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input asp-for="RegisterInput.PhoneNumber" placeholder="Số điện thoại" />
+                                </div>
+                                <span asp-validation-for="RegisterInput.PhoneNumber" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input asp-for="RegisterInput.Password" type="password" placeholder="Mật khẩu" />
+                                    <i class="fa-regular fa-eye eye-icon" data-target="registerPassword"></i>
+                                </div>
+                                <span asp-validation-for="RegisterInput.Password" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <div class="input-group">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input asp-for="RegisterInput.ConfirmPassword" type="password" placeholder="Nhập lại mật khẩu" />
+                                    <i class="fa-regular fa-eye eye-icon" data-target="confirmPassword"></i>
+                                </div>
+                                <span asp-validation-for="RegisterInput.ConfirmPassword" class="field-error"></span>
+                            </div>
+
+                            <button type="submit" class="main-btn">
+                                <i class="fa-solid fa-user-plus"></i>
+                                Tạo tài khoản
+                            </button>
+                        </form>
+
+                        <div class="divider">
+                            <span></span>
+                            <p>hoặc</p>
+                            <span></span>
+                        </div>
+
+                        <button type="button" class="switch-card" data-tab="login">
+                            <i class="fa-solid fa-lock"></i>
+                            <strong>Đăng nhập</strong>
+                            <small>Đã có tài khoản?</small>
+                        </button>
+                    </div>
+
+                    <div class="mini-support">
+                        <h4><i class="fa-solid fa-headset"></i> LIÊN HỆ HỖ TRỢ</h4>
+
+                        <div class="mini-icons">
+                            <i class="fa-solid fa-phone"></i>
+                            <i class="fa-solid fa-envelope"></i>
+                            <i class="fa-regular fa-clock"></i>
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const switchButtons = document.querySelectorAll("[data-tab]");
+        const loginPanel = document.getElementById("loginPanel");
+        const registerPanel = document.getElementById("registerPanel");
+
+        function showTab(tab) {
+            loginPanel.classList.remove("active");
+            registerPanel.classList.remove("active");
+            if (tab === "login") {
+                loginPanel.classList.add("active");
+            } else {
+                registerPanel.classList.add("active");
+            }
+        }
+
+        // Auto-open tab từ server (sau redirect)
+        showTab("@activeTab");
+
+        switchButtons.forEach(btn => {
+            btn.addEventListener("click", () => showTab(btn.dataset.tab));
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

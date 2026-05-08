@@ -1,0 +1,16 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Admin.RevenueStatisticsModel
+
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/shared/statistics.css" asp-append-version="true" />
+}
+
+<partial name="/Pages/Shared/Statistics/_RevenueStatisticsContent.cshtml" model="Model" />
+
+@section Scripts {
+    <partial name="/Pages/Shared/Statistics/_RevenueStatisticsScripts.cshtml" />
+}

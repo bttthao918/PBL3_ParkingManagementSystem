@@ -1,0 +1,98 @@
+@model ParkingManagement.FE.Pages.Shared.ParkingSlotManagement.ParkingSlotManagementModel
+
+<script>
+    const slots = @Html.Raw(Model.SlotsJson);
+
+    let currentZone = "A";
+
+    function getStatusClass(status) {
+        switch (status) {
+            case "Trống": return "available";
+            case "Đang sử dụng": return "using";
+            case "Đã đặt": return "booked";
+            case "Bảo trì": return "maintenance";
+            case "Sự cố": return "error";
+            default: return "available";
+        }
+    }
+
+    function renderSlots() {
+        const grid = document.getElementById("slotGrid");
+        const statusFilter = document.getElementById("statusFilter").value;
+        const keyword = document.getElementById("slotSearch").value.toLowerCase();
+
+        grid.innerHTML = "";
+        grid.className = currentZone === "C"
+            ? "parking-slot-grid zone-c"
+            : "parking-slot-grid zone-a";
+
+        const filteredSlots = slots.filter(slot => {
+            const matchZone = slot.slotId.startsWith(currentZone);
+            const matchStatus = !statusFilter || slot.status === statusFilter;
+            const matchKeyword = !keyword || slot.slotId.toLowerCase().includes(keyword);
+            return matchZone && matchStatus && matchKeyword;
+        });
+
+        filteredSlots.forEach(slot => {
+            const statusClass = getStatusClass(slot.status);
+
+            const item = document.createElement("button");
+            item.className = `parking-slot ${statusClass}`;
+            item.onclick = () => showDetail(slot);
+
+            item.innerHTML = `
+                <strong>${slot.slotId}</strong>
+                <span>${slot.status}</span>
+                <small>${slot.lastUpdatedText}</small>
+            `;
+
+            grid.appendChild(item);
+        });
+    }
+
+    function changeZone(zone) {
+        currentZone = zone;
+
+        document.getElementById("zoneFilter").value = zone;
+
+        document.querySelectorAll(".parking-zone-tabs button").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        document.querySelector(`.parking-zone-tabs button[data-zone="${zone}"]`).classList.add("active");
+
+        renderSlots();
+    }
+
+    function showDetail(slot) {
+        const statusClass = getStatusClass(slot.status);
+        const zoneName = slot.slotId.startsWith("A") ? "Khu A" : slot.slotId.startsWith("B") ? "Khu B" : "Khu C";
+
+        document.getElementById("detailSlotIcon").textContent = slot.slotId;
+        document.getElementById("detailSlotIcon").className = `detail-slot-icon ${statusClass}`;
+
+        document.getElementById("detailTitle").textContent = `Chỗ đỗ ${slot.slotId}`;
+        document.getElementById("detailStatus").textContent = slot.status;
+        document.getElementById("detailStatus").className = `parking-status ${statusClass}`;
+
+        document.getElementById("detailZone").textContent = zoneName;
+        document.getElementById("detailVehicleType").textContent = slot.vehicleType;
+        document.getElementById("detailLocation").textContent = slot.location;
+        document.getElementById("detailUpdated").textContent = slot.lastUpdatedFull;
+    }
+
+    function resetParkingFilter() {
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("slotSearch").value = "";
+        renderSlots();
+    }
+
+    document.getElementById("zoneFilter").addEventListener("change", function () {
+        changeZone(this.value);
+    });
+
+    document.getElementById("statusFilter").addEventListener("change", renderSlots);
+    document.getElementById("slotSearch").addEventListener("input", renderSlots);
+
+    renderSlots();
+</script>

@@ -1,0 +1,126 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Customer.Booking.CreateModel
+
+@section Styles {
+    <link rel="stylesheet" href="/css/customer/bookings.css" asp-append-version="true" />
+}
+
+<div class="booking-page">
+    <div class="booking-header">
+        <div>
+            <h1>Đặt chỗ mới</h1>
+            <p>Đặt chỗ tại bãi gửi xe tư nhân</p>
+        </div>
+
+        <a asp-page="/Customer/Bookings/Index" class="btn-back">
+            ← Quay lại
+        </a>
+    </div>
+
+    <form method="post" id="bookingForm">
+        <div class="create-layout">
+            <div class="booking-panel">
+                <h3>1. Chọn bộ thông tin</h3>
+
+                <label>Chọn bộ thông tin</label>
+                <select id="profileSelect" class="booking-input">
+                    <option value="">-- Chọn bộ thông tin --</option>
+
+                    @foreach (var profile in Model.Profiles)
+                    {
+                        <option value="@profile.Id"
+                                data-name="@profile.CustomerName"
+                                data-phone="@profile.Phone"
+                                data-plate="@profile.PlateNumber"
+                                data-type="@profile.VehicleType">
+                            @profile.Label
+                        </option>
+                    }
+                </select>
+
+                <div class="auto-fill-box">
+                    <p>Thông tin được điền tự động</p>
+
+                    <label>Họ và tên</label>
+                    <input asp-for="Input.CustomerName" id="customerName" class="booking-input" />
+
+                    <label>Số điện thoại</label>
+                    <input asp-for="Input.Phone" id="phone" class="booking-input" />
+
+                    <label>Biển số xe</label>
+                    <input asp-for="Input.PlateNumber" id="plateNumber" class="booking-input" />
+
+                    <label>Loại xe</label>
+                    <input asp-for="Input.VehicleType" id="vehicleType" class="booking-input" />
+                </div>
+            </div>
+
+            <div class="booking-panel">
+                <h3>2. Chọn thời gian</h3>
+
+                <label>Ngày giờ vào</label>
+                <input asp-for="Input.StartTime" type="datetime-local" class="booking-input" id="startTime" />
+
+                <label>Ngày giờ ra dự kiến</label>
+                <input asp-for="Input.EndTime" type="datetime-local" class="booking-input" id="endTime" />
+
+                <div class="price-box">
+                    <span>Tạm tính</span>
+                    <strong id="estimatedPrice">0 đ</strong>
+                </div>
+            </div>
+
+            <div class="booking-panel slot-panel">
+                <h3>3. Chọn vị trí đỗ</h3>
+
+                <div class="slot-legend">
+                    <span><i class="dot available"></i> Còn trống</span>
+                    <span><i class="dot holding"></i> Đang giữ</span>
+                    <span><i class="dot occupied"></i> Đã có xe</span>
+                    <span><i class="dot selected"></i> Đang chọn</span>
+                </div>
+
+                <input asp-for="Input.ParkingSlot" type="hidden" id="selectedSlot" />
+
+                <div class="slot-map">
+                    @foreach (var slot in Model.Slots)
+                    {
+                        <button type="button"
+                                class="slot @slot.Status.ToLower()"
+                                data-slot="@slot.Code"
+                                disabled="@(slot.Status == "Occupied" || slot.Status == "Holding")">
+                            @slot.Code
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="booking-panel summary-panel">
+                <h3>4. Xác nhận đặt chỗ</h3>
+
+                <div class="summary-box">
+                    <p>Họ tên: <b id="sumName">---</b></p>
+                    <p>Số điện thoại: <b id="sumPhone">---</b></p>
+                    <p>Biển số: <b id="sumPlate">---</b></p>
+                    <p>Loại xe: <b id="sumType">---</b></p>
+                    <p>Vị trí đỗ: <b id="sumSlot">---</b></p>
+                    <p>Thành tiền: <b id="sumPrice">0 đ</b></p>
+                </div>
+
+                <label class="agree-box">
+                    <input type="checkbox" required />
+                    Tôi đã đọc và đồng ý với nội quy bãi xe
+                </label>
+
+                <button type="submit" class="btn-booking-primary full">
+                    Xác nhận đặt chỗ
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="/js/bookings.js" asp-append-version="true"></script>
+}

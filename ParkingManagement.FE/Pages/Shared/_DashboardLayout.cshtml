@@ -1,0 +1,185 @@
+@{
+    var role = ViewData["Role"]?.ToString() ?? "";
+    var userName = ViewData["UserName"]?.ToString() ?? "User";
+    var pageTitle = ViewData["Title"]?.ToString() ?? "Dashboard";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@pageTitle - Parking Management</title>
+
+    <link rel="stylesheet" href="/css/shared/dashboard_layout.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        /* User dropdown */
+        .user-profile {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        .user-dropdown {            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            min-width: 180px;
+            z-index: 1000;
+            overflow: hidden;
+            animation: fadeIn .15s ease;
+        }
+        .user-dropdown.open { display: block; }
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background .15s;
+        }
+        .user-dropdown a:hover { background: #f3f4f6; }
+        .user-dropdown .divider { height: 1px; background: #e5e7eb; margin: 4px 0; }
+        .user-dropdown .logout-link { color: #ef4444 !important; }
+        .user-dropdown .logout-link:hover { background: #fef2f2 !important; }
+        @@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="logo">P</div>
+                <div>
+                    <h3>PARKING</h3>
+                    <span>MANAGEMENT SYSTEM</span>
+                </div>
+            </div>
+
+            <nav class="menu">
+                @RenderSection("Sidebar", required: true)
+            </nav>
+
+            <div class="sidebar-support">
+                <i class="fa-solid fa-headset"></i>
+                <div>
+                    <strong>Hỗ trợ</strong>
+                    <span>1900 1234</span>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+
+                <div class="topbar-left">
+                    <i class="fa-solid fa-bars" id="sidebarToggle" style="cursor:pointer"></i>
+                    <h1>@pageTitle</h1>
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input placeholder="Tìm kiếm nhanh..." />
+                    </div>
+
+                    <div class="notification" onclick="toggleNotification()">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+
+                    <div class="notification-box" id="notificationBox">
+                        <h4>Thông báo</h4>
+                        <div class="notification-item danger">
+                            <strong>Vé tháng sắp hết hạn</strong>
+                            <p>Còn lại 1 ngày</p>
+                        </div>
+                        <div class="notification-item">
+                            <strong>Cập nhật hệ thống</strong>
+                            <p>Dữ liệu đã được đồng bộ</p>
+                        </div>
+                    </div>
+
+                    <!-- USER PROFILE + DROPDOWN -->
+                    <div class="user-profile" id="userProfileBtn" onclick="toggleUserDropdown()">
+                        <div class="avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <strong>@userName</strong>
+                            <span>@role</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="/Account/Profile">
+                                <i class="fa-solid fa-user-gear"></i> Thông tin tài khoản
+                            </a>
+                            <a href="/Account/ChangePassword">
+                                <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+                            </a>
+                            <div class="divider"></div>
+                            <a href="/Account/Logout" class="logout-link">
+                                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- CONTENT RIÊNG CỦA TỪNG ROLE -->
+            <section class="dashboard-content">
+                @RenderBody()
+            </section>
+
+        </main>
+
+    </div>
+
+    <script>
+        function toggleNotification() {
+            document.getElementById("notificationBox").classList.toggle("show");
+            document.getElementById("userDropdown").classList.remove("open");
+        }
+
+        function toggleUserDropdown() {
+            document.getElementById("userDropdown").classList.toggle("open");
+            document.getElementById("notificationBox").classList.remove("show");
+        }
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener("click", function (e) {
+            const userBtn = document.getElementById("userProfileBtn");
+            const notifBtn = document.querySelector(".notification");
+            if (!userBtn?.contains(e.target)) {
+                document.getElementById("userDropdown")?.classList.remove("open");
+            }
+            if (!notifBtn?.contains(e.target)) {
+                document.getElementById("notificationBox")?.classList.remove("show");
+            }
+        });
+
+        // Sidebar toggle (mobile)
+        document.getElementById("sidebarToggle")?.addEventListener("click", function () {
+            document.querySelector(".sidebar").classList.toggle("collapsed");
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

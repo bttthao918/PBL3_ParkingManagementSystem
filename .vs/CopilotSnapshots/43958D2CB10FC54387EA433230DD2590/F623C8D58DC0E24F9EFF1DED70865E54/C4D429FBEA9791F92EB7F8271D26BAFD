@@ -1,0 +1,139 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Customer.DashboardModel
+@{
+    ViewData["Title"] = "Tổng quan Khách hàng";
+    ViewData["UserName"] = "Nguyễn Văn Nam";
+    ViewData["Role"] = "Khách hàng";
+}
+
+<div class="card" style="margin-bottom:22px;background:linear-gradient(135deg,#0ea5ff,#005eff);color:white;">
+    <h2>Xin chào, Nguyễn Văn Nam 👋</h2>
+    <p style="margin-top:8px;">Chúc bạn một ngày thuận lợi. Dưới đây là tổng quan hoạt động gửi xe của bạn.</p>
+</div>
+
+<div class="kpi-grid">
+
+    <div class="card kpi-card">
+        <div class="kpi-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+        <div>
+            <p>Đơn đặt chỗ</p>
+            <h2>3</h2>
+            <span>1 đơn đang hoạt động</span>
+        </div>
+    </div>
+
+    <div class="card kpi-card">
+        <div class="kpi-icon green"><i class="fa-solid fa-ticket"></i></div>
+        <div>
+            <p>Tổng vé</p>
+            <h2>12</h2>
+            <span>Trong tháng này</span>
+        </div>
+    </div>
+
+    <div class="card kpi-card">
+        <div class="kpi-icon red"><i class="fa-solid fa-credit-card"></i></div>
+        <div>
+            <p>Vé tháng</p>
+            <h2>1</h2>
+            <span class="badge-danger">Sắp hết hạn</span>
+        </div>
+    </div>
+
+    <div class="card kpi-card">
+        <div class="kpi-icon orange"><i class="fa-solid fa-wallet"></i></div>
+        <div>
+            <p>Chi tiêu</p>
+            <h2>12,450,000 đ</h2>
+            <span class="neutral-up">↑ 18.6% so với tháng trước</span>
+        </div>
+    </div>
+
+</div>
+
+<div class="card quick-actions">
+    <h3>Thao tác nhanh</h3>
+
+    <div class="action-grid">
+        <a href="#"><i class="fa-solid fa-plus"></i> Đặt chỗ mới</a>
+        <a href="#"><i class="fa-solid fa-list"></i> Xem đơn đặt chỗ</a>
+        <a href="#"><i class="fa-solid fa-ticket"></i> Vé của tôi</a>
+        <a href="#"><i class="fa-solid fa-credit-card"></i> Đăng ký vé tháng</a>
+        <a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử thanh toán</a>
+    </div>
+</div>
+
+<div class="card chart-card">
+    <h3>Chi tiêu 6 tháng gần đây</h3>
+
+    <svg viewBox="0 0 1000 260" preserveAspectRatio="none">
+        <polyline
+            points="0,210 140,170 280,145 420,160 560,125 700,135 840,110 1000,120"
+            fill="none"
+            stroke="#f97316"
+            stroke-width="4" />
+    </svg>
+</div>
+
+<div class="bottom-grid">
+
+    <div class="card">
+        <h3>Đơn đặt chỗ gần đây</h3>
+
+        <table>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Vị trí</th>
+                <th>Trạng thái</th>
+            </tr>
+            <tr>
+                <td>BK001</td>
+                <td>A-12</td>
+                <td><span class="status-success">Đã xác nhận</span></td>
+            </tr>
+            <tr>
+                <td>BK002</td>
+                <td>B-08</td>
+                <td><span class="status-danger">Đã hủy</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Vé gần đây</h3>
+
+        <table>
+            <tr>
+                <th>Mã vé</th>
+                <th>Thời gian</th>
+                <th>Phí</th>
+            </tr>
+            <tr>
+                <td>VE001</td>
+                <td>31/06 10:00</td>
+                <td>25,000 đ</td>
+            </tr>
+            <tr>
+                <td>VE002</td>
+                <td>30/06 17:30</td>
+                <td>30,000 đ</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card" style="border:2px solid #ef4444;">
+        <h3>Vé tháng hiện tại</h3>
+
+        <p style="margin-top:16px;">Biển số: <strong>30A-12345</strong></p>
+        <p style="margin-top:12px;">Gói: <strong>Vé tháng ô tô</strong></p>
+        <p style="margin-top:12px;">
+            Còn lại: <strong style="color:#dc2626;">1 ngày</strong>
+            <span class="badge-danger">Sắp hết hạn</span>
+        </p>
+
+        <a href="#" style="display:block;margin-top:20px;text-align:center;background:#ef4444;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
+            Gia hạn ngay
+        </a>
+    </div>
+
+</div>
