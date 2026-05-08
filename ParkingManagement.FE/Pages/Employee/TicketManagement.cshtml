@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ParkingManagement.FE.Pages.Employee.TicketManagementModel
 
 @{
@@ -93,16 +93,15 @@
                 <div class="filter-bottom">
                     <select asp-for="StatusFilter">
                         <option value="">Trạng thái: Tất cả</option>
-                        <option value="Active">Đang gửi</option>
-                        <option value="Paid">Đã thanh toán</option>
-                        <option value="Expired">Quá hạn</option>
-                        <option value="Cancelled">Đã hủy</option>
+                        <option value="Đang trong bãi">Đang gửi</option>
+                        <option value="Đã ra">Đã thanh toán / Đã ra</option>
                     </select>
 
                     <select asp-for="VehicleFilter">
                         <option value="">Loại xe: Tất cả</option>
-                        <option value="Car">Ô tô</option>
-                        <option value="Motorbike">Xe máy</option>
+                        <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                        <option value="Ô tô lớn">Ô tô lớn</option>
+                        <option value="Xe máy">Xe máy</option>
                     </select>
 
                     <select asp-for="AreaFilter">

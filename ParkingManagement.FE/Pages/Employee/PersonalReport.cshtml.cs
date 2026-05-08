@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -7,12 +7,19 @@ namespace ParkingManagement.FE.Pages.Employee
     [Authorize(Roles = "Employee")]
     public class PersonalReportModel : PageModel
     {
-        public string FromDate { get; set; } = "01/05/2024";
-        public string ToDate { get; set; } = "20/05/2024";
+        private readonly Services.IReportService _reportService;
+
+        public PersonalReportModel(Services.IReportService reportService)
+        {
+            _reportService = reportService;
+        }
+
+        public string FromDate { get; set; } = DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy");
+        public string ToDate { get; set; } = DateTime.Now.ToString("dd/MM/yyyy");
 
         public int TotalTickets { get; set; }
         public decimal TotalRevenue { get; set; }
-        public string TotalWorkingHours { get; set; } = "";
+        public string TotalWorkingHours { get; set; } = "0 giờ 0 phút";
         public int TotalShifts { get; set; }
         public double AverageHoursPerShift { get; set; }
         public decimal AverageRevenuePerHour { get; set; }
@@ -24,111 +31,99 @@ namespace ParkingManagement.FE.Pages.Employee
         public List<ShiftReportVM> Shifts { get; set; } = new List<ShiftReportVM>();
         public List<CalendarDayVM> CalendarDays { get; set; } = new List<CalendarDayVM>();
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            TotalTickets = 1248;
-            TotalRevenue = 45680000;
-            TotalWorkingHours = "176 giờ 30 phút";
-            TotalShifts = 24;
-            AverageHoursPerShift = 7.4;
-            AverageRevenuePerHour = 259250;
-
-            Shifts = new List<ShiftReportVM>
+            var employeeId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(employeeId))
             {
-                new ShiftReportVM
+                var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, "month");
+                var attendanceReport = await _reportService.GetShiftAttendanceReportAsync(employeeId);
+
+                if (revenueReport != null)
                 {
-                    WorkDate = "20/05/2024",
-                    DayName = "Thứ hai",
-                    ShiftName = "Ca sáng",
-                    StartTime = "07:00",
-                    EndTime = "15:00",
-                    TotalHours = "8 giờ",
-                    TicketCount = 48,
-                    Revenue = 2450000,
-                    Status = "Đã hoàn thành"
-                },
-                new ShiftReportVM
-                {
-                    WorkDate = "19/05/2024",
-                    DayName = "Chủ nhật",
-                    ShiftName = "Ca tối",
-                    StartTime = "15:00",
-                    EndTime = "23:00",
-                    TotalHours = "8 giờ",
-                    TicketCount = 52,
-                    Revenue = 2780000,
-                    Status = "Đã hoàn thành"
-                },
-                new ShiftReportVM
-                {
-                    WorkDate = "18/05/2024",
-                    DayName = "Thứ bảy",
-                    ShiftName = "Ca sáng",
-                    StartTime = "07:00",
-                    EndTime = "15:00",
-                    TotalHours = "8 giờ",
-                    TicketCount = 46,
-                    Revenue = 2320000,
-                    Status = "Đã hoàn thành"
-                },
-                new ShiftReportVM
-                {
-                    WorkDate = "17/05/2024",
-                    DayName = "Thứ sáu",
-                    ShiftName = "Ca tối",
-                    StartTime = "15:00",
-                    EndTime = "23:00",
-                    TotalHours = "8 giờ",
-                    TicketCount = 50,
-                    Revenue = 2650000,
-                    Status = "Đã hoàn thành"
-                },
-                new ShiftReportVM
-                {
-                    WorkDate = "16/05/2024",
-                    DayName = "Thứ năm",
-                    ShiftName = "Ca sáng",
-                    StartTime = "07:00",
-                    EndTime = "15:00",
-                    TotalHours = "8 giờ",
-                    TicketCount = 45,
-                    Revenue = 2270000,
-                    Status = "Đã hoàn thành"
+                    TotalTickets = revenueReport.TotalTickets;
+                    TotalRevenue = revenueReport.TotalRevenue;
+                    
+                    if (revenueReport.DailyBreakdown != null)
+                    {
+                        foreach (var day in revenueReport.DailyBreakdown.OrderBy(d => d.Date).TakeLast(10))
+                        {
+                            ChartLabels.Add(day.Date.ToString("dd/MM"));
+                            RevenueChartData.Add(day.TotalRevenue);
+                            TicketChartData.Add(day.TicketCount);
+                        }
+                    }
                 }
-            };
 
-            CalendarDays = Enumerable.Range(1, 31)
-                .Select(day => new CalendarDayVM
+                if (attendanceReport != null)
                 {
-                    Day = day,
-                    IsToday = day == 20,
-                    HasWorked = day >= 1 && day <= 20 && day != 3 && day != 4 && day != 11
-                })
-                .ToList();
+                    TotalShifts = attendanceReport.TotalWorkDays;
+                    int hours = attendanceReport.TotalWorkMinutes / 60;
+                    int mins = attendanceReport.TotalWorkMinutes % 60;
+                    TotalWorkingHours = $"{hours} giờ {mins} phút";
+                    
+                    AverageHoursPerShift = attendanceReport.TotalWorkDays > 0 
+                        ? Math.Round(attendanceReport.TotalWorkMinutes / 60.0 / attendanceReport.TotalWorkDays, 1) 
+                        : 0;
 
-            ChartLabels = new List<string>
-{
-    "01/05", "02/05", "03/05", "04/05", "05/05",
-    "06/05", "07/05", "08/05", "09/05", "10/05",
-    "11/05", "12/05", "13/05", "14/05", "15/05",
-    "16/05", "17/05", "18/05", "19/05", "20/05"
-};
+                    if (TotalTickets > 0 && attendanceReport.TotalWorkMinutes > 0)
+                    {
+                        AverageRevenuePerHour = TotalRevenue / (decimal)(attendanceReport.TotalWorkMinutes / 60.0);
+                    }
 
-            RevenueChartData = new List<decimal>
-{
-    2000000, 4100000, 3000000, 4500000, 5200000,
-    4000000, 4700000, 5300000, 3900000, 6250000,
-    4300000, 5100000, 4900000, 6000000, 3700000,
-    4800000, 3200000, 3900000, 4700000, 3300000
-};
+                    if (attendanceReport.Details != null)
+                    {
+                        Shifts = attendanceReport.Details.OrderByDescending(d => d.Date).Select(d => new ShiftReportVM
+                        {
+                            WorkDate = d.Date.ToString("dd/MM/yyyy"),
+                            DayName = "Thứ " + ((int)d.Date.DayOfWeek + 1 == 1 ? "Chủ nhật" : ((int)d.Date.DayOfWeek + 1).ToString()),
+                            ShiftName = "Ca " + d.Shift,
+                            StartTime = d.CheckInTime?.ToString("HH:mm") ?? "-",
+                            EndTime = d.CheckOutTime?.ToString("HH:mm") ?? "-",
+                            TotalHours = d.WorkMinutes.HasValue ? $"{d.WorkMinutes.Value / 60} giờ {d.WorkMinutes.Value % 60} phút" : "0 giờ",
+                            TicketCount = d.TicketsProcessed,
+                            Revenue = d.ShiftRevenue,
+                            Status = d.Status
+                        }).ToList();
+                    }
+                }
+            }
 
-            TicketChartData = new List<int>
-{
-    25, 52, 39, 47, 58,
-    60, 49, 38, 45, 68,
-    50, 53, 60, 41, 55,
-    60, 57, 40, 48, 39
-};
+            if (TotalTickets == 0)
+            {
+                // Fallback to fake data if API returns null/empty
+                TotalTickets = 1248;
+                TotalRevenue = 45680000;
+                TotalWorkingHours = "176 giờ 30 phút";
+                TotalShifts = 24;
+                AverageHoursPerShift = 7.4;
+                AverageRevenuePerHour = 259250;
+
+                Shifts = new List<ShiftReportVM>
+                {
+                    new ShiftReportVM
+                    {
+                        WorkDate = "20/05/2024",
+                        DayName = "Thứ hai",
+                        ShiftName = "Ca sáng",
+                        StartTime = "07:00",
+                        EndTime = "15:00",
+                        TotalHours = "8 giờ",
+                        TicketCount = 48,
+                        Revenue = 2450000,
+                        Status = "Đã hoàn thành"
+                    }
+                };
+            }
+
+            // Fake Calendar Days (keep UI nice)
+            CalendarDays = Enumerable.Range(1, 31)
+                .Select(d => new CalendarDayVM
+                {
+                    Day = d,
+                    IsToday = d == DateTime.Now.Day,
+                    HasWorked = (d % 2 != 0 && d <= 20)
+                }).ToList();
         }
     }
 

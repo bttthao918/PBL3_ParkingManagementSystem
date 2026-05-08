@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ParkingManagement.FE.Pages.Employee.DashboardModel
 @{
     ViewData["Title"] = "Tổng quan Nhân viên";
@@ -12,7 +12,7 @@
         <div class="kpi-icon blue"><i class="fa-solid fa-ticket"></i></div>
         <div>
             <p>Tổng vé đã xử lý</p>
-            <h2>128</h2>
+            <h2>@Model.Stats.TicketsProcessedThisMonth</h2>
             <span class="up">↑ 15.2%</span>
         </div>
     </div>
@@ -21,7 +21,7 @@
         <div class="kpi-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
         <div>
             <p>Doanh thu cá nhân</p>
-            <h2>8,450,000 đ</h2>
+            <h2>@Model.Stats.RevenueThisMonth.ToString("N0") đ</h2>
             <span class="up">↑ 12.4%</span>
         </div>
     </div>
@@ -30,8 +30,8 @@
         <div class="kpi-icon purple"><i class="fa-solid fa-clock"></i></div>
         <div>
             <p>Tổng giờ làm việc</p>
-            <h2>96 giờ</h2>
-            <span>12 ca làm việc</span>
+            <h2>@(Model.Stats.WorkMinutesThisMonth / 60) giờ</h2>
+            <span>@Model.Stats.WorkDaysThisMonth ca làm việc</span>
         </div>
     </div>
 
@@ -50,11 +50,11 @@
     <h3>Thao tác nhanh</h3>
 
     <div class="action-grid">
-        <a href="#"><i class="fa-solid fa-plus"></i> Tạo vé mới</a>
-        <a href="#"><i class="fa-solid fa-right-to-bracket"></i> Check-in</a>
-        <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Check-out</a>
-        <a href="#"><i class="fa-solid fa-magnifying-glass"></i> Tìm vé</a>
-        <a href="#"><i class="fa-solid fa-square-parking"></i> Cập nhật chỗ đỗ</a>
+        <a asp-page="./TicketManagement"><i class="fa-solid fa-plus"></i> Tạo vé mới</a>
+        <a asp-page="./TicketManagement"><i class="fa-solid fa-right-to-bracket"></i> Check-in</a>
+        <a asp-page="./TicketManagement"><i class="fa-solid fa-right-from-bracket"></i> Check-out</a>
+        <a asp-page="./TicketManagement"><i class="fa-solid fa-magnifying-glass"></i> Tìm vé</a>
+        <a asp-page="./ParkingSlotManagement"><i class="fa-solid fa-square-parking"></i> Cập nhật chỗ đỗ</a>
     </div>
 </div>
 
@@ -85,20 +85,25 @@
                 <th>Thời gian</th>
                 <th>Trạng thái</th>
             </tr>
-            <tr>
-                <td>VE001</td>
-                <td>Nguyễn Văn Nam</td>
-                <td>Xe máy</td>
-                <td>10:00</td>
-                <td><span class="status-success">Đã xử lý</span></td>
-            </tr>
-            <tr>
-                <td>VE002</td>
-                <td>Trần Thị Hoa</td>
-                <td>Ô tô</td>
-                <td>10:30</td>
-                <td><span class="status-warning">Đang gửi</span></td>
-            </tr>
+            @foreach (var ticket in Model.RecentTickets)
+            {
+                <tr>
+                    <td>@ticket.TicketCode</td>
+                    <td>@ticket.CustomerName</td>
+                    <td>@ticket.VehicleType</td>
+                    <td>@ticket.CheckInTime</td>
+                    <td>
+                        @if (ticket.Status == "Đang trong bãi")
+                        {
+                            <span class="status-warning">@ticket.Status</span>
+                        }
+                        else
+                        {
+                            <span class="status-success">@ticket.Status</span>
+                        }
+                    </td>
+                </tr>
+            }
         </table>
     </div>
 
@@ -112,14 +117,14 @@
                 <th>Tổng giờ</th>
             </tr>
             <tr>
-                <td>31/06/2024</td>
+                <td>@DateTime.Now.ToString("dd/MM/yyyy")</td>
                 <td>Ca sáng</td>
                 <td>07:00</td>
                 <td>15:00</td>
                 <td>8 giờ</td>
             </tr>
             <tr>
-                <td>30/06/2024</td>
+                <td>@DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy")</td>
                 <td>Ca chiều</td>
                 <td>15:00</td>
                 <td>23:00</td>

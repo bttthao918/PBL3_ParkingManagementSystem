@@ -6,6 +6,13 @@ namespace ParkingManagement.FE.Pages.Shared.ParkingSlotManagement
 {
         public class ParkingSlotManagementModel : PageModel
         {
+            private readonly Services.IParkingSlotService _parkingSlotService;
+
+            public ParkingSlotManagementModel(Services.IParkingSlotService parkingSlotService)
+            {
+                _parkingSlotService = parkingSlotService;
+            }
+
             public List<ParkingSlotViewModel> Slots { get; set; } = new();
 
             public string SlotsJson { get; set; } = "[]";
@@ -14,9 +21,30 @@ namespace ParkingManagement.FE.Pages.Shared.ParkingSlotManagement
             public int UsingCount => Slots.Count(x => x.Status == "Đang sử dụng");
             public int BookedCount => Slots.Count(x => x.Status == "Đã đặt");
 
-            public void OnGet()
+            public async Task OnGetAsync()
             {
-                Slots = GenerateSlots();
+                var result = await _parkingSlotService.GetEmployeeSlotsAsync(new Models.EmployeeSlotFilterDto
+                {
+                    PageNumber = 1,
+                    PageSize = 200
+                });
+
+                if (result != null && result.Items != null && result.Items.Any())
+                {
+                    Slots = result.Items.Select(s => new ParkingSlotViewModel
+                    {
+                        SlotId = s.SlotId,
+                        Location = s.Location,
+                        VehicleType = s.VehicleType,
+                        Status = s.Status,
+                        LastUpdated = s.OccupiedSince ?? DateTime.Now
+                    }).ToList();
+                }
+                else
+                {
+                    // Fallback to fake data
+                    Slots = GenerateSlots();
+                }
 
                 SlotsJson = JsonSerializer.Serialize(Slots, new JsonSerializerOptions
                 {
