@@ -1,183 +1,151 @@
-using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models.Auth;
 using ParkingManagement.FE.Services;
+using System.Security.Claims;
 
-public class AuthenticateModel : PageModel
+namespace ParkingManagement.FE.Pages.Auth
 {
-    private readonly IAuthService _authService;
-
-    public AuthenticateModel(IAuthService authService)
+    public class AuthenticateModel : PageModel
     {
-        _authService = authService;
-    }
+        private readonly IAuthService _authService;
 
-    [BindProperty]
-    public LoginInputModel LoginInput { get; set; } = new();
-
-    [BindProperty]
-    public RegisterInputModel RegisterInput { get; set; } = new();
-
-    [TempData] public string? ErrorMessage { get; set; }
-    [TempData] public string? SuccessMessage { get; set; }
-    [TempData] public string? ActiveTab { get; set; }
-
-    public void OnGet()
-    {
-        if (User.Identity?.IsAuthenticated == true)
+        public AuthenticateModel(IAuthService authService)
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
-            Response.Redirect(GetDashboardPath(role));
-        }
-    }
-
-    /// <summary>Xử lý đăng nhập</summary>
-    public async Task<IActionResult> OnPostLoginAsync()
-    {
-        // ✅ FIX: Chỉ validate LoginInput, bỏ qua RegisterInput
-        foreach (var key in ModelState.Keys.Where(k => k.StartsWith("RegisterInput")).ToList())
-            ModelState.Remove(key);
-
-        if (!ModelState.IsValid)
-        {
-            var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
-            ErrorMessage = firstError ?? "Vui lòng kiểm tra lại thông tin.";
-            ActiveTab = "login";
-            return RedirectToPage();
+            _authService = authService;
         }
 
-        var request = new LoginRequest
-        {
-            Email = LoginInput.Email.Trim(),
-            Password = LoginInput.Password
-        };
+        [BindProperty]
+        public LoginInputModel LoginInput { get; set; } = new();
 
-        var (success, data, message) = await _authService.LoginAsync(request);
+        [BindProperty]
+        public RegisterInputModel RegisterInput { get; set; } = new();
 
-        if (!success || data == null)
+        public string? ActiveTab { get; set; }
+        public string? ErrorMessage { get; set; }
+        public string? SuccessMessage { get; set; }
+
+        public void OnGet(string? tab = null)
         {
-            ErrorMessage = message;
-            ActiveTab = "login";
-            return RedirectToPage();
+            ActiveTab = tab ?? "login";
         }
 
-        // Lưu JWT vào Session
-        HttpContext.Session.SetString("jwt_token", data.Token);
-        HttpContext.Session.SetString("account_id", data.AccountId);
-        HttpContext.Session.SetString("role", data.Role);
-        HttpContext.Session.SetString("full_name", data.FullName);
-        HttpContext.Session.SetString("related_id", data.RelatedId ?? "");
-        HttpContext.Session.SetString("email", data.Email);
-
-        // Tạo Cookie Claims
-        var claims = new List<Claim>
+        // ✅ QUAN TRỌNG: Method xử lý login
+        public async Task<IActionResult> OnPostLogin()
         {
-            new(ClaimTypes.NameIdentifier, data.AccountId),
-            new(ClaimTypes.Email, data.Email),
-            new(ClaimTypes.Name, data.FullName),
-            new(ClaimTypes.Role, data.Role),
-            new("related_id", data.RelatedId ?? ""),
-            new("jwt_token", data.Token)
-        };
+            if (!ModelState.IsValid)
+            {
+                ActiveTab = "login";
+                return Page();
+            }
 
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
+            var request = new LoginRequest
+            {
+                Email = LoginInput.Email,
+                Password = LoginInput.Password
+            };
 
-        var authProperties = new AuthenticationProperties
-        {
-            IsPersistent = LoginInput.RememberMe,
-            ExpiresUtc = LoginInput.RememberMe
-                ? DateTimeOffset.UtcNow.AddDays(7)
-                : DateTimeOffset.UtcNow.AddHours(24)
-        };
+            var result = await _authService.LoginAsync(request);
 
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+            if (!result.Success || result.Data == null)
+            {
+                ErrorMessage = result.Message;
+                ActiveTab = "login";
+                return Page();
+            }
 
-        return Redirect(GetDashboardPath(data.Role));
-    }
-
-    /// <summary>Xử lý đăng ký → gửi OTP email</summary>
-    public async Task<IActionResult> OnPostRegisterAsync()
+            // ✅ Tạo Claims cho Cookie Authentication
+            var claims = new List<Claim>
     {
-        // ✅ FIX: Chỉ validate RegisterInput, bỏ qua LoginInput
-        foreach (var key in ModelState.Keys.Where(k => k.StartsWith("LoginInput")).ToList())
-            ModelState.Remove(key);
-
-        if (!ModelState.IsValid)
-        {
-            var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
-            ErrorMessage = firstError ?? "Vui lòng kiểm tra lại thông tin.";
-            ActiveTab = "register";
-            return RedirectToPage();
-        }
-
-        var request = new RegisterRequest
-        {
-            Email = RegisterInput.Email.Trim(),
-            Password = RegisterInput.Password,
-            ConfirmPassword = RegisterInput.ConfirmPassword,
-            FullName = RegisterInput.FullName.Trim(),
-            PhoneNumber = RegisterInput.PhoneNumber.Trim()
-        };
-
-        var (success, message) = await _authService.RegisterAsync(request);
-
-        if (!success)
-        {
-            ErrorMessage = message;
-            ActiveTab = "register";
-            return RedirectToPage();
-        }
-
-        // Đăng ký thành công → chuyển sang trang xác thực OTP
-        return RedirectToPage("/Auth/VerifyOtp", new { email = RegisterInput.Email.Trim() });
-    }
-
-    private static string GetDashboardPath(string role) => role switch
-    {
-        "Manager" => "/Admin/Dashboard",
-        "Employee" => "/Employee/Dashboard",
-        "Customer" => "/Customer/Dashboard",
-        _ => "/Auth/Authenticate"
+        new Claim(ClaimTypes.Name, result.Data.FullName ?? ""),
+        new Claim(ClaimTypes.Email, result.Data.Email ?? ""),
+        new Claim(ClaimTypes.Role, result.Data.Role ?? ""),
+        new Claim("AccountId", result.Data.AccountId ?? ""),
+        new Claim("RelatedId", result.Data.RelatedId ?? "")
     };
 
-    // ── Input Models ──────────────────────────────────────────────
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = LoginInput.RememberMe,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
+            };
 
+            // ✅ Đăng nhập - tạo cookie
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            // ✅ Lưu thêm vào Session (nếu cần dùng ở其他地方)
+            HttpContext.Session.SetString("user_role", result.Data.Role ?? "");
+            HttpContext.Session.SetString("user_name", result.Data.FullName ?? "");
+            HttpContext.Session.SetString("user_email", result.Data.Email ?? "");
+            if (!string.IsNullOrEmpty(result.Data.RelatedId))
+            {
+                HttpContext.Session.SetString(
+                    result.Data.Role == "Customer" ? "CustomerId" : "EmployeeId",
+                    result.Data.RelatedId
+                );
+            }
+
+            // ✅ Chuyển hướng theo role
+            var role = result.Data.Role?.ToLower() ?? "";
+            if (role == "manager")
+                return RedirectToPage("/Admin/Dashboard");
+            else if (role == "employee")
+                return RedirectToPage("/Employee/Dashboard");
+            else
+                return RedirectToPage("/Customer/Dashboard");
+        }
+
+        public async Task<IActionResult> OnPostRegister()
+        {
+            if (!ModelState.IsValid)
+            {
+                ActiveTab = "register";
+                return Page();
+            }
+
+            var request = new RegisterRequest
+            {
+                Email = RegisterInput.Email,
+                Password = RegisterInput.Password,
+                ConfirmPassword = RegisterInput.ConfirmPassword,
+                FullName = RegisterInput.FullName,
+                PhoneNumber = RegisterInput.PhoneNumber
+            };
+
+            var result = await _authService.RegisterAsync(request);
+
+            if (!result.Success)
+            {
+                ErrorMessage = result.Message;
+                ActiveTab = "register";
+                return Page();
+            }
+
+            // Chuyển sang trang xác thực OTP
+            return RedirectToPage("/Auth/VerifyOtp", new { email = RegisterInput.Email });
+        }
+    }
+
+    // Input Models
     public class LoginInputModel
     {
-        [Required(ErrorMessage = "Vui lòng nhập email")]
-        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
         public string Password { get; set; } = string.Empty;
-
         public bool RememberMe { get; set; }
     }
 
     public class RegisterInputModel
     {
-        [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
         public string FullName { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Vui lòng nhập email")]
-        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
-        [RegularExpression(@"^(0|\+84)[0-9]{9}$", ErrorMessage = "Số điện thoại không hợp lệ")]
         public string PhoneNumber { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
-        [StringLength(50, MinimumLength = 8, ErrorMessage = "Mật khẩu tối thiểu 8 ký tự")]
         public string Password { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Vui lòng nhập lại mật khẩu")]
-        [Compare(nameof(Password), ErrorMessage = "Mật khẩu nhập lại không khớp")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

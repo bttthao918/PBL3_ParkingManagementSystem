@@ -1,6 +1,6 @@
 @{
-    var role = ViewData["Role"]?.ToString() ?? "";
-    var userName = ViewData["UserName"]?.ToString() ?? "User";
+    var role = Context.Session.GetString("user_role") ?? "";
+    var userName = Context.Session.GetString("user_name") ?? "User";
     var pageTitle = ViewData["Title"]?.ToString() ?? "Dashboard";
 }
 
@@ -9,53 +9,14 @@
 <head>
     <meta charset="utf-8" />
     <title>@pageTitle - Parking Management</title>
-
-    <link rel="stylesheet" href="/css/shared/dashboard_layout.css" />
+    <link rel="stylesheet" href="~/css/shared/dashboard_layout.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <style>
-        /* User dropdown */
-        .user-profile {
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-        }
-        .user-dropdown {            display: none;
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            min-width: 180px;
-            z-index: 1000;
-            overflow: hidden;
-            animation: fadeIn .15s ease;
-        }
-        .user-dropdown.open { display: block; }
-        .user-dropdown a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            color: #374151;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: background .15s;
-        }
-        .user-dropdown a:hover { background: #f3f4f6; }
-        .user-dropdown .divider { height: 1px; background: #e5e7eb; margin: 4px 0; }
-        .user-dropdown .logout-link { color: #ef4444 !important; }
-        .user-dropdown .logout-link:hover { background: #fef2f2 !important; }
-        @@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-    </style>
-    @RenderSection("Styles", required: false)
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <div class="dashboard-layout">
-
         <!-- SIDEBAR -->
         <aside class="sidebar">
-
             <div class="brand">
                 <div class="logo">P</div>
                 <div>
@@ -65,7 +26,78 @@
             </div>
 
             <nav class="menu">
-                @RenderSection("Sidebar", required: true)
+                @if (role == "Manager")
+                {
+                    <p>MAIN MENU</p>
+                    <a href="/Admin/Dashboard" class="@(IsActive("Admin/Dashboard") ? "active" : "")">
+                        <i class="fa-solid fa-chart-pie"></i> Tổng quan
+                    </a>
+                    <a href="/Admin/TicketManagement" class="@(IsActive("Admin/TicketManagement") ? "active" : "")">
+                        <i class="fa-solid fa-ticket"></i> Quản lý vé
+                    </a>
+                    <a href="/Admin/ParkingSlotManagement" class="@(IsActive("Admin/ParkingSlotManagement") ? "active" : "")">
+                        <i class="fa-solid fa-square-parking"></i> Chỗ đỗ xe
+                    </a>
+                    <a href="/Admin/EmployeeManagement" class="@(IsActive("Admin/EmployeeManagement") ? "active" : "")">
+                        <i class="fa-solid fa-users"></i> Nhân viên
+                    </a>
+                    <a href="/Admin/CustomerStatistics" class="@(IsActive("Admin/CustomerStatistics") ? "active" : "")">
+                        <i class="fa-solid fa-user-group"></i> Khách hàng
+                    </a>
+                    <a href="/Admin/RevenueStatistics" class="@(IsActive("Admin/RevenueStatistics") ? "active" : "")">
+                        <i class="fa-solid fa-chart-line"></i> Báo cáo
+                    </a>
+                }
+                else if (role == "Employee")
+                {
+                    <p>VẬN HÀNH</p>
+                    <a href="/Employee/Dashboard" class="@(IsActive("Employee/Dashboard") ? "active" : "")">
+                        <i class="fa-solid fa-house"></i> Tổng quan
+                    </a>
+                    <a href="/Employee/CustomerManagement" class="@(IsActive("Employee/CustomerManagement") ? "active" : "")">
+                        <i class="fa-solid fa-users"></i> Khách hàng
+                    </a>
+                    <a href="/Employee/TicketManagement" class="@(IsActive("Employee/TicketManagement") ? "active" : "")">
+                        <i class="fa-solid fa-ticket"></i> Quản lý vé
+                    </a>
+                    <a href="/Employee/ParkingSlotManagement" class="@(IsActive("Employee/ParkingSlotManagement") ? "active" : "")">
+                        <i class="fa-solid fa-square-parking"></i> Chỗ đỗ xe
+                    </a>
+                    <p>THỐNG KÊ</p>
+                    <a href="/Employee/PersonalReport" class="@(IsActive("Employee/PersonalReport") ? "active" : "")">
+                        <i class="fa-solid fa-chart-user"></i> Báo cáo cá nhân
+                    </a>
+                    <a href="/Employee/RevenueStatistics" class="@(IsActive("Employee/RevenueStatistics") ? "active" : "")">
+                        <i class="fa-solid fa-chart-line"></i> Doanh thu
+                    </a>
+                }
+                else if (role == "Customer")
+                {
+                    <p>QUẢN LÝ</p>
+                    <a href="/Customer/Dashboard" class="@(IsActive("Customer/Dashboard") ? "active" : "")">
+                        <i class="fa-solid fa-house"></i> Tổng quan
+                    </a>
+                    <a href="/Customer/Booking/Index" class="@(IsActive("Customer/Booking") ? "active" : "")">
+                        <i class="fa-solid fa-calendar-check"></i> Đơn đặt chỗ
+                    </a>
+                    <a href="/Customer/MyTickets" class="@(IsActive("Customer/MyTickets") ? "active" : "")">
+                        <i class="fa-solid fa-ticket"></i> Vé xe
+                    </a>
+                    <a href="/Customer/MonthlyPass" class="@(IsActive("Customer/MonthlyPass") ? "active" : "")">
+                        <i class="fa-solid fa-credit-card"></i> Vé tháng
+                    </a>
+                }
+
+                <p>TÀI KHOẢN</p>
+                <a href="/Account/Profile" class="@(IsActive("Account/Profile") ? "active" : "")">
+                    <i class="fa-solid fa-user-gear"></i> Thông tin tài khoản
+                </a>
+                <a href="/Account/ChangePassword" class="@(IsActive("Account/ChangePassword") ? "active" : "")">
+                    <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+                </a>
+                <a href="/Account/Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                </a>
             </nav>
 
             <div class="sidebar-support">
@@ -75,111 +107,79 @@
                     <span>1900 1234</span>
                 </div>
             </div>
-
         </aside>
 
-        <!-- MAIN -->
+        <!-- MAIN CONTENT -->
         <main class="main">
-
-            <!-- TOPBAR -->
             <header class="topbar">
-
                 <div class="topbar-left">
-                    <i class="fa-solid fa-bars" id="sidebarToggle" style="cursor:pointer"></i>
+                    <i class="fa-solid fa-bars" id="sidebarToggle"></i>
                     <h1>@pageTitle</h1>
                 </div>
-
                 <div class="topbar-right">
-
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input placeholder="Tìm kiếm nhanh..." />
+                        <input type="text" placeholder="Tìm kiếm..." id="globalSearch" />
                     </div>
-
-                    <div class="notification" onclick="toggleNotification()">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
-
-                    <div class="notification-box" id="notificationBox">
-                        <h4>Thông báo</h4>
-                        <div class="notification-item danger">
-                            <strong>Vé tháng sắp hết hạn</strong>
-                            <p>Còn lại 1 ngày</p>
-                        </div>
-                        <div class="notification-item">
-                            <strong>Cập nhật hệ thống</strong>
-                            <p>Dữ liệu đã được đồng bộ</p>
-                        </div>
-                    </div>
-
-                    <!-- USER PROFILE + DROPDOWN -->
-                    <div class="user-profile" id="userProfileBtn" onclick="toggleUserDropdown()">
+                    <div class="user-profile" id="userProfileBtn">
                         <div class="avatar">
                             <i class="fa-solid fa-user"></i>
                         </div>
                         <div>
                             <strong>@userName</strong>
-                            <span>@role</span>
+                            <span>@(role == "Manager" ? "Quản trị viên" : role == "Employee" ? "Nhân viên" : "Khách hàng")</span>
                         </div>
                         <i class="fa-solid fa-chevron-down"></i>
-
-                        <div class="user-dropdown" id="userDropdown">
-                            <a href="/Account/Profile">
-                                <i class="fa-solid fa-user-gear"></i> Thông tin tài khoản
-                            </a>
-                            <a href="/Account/ChangePassword">
-                                <i class="fa-solid fa-lock"></i> Đổi mật khẩu
-                            </a>
-                            <div class="divider"></div>
-                            <a href="/Account/Logout" class="logout-link">
-                                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                            </a>
-                        </div>
                     </div>
-
                 </div>
-
             </header>
 
-            <!-- CONTENT RIÊNG CỦA TỪNG ROLE -->
             <section class="dashboard-content">
                 @RenderBody()
             </section>
 
+            <!-- FOOTER TRONG DASHBOARD -->
+            <footer class="dashboard-footer">
+                <div class="footer-content">
+                    <p>&copy; @DateTime.Now.Year - Parking Management System</p>
+                    <div class="footer-links">
+                        <a href="#">Điều khoản</a>
+                        <a href="#">Bảo mật</a>
+                        <a href="#">Liên hệ</a>
+                    </div>
+                </div>
+            </footer>
         </main>
-
     </div>
 
     <script>
-        function toggleNotification() {
-            document.getElementById("notificationBox").classList.toggle("show");
-            document.getElementById("userDropdown").classList.remove("open");
-        }
+            // Toggle sidebar
+            document.getElementById("sidebarToggle")?.addEventListener("click", function() {
+                document.querySelector(".sidebar").classList.toggle("collapsed");
+            });
 
-        function toggleUserDropdown() {
-            document.getElementById("userDropdown").classList.toggle("open");
-            document.getElementById("notificationBox").classList.remove("show");
-        }
+            // User dropdown
+            document.getElementById("userProfileBtn")?.addEventListener("click", function() {
+                // Xử lý dropdown nếu cần
+                window.location.href = "/Account/Profile";
+            });
 
-        // Đóng dropdown khi click ra ngoài
-        document.addEventListener("click", function (e) {
-            const userBtn = document.getElementById("userProfileBtn");
-            const notifBtn = document.querySelector(".notification");
-            if (!userBtn?.contains(e.target)) {
-                document.getElementById("userDropdown")?.classList.remove("open");
-            }
-            if (!notifBtn?.contains(e.target)) {
-                document.getElementById("notificationBox")?.classList.remove("show");
-            }
-        });
-
-        // Sidebar toggle (mobile)
-        document.getElementById("sidebarToggle")?.addEventListener("click", function () {
-            document.querySelector(".sidebar").classList.toggle("collapsed");
-        });
+            // Search
+            document.getElementById("globalSearch")?.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    alert("Tìm kiếm: " + this.value);
+                }
+            });
     </script>
 
-    @RenderSection("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+@functions {
+    private bool IsActive(string pageName)
+    {
+        var path = Context.Request.Path.Value ?? "";
+        return path.Contains(pageName, StringComparison.OrdinalIgnoreCase);
+    }
+}

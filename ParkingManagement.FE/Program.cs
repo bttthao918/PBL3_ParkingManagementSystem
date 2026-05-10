@@ -6,14 +6,74 @@ var builder = WebApplication.CreateBuilder(args);
 // ── Razor Pages ──────────────────────────
 builder.Services.AddRazorPages();
 
-// ── HttpClient → gọi BE API ──────────────────────────
+// ── HttpContextAccessor ──────────────────────────
+builder.Services.AddHttpContextAccessor();
+
+// ── Config ──────────────────────────
 var backendBaseUrl = builder.Configuration["BackendApi:BaseUrl"]
     ?? throw new InvalidOperationException("BackendApi:BaseUrl not configured");
 
+// ── Auth Service ──────────────────────────
 builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
 {
     client.BaseAddress = new Uri(backendBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Customer Service ──────────────────────────
+builder.Services.AddHttpClient<ICustomerService, CustomerService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Parking Slot Service ──────────────────────────
+builder.Services.AddHttpClient<IParkingSlotService, ParkingSlotService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Reservation Service ──────────────────────────
+builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Ticket Service ──────────────────────────
+builder.Services.AddHttpClient<ITicketService, TicketService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Monthly Ticket Service ──────────────────────────
+builder.Services.AddHttpClient<IMonthlyTicketService, MonthlyTicketService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Payment Service ──────────────────────────
+builder.Services.AddHttpClient<IPaymentService, PaymentService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Employee Service ──────────────────────────
+builder.Services.AddHttpClient<IEmployeeService, EmployeeService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// ── Report Service ──────────────────────────
+builder.Services.AddHttpClient<IReportService, ReportService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
@@ -33,7 +93,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-// ── Session (dùng lưu token để gọi BE các trang khác) ──────────────────────────
+// ── Session ──────────────────────────
 builder.Services.AddSession(opt =>
 {
     opt.IdleTimeout = TimeSpan.FromHours(24);
@@ -41,8 +101,6 @@ builder.Services.AddSession(opt =>
     opt.Cookie.IsEssential = true;
     opt.Cookie.Name = "ParkingSession";
 });
-
-builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

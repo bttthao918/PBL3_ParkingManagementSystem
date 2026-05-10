@@ -55,11 +55,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
-        policy
+        policy.WithOrigins(
+                "https://localhost:63491",  // Frontend HTTPS port
+                "http://localhost:63492"    // Frontend HTTP port
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()
-            .SetIsOriginAllowed(_ => true);
+            .AllowCredentials();
     });
 });
 

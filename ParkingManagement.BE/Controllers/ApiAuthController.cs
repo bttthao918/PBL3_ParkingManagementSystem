@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services;
 using ParkingManagement.BLL.Services.Interfaces;
+using ParkingManagement.DAL.Interfaces;
 
 namespace ParkingManagement.Web.Controllers.Api
 {
@@ -17,15 +18,21 @@ namespace ParkingManagement.Web.Controllers.Api
     {
         private readonly IAuthService _authService;
         private readonly IJwtTokenProvider _tokenProvider;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<ApiAuthController> _logger;
 
         public ApiAuthController(
             IAuthService authService,
             IJwtTokenProvider tokenProvider,
+            IAccountRepository accountRepository,
+            ICustomerRepository customerRepository,
             ILogger<ApiAuthController> logger)
         {
             _authService = authService;
             _tokenProvider = tokenProvider;
+            _accountRepository = accountRepository;
+            _customerRepository = customerRepository;
             _logger = logger;
         }
 
@@ -208,6 +215,217 @@ namespace ParkingManagement.Web.Controllers.Api
             };
 
             return Ok(response);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // ACCOUNT DELETION APIs
+        // ═══════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Customer tự xóa tài khoản của mình (Soft Delete)
+        /// </summary>
+        /// <returns>Confirmation message</returns>
+        [HttpDelete("account")]
+        [Authorize]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> DeleteMyAccount()
+        {
+            try
+            {
+                var accountId = User.FindFirst("accountId")?.Value;
+                var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+                if (string.IsNullOrEmpty(accountId))
+                    return Unauthorized(new { message = "Invalid token" });
+
+                if (role != "Customer")
+                    return BadRequest(new { message = "Chỉ khách hàng mới có thể tự xóa tài khoản" });
+
+                // Soft delete customer
+                var customer = await _customerRepository.GetByAccountIdAsync(accountId);
+                if (customer != null)
+                {
+                    await _customerRepository.SoftDeleteAsync(customer.CustomerId);
+                }
+
+                // Deactivate account
+                var account = await _accountRepository.GetByIdAsync(accountId);
+                if (account != null)
+                {
+                    account.IsActive = false;
+                    await _accountRepository.UpdateAsync(account);
+                }
+
+                _logger.LogInformation($"Customer deleted own account: {accountId}");
+                return Ok(new { success = true, message = "Tài khoản đã được xóa thành công" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"DeleteMyAccount error: {ex.Message}");
+                return StatusCode(500, new { message = "Lỗi server" });
+            }
+        }
+
+        /// <summary>
+        /// Admin xóa tài khoản bất kỳ (Hard Delete - Xóa vĩnh viễn)
+        /// </summary>
+        /// <param name="accountId">ID của tài khoản cần xóa</param>
+        /// <returns>Confirmation message</returns>
+        [HttpDelete("admin/account/{accountId}")]
+        [Authorize(Roles = "Manager,Employee")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AdminDeleteAccount(string accountId)
+        {
+            try
+            {
+                var account = await _accountRepository.GetByIdAsync(accountId);
+                if (account == null)
+                    return NotFound(new { message = "Không tìm thấy tài khoản" });
+
+                // Không cho xóa Manager
+                if (account.Role == "Manager")
+                    return BadRequest(new { message = "Không thể xóa tài khoản Manager" });
+
+                // Soft delete customer nếu có
+                if (account.Role == "Customer")
+                {
+                    var customer = await _customerRepository.GetByAccountIdAsync(accountId);
+                    if (customer != null)
+                    {
+                        await _customerRepository.SoftDeleteAsync(customer.CustomerId);
+                    }
+                }
+
+                // Deactivate account
+                account.IsActive = false;
+                await _accountRepository.UpdateAsync(account);
+
+                _logger.LogInformation($"Admin deleted account: {accountId}");
+                return Ok(new { success = true, message = $"Đã xóa tài khoản {accountId} thành công" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AdminDeleteAccount error: {ex.Message}");
+                return StatusCode(500, new { message = "Lỗi server" });
+            }
+        }
+
+        /// <summary>
+        /// Admin xóa customer theo CustomerId (Soft Delete)
+        /// </summary>
+        /// <param name="customerId">ID của customer cần xóa</param>
+        /// <returns>Confirmation message</returns>
+        [HttpDelete("admin/customer/{customerId}")]
+        [Authorize(Roles = "Manager,Employee")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AdminDeleteCustomer(string customerId)
+        {
+            try
+            {
+                var customer = await _customerRepository.GetByIdAsync(customerId);
+                if (customer == null)
+                    return NotFound(new { message = "Không tìm thấy khách hàng" });
+
+                // Soft delete customer
+                await _customerRepository.SoftDeleteAsync(customerId);
+
+                // Deactivate account
+                var account = await _accountRepository.GetByIdAsync(customer.AccountId);
+                if (account != null)
+                {
+                    account.IsActive = false;
+                    await _accountRepository.UpdateAsync(account);
+                }
+
+                _logger.LogInformation($"Admin deleted customer: {customerId}");
+                return Ok(new { success = true, message = $"Đã xóa khách hàng {customer.FullName} thành công" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AdminDeleteCustomer error: {ex.Message}");
+                return StatusCode(500, new { message = "Lỗi server" });
+            }
+        }
+
+        /// <summary>
+        /// Admin khôi phục tài khoản đã xóa
+        /// </summary>
+        /// <param name="accountId">ID của tài khoản cần khôi phục</param>
+        /// <returns>Confirmation message</returns>
+        [HttpPatch("admin/account/{accountId}/restore")]
+        [Authorize(Roles = "Manager")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RestoreAccount(string accountId)
+        {
+            try
+            {
+                var account = await _accountRepository.GetByIdAsync(accountId);
+                if (account == null)
+                    return NotFound(new { message = "Không tìm thấy tài khoản" });
+
+                // Kích hoạt lại account
+                account.IsActive = true;
+                await _accountRepository.UpdateAsync(account);
+
+                // Restore customer nếu có
+                if (account.Role == "Customer")
+                {
+                    var customer = await _customerRepository.GetByAccountIdAsync(accountId);
+                    if (customer != null)
+                    {
+                        await _customerRepository.RestoreAsync(customer.CustomerId);
+                    }
+                }
+
+                _logger.LogInformation($"Admin restored account: {accountId}");
+                return Ok(new { success = true, message = $"Đã khôi phục tài khoản {accountId} thành công" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"RestoreAccount error: {ex.Message}");
+                return StatusCode(500, new { message = "Lỗi server" });
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách tài khoản đã bị xóa
+        /// </summary>
+        /// <returns>List of deleted accounts</returns>
+        [HttpGet("admin/deleted-accounts")]
+        [Authorize(Roles = "Manager")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDeletedAccounts()
+        {
+            try
+            {
+                var deletedCustomers = await _customerRepository.GetDeletedAsync();
+
+                var result = deletedCustomers.Select(c => new
+                {
+                    c.CustomerId,
+                    c.FullName,
+                    c.AccountId,
+                    c.PhoneNumber
+                });
+
+                return Ok(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"GetDeletedAccounts error: {ex.Message}");
+                return StatusCode(500, new { message = "Lỗi server" });
+            }
         }
     }
 

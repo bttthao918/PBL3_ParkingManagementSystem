@@ -1,53 +1,69 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ParkingManagement.FE</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ParkingManagement.FE.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Parking Management System</title>
+    <link rel="stylesheet" href="~/css/shared/dashboard_layout.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">ParkingManagement.FE</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
+    <div class="app-wrapper">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-container">
+                <div class="logo-area">
+                    <div class="logo-icon">P</div>
+                    <div class="logo-text">
+                        <h1>PARKING</h1>
+                        <span>MANAGEMENT SYSTEM</span>
+                    </div>
+                </div>
+                <nav class="header-nav">
+                    <a href="/"><i class="fa-solid fa-home"></i> Trang chủ</a>
+                    <a href="/Home/About"><i class="fa-solid fa-info-circle"></i> Giới thiệu</a>
+                    <a href="/Home/Contact"><i class="fa-solid fa-envelope"></i> Liên hệ</a>
+                </nav>
+                <div class="header-auth">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="user-info">
+                            <span><i class="fa-solid fa-user"></i> @User.Identity.Name</span>
+                            <a href="/Account/Logout" class="logout-btn"><i class="fa-solid fa-sign-out-alt"></i> Đăng xuất</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="/Auth/Authenticate" class="login-btn"><i class="fa-solid fa-lock"></i> Đăng nhập</a>
+                    }
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="app-main">
             @RenderBody()
         </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <div class="footer-container">
+                <div class="footer-info">
+                    <p>&copy; @DateTime.Now.Year - Parking Management System</p>
+                    <p>Địa chỉ: 123 Đường ABC, Quận 1, TP. Hồ Chí Minh</p>
+                    <p>Hotline: 1900 1234 | Email: support@parking.vn</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Điều khoản sử dụng</a>
+                    <a href="#">Chính sách bảo mật</a>
+                    <a href="#">Hỗ trợ</a>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ParkingManagement.FE - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

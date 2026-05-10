@@ -1,59 +1,14 @@
 @{
     Layout = "/Pages/Shared/_DashboardLayout.cshtml";
-    var currentPath = ViewContext.HttpContext.Request.Path.Value ?? "";
+    ViewData["Role"] = "Quản trị viên";
 }
 
-@* Cho phép các trang con nhúng CSS riêng *@
 @section Styles {
-    @RenderSection("Styles", required: false)
+    @await RenderSectionAsync("Styles", required: false)
 }
 
-@* KHUNG SIDEBAR DÙNG CHUNG CHO TOÀN BỘ ADMIN *@
-@section Sidebar {
-    <a asp-page="/Admin/Dashboard" class="@(currentPath.Equals("/Admin/Dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-house"></i> Tổng quan
-    </a>
-
-    <p>QUẢN LÝ</p>
-    <a asp-page="/Admin/TicketManagement" class="@(currentPath.Contains("/Admin/TicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-ticket"></i> Quản lý vé
-    </a>
-    
-    <a asp-page="/Admin/EmployeeManagement" class="@(currentPath.Contains("/Admin/EmployeeManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-users"></i> Quản lý nhân viên
-    </a>
-    
-    <a asp-page="/Admin/ParkingSlotManagement"
-           class="@(currentPath.Contains("/Admin/ParkingSlotManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-square-parking"></i>
-        Quản lý chỗ đỗ
-    </a>
-
-    <p>THỐNG KÊ VÀ BÁO CÁO</p>
-    <a asp-page="/Admin/RevenueStatistics"
-           class="@(currentPath.Contains("/Admin/RevenueStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-chart-line"></i> Doanh thu
-    </a>
-    <a asp-page="/Admin/CustomerStatistics"
-           class="@(currentPath.Contains("/Admin/CustomerStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-user-group"></i> Khách hàng
-    </a>
-    <a href="#"><i class="fa-solid fa-chart-column"></i> Tổng hợp</a>
-
-    <p>TÀI KHOẢN</p>
-    <a asp-page="/Account/Profile"
-           class="@(currentPath.Contains("/Account/Profile", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-user-gear"></i> Thông tin tài khoản
-    </a>
-    <a asp-page="/Account/ChangePassword"
-           class="@(currentPath.Contains("/Account/ChangePassword", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-lock"></i> Đổi mật khẩu
-    </a>
-}
-
-@* CODE CỦA CÁC TRANG (GIAO DIỆN TỪNG CHỨC NĂNG CHÍNH) SẼ NẰM Ở ĐÂY *@
 @RenderBody()
 
 @section Scripts {
-    @RenderSection("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 }
