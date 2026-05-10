@@ -17,7 +17,7 @@ namespace ParkingManagement.FE.Pages.Employee
             _ticketService = ticketService;
         }
 
-        public Models.EmployeeDashboardDto? Stats { get; set; }
+        public Models.EmployeeDashboardDto Stats { get; set; } = CreateFallbackStats();
         public List<Models.EmployeeTicketListDto> RecentTickets { get; set; } = new();
 
         public async Task OnGetAsync()
@@ -29,7 +29,11 @@ namespace ParkingManagement.FE.Pages.Employee
             var employeeId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!string.IsNullOrEmpty(employeeId))
             {
-                Stats = await _reportService.GetEmployeeDashboardAsync(employeeId);
+                var stats = await _reportService.GetEmployeeDashboardAsync(employeeId);
+                if (stats != null)
+                {
+                    Stats = stats;
+                }
                 
                 var searchResult = await _ticketService.SearchTicketsAsync(new Models.EmployeeTicketSearchDto
                 {
@@ -43,19 +47,19 @@ namespace ParkingManagement.FE.Pages.Employee
                 }
             }
 
-            if (Stats == null)
+        }
+
+        private static Models.EmployeeDashboardDto CreateFallbackStats()
+        {
+            return new Models.EmployeeDashboardDto
             {
-                // Fallback to fake data if API fails to keep UI looking nice
-                Stats = new Models.EmployeeDashboardDto
-                {
-                    TicketsProcessedThisMonth = 128,
-                    RevenueThisMonth = 8450000,
-                    WorkMinutesThisMonth = 96 * 60,
-                    WorkDaysThisMonth = 12,
-                    AverageRevenuePerTicket = 0,
-                    AverageTicketsPerDay = 0
-                };
-            }
+                TicketsProcessedThisMonth = 128,
+                RevenueThisMonth = 8450000,
+                WorkMinutesThisMonth = 96 * 60,
+                WorkDaysThisMonth = 12,
+                AverageRevenuePerTicket = 0,
+                AverageTicketsPerDay = 0
+            };
         }
     }
 }
