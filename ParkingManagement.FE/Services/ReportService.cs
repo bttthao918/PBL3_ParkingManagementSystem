@@ -8,6 +8,9 @@ namespace ParkingManagement.FE.Services
         Task<EmployeeDashboardDto?> GetEmployeeDashboardAsync(string employeeId);
         Task<ShiftAttendanceReportDto?> GetShiftAttendanceReportAsync(string employeeId, DateTime? fromDate = null, DateTime? toDate = null);
         Task<EmployeeRevenueReportDto?> GetEmployeeRevenueReportAsync(string employeeId, string period = "month");
+        Task<DashboardSummaryDto?> GetManagerDashboardAsync();
+        Task<RevenueReportDto?> GetManagerRevenueReportAsync(RevenueReportFilterDto filter);
+        Task<CustomerReportDto?> GetManagerCustomerReportAsync();
     }
 
     public class ReportService : IReportService
@@ -99,6 +102,63 @@ namespace ParkingManagement.FE.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calling GetEmployeeRevenueReportAsync");
+                return null;
+            }
+        }
+
+        public async Task<DashboardSummaryDto?> GetManagerDashboardAsync()
+        {
+            try
+            {
+                AddAuthorizationHeader();
+                var response = await _httpClient.GetAsync("api/reports/manager/dashboard");
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<DashboardSummaryDto>();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling GetManagerDashboardAsync");
+                return null;
+            }
+        }
+
+        public async Task<RevenueReportDto?> GetManagerRevenueReportAsync(RevenueReportFilterDto filter)
+        {
+            try
+            {
+                AddAuthorizationHeader();
+                var response = await _httpClient.PostAsJsonAsync("api/reports/manager/revenue", filter);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<RevenueReportDto>();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling GetManagerRevenueReportAsync");
+                return null;
+            }
+        }
+
+        public async Task<CustomerReportDto?> GetManagerCustomerReportAsync()
+        {
+            try
+            {
+                AddAuthorizationHeader();
+                var response = await _httpClient.GetAsync("api/reports/manager/customers");
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<CustomerReportDto>();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling GetManagerCustomerReportAsync");
                 return null;
             }
         }

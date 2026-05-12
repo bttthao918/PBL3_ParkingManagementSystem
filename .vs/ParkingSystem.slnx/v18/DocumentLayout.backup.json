@@ -1,317 +1,317 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\K\u1EF3 4\\ParkingSystem\\",
+  "WorkspaceRootPath": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\_dashboardlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_dashboardlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\_adminlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_adminlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\_customerlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_customerlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\_employeelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_employeelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\booking\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\helpers\\customerbookingfakedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\helpers\\customerbookingfakedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\booking\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\bookingcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\bookingcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\bookingviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\bookingviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\customer\\bookings.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\customer\\bookings.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\js\\bookings.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\bookings.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\booking\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\booking\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\vehicleprofileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\vehicleprofileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\parkingslotviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\parkingslotviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\booking\\cancel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\cancel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\customer\\booking\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\customerstatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\customerstatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\account\\changepassword.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\changepassword.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\account\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\account\\profile.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\profile.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\account\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\account_profile.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\account_profile.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_statisticstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_statisticstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_statisticskpicard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_statisticskpicard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_statisticsheader.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_statisticsheader.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\js\\statistics.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\statistics.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\statistics.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\statistics.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_scripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_scripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_indexpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_indexpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\js\\personal_report.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\personal_report.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\employee\\personal_report.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\employee\\personal_report.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\personalreport.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\personalreport.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\personalreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\personalreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\parkingslotmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\parkingslotmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\parkingslotmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\parkingslotmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\parkingslot.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\parkingslot.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\employeemanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\employeemanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\employee\\ticket_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\employee\\ticket_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\employee\\customer_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\employee\\customer_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\employee\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\auth\\authenticate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\auth\\authenticate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\authenticate.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\authenticate.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\change_password.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\change_password.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\admin\\admin_ticket.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\admin\\admin_ticket.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\customerstatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\customerstatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\viewmodels\\statisticsviewmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\statisticsviewmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\employeemanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\employeemanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\admin\\admin_employee.css||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\admin\\admin_employee.css||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\auth\\authenticate.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\auth\\authenticate.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\dashboard_layout.css||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\dashboard_layout.css||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\wwwroot\\js\\auth.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\auth.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\_employeelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_employeelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\auth\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\auth\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\auth\\loginrespone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\ticketmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\personalreport.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\personalreport.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\_customerlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_customerlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\_dashboardlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_dashboardlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\employeemanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\employeemanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\dashboard.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\services\\reportservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\services\\reportservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\auth\\authenticate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\auth\\authenticate.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\account\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\auth\\loginrespone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\auth\\loginrespone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\models\\auth\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\models\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\models\\dtos\\authdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\controllers\\apiauthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\controllers\\apiauthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\configurations\\dependencyinjectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\configurations\\dependencyinjectionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\js\\auth.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\auth.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\parkingmanagement.fe.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\parkingmanagement.fe.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\bookingcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\bookingcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\bookingviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\bookingviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\customer\\bookings.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\customer\\bookings.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\js\\bookings.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\bookings.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\vehicleprofileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\vehicleprofileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\viewmodels\\customer\\parkingslotviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\customer\\parkingslotviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\customer\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\customer\\booking\\cancel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\cancel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\customer\\booking\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\customer\\booking\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\account\\changepassword.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\changepassword.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\account\\profile.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\profile.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\account\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\account\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\account_profile.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\account_profile.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_statisticstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_statisticstable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_statisticskpicard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_statisticskpicard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_statisticsheader.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_statisticsheader.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\revenuestatistics.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\js\\statistics.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\statistics.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\statistics.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\statistics.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_scripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_scripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_indexpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\parkingslotmanagement\\_indexpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticscontent.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\revenuestatistics.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\js\\personal_report.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\js\\personal_report.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\employee\\personal_report.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\employee\\personal_report.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\personalreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\personalreport.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\parkingslotmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\parkingslot.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\parkingslot.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\employee\\ticket_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\employee\\ticket_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\employee\\customer_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\employee\\customer_manage.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\customermanagement.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\employee\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\employee\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\authenticate.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\authenticate.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\change_password.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\change_password.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\admin\\admin_ticket.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\admin\\admin_ticket.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\viewmodels\\statisticsviewmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\viewmodels\\statisticsviewmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\admin\\admin_employee.css||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\admin\\admin_employee.css||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\wwwroot\\css\\shared\\dashboard_layout.css||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\wwwroot\\css\\shared\\dashboard_layout.css||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\auth\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\auth\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\models\\auth\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\models\\auth\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\parkingmanagement.fe.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\parkingmanagement.fe.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|d:\\k\u1EF3 4\\parkingsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticsscripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticsscripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\shared\\statistics\\_revenuestatisticsscripts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -322,7 +322,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -341,209 +341,290 @@
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TicketManagement.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAcwFwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T01:34:41.935Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "_DashboardLayout.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAhwBsAAAA0AAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "TicketManagement.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAEwGoAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-03T09:05:26.347Z",
+              "WhenOpened": "2026-05-07T10:15:45.027Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CustomerManagement.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
+              "ViewState": "AgIAAOgAAAAAAAAAAAA8wBUBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T06:29:41.381Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\appsettings.json",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\appsettings.json",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\appsettings.json",
+              "RelativeToolTip": "ParkingManagement.FE\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-12T02:32:28.948Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\appsettings.json",
+              "RelativeDocumentMoniker": "ParkingManagement.BE\\appsettings.json",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\appsettings.json",
+              "RelativeToolTip": "ParkingManagement.BE\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-09T02:00:31.661Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TicketManagement.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-04T04:49:12.962Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "_EmployeeLayout.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_EmployeeLayout.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_EmployeeLayout.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_EmployeeLayout.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_EmployeeLayout.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_EmployeeLayout.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_EmployeeLayout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAABQAAAAAAAAAAAAAAD0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-06T04:27:24.422Z"
+              "WhenOpened": "2026-05-12T01:24:13.64Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
+              "Title": "TicketManagement.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
+              "ViewState": "AgIAAJAAAAAAAAAAAAA8wKUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-07T10:16:45.524Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Dashboard.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAowC0AAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T00:53:02.673Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PersonalReport.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
+              "ViewState": "AgIAAF8AAAAAAAAAAAAqwJcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-07T18:04:42.109Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "_CustomerLayout.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_CustomerLayout.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_CustomerLayout.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_CustomerLayout.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_CustomerLayout.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_CustomerLayout.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_CustomerLayout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAowDEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-05-08T05:47:05.576Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "_AdminLayout.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_AdminLayout.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_AdminLayout.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_AdminLayout.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_AdminLayout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAB1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T02:45:43.781Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml",
-              "ViewState": "AgIAAAYAAAAAAAAAAAASwEAAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-08T05:15:33.209Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Index.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T05:37:18.569Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "bookings.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
-              "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
-              "ViewState": "AgIAAAkBAABAzczMzMwnwBUBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-05-08T05:36:23.809Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "bookings.js",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\bookings.js",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\js\\bookings.js",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\bookings.js",
-              "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\js\\bookings.js",
-              "ViewState": "AgIAADEAAAAAAAAAAAA6wE4AAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-05-08T05:45:23.285Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CustomerBookingFakeData.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Helpers\\CustomerBookingFakeData.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Helpers\\CustomerBookingFakeData.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Helpers\\CustomerBookingFakeData.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Helpers\\CustomerBookingFakeData.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T06:50:08.281Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "BookingViewModel.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T05:43:36.553Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "BookingCreateViewModel.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAYwA0AAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T05:44:06.041Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 11,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml",
-              "ViewState": "AgIAAGkAAABImpmZmZkuwHwAAAARAAAAAAAAAA==",
+              "Title": "_DashboardLayout.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_DashboardLayout.cshtml",
+              "ViewState": "AgIAAJUAAAAAAAAAAAAAALgAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-08T05:15:55.905Z"
+              "WhenOpened": "2026-05-03T09:05:26.347Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 12,
-              "Title": "Create.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Create.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T05:16:18.543Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "VehicleProfileViewModel.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T05:44:59.059Z"
+              "Title": "Dashboard.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
+              "ViewState": "AgIAADYAAAAAAAAAAAAowJUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-12T00:39:41.815Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 14,
-              "Title": "ParkingSlotViewModel.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Title": "Dashboard.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAcwAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-08T05:44:30.214Z"
+              "WhenOpened": "2026-05-12T00:28:03.287Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 15,
-              "Title": "_ViewStart.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
+              "Title": "ReportService.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Services\\ReportService.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Services\\ReportService.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Services\\ReportService.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Services\\ReportService.cs",
+              "ViewState": "AgIAAGoAAAAAAAAAAAAAAGoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T00:23:15.144Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "EmployeeManagement.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-08T05:55:40.834Z"
+              "WhenOpened": "2026-05-12T00:32:05.099Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 16,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAACIAAAAAAAAAAAAAwEQAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-02T13:50:15.122Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
               "Title": "_ViewStart.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\_ViewStart.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-10T03:48:48.74Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Index.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Index.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Index.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-10T03:48:51.565Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Privacy.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Privacy.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Privacy.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-10T03:48:53.216Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Error.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Error.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Error.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Error.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-10T03:48:49.923Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Authenticate.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
+              "ViewState": "AgIAAAgBAAAAAAAAAAAiwBkBAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-03T09:39:48.855Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\_ViewImports.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-10T03:48:47.392Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\_ViewStart.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\_ViewStart.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\_ViewStart.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\_ViewStart.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -551,35 +632,191 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Dashboard.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\Dashboard.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-03T08:19:04.221Z"
+              "DocumentIndex": 28,
+              "Title": "DependencyInjectionExtensions.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Configurations\\DependencyInjectionExtensions.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.BE\\Configurations\\DependencyInjectionExtensions.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Configurations\\DependencyInjectionExtensions.cs",
+              "RelativeToolTip": "ParkingManagement.BE\\Configurations\\DependencyInjectionExtensions.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAUwDoAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T07:28:28.594Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Dashboard.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Dashboard.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Dashboard.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Dashboard.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Dashboard.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAASAAAAAAAAAA==",
+              "DocumentIndex": 24,
+              "Title": "ChangePassword.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-03T09:02:34.455Z"
+              "WhenOpened": "2026-05-06T03:14:12.041Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 25,
+              "Title": "LoginRespone.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAowBsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-02T08:09:25.082Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Program.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.BE\\Program.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Program.cs",
+              "RelativeToolTip": "ParkingManagement.BE\\Program.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAUwDgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-09T02:00:28.813Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "AuthDTOs.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Models\\DTOs\\AuthDTOs.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.BE\\Models\\DTOs\\AuthDTOs.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Models\\DTOs\\AuthDTOs.cs",
+              "RelativeToolTip": "ParkingManagement.BE\\Models\\DTOs\\AuthDTOs.cs",
+              "ViewState": "AgIAAGEAAAAAAAAAAAAAwG4AAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T07:40:53.204Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "ApiAuthController.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Controllers\\ApiAuthController.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.BE\\Controllers\\ApiAuthController.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\Controllers\\ApiAuthController.cs",
+              "RelativeToolTip": "ParkingManagement.BE\\Controllers\\ApiAuthController.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAlwDgAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T07:29:03.531Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "auth.js",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\auth.js",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\js\\auth.js",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\auth.js",
+              "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\js\\auth.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-05-03T16:07:53.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "ParkingManagement.FE",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\ParkingManagement.FE.csproj",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\ParkingManagement.FE.csproj",
+              "RelativeToolTip": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-09T02:23:22.534Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "bookings.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
+              "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\customer\\bookings.css",
+              "ViewState": "AgIAAAkBAABAzczMzMwnwBUBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-05-08T05:36:23.809Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "bookings.js",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\bookings.js",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\js\\bookings.js",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\bookings.js",
+              "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\js\\bookings.js",
+              "ViewState": "AgIAADIAAAAAAAAAAAAiwE4AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-05-08T05:45:23.285Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "BookingViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T05:43:36.553Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "BookingCreateViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\BookingCreateViewModel.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAYwA0AAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T05:44:06.041Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "VehicleProfileViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\VehicleProfileViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T05:44:59.059Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "ParkingSlotViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
+              "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\Customer\\ParkingSlotViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-08T05:44:30.214Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
+              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-08T05:55:40.834Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
               "Title": "RevenueStatistics.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -587,11 +824,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 40,
               "Title": "Cancel.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Cancel.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Cancel.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Cancel.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Cancel.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Cancel.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Cancel.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -599,11 +836,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 41,
               "Title": "Details.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Details.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Details.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Details.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Customer\\Booking\\Details.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Customer\\Booking\\Details.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -611,23 +848,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "ChangePassword.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-06T03:14:12.041Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 42,
               "Title": "ChangePassword.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Account\\ChangePassword.cshtml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -635,23 +860,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "CustomerStatistics.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T05:36:55.486Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 44,
               "Title": "Profile.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Account\\Profile.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Account\\Profile.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -659,11 +872,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 45,
               "Title": "account_profile.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\account_profile.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\account_profile.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\shared\\account_profile.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\account_profile.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\account_profile.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\shared\\account_profile.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFQAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -671,11 +884,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 46,
               "Title": "_RevenueStatisticsContent.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml",
               "ViewState": "AgIAAEcAAADAzMzMzMwlwFoAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -683,11 +896,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 43,
               "Title": "Profile.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Account\\Profile.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Account\\Profile.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Account\\Profile.cshtml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -695,11 +908,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 47,
               "Title": "_StatisticsTable.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsTable.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsTable.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsTable.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsTable.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsTable.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsTable.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -707,11 +920,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 48,
               "Title": "_StatisticsKpiCard.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsKpiCard.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsKpiCard.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsKpiCard.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsKpiCard.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsKpiCard.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsKpiCard.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -719,11 +932,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 49,
               "Title": "_StatisticsHeader.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsHeader.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsHeader.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsHeader.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsHeader.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsHeader.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_StatisticsHeader.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -733,9 +946,9 @@
               "$type": "Document",
               "DocumentIndex": 77,
               "Title": "_RevenueStatisticsScripts.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsScripts.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsScripts.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsScripts.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsScripts.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsScripts.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsScripts.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -743,23 +956,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 50,
               "Title": "RevenueStatistics.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-07T19:34:49.36Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 51,
               "Title": "RevenueStatistics.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\RevenueStatistics.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -767,11 +980,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 52,
               "Title": "statistics.js",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\statistics.js",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\statistics.js",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\js\\statistics.js",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\statistics.js",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\statistics.js",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\js\\statistics.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAIoAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
@@ -779,11 +992,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 53,
               "Title": "statistics.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\statistics.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\statistics.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\shared\\statistics.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\statistics.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\statistics.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\shared\\statistics.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAF8BAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -791,11 +1004,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 54,
               "Title": "_Scripts.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_Scripts.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_Scripts.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_Scripts.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_Scripts.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_Scripts.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_Scripts.cshtml",
               "ViewState": "AgIAAAEAAAAAPDMzMzP7vxEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -803,11 +1016,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 55,
               "Title": "_IndexPartial.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_IndexPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_IndexPartial.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_IndexPartial.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_IndexPartial.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_IndexPartial.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\ParkingSlotManagement\\_IndexPartial.cshtml",
               "ViewState": "AgIAALEAAAAANDMzMzMrwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -815,11 +1028,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 57,
               "Title": "RevenueStatistics.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\RevenueStatistics.cshtml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -827,11 +1040,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 56,
               "Title": "_RevenueStatisticsContent.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\Statistics\\_RevenueStatisticsContent.cshtml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -839,35 +1052,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "TicketManagement.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-04T04:49:12.962Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "CustomerManagement.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml.cs",
-              "ViewState": "AgIAAMsAAAAAkZmZmRkwwAwBAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T06:29:41.381Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 58,
               "Title": "personal_report.js",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\personal_report.js",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\personal_report.js",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\js\\personal_report.js",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\personal_report.js",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\js\\personal_report.js",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\js\\personal_report.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAALsAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
@@ -875,11 +1064,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 59,
               "Title": "personal_report.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\personal_report.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\personal_report.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\employee\\personal_report.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\personal_report.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\personal_report.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\employee\\personal_report.css",
               "ViewState": "AgIAAJAAAAAA/v////8DwJ8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -887,35 +1076,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
-              "Title": "PersonalReport.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHYAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T18:04:42.109Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 45,
-              "Title": "TicketManagement.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAYwBMAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-07T10:15:45.027Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 60,
               "Title": "PersonalReport.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\PersonalReport.cshtml",
               "ViewState": "AgIAAGMAAADAkZmZmZkuwOIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -923,11 +1088,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 62,
               "Title": "ParkingSlotManagement.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -935,11 +1100,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 61,
               "Title": "ParkingSlotManagement.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\ParkingSlotManagement.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -947,35 +1112,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
-              "Title": "ParkingSlotManagement.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-07T14:42:34.952Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "ParkingSlotManagement.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\ParkingSlotManagement.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T14:54:06.045Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 63,
               "Title": "parkingslot.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\parkingslot.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\parkingslot.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\shared\\parkingslot.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\parkingslot.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\parkingslot.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\shared\\parkingslot.css",
               "ViewState": "AgIAAMgBAAAAAAAAAAAgwNoBAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -983,23 +1124,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
-              "Title": "EmployeeManagement.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-05T02:34:14.216Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 64,
               "Title": "ticket_manage.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\ticket_manage.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\ticket_manage.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\employee\\ticket_manage.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\ticket_manage.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\ticket_manage.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\employee\\ticket_manage.css",
               "ViewState": "AgIAAIgFAAAAAAAAAAAUwJkFAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -1007,23 +1136,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
-              "Title": "TicketManagement.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\TicketManagement.cshtml.cs",
-              "ViewState": "AgIAAG8AAADAnJmZmZkbwHgAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T10:16:45.524Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 65,
               "Title": "customer_manage.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\customer_manage.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\customer_manage.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\employee\\customer_manage.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\customer_manage.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\employee\\customer_manage.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\employee\\customer_manage.css",
               "ViewState": "AgIAANoCAAAAAAAAAAAcwAIDAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -1031,23 +1148,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
-              "Title": "Dashboard.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\Dashboard.cshtml",
-              "ViewState": "AgIAACIAAADA0szMzMwnwAoAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-03T08:44:18.743Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 66,
               "Title": "CustomerManagement.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\CustomerManagement.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -1055,23 +1160,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
-              "Title": "Authenticate.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml",
-              "ViewState": "AgIAAAAAAAAANDMzMzP7vwsAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-03T09:39:48.855Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 67,
               "Title": "_ViewStart.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\_ViewStart.cshtml",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Employee\\_ViewStart.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Employee\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Employee\\_ViewStart.cshtml",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Employee\\_ViewStart.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -1079,23 +1172,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-02T13:50:15.122Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 68,
               "Title": "authenticate.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\authenticate.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\authenticate.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\shared\\authenticate.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\authenticate.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\authenticate.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\shared\\authenticate.css",
               "ViewState": "AgIAACIBAAAAAAAAAAASwDkBAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -1103,11 +1184,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 69,
               "Title": "change_password.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\change_password.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\change_password.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\shared\\change_password.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\change_password.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\change_password.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\shared\\change_password.css",
               "ViewState": "AgIAAIIAAAAAmZmZmZkswIUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -1115,11 +1196,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 70,
               "Title": "admin_ticket.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_ticket.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_ticket.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\admin\\admin_ticket.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_ticket.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_ticket.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\admin\\admin_ticket.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACgBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -1127,23 +1208,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
-              "Title": "CustomerStatistics.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\CustomerStatistics.cshtml.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAAACsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T06:05:31.243Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 71,
               "Title": "StatisticsViewModels.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\StatisticsViewModels.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\StatisticsViewModels.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\ViewModels\\StatisticsViewModels.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\ViewModels\\StatisticsViewModels.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\ViewModels\\StatisticsViewModels.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Models\\ViewModels\\StatisticsViewModels.cs",
               "ViewState": "AgIAAAoAAABA/v////8bwBYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -1151,23 +1220,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
-              "Title": "EmployeeManagement.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\EmployeeManagement.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T02:34:19.221Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 72,
               "Title": "admin_employee.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_employee.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_employee.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\admin\\admin_employee.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_employee.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\admin\\admin_employee.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\admin\\admin_employee.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADgCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -1175,59 +1232,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
-              "Title": "Authenticate.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Auth\\Authenticate.cshtml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-03T09:40:25.975Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 69,
-              "Title": "TicketManagement.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
-              "ViewState": "AgIAADIAAACQmZmZmZkXwDgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-04T04:51:18.589Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 73,
               "Title": "dashboard_layout.css",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\dashboard_layout.css",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\dashboard_layout.css",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\css\\shared\\dashboard_layout.css",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\dashboard_layout.css",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\wwwroot\\css\\shared\\dashboard_layout.css",
               "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\css\\shared\\dashboard_layout.css",
-              "ViewState": "AgIAANkBAAAAAAAAAAAAAPIBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAANYBAAAAAAAAAIBJwPIBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2026-05-03T16:40:09.772Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
-              "Title": "auth.js",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\auth.js",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\wwwroot\\js\\auth.js",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\wwwroot\\js\\auth.js",
-              "RelativeToolTip": "ParkingManagement.FE\\wwwroot\\js\\auth.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-05-03T16:07:53.686Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 74,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Index.cshtml.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Pages\\Index.cshtml.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Index.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Index.cshtml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -1235,11 +1256,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 75,
               "Title": "RegisterRequest.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\Auth\\RegisterRequest.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\Auth\\RegisterRequest.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\Auth\\RegisterRequest.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\Auth\\RegisterRequest.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\Auth\\RegisterRequest.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Models\\Auth\\RegisterRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -1247,39 +1268,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
-              "Title": "LoginRespone.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
-              "RelativeToolTip": "ParkingManagement.FE\\Models\\Auth\\LoginRespone.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-02T08:09:25.082Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 76,
               "Title": "LoginRequest.cs",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRequest.cs",
+              "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRequest.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Models\\Auth\\LoginRequest.cs",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRequest.cs",
+              "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Models\\Auth\\LoginRequest.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Models\\Auth\\LoginRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-02T08:09:10.682Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 76,
-              "Title": "ParkingManagement.FE.csproj",
-              "DocumentMoniker": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\ParkingManagement.FE.csproj",
-              "RelativeDocumentMoniker": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
-              "ToolTip": "D:\\K\u1EF3 4\\ParkingSystem\\ParkingManagement.FE\\ParkingManagement.FE.csproj",
-              "RelativeToolTip": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-02T07:49:58.257Z"
             }
           ]
         }

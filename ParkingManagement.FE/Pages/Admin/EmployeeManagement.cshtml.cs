@@ -1,28 +1,49 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Services;
+using ParkingManagement.FE.Models;
 
 namespace ParkingManagement.FE.Pages.Admin
 {
     [Authorize(Roles = "Manager")]
     public class EmployeeManagementModel : PageModel
     {
+        private readonly IEmployeeService _employeeService;
+
+        public EmployeeManagementModel(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
         public List<EmployeeViewModel> Employees { get; set; } = new();
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            Employees = new List<EmployeeViewModel>
+            var filter = new ManagerEmployeeFilterDto
             {
-                new("NV0001", "Nguyễn Văn An", "Nhân viên bãi xe", "Bãi xe A", "0901 234 567", 1256, 1198, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0002", "Trần Thị Bình", "Nhân viên bãi xe", "Bãi xe B", "0902 345 678", 980, 872, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0003", "Lê Văn Cường", "Tổ trưởng", "Bãi xe A", "0903 456 789", 1562, 1430, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0004", "Phạm Thị Dung", "Nhân viên bãi xe", "Bãi xe C", "0904 567 890", 753, 690, "Nghỉ phép", "leave", "/images/avatar-demo.jpg"),
-                new("NV0005", "Hoàng Văn Em", "Nhân viên bãi xe", "Bãi xe B", "0905 678 901", 612, 580, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0006", "Đỗ Thị Hương", "Nhân viên bãi xe", "Bãi xe A", "0906 789 012", 1102, 1002, "Tạm nghỉ", "inactive", "/images/avatar-demo.jpg"),
-                new("NV0007", "Vũ Văn Kiên", "Tổ trưởng", "Bãi xe C", "0907 890 123", 890, 812, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0008", "Bùi Thị Lan", "Nhân viên bãi xe", "Bãi xe A", "0908 901 234", 567, 498, "Đang làm việc", "active", "/images/avatar-demo.jpg")
+                PageNumber = 1,
+                PageSize = 100
             };
+
+            var result = await _employeeService.GetEmployeesAsync(filter);
+
+            if (result != null && result.Items != null)
+            {
+                Employees = result.Items.Select(e => new EmployeeViewModel(
+                    e.EmployeeId,
+                    e.FullName,
+                    "Nhân viên bãi xe", // Temporarily hardcoded or mapped if BE provides it
+                    "Bãi xe A", // Temporarily hardcoded
+                    e.PhoneNumber,
+                    0, // TotalTickets (BE detail endpoint has this, list doesn't)
+                    0, // ProcessedTickets
+                    e.Status,
+                    e.Status == "Hoạt động" ? "active" : "inactive",
+                    "/images/avatar-demo.jpg"
+                )).ToList();
+            }
         }
     }
 

@@ -174,8 +174,8 @@
                         <td>@ticket.CustomerName</td>
                         <td>@ticket.Type</td>
                         <td>@ticket.Price.ToString("N0") đ</td>
-                        <td>@ticket.StartDate.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@ticket.EndDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@(ticket.CheckOutTime != DateTime.MinValue ? ticket.CheckOutTime.ToString("dd/MM/yyyy HH:mm") : "-")</td>
                         <td>
                             <span class="ticket-status @ticket.StatusClass">
                                 @ticket.Status

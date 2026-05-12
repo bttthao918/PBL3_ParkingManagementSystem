@@ -67,4 +67,70 @@ namespace ParkingManagement.FE.Models
         public string Trend { get; set; } = "";
         public List<DailyRevenueDetailDto> TopDays { get; set; } = new();
     }
+
+    public class DashboardSummaryDto
+    {
+        public decimal TodayRevenue { get; set; }
+        public decimal ThisMonthRevenue { get; set; }
+        public decimal ThisYearRevenue { get; set; }
+        public int TodayTickets { get; set; }
+        public int ThisMonthTickets { get; set; }
+        public decimal SlotUtilizationRate { get; set; }
+        public int OccupiedSlots { get; set; }
+        public int TotalSlots { get; set; }
+        public int TotalActiveEmployees { get; set; }
+        public int EmployeesOnline { get; set; }
+        public int TotalCustomers { get; set; }
+        public int ActiveMonthlyTickets { get; set; }
+    }
+
+    public class RevenueReportFilterDto
+    {
+        public string Period { get; set; } = "month";
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public string? VehicleType { get; set; }
+    }
+
+    public class RevenueReportDto
+    {
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public int TotalTickets { get; set; }
+        public int TotalMonthlyTickets { get; set; }
+        public decimal RevenueFromSingleTickets { get; set; }
+        public decimal RevenueFromMonthlyTickets { get; set; }
+        public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
+    }
+
+    public class DailyRevenueDto
+    {
+        public DateTime Date { get; set; }
+        public decimal Revenue { get; set; }
+        public int TicketCount { get; set; }
+    }
+
+    public class CustomerReportDto
+    {
+        public int TotalCustomers { get; set; }
+        public int NewCustomersThisMonth { get; set; }
+        public int ActiveMonthlyTickets { get; set; }
+        public int ExpiredMonthlyTickets { get; set; }
+        public int RegularCustomers { get; set; }
+        public int VIPCustomers { get; set; }
+        public int OneTimeCustomers { get; set; }
+        public List<CustomerDetailDto> TopCustomers { get; set; } = new();
+    }
+
+    public class CustomerDetailDto
+    {
+        public string CustomerId { get; set; } = null!;
+        public string FullName { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public int TicketCount { get; set; }
+        public decimal TotalSpent { get; set; }
+        public bool HasActiveMonthlyTicket { get; set; }
+        public DateTime? LastVisit { get; set; }
+    }
 }
