@@ -107,4 +107,5 @@ D:\pbl3\PBL3_ParkingManagementSystem\artifacts\fe-check\ParkingManagement.FE.dep
 D:\pbl3\PBL3_ParkingManagementSystem\artifacts\fe-check\ParkingManagement.FE.runtimeconfig.json
 D:\pbl3\PBL3_ParkingManagementSystem\artifacts\fe-check\ParkingManagement.FE.dll
 D:\pbl3\PBL3_ParkingManagementSystem\artifacts\fe-check\ParkingManagement.FE.pdb
-D:\pbl3\PBL3_ParkingManagementSystem\ParkingManagement.FE\obj\Debug\net10.0\compressed\6ts9t5k6r0-{0}-6pdzrlhfo2-6pdzrlhfo2.gz
+D:\pbl3\PBL3_ParkingManagementSystem\ParkingManagement.FE\obj\Debug\net10.0\compressed\6ts9t5k6r0-{0}-n94jkap2xi-n94jkap2xi.gz
+D:\pbl3\PBL3_ParkingManagementSystem\ParkingManagement.FE\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

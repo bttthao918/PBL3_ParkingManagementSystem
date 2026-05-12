@@ -57,7 +57,7 @@ namespace BackendAPI.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
 
                     b.HasData(
                         new
@@ -184,7 +184,7 @@ namespace BackendAPI.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
 
                     b.HasData(
                         new
@@ -281,7 +281,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
 
                     b.HasData(
                         new
@@ -361,7 +361,7 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("InviteToken");
 
-                    b.ToTable("EmployeeInvites");
+                    b.ToTable("EmployeeInvites", (string)null);
 
                     b.HasData(
                         new
@@ -422,7 +422,7 @@ namespace BackendAPI.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Managers");
+                    b.ToTable("Managers", (string)null);
 
                     b.HasData(
                         new
@@ -485,7 +485,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("VehiclePlate");
 
-                    b.ToTable("MonthlyTickets", t =>
+                    b.ToTable("MonthlyTickets", null, t =>
                         {
                             t.HasCheckConstraint("CK_MonthlyTicket_Status", "Status IN (N'Hoạt động', N'Hết hạn', N'Đã hủy')");
                         });
@@ -577,7 +577,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("Email");
 
-                    b.ToTable("Otps");
+                    b.ToTable("Otps", (string)null);
 
                     b.HasData(
                         new
@@ -627,7 +627,7 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("SlotId");
 
-                    b.ToTable("ParkingSlots", t =>
+                    b.ToTable("ParkingSlots", null, t =>
                         {
                             t.HasCheckConstraint("CK_ParkingSlot_Status", "Status IN (N'Trống', N'Đang sử dụng', N'Đã đặt', N'Bảo trì')");
                         });
@@ -774,7 +774,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("SlotId");
 
-                    b.ToTable("ParkingSlotAuditLogs");
+                    b.ToTable("ParkingSlotAuditLogs", (string)null);
 
                     b.HasData(
                         new
@@ -852,7 +852,7 @@ namespace BackendAPI.Migrations
                         .IsUnique()
                         .HasFilter("[TicketId] IS NOT NULL");
 
-                    b.ToTable("Payments", t =>
+                    b.ToTable("Payments", null, t =>
                         {
                             t.HasCheckConstraint("CK_Payment_TicketOrMonthly", "(TicketId IS NOT NULL AND MonthlyTicketId IS NULL) OR (TicketId IS NULL AND MonthlyTicketId IS NOT NULL)");
                         });
@@ -959,7 +959,7 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("PricingId");
 
-                    b.ToTable("PricingConfigurations");
+                    b.ToTable("PricingConfigurations", (string)null);
 
                     b.HasData(
                         new
@@ -1137,7 +1137,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("VehiclePlate");
 
-                    b.ToTable("Reservations", t =>
+                    b.ToTable("Reservations", null, t =>
                         {
                             t.HasCheckConstraint("CK_Reservation_Status", "Status IN (N'Chờ', N'Đã nhận', N'Hủy', N'Hết hạn')");
                         });
@@ -1231,7 +1231,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("VehiclePlate");
 
-                    b.ToTable("Tickets", t =>
+                    b.ToTable("Tickets", null, t =>
                         {
                             t.HasCheckConstraint("CK_Ticket_Status", "Status IN (N'Đang trong bãi', N'Đã ra')");
                         });
@@ -1348,7 +1348,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Vehicles", t =>
+                    b.ToTable("Vehicles", null, t =>
                         {
                             t.HasCheckConstraint("CK_Vehicle_Type", "VehicleType IN (N'Xe máy', N'Ô tô nhỏ', N'Ô tô lớn')");
                         });
