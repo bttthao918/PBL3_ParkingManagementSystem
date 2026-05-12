@@ -218,17 +218,17 @@
                                                     Xem chi tiết
                                                 </a>
 
-                                                <a href="#">
+                                                <a asp-page="./CustomerManagement" asp-route-selectedId="@item.Id">
                                                     <i class="fa-solid fa-clock-rotate-left"></i>
                                                     Lịch sử gửi xe
                                                 </a>
 
-                                                <a href="#">
+                                                <a asp-page="./CustomerManagement" asp-route-selectedId="@item.Id">
                                                     <i class="fa-solid fa-car"></i>
                                                     Xe của khách
                                                 </a>
 
-                                                <a href="#">
+                                                <a asp-page="./CustomerManagement" asp-route-selectedId="@item.Id">
                                                     <i class="fa-solid fa-pen"></i>
                                                     Cập nhật
                                                 </a>
@@ -380,7 +380,7 @@
                             VIP Level: @Model.SelectedCustomer.VipLevel
                         </h4>
 
-                        <a href="#">Xem quyền lợi</a>
+                        <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id">Xem quyền lợi</a>
                     </div>
 
                     <div class="vip-summary">
@@ -415,7 +415,7 @@
                 <div class="detail-card">
                     <div class="detail-card-title">
                         <h4>Thông tin xe (@Model.SelectedCustomer.Vehicles.Count xe)</h4>
-                        <a href="#">+ Thêm xe</a>
+                        <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id">+ Thêm xe</a>
                     </div>
 
                     <div class="vehicle-list">
@@ -438,13 +438,13 @@
                         }
                     </div>
 
-                    <a href="#" class="view-all-link">Xem tất cả xe</a>
+                    <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id" class="view-all-link">Xem tất cả xe</a>
                 </div>
 
                 <div class="detail-card">
                     <div class="detail-card-title">
                         <h4>Lịch sử gửi xe</h4>
-                        <a href="#">Xem tất cả</a>
+                        <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id">Xem tất cả</a>
                     </div>
 
                     <table class="history-table">

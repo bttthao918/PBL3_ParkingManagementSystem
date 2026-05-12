@@ -77,6 +77,16 @@ public class AuthenticateModel : PageModel
         HttpContext.Session.SetString("related_id", data.RelatedId ?? "");
         HttpContext.Session.SetString("email", data.Email);
 
+        HttpContext.Response.Cookies.Append("jwt_token", data.Token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = LoginInput.RememberMe
+                ? DateTimeOffset.UtcNow.AddDays(7)
+                : DateTimeOffset.UtcNow.AddHours(24)
+        });
+
         // Tạo Cookie Claims
         var claims = new List<Claim>
         {

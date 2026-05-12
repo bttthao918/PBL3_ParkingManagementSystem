@@ -6,6 +6,7 @@ namespace ParkingManagement.FE.Services
     public interface ITicketService
     {
         Task<ListEmployeeTicketDto?> SearchTicketsAsync(EmployeeTicketSearchDto search);
+        Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt");
     }
 
     public class TicketService : ITicketService
@@ -28,17 +29,20 @@ namespace ParkingManagement.FE.Services
             {
                 token = _httpContextAccessor.HttpContext?.Session.GetString("jwt_token");
             }
-
-            if (!string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
             }
+
+            _httpClient.DefaultRequestHeaders.Authorization = !string.IsNullOrEmpty(token)
+                ? new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token)
+                : null;
 
             // Construct query parameters
             var queryParams = new List<string>();
-            if (!string.IsNullOrEmpty(search.SearchKeyword)) queryParams.Add($"SearchKeyword={search.SearchKeyword}");
-            if (!string.IsNullOrEmpty(search.Status)) queryParams.Add($"Status={search.Status}");
-            if (!string.IsNullOrEmpty(search.VehicleType)) queryParams.Add($"VehicleType={search.VehicleType}");
+            if (!string.IsNullOrEmpty(search.SearchKeyword)) queryParams.Add($"SearchKeyword={Uri.EscapeDataString(search.SearchKeyword)}");
+            if (!string.IsNullOrEmpty(search.Status)) queryParams.Add($"Status={Uri.EscapeDataString(search.Status)}");
+            if (!string.IsNullOrEmpty(search.VehicleType)) queryParams.Add($"VehicleType={Uri.EscapeDataString(search.VehicleType)}");
             queryParams.Add($"PageNumber={search.PageNumber}");
             queryParams.Add($"PageSize={search.PageSize}");
 
@@ -53,6 +57,33 @@ namespace ParkingManagement.FE.Services
             
             var errorContent = await response.Content.ReadAsStringAsync();
             throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent} - Token: {!string.IsNullOrEmpty(token)} - URL: {url}");
+        }
+
+        public async Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt")
+        {
+            var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt_token")?.Value
+                ?? _httpContextAccessor.HttpContext?.Session.GetString("jwt_token")
+                ?? _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
+
+            _httpClient.DefaultRequestHeaders.Authorization = !string.IsNullOrEmpty(token)
+                ? new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token)
+                : null;
+
+            var response = await _httpClient.PostAsJsonAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}/checkout", new
+            {
+                ticketId,
+                fee,
+                paymentMethod
+            });
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("CheckOutAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return false;
         }
     }
 }

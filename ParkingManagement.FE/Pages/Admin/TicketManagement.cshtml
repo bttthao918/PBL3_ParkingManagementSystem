@@ -20,10 +20,10 @@
             <p>Quản lý danh sách vé, tìm kiếm vé và cấu hình giá vé</p>
         </div>
 
-        <button class="ticket-btn-primary">
+        <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
             <i class="fa-solid fa-plus"></i>
             Thêm vé mới
-        </button>
+        </a>
     </div>
 
     <div class="ticket-kpi-grid">
@@ -78,12 +78,12 @@
         <form method="get" class="ticket-filter-grid">
             <div class="ticket-input-group large">
                 <label>Từ khóa</label>
-                <input type="text" name="keyword" placeholder="Nhập mã vé, biển số xe, tên khách hàng..." />
+                <input type="text" asp-for="Keyword" placeholder="Nhập mã vé, biển số xe, tên khách hàng..." />
             </div>
 
             <div class="ticket-input-group">
                 <label>Trạng thái</label>
-                <select name="status">
+                <select asp-for="Status">
                     <option value="">Tất cả</option>
                     <option>Đang hoạt động</option>
                     <option>Hết hạn</option>
@@ -93,7 +93,7 @@
 
             <div class="ticket-input-group">
                 <label>Loại vé</label>
-                <select name="type">
+                <select asp-for="Type">
                     <option value="">Tất cả</option>
                     <option>Vé ngày</option>
                     <option>Vé tháng</option>
@@ -102,12 +102,12 @@
 
             <div class="ticket-input-group">
                 <label>Từ ngày</label>
-                <input type="date" name="fromDate" />
+                <input type="date" asp-for="FromDate" />
             </div>
 
             <div class="ticket-input-group">
                 <label>Đến ngày</label>
-                <input type="date" name="toDate" />
+                <input type="date" asp-for="ToDate" />
             </div>
 
             <button class="ticket-btn-primary search-btn" type="submit">
@@ -116,10 +116,10 @@
             </button>
         </form>
 
-        <button class="ticket-btn-outline">
+        <a asp-page="/Admin/TicketManagement" class="ticket-btn-outline" style="text-decoration:none;">
             <i class="fa-solid fa-filter-circle-xmark"></i>
             Xóa bộ lọc
-        </button>
+        </a>
     </div>
 
     <div class="ticket-toolbar">
@@ -135,15 +135,15 @@
         </div>
 
         <div class="ticket-toolbar-actions">
-            <button class="ticket-btn-outline">
+            <button class="ticket-btn-outline" type="button" onclick="window.print()">
                 <i class="fa-solid fa-file-export"></i>
                 Xuất Excel
             </button>
 
-            <button class="ticket-btn-primary">
+            <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
                 <i class="fa-solid fa-plus"></i>
                 Thêm vé mới
-            </button>
+            </a>
         </div>
     </div>
 
@@ -183,9 +183,9 @@
                         </td>
                         <td>
                             <div class="ticket-actions">
-                                <button class="view"><i class="fa-solid fa-eye"></i></button>
-                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
-                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
+                                <button class="view" type="button" title="Xem"><i class="fa-solid fa-eye"></i></button>
+                                <button class="edit" type="button" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                                <button class="delete" type="button" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>

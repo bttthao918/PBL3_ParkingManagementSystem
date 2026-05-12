@@ -85,6 +85,10 @@ namespace ParkingManagement.FE.Services
             {
                 token = _httpContextAccessor.HttpContext?.Session.GetString("jwt_token");
             }
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
+            }
 
             _httpClient.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(token)
                 ? null

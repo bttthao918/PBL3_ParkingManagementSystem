@@ -179,6 +179,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Create employee invite - Manager sends invite link
         /// </summary>
         [HttpPost("manager/invite")]
+        [Authorize(Roles = "Manager,Admin")]
         [ProducesResponseType(typeof(CreateEmployeeInviteResultDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(CreateEmployeeInviteResultDto), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateInvite([FromBody] CreateEmployeeInviteByManagerDto dto)
@@ -207,6 +208,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Confirm invite and activate account
         /// </summary>
         [HttpPost("invite/confirm")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ConfirmEmployeeInviteResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ConfirmEmployeeInviteResultDto), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ConfirmInvite([FromBody] ConfirmEmployeeInviteDto dto)
@@ -215,6 +217,23 @@ namespace ParkingManagement.Web.Controllers.Api
             if (!result.Success)
                 return BadRequest(result);
             return Ok(result);
+        }
+
+        [HttpGet("invite/confirm")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmInviteByLink([FromQuery] string token)
+        {
+            var result = await _employeeService.ConfirmInviteAsync(new ConfirmEmployeeInviteDto
+            {
+                InviteToken = token
+            });
+
+            if (!result.Success)
+            {
+                return Content($"Xác nhận thất bại: {result.Message}", "text/plain; charset=utf-8");
+            }
+
+            return Content("Xác nhận tài khoản thành công. Bạn có thể đăng nhập vào hệ thống.", "text/plain; charset=utf-8");
         }
     }
 }

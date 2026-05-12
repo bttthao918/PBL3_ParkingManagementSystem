@@ -7,6 +7,7 @@ namespace ParkingManagement.FE.Services
     public interface IEmployeeService
     {
         Task<ListManagerEmployeeDto?> GetEmployeesAsync(ManagerEmployeeFilterDto filter);
+        Task<CreateEmployeeInviteResultDto?> CreateEmployeeInviteAsync(CreateEmployeeInviteByManagerDto dto);
     }
 
     public class EmployeeService : IEmployeeService
@@ -62,12 +63,63 @@ namespace ParkingManagement.FE.Services
             }
         }
 
+        public async Task<CreateEmployeeInviteResultDto?> CreateEmployeeInviteAsync(CreateEmployeeInviteByManagerDto dto)
+        {
+            try
+            {
+                AttachBearerToken();
+                var response = await _httpClient.PostAsJsonAsync("api/employees/manager/invite", dto);
+                CreateEmployeeInviteResultDto? result = null;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<CreateEmployeeInviteResultDto>();
+                }
+                catch
+                {
+                    // Fallback when API returns non-JSON body (401/403/500 middleware responses)
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return result;
+                }
+
+                _logger.LogWarning("CreateEmployeeInviteAsync failed: {StatusCode}", response.StatusCode);
+                if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    return new CreateEmployeeInviteResultDto { Success = false, Message = "Bạn không có quyền thêm nhân viên." };
+                }
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return new CreateEmployeeInviteResultDto { Success = false, Message = "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại." };
+                }
+                return result ?? new CreateEmployeeInviteResultDto
+                {
+                    Success = false,
+                    Message = $"Không thể tạo nhân viên. Mã lỗi: {(int)response.StatusCode}."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling CreateEmployeeInviteAsync");
+                return new CreateEmployeeInviteResultDto
+                {
+                    Success = false,
+                    Message = "Lỗi kết nối đến máy chủ."
+                };
+            }
+        }
+
         private void AttachBearerToken()
         {
             var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt_token")?.Value;
             if (string.IsNullOrWhiteSpace(token))
             {
                 token = _httpContextAccessor.HttpContext?.Session.GetString("jwt_token");
+            }
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
             }
 
             if (!string.IsNullOrWhiteSpace(token))

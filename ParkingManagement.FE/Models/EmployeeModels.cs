@@ -31,4 +31,21 @@ namespace ParkingManagement.FE.Models
         public int TotalActive { get; set; }
         public int TotalInactive { get; set; }
     }
+
+    public class CreateEmployeeInviteByManagerDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+        public bool SendInvitationEmail { get; set; } = true;
+    }
+
+    public class CreateEmployeeInviteResultDto
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public string? EmployeeCode { get; set; }
+    }
 }

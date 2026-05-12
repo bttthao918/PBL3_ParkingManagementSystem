@@ -11,6 +11,14 @@
 }
 
 <div class="dashboard-content employee-page">
+    @if (!string.IsNullOrWhiteSpace(Model.CreateEmployeeMessage))
+    {
+        <div class="card" style="margin-bottom:12px; border-left:4px solid @(Model.CreateEmployeeSuccess ? "#2e7d32" : "#c62828");">
+            <p style="margin:0; color:@(Model.CreateEmployeeSuccess ? "#2e7d32" : "#c62828");">
+                @Model.CreateEmployeeMessage
+            </p>
+        </div>
+    }
 
     <div class="employee-header">
         <div>
@@ -306,26 +314,16 @@
             <button onclick="closeCreateModal()">×</button>
         </div>
 
-        <form class="emp-modal-form">
-            <input placeholder="Họ và tên" />
-            <input placeholder="Email" />
-            <input placeholder="Số điện thoại" />
+        <form method="post" asp-page-handler="CreateEmployee" class="emp-modal-form">
+            <input asp-for="CreateEmployeeInput.FullName" placeholder="Họ và tên" />
+            <input asp-for="CreateEmployeeInput.Email" placeholder="Email" />
+            <input asp-for="CreateEmployeeInput.PhoneNumber" placeholder="Số điện thoại" />
 
-            <select>
-                <option>Nhân viên bãi xe</option>
-                <option>Tổ trưởng</option>
-            </select>
-
-            <select>
-                <option>Bãi xe A</option>
-                <option>Bãi xe B</option>
-                <option>Bãi xe C</option>
-            </select>
-
-            <input type="password" placeholder="Mật khẩu cấp tài khoản" />
+            <input asp-for="CreateEmployeeInput.Password" type="password" placeholder="Mật khẩu cấp tài khoản" />
+            <input asp-for="CreateEmployeeInput.ConfirmPassword" type="password" placeholder="Xác nhận mật khẩu" />
 
             <label class="emp-checkbox">
-                <input type="checkbox" checked />
+                <input asp-for="CreateEmployeeInput.SendInvitationEmail" />
                 Gửi email cấp tài khoản cho nhân viên
             </label>
 

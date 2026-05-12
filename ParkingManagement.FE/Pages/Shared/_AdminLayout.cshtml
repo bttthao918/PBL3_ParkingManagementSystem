@@ -38,7 +38,9 @@
            class="@(currentPath.Contains("/Admin/CustomerStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
         <i class="fa-solid fa-user-group"></i> Khách hàng
     </a>
-    <a href="#"><i class="fa-solid fa-chart-column"></i> Tổng hợp</a>
+    <a asp-page="/Admin/Dashboard" class="@(currentPath.Equals("/Admin/Dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-chart-column"></i> Tổng hợp
+    </a>
 
     <p>TÀI KHOẢN</p>
     <a asp-page="/Account/Profile"

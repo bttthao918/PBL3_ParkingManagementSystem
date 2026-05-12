@@ -33,11 +33,14 @@ namespace ParkingManagement.FE.Services
             {
                 token = _httpContextAccessor.HttpContext?.Session.GetString("jwt_token");
             }
-
-            if (!string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
             }
+
+            _httpClient.DefaultRequestHeaders.Authorization = !string.IsNullOrEmpty(token)
+                ? new AuthenticationHeaderValue("Bearer", token)
+                : null;
         }
 
         public async Task<EmployeeDashboardDto?> GetEmployeeDashboardAsync(string employeeId)

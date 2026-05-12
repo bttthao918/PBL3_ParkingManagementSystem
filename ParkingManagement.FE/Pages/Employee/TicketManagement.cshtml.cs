@@ -44,6 +44,10 @@ namespace ParkingManagement.FE.Pages.Employee
         public List<TicketItemVM> Tickets { get; set; } = new List<TicketItemVM>();
 
         public TicketDetailVM? SelectedTicket { get; set; }
+        [TempData]
+        public string? ActionMessage { get; set; }
+        [TempData]
+        public bool ActionSuccess { get; set; }
         public async Task OnGetAsync()
         {
             var searchDto = new EmployeeTicketSearchDto
@@ -126,6 +130,23 @@ namespace ParkingManagement.FE.Pages.Employee
                     };
                 }
             }
+        }
+
+        public async Task<IActionResult> OnPostCheckOutAsync(string ticketId, decimal fee, int? selectedId)
+        {
+            var ok = await _ticketService.CheckOutAsync(ticketId, fee);
+            ActionSuccess = ok;
+            ActionMessage = ok ? $"Đã check-out vé {ticketId}." : $"Check-out thất bại cho vé {ticketId}.";
+
+            return RedirectToPage(new
+            {
+                Search,
+                StatusFilter,
+                VehicleFilter,
+                AreaFilter,
+                CreatedDate,
+                SelectedId = selectedId
+            });
         }
 
         [Authorize(Roles = "Employee")]

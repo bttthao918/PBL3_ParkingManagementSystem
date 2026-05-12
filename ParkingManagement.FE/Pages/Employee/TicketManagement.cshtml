@@ -12,6 +12,12 @@
 }
 
 <div class="ticket-page">
+    @if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+    {
+        <div class="card" style="margin-bottom:12px; border-left:4px solid @(Model.ActionSuccess ? "#2e7d32" : "#c62828");">
+            <p style="margin:0; color:@(Model.ActionSuccess ? "#2e7d32" : "#c62828");">@Model.ActionMessage</p>
+        </div>
+    }
 
     <div class="ticket-toolbar">
         <div>
@@ -84,10 +90,10 @@
                         Bộ lọc
                     </button>
 
-                    <button type="button" class="primary-btn">
+                    <a asp-page="./TicketManagement" class="primary-btn" style="text-decoration:none;">
                         <i class="fa-solid fa-plus"></i>
                         Tạo vé mới
-                    </button>
+                    </a>
                 </div>
 
                 <div class="filter-bottom">
@@ -216,22 +222,32 @@
                                                     Xem chi tiết
                                                 </a>
 
-                                                <a href="#">
+                                                <form method="post" asp-page-handler="CheckOut">
+                                                    <input type="hidden" name="ticketId" value="@item.TicketCode" />
+                                                    <input type="hidden" name="fee" value="@(item.TotalPrice ?? 0)" />
+                                                    <input type="hidden" name="selectedId" value="@item.Id" />
+                                                    <button type="submit" style="all:unset; cursor:pointer; display:block; width:100%;">
+                                                        <i class="fa-solid fa-right-from-bracket"></i>
+                                                        Check-out
+                                                    </button>
+                                                </form>
+
+                                                <form method="post" asp-page-handler="CheckOut">
+                                                    <input type="hidden" name="ticketId" value="@item.TicketCode" />
+                                                    <input type="hidden" name="fee" value="@(item.TotalPrice ?? 0)" />
+                                                    <input type="hidden" name="selectedId" value="@item.Id" />
+                                                    <button type="submit" style="all:unset; cursor:pointer; display:block; width:100%;">
+                                                        <i class="fa-solid fa-money-bill"></i>
+                                                        Thanh toán
+                                                    </button>
+                                                </form>
+
+                                                <a asp-page="./TicketManagement" asp-route-selectedId="@item.Id">
                                                     <i class="fa-solid fa-right-to-bracket"></i>
                                                     Check-in
                                                 </a>
 
-                                                <a href="#">
-                                                    <i class="fa-solid fa-right-from-bracket"></i>
-                                                    Check-out
-                                                </a>
-
-                                                <a href="#">
-                                                    <i class="fa-solid fa-money-bill"></i>
-                                                    Thanh toán
-                                                </a>
-
-                                                <a href="#">
+                                                <a asp-page="./TicketManagement" asp-route-selectedId="@item.Id">
                                                     <i class="fa-solid fa-ban"></i>
                                                     Hủy vé
                                                 </a>
@@ -374,7 +390,7 @@
                 <div class="detail-card payment-card">
                     <div class="detail-card-title">
                         <h4>Thông tin thanh toán</h4>
-                        <a href="#">Xem bảng giá</a>
+                        <a asp-page="/Admin/TicketManagement">Xem bảng giá</a>
                     </div>
 
                     <div class="info-row">
@@ -397,9 +413,12 @@
                         <strong>@Model.SelectedTicket.PaymentTotal.ToString("N0") đ</strong>
                     </div>
 
-                    <button class="pay-btn" type="button">
-                        Thanh toán
-                    </button>
+                    <form method="post" asp-page-handler="CheckOut">
+                        <input type="hidden" name="ticketId" value="@Model.SelectedTicket.TicketCode" />
+                        <input type="hidden" name="fee" value="@Model.SelectedTicket.PaymentTotal" />
+                        <input type="hidden" name="selectedId" value="@Model.SelectedTicket.Id" />
+                        <button class="pay-btn" type="submit">Thanh toán</button>
+                    </form>
                 </div>
 
             </aside>

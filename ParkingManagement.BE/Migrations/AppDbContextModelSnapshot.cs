@@ -57,7 +57,7 @@ namespace BackendAPI.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
 
                     b.HasData(
                         new
@@ -434,7 +434,7 @@ namespace BackendAPI.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
 
                     b.HasData(
                         new
@@ -756,7 +756,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
 
                     b.HasData(
                         new
@@ -836,7 +836,7 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("InviteToken");
 
-                    b.ToTable("EmployeeInvites", (string)null);
+                    b.ToTable("EmployeeInvites");
 
                     b.HasData(
                         new
@@ -897,7 +897,7 @@ namespace BackendAPI.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Managers", (string)null);
+                    b.ToTable("Managers");
 
                     b.HasData(
                         new
@@ -960,7 +960,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("VehiclePlate");
 
-                    b.ToTable("MonthlyTickets", null, t =>
+                    b.ToTable("MonthlyTickets", t =>
                         {
                             t.HasCheckConstraint("CK_MonthlyTicket_Status", "Status IN (N'Hoạt động', N'Hết hạn', N'Đã hủy')");
                         });
@@ -969,11 +969,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK001",
-                            CreatedAt = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS002",
-                            EndDate = new DateTime(2026, 5, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hết hạn",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-816.83",
@@ -995,11 +995,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK003",
-                            CreatedAt = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS003",
-                            EndDate = new DateTime(2026, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "3 tháng",
-                            StartDate = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hoạt động",
                             TotalFee = 300000m,
                             VehiclePlate = "43B-554.30",
@@ -1008,12 +1008,12 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK004",
-                            CreatedAt = new DateTime(2026, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS004",
-                            EndDate = new DateTime(2026, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Hoạt động",
+                            StartDate = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Hết hạn",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-294.11",
                             VehicleType = "Xe máy"
@@ -1021,11 +1021,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK005",
-                            CreatedAt = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS005",
-                            EndDate = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hết hạn",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-766.27",
@@ -1047,12 +1047,12 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK007",
-                            CreatedAt = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS006",
-                            EndDate = new DateTime(2026, 5, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Hoạt động",
+                            StartDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Hết hạn",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-193.57",
                             VehicleType = "Xe máy"
@@ -1060,12 +1060,12 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK008",
-                            CreatedAt = new DateTime(2026, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS006",
-                            EndDate = new DateTime(2026, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Hết hạn",
+                            StartDate = new DateTime(2026, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Hoạt động",
                             TotalFee = 300000m,
                             VehiclePlate = "43B-422.72",
                             VehicleType = "Ô tô nhỏ"
@@ -1073,11 +1073,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK009",
-                            CreatedAt = new DateTime(2026, 4, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS007",
-                            EndDate = new DateTime(2026, 7, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "3 tháng",
-                            StartDate = new DateTime(2026, 4, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hoạt động",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-657.75",
@@ -1086,11 +1086,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK010",
-                            CreatedAt = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS008",
-                            EndDate = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hết hạn",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-456.31",
@@ -1099,11 +1099,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK011",
-                            CreatedAt = new DateTime(2026, 4, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS009",
-                            EndDate = new DateTime(2026, 5, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hoạt động",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-289.56",
@@ -1112,11 +1112,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK012",
-                            CreatedAt = new DateTime(2026, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS009",
-                            EndDate = new DateTime(2026, 7, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "3 tháng",
-                            StartDate = new DateTime(2026, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hoạt động",
                             TotalFee = 300000m,
                             VehiclePlate = "43B-536.32",
@@ -1125,12 +1125,12 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK013",
-                            CreatedAt = new DateTime(2026, 4, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS010",
-                            EndDate = new DateTime(2026, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Hoạt động",
+                            StartDate = new DateTime(2026, 4, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Hết hạn",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-102.53",
                             VehicleType = "Xe máy"
@@ -1138,11 +1138,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK014",
-                            CreatedAt = new DateTime(2026, 4, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS010",
-                            EndDate = new DateTime(2026, 5, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "1 tháng",
-                            StartDate = new DateTime(2026, 4, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hoạt động",
                             TotalFee = 500000m,
                             VehiclePlate = "43C-502.53",
@@ -1151,11 +1151,11 @@ namespace BackendAPI.Migrations
                         new
                         {
                             MonthlyTicketId = "MTK015",
-                            CreatedAt = new DateTime(2026, 4, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = "CUS011",
-                            EndDate = new DateTime(2026, 7, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2026, 7, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PackageType = "3 tháng",
-                            StartDate = new DateTime(2026, 4, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2026, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Hoạt động",
                             TotalFee = 150000m,
                             VehiclePlate = "43A-505.34",
@@ -1195,7 +1195,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("Email");
 
-                    b.ToTable("Otps", (string)null);
+                    b.ToTable("Otps");
 
                     b.HasData(
                         new
@@ -1235,7 +1235,7 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("SlotId");
 
-                    b.ToTable("ParkingSlots", null, t =>
+                    b.ToTable("ParkingSlots", t =>
                         {
                             t.HasCheckConstraint("CK_ParkingSlot_Status", "Status IN (N'Trống', N'Đang sử dụng', N'Đã đặt', N'Bảo trì')");
                         });
@@ -1268,9 +1268,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "A04",
-                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu A - Ô 04",
-                            Status = "Đang sử dụng",
+                            Status = "Trống",
                             VehicleType = "Xe máy"
                         },
                         new
@@ -1292,9 +1292,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "A07",
-                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu A - Ô 07",
-                            Status = "Đang sử dụng",
+                            Status = "Trống",
                             VehicleType = "Xe máy"
                         },
                         new
@@ -1308,9 +1308,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "A09",
-                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu A - Ô 09",
-                            Status = "Đang sử dụng",
+                            Status = "Trống",
                             VehicleType = "Xe máy"
                         },
                         new
@@ -1340,9 +1340,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "A13",
-                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu A - Ô 13",
-                            Status = "Đang sử dụng",
+                            Status = "Trống",
                             VehicleType = "Xe máy"
                         },
                         new
@@ -1356,9 +1356,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "A15",
-                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu A - Ô 15",
-                            Status = "Đang sử dụng",
+                            Status = "Trống",
                             VehicleType = "Xe máy"
                         },
                         new
@@ -1668,9 +1668,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "B04",
-                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu B - Ô 04",
-                            Status = "Trống",
+                            Status = "Đang sử dụng",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
@@ -1708,9 +1708,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "B09",
-                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu B - Ô 09",
-                            Status = "Trống",
+                            Status = "Đang sử dụng",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
@@ -1740,9 +1740,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "B13",
-                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu B - Ô 13",
-                            Status = "Trống",
+                            Status = "Đang sử dụng",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
@@ -2092,9 +2092,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "C07",
-                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu C - Ô 07",
-                            Status = "Trống",
+                            Status = "Đang sử dụng",
                             VehicleType = "Ô tô lớn"
                         },
                         new
@@ -2156,9 +2156,9 @@ namespace BackendAPI.Migrations
                         new
                         {
                             SlotId = "C15",
-                            LastUpdated = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdated = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu C - Ô 15",
-                            Status = "Trống",
+                            Status = "Đang sử dụng",
                             VehicleType = "Ô tô lớn"
                         },
                         new
@@ -2246,46 +2246,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("SlotId");
 
-<<<<<<< HEAD
                     b.ToTable("ParkingSlotAuditLogs");
-=======
-                    b.ToTable("ParkingSlotAuditLogs", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            LogId = "LOG001",
-                            ChangedAt = new DateTime(2026, 5, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmployeeId = "EMP001",
-                            NewStatus = "Đã đặt",
-                            Note = "Khách đặt chỗ trước",
-                            OldStatus = "Trống",
-                            Reason = "Reservation RES001",
-                            SlotId = "A04"
-                        },
-                        new
-                        {
-                            LogId = "LOG002",
-                            ChangedAt = new DateTime(2026, 5, 7, 16, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmployeeId = "EMP002",
-                            NewStatus = "Bảo trì",
-                            Note = "Khóa ô để sửa cảm biến",
-                            OldStatus = "Trống",
-                            Reason = "Maintenance",
-                            SlotId = "A06"
-                        },
-                        new
-                        {
-                            LogId = "LOG003",
-                            ChangedAt = new DateTime(2026, 5, 8, 9, 5, 0, 0, DateTimeKind.Unspecified),
-                            EmployeeId = "EMP001",
-                            NewStatus = "Đang sử dụng",
-                            Note = "Check-in TKT002",
-                            OldStatus = "Trống",
-                            Reason = "Check-in",
-                            SlotId = "B01"
-                        });
->>>>>>> 25a9b2d22c250a87d9a0c73ea8e32e8a721c755d
                 });
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.Payment", b =>
@@ -2328,7 +2289,7 @@ namespace BackendAPI.Migrations
                         .IsUnique()
                         .HasFilter("[TicketId] IS NOT NULL");
 
-                    b.ToTable("Payments", null, t =>
+                    b.ToTable("Payments", t =>
                         {
                             t.HasCheckConstraint("CK_Payment_TicketOrMonthly", "(TicketId IS NOT NULL AND MonthlyTicketId IS NULL) OR (TicketId IS NULL AND MonthlyTicketId IS NOT NULL)");
                         });
@@ -2338,8 +2299,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0001",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 16, 36, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 1, 14, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0001"
                         },
@@ -2348,7 +2309,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0002",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 18, 11, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 1, 21, 38, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0002"
                         },
@@ -2357,7 +2318,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0003",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 1, 17, 29, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 1, 19, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0003"
                         },
@@ -2365,17 +2326,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0004",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 11, 46, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 1, 14, 45, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0004"
                         },
                         new
                         {
                             PaymentId = "PAY0005",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 22, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 1, 20, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0005"
                         },
@@ -2383,17 +2344,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0006",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 1, 11, 2, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 1, 19, 9, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0006"
                         },
                         new
                         {
                             PaymentId = "PAY0007",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 1, 13, 33, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 2, 1, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0007"
                         },
@@ -2402,34 +2363,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0008",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 2, 3, 57, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 1, 19, 49, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0008"
                         },
                         new
                         {
                             PaymentId = "PAY0009",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 15, 41, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 2, 22, 31, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0009"
                         },
                         new
                         {
                             PaymentId = "PAY0010",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 19, 46, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 2, 17, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0010"
                         },
                         new
                         {
                             PaymentId = "PAY0011",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 1, 9, 19, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 2, 18, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0011"
                         },
@@ -2437,17 +2398,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0012",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 1, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 3, 3, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0012"
                         },
                         new
                         {
                             PaymentId = "PAY0013",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 1, 15, 53, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 3, 1, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0013"
                         },
@@ -2456,16 +2417,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0014",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 3, 20, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 10, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0014"
                         },
                         new
                         {
                             PaymentId = "PAY0015",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 2, 11, 12, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 3, 9, 49, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0015"
                         },
@@ -2473,26 +2434,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0016",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 2, 19, 10, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 4, 1, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0016"
                         },
                         new
                         {
                             PaymentId = "PAY0017",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 2, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 12, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0017"
                         },
                         new
                         {
                             PaymentId = "PAY0018",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 2, 19, 26, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 14, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0018"
                         },
@@ -2500,8 +2461,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0019",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 2, 14, 45, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 3, 23, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0019"
                         },
@@ -2509,8 +2470,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0020",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 2, 19, 32, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 3, 22, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0020"
                         },
@@ -2518,44 +2479,44 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0021",
                             Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 3, 1, 58, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 3, 12, 39, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0021"
                         },
                         new
                         {
                             PaymentId = "PAY0022",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 3, 3, 29, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 3, 12, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0022"
                         },
                         new
                         {
                             PaymentId = "PAY0023",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 2, 16, 57, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 16, 50, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0023"
                         },
                         new
                         {
                             PaymentId = "PAY0024",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 3, 18, 21, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 19, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0024"
                         },
                         new
                         {
                             PaymentId = "PAY0025",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 20, 50, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 3, 17, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0025"
                         },
@@ -2564,7 +2525,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0026",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 4, 4, 28, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 23, 49, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0026"
                         },
@@ -2573,16 +2534,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0027",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 17, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 3, 11, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0027"
                         },
                         new
                         {
                             PaymentId = "PAY0028",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 4, 1, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 4, 11, 45, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0028"
                         },
@@ -2591,34 +2552,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0029",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 21, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 4, 14, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0029"
                         },
                         new
                         {
                             PaymentId = "PAY0030",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 3, 19, 19, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 4, 12, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0030"
                         },
                         new
                         {
                             PaymentId = "PAY0031",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 17, 57, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 5, 3, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0031"
                         },
                         new
                         {
                             PaymentId = "PAY0032",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 19, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 4, 17, 55, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0032"
                         },
@@ -2626,8 +2587,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0033",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 16, 50, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 4, 21, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0033"
                         },
@@ -2635,17 +2596,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0034",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 22, 36, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 6, 3, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0034"
                         },
                         new
                         {
                             PaymentId = "PAY0035",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 18, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 5, 21, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0035"
                         },
@@ -2654,7 +2615,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0036",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 11, 16, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 5, 13, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0036"
                         },
@@ -2663,7 +2624,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0037",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 3, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 5, 15, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0037"
                         },
@@ -2672,25 +2633,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0038",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 3, 19, 38, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 5, 17, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0038"
                         },
                         new
                         {
                             PaymentId = "PAY0039",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 5, 3, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 5, 10, 48, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0039"
                         },
                         new
                         {
                             PaymentId = "PAY0040",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 4, 20, 48, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 6, 2, 51, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0040"
                         },
@@ -2699,7 +2660,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0041",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 4, 18, 27, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 20, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0041"
                         },
@@ -2707,8 +2668,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0042",
                             Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 4, 19, 20, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 7, 1, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0042"
                         },
@@ -2717,16 +2678,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0043",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 5, 1, 20, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 15, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0043"
                         },
                         new
                         {
                             PaymentId = "PAY0044",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 4, 22, 56, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 6, 16, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0044"
                         },
@@ -2735,25 +2696,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0045",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 4, 15, 25, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 21, 31, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0045"
                         },
                         new
                         {
                             PaymentId = "PAY0046",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 5, 5, 33, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 18, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0046"
                         },
                         new
                         {
                             PaymentId = "PAY0047",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 6, 1, 23, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 6, 17, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0047"
                         },
@@ -2761,8 +2722,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0048",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 6, 0, 17, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 6, 19, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0048"
                         },
@@ -2770,17 +2731,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0049",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 5, 13, 13, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 6, 14, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0049"
                         },
                         new
                         {
                             PaymentId = "PAY0050",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 5, 18, 46, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 15, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0050"
                         },
@@ -2789,25 +2750,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0051",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 4, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 15, 1, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0051"
                         },
                         new
                         {
                             PaymentId = "PAY0052",
-                            Amount = 15000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 18, 37, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 19, 15, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0052"
                         },
                         new
                         {
                             PaymentId = "PAY0053",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 19, 57, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 20, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0053"
                         },
@@ -2816,7 +2777,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0054",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 18, 31, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 6, 21, 41, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0054"
                         },
@@ -2824,8 +2785,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0055",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 19, 52, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 6, 13, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0055"
                         },
@@ -2834,7 +2795,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0056",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 21, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 8, 1, 55, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0056"
                         },
@@ -2843,34 +2804,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0057",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 6, 16, 46, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 7, 18, 48, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0057"
                         },
                         new
                         {
                             PaymentId = "PAY0058",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 21, 52, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 7, 12, 24, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0058"
                         },
                         new
                         {
                             PaymentId = "PAY0059",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 23, 18, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 7, 16, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0059"
                         },
                         new
                         {
                             PaymentId = "PAY0060",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 7, 14, 26, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 7, 11, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0060"
                         },
@@ -2878,17 +2839,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0061",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 7, 15, 38, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 7, 14, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0061"
                         },
                         new
                         {
                             PaymentId = "PAY0062",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 11, 44, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 7, 13, 22, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0062"
                         },
@@ -2896,26 +2857,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0063",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 9, 41, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 7, 18, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0063"
                         },
                         new
                         {
                             PaymentId = "PAY0064",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 8, 3, 35, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 7, 19, 47, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0064"
                         },
                         new
                         {
                             PaymentId = "PAY0065",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 17, 56, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 8, 13, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0065"
                         },
@@ -2923,8 +2884,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0066",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 8, 23, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 8, 21, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0066"
                         },
@@ -2933,7 +2894,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0067",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 8, 0, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 9, 1, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0067"
                         },
@@ -2941,17 +2902,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0068",
                             Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 7, 15, 35, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 8, 17, 58, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0068"
                         },
                         new
                         {
                             PaymentId = "PAY0069",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 16, 35, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 8, 13, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0069"
                         },
@@ -2960,7 +2921,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0070",
                             Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 21, 25, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 8, 15, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0070"
                         },
@@ -2968,8 +2929,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0071",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 7, 14, 20, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 8, 17, 20, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0071"
                         },
@@ -2977,8 +2938,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0072",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 8, 23, 49, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 9, 2, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0072"
                         },
@@ -2987,52 +2948,52 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0073",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 8, 13, 51, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 8, 21, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0073"
                         },
                         new
                         {
                             PaymentId = "PAY0074",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 8, 13, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 9, 21, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0074"
                         },
                         new
                         {
                             PaymentId = "PAY0075",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 8, 13, 26, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 9, 22, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0075"
                         },
                         new
                         {
                             PaymentId = "PAY0076",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 8, 13, 14, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 9, 16, 53, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0076"
                         },
                         new
                         {
                             PaymentId = "PAY0077",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 8, 13, 34, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 9, 22, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0077"
                         },
                         new
                         {
                             PaymentId = "PAY0078",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 2, 37, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 9, 13, 50, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0078"
                         },
@@ -3041,7 +3002,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0079",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 0, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 9, 17, 20, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0079"
                         },
@@ -3049,8 +3010,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0080",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 10, 0, 41, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 9, 15, 24, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0080"
                         },
@@ -3058,8 +3019,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0081",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 9, 15, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0081"
                         },
@@ -3068,7 +3029,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0082",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 9, 9, 33, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 9, 17, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0082"
                         },
@@ -3076,8 +3037,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0083",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 9, 18, 17, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 10, 2, 39, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0083"
                         },
@@ -3085,44 +3046,44 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0084",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 19, 44, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 10, 1, 41, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0084"
                         },
                         new
                         {
                             PaymentId = "PAY0085",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 9, 19, 11, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 10, 3, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0085"
                         },
                         new
                         {
                             PaymentId = "PAY0086",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 20, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 2, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0086"
                         },
                         new
                         {
                             PaymentId = "PAY0087",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 13, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 9, 14, 51, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0087"
                         },
                         new
                         {
                             PaymentId = "PAY0088",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 9, 12, 31, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 19, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0088"
                         },
@@ -3131,16 +3092,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0089",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 13, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 10, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0089"
                         },
                         new
                         {
                             PaymentId = "PAY0090",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 9, 22, 16, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 18, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0090"
                         },
@@ -3149,25 +3110,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0091",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 15, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 10, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0091"
                         },
                         new
                         {
                             PaymentId = "PAY0092",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 21, 27, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 19, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0092"
                         },
                         new
                         {
                             PaymentId = "PAY0093",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 9, 16, 48, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 16, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0093"
                         },
@@ -3176,25 +3137,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0094",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 2, 52, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 20, 15, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0094"
                         },
                         new
                         {
                             PaymentId = "PAY0095",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 10, 16, 47, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 10, 17, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0095"
                         },
                         new
                         {
                             PaymentId = "PAY0096",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 10, 12, 34, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 12, 2, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0096"
                         },
@@ -3203,7 +3164,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0097",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 10, 20, 53, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 11, 16, 56, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0097"
                         },
@@ -3211,17 +3172,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0098",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 10, 8, 36, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 11, 13, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0098"
                         },
                         new
                         {
                             PaymentId = "PAY0099",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 18, 41, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 12, 2, 31, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0099"
                         },
@@ -3230,16 +3191,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0100",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 16, 39, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 11, 7, 18, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0100"
                         },
                         new
                         {
                             PaymentId = "PAY0101",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 16, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 12, 4, 34, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0101"
                         },
@@ -3248,7 +3209,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0102",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 12, 2, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 11, 23, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0102"
                         },
@@ -3256,44 +3217,44 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0103",
                             Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 12, 1, 48, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 11, 23, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0103"
                         },
                         new
                         {
                             PaymentId = "PAY0104",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 14, 12, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 11, 14, 39, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0104"
                         },
                         new
                         {
                             PaymentId = "PAY0105",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 20, 25, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 12, 1, 38, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0105"
                         },
                         new
                         {
                             PaymentId = "PAY0106",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 11, 10, 34, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 11, 22, 45, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0106"
                         },
                         new
                         {
                             PaymentId = "PAY0107",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 18, 49, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 11, 23, 34, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0107"
                         },
@@ -3301,26 +3262,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0108",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 11, 14, 33, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 12, 15, 50, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0108"
                         },
                         new
                         {
                             PaymentId = "PAY0109",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 18, 9, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 1, 39, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0109"
                         },
                         new
                         {
                             PaymentId = "PAY0110",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 11, 18, 42, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 12, 8, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0110"
                         },
@@ -3328,17 +3289,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0111",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 11, 18, 14, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 12, 15, 49, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0111"
                         },
                         new
                         {
                             PaymentId = "PAY0112",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 11, 21, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 12, 20, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0112"
                         },
@@ -3347,7 +3308,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0113",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 12, 19, 25, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 12, 15, 9, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0113"
                         },
@@ -3355,44 +3316,44 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0114",
                             Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 12, 23, 1, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 12, 21, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0114"
                         },
                         new
                         {
                             PaymentId = "PAY0115",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 12, 16, 23, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 16, 18, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0115"
                         },
                         new
                         {
                             PaymentId = "PAY0116",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 12, 18, 3, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 13, 15, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0116"
                         },
                         new
                         {
                             PaymentId = "PAY0117",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 12, 22, 38, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 14, 1, 48, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0117"
                         },
                         new
                         {
                             PaymentId = "PAY0118",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 14, 0, 30, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 14, 5, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0118"
                         },
@@ -3400,8 +3361,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0119",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 14, 57, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 14, 1, 59, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0119"
                         },
@@ -3410,7 +3371,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0120",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 13, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 22, 58, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0120"
                         },
@@ -3419,52 +3380,52 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0121",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 19, 48, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 9, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0121"
                         },
                         new
                         {
                             PaymentId = "PAY0122",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 19, 57, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 13, 16, 51, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0122"
                         },
                         new
                         {
                             PaymentId = "PAY0123",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 13, 23, 5, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 19, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0123"
                         },
                         new
                         {
                             PaymentId = "PAY0124",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 21, 20, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 14, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0124"
                         },
                         new
                         {
                             PaymentId = "PAY0125",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 17, 27, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 15, 53, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0125"
                         },
                         new
                         {
                             PaymentId = "PAY0126",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 18, 29, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 13, 21, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0126"
                         },
@@ -3473,16 +3434,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0127",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 13, 13, 5, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 7, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0127"
                         },
                         new
                         {
                             PaymentId = "PAY0128",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 17, 8, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 13, 18, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0128"
                         },
@@ -3491,16 +3452,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0129",
                             Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 21, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0129"
                         },
                         new
                         {
                             PaymentId = "PAY0130",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 13, 17, 26, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 22, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0130"
                         },
@@ -3509,7 +3470,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0131",
                             Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 14, 19, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 20, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0131"
                         },
@@ -3518,7 +3479,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0132",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 14, 10, 36, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 16, 20, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0132"
                         },
@@ -3527,43 +3488,43 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0133",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 15, 0, 10, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 15, 41, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0133"
                         },
                         new
                         {
                             PaymentId = "PAY0134",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 14, 19, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 14, 14, 25, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0134"
                         },
                         new
                         {
                             PaymentId = "PAY0135",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 15, 1, 40, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 15, 4, 47, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0135"
                         },
                         new
                         {
                             PaymentId = "PAY0136",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 14, 10, 29, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 16, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0136"
                         },
                         new
                         {
                             PaymentId = "PAY0137",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 14, 12, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 19, 59, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0137"
                         },
@@ -3581,16 +3542,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0139",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 14, 21, 3, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 14, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0139"
                         },
                         new
                         {
                             PaymentId = "PAY0140",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 15, 3, 28, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 15, 1, 13, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0140"
                         },
@@ -3598,8 +3559,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0141",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 14, 17, 37, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 15, 0, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0141"
                         },
@@ -3608,16 +3569,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0142",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 14, 19, 11, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 12, 24, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0142"
                         },
                         new
                         {
                             PaymentId = "PAY0143",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 14, 21, 10, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 14, 19, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0143"
                         },
@@ -3625,8 +3586,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0144",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 15, 9, 49, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 15, 20, 49, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0144"
                         },
@@ -3635,7 +3596,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0145",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 16, 2, 16, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 15, 22, 38, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0145"
                         },
@@ -3644,34 +3605,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0146",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 15, 21, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 15, 14, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0146"
                         },
                         new
                         {
                             PaymentId = "PAY0147",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 15, 21, 14, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 15, 17, 27, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0147"
                         },
                         new
                         {
                             PaymentId = "PAY0148",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 15, 16, 6, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 15, 17, 15, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0148"
                         },
                         new
                         {
                             PaymentId = "PAY0149",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 15, 21, 33, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 15, 14, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0149"
                         },
@@ -3680,34 +3641,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0150",
                             Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 15, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 15, 15, 39, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0150"
                         },
                         new
                         {
                             PaymentId = "PAY0151",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 15, 12, 24, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 15, 14, 53, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0151"
                         },
                         new
                         {
                             PaymentId = "PAY0152",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 16, 21, 46, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 15, 21, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0152"
                         },
                         new
                         {
                             PaymentId = "PAY0153",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 16, 21, 38, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 15, 10, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0153"
                         },
@@ -3716,7 +3677,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0154",
                             Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 16, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 15, 17, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0154"
                         },
@@ -3725,7 +3686,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0155",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 16, 13, 42, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 3, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0155"
                         },
@@ -3733,26 +3694,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0156",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 16, 14, 11, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 15, 10, 56, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0156"
                         },
                         new
                         {
                             PaymentId = "PAY0157",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 16, 16, 20, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 16, 14, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0157"
                         },
                         new
                         {
                             PaymentId = "PAY0158",
-                            Amount = 15000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 17, 15, 34, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 20, 34, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0158"
                         },
@@ -3761,25 +3722,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0159",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 17, 13, 35, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 16, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0159"
                         },
                         new
                         {
                             PaymentId = "PAY0160",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 17, 14, 31, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 2, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0160"
                         },
                         new
                         {
                             PaymentId = "PAY0161",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 17, 17, 22, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 13, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0161"
                         },
@@ -3788,7 +3749,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0162",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 17, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 21, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0162"
                         },
@@ -3797,7 +3758,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0163",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 17, 22, 39, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 21, 38, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0163"
                         },
@@ -3805,62 +3766,62 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0164",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 17, 15, 39, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 16, 16, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0164"
                         },
                         new
                         {
                             PaymentId = "PAY0165",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 18, 21, 10, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 3, 47, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0165"
                         },
                         new
                         {
                             PaymentId = "PAY0166",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 11, 56, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 15, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0166"
                         },
                         new
                         {
                             PaymentId = "PAY0167",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 18, 9, 56, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 19, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0167"
                         },
                         new
                         {
                             PaymentId = "PAY0168",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 21, 47, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 16, 13, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0168"
                         },
                         new
                         {
                             PaymentId = "PAY0169",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 12, 21, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 16, 13, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0169"
                         },
                         new
                         {
                             PaymentId = "PAY0170",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 16, 48, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 0, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0170"
                         },
@@ -3869,25 +3830,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0171",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 16, 17, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 13, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0171"
                         },
                         new
                         {
                             PaymentId = "PAY0172",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 19, 1, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 11, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0172"
                         },
                         new
                         {
                             PaymentId = "PAY0173",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 17, 57, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 17, 17, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0173"
                         },
@@ -3896,7 +3857,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0174",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 20, 19, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 11, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0174"
                         },
@@ -3904,17 +3865,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0175",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 18, 18, 26, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 20, 48, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0175"
                         },
                         new
                         {
                             PaymentId = "PAY0176",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 19, 0, 17, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 18, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0176"
                         },
@@ -3922,8 +3883,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0177",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 18, 15, 24, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 21, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0177"
                         },
@@ -3932,7 +3893,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0178",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 18, 11, 52, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 17, 22, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0178"
                         },
@@ -3941,52 +3902,52 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0179",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 18, 15, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 18, 2, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0179"
                         },
                         new
                         {
                             PaymentId = "PAY0180",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 19, 16, 10, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 18, 1, 25, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0180"
                         },
                         new
                         {
                             PaymentId = "PAY0181",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 10, 20, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 10, 27, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0181"
                         },
                         new
                         {
                             PaymentId = "PAY0182",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 11, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 12, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0182"
                         },
                         new
                         {
                             PaymentId = "PAY0183",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 12, 6, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 18, 0, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0183"
                         },
                         new
                         {
                             PaymentId = "PAY0184",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 12, 6, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 15, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0184"
                         },
@@ -3994,8 +3955,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0185",
                             Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 17, 17, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0185"
                         },
@@ -4003,26 +3964,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0186",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 20, 2, 14, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 18, 23, 11, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0186"
                         },
                         new
                         {
                             PaymentId = "PAY0187",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 17, 22, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 18, 20, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0187"
                         },
                         new
                         {
                             PaymentId = "PAY0188",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 0, 19, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 18, 21, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0188"
                         },
@@ -4030,26 +3991,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0189",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 19, 20, 8, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 18, 13, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0189"
                         },
                         new
                         {
                             PaymentId = "PAY0190",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 2, 7, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 18, 12, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0190"
                         },
                         new
                         {
                             PaymentId = "PAY0191",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 20, 19, 46, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 18, 19, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0191"
                         },
@@ -4058,25 +4019,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0192",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 16, 39, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 18, 14, 7, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0192"
                         },
                         new
                         {
                             PaymentId = "PAY0193",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 20, 14, 53, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 18, 22, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0193"
                         },
                         new
                         {
                             PaymentId = "PAY0194",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 2, 32, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 19, 21, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0194"
                         },
@@ -4084,17 +4045,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0195",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 21, 1, 33, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 20, 1, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0195"
                         },
                         new
                         {
                             PaymentId = "PAY0196",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 17, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 19, 13, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0196"
                         },
@@ -4103,7 +4064,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0197",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 0, 39, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 19, 21, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0197"
                         },
@@ -4111,17 +4072,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0198",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 15, 59, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 19, 20, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0198"
                         },
                         new
                         {
                             PaymentId = "PAY0199",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 21, 3, 17, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 19, 15, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0199"
                         },
@@ -4130,7 +4091,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0200",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 19, 13, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0200"
                         },
@@ -4139,16 +4100,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0201",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 17, 22, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 0, 11, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0201"
                         },
                         new
                         {
                             PaymentId = "PAY0202",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 8, 23, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 20, 13, 1, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0202"
                         },
@@ -4156,8 +4117,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0203",
                             Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 20, 17, 33, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 20, 11, 56, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0203"
                         },
@@ -4166,7 +4127,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0204",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 20, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 20, 8, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0204"
                         },
@@ -4175,25 +4136,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0205",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 15, 12, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 20, 13, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0205"
                         },
                         new
                         {
                             PaymentId = "PAY0206",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 22, 1, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 14, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0206"
                         },
                         new
                         {
                             PaymentId = "PAY0207",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 13, 56, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 12, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0207"
                         },
@@ -4202,61 +4163,61 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0208",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 22, 1, 47, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 17, 27, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0208"
                         },
                         new
                         {
                             PaymentId = "PAY0209",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 13, 23, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 21, 22, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0209"
                         },
                         new
                         {
                             PaymentId = "PAY0210",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 21, 14, 52, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 19, 31, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0210"
                         },
                         new
                         {
                             PaymentId = "PAY0211",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 22, 1, 56, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 14, 34, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0211"
                         },
                         new
                         {
                             PaymentId = "PAY0212",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 22, 1, 22, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 21, 18, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0212"
                         },
                         new
                         {
                             PaymentId = "PAY0213",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 21, 12, 23, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 21, 17, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0213"
                         },
                         new
                         {
                             PaymentId = "PAY0214",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 22, 19, 23, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 21, 20, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0214"
                         },
@@ -4264,26 +4225,26 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0215",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 3, 15, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 21, 18, 18, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0215"
                         },
                         new
                         {
                             PaymentId = "PAY0216",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 22, 12, 29, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 15, 47, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0216"
                         },
                         new
                         {
                             PaymentId = "PAY0217",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 22, 10, 23, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 21, 14, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0217"
                         },
@@ -4291,8 +4252,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0218",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 22, 21, 33, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 22, 23, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0218"
                         },
@@ -4301,34 +4262,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0219",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 22, 18, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 22, 13, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0219"
                         },
                         new
                         {
                             PaymentId = "PAY0220",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 19, 3, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 22, 12, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0220"
                         },
                         new
                         {
                             PaymentId = "PAY0221",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 23, 22, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 23, 1, 11, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0221"
                         },
                         new
                         {
                             PaymentId = "PAY0222",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 10, 32, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 22, 16, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0222"
                         },
@@ -4336,17 +4297,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0223",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 20, 47, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 22, 13, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0223"
                         },
                         new
                         {
                             PaymentId = "PAY0224",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 0, 11, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 22, 15, 20, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0224"
                         },
@@ -4355,16 +4316,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0225",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 19, 11, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 22, 18, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0225"
                         },
                         new
                         {
                             PaymentId = "PAY0226",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 23, 22, 19, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 23, 17, 13, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0226"
                         },
@@ -4372,17 +4333,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0227",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 23, 17, 57, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 23, 20, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0227"
                         },
                         new
                         {
                             PaymentId = "PAY0228",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 23, 17, 48, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 23, 8, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0228"
                         },
@@ -4391,7 +4352,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0229",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 3, 5, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 23, 14, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0229"
                         },
@@ -4400,16 +4361,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0230",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 23, 15, 33, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 24, 2, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0230"
                         },
                         new
                         {
                             PaymentId = "PAY0231",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 24, 2, 29, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 23, 8, 20, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0231"
                         },
@@ -4417,17 +4378,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0232",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 24, 20, 41, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 23, 15, 18, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0232"
                         },
                         new
                         {
                             PaymentId = "PAY0233",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 22, 6, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 23, 18, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0233"
                         },
@@ -4435,8 +4396,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0234",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 10, 26, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 23, 20, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0234"
                         },
@@ -4445,7 +4406,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0235",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 11, 24, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 23, 17, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0235"
                         },
@@ -4454,16 +4415,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0236",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 18, 42, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 23, 17, 45, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0236"
                         },
                         new
                         {
                             PaymentId = "PAY0237",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 24, 18, 56, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 23, 19, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0237"
                         },
@@ -4471,53 +4432,53 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0238",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 24, 22, 33, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 23, 14, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0238"
                         },
                         new
                         {
                             PaymentId = "PAY0239",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 18, 56, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 25, 0, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0239"
                         },
                         new
                         {
                             PaymentId = "PAY0240",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 25, 14, 7, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 24, 19, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0240"
                         },
                         new
                         {
                             PaymentId = "PAY0241",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 14, 38, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 24, 13, 48, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0241"
                         },
                         new
                         {
                             PaymentId = "PAY0242",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 15, 14, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 24, 16, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0242"
                         },
                         new
                         {
                             PaymentId = "PAY0243",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 19, 38, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 24, 21, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0243"
                         },
@@ -4526,43 +4487,43 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0244",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 25, 18, 53, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 24, 15, 56, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0244"
                         },
                         new
                         {
                             PaymentId = "PAY0245",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 23, 28, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 26, 3, 9, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0245"
                         },
                         new
                         {
                             PaymentId = "PAY0246",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 17, 33, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 1, 37, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0246"
                         },
                         new
                         {
                             PaymentId = "PAY0247",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 17, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0247"
                         },
                         new
                         {
                             PaymentId = "PAY0248",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 10, 35, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 26, 2, 22, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0248"
                         },
@@ -4570,8 +4531,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0249",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 21, 44, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 25, 16, 18, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0249"
                         },
@@ -4580,70 +4541,70 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0250",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 23, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 12, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0250"
                         },
                         new
                         {
                             PaymentId = "PAY0251",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 18, 53, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 22, 51, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0251"
                         },
                         new
                         {
                             PaymentId = "PAY0252",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 15, 52, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 11, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0252"
                         },
                         new
                         {
                             PaymentId = "PAY0253",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 25, 19, 16, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 25, 17, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0253"
                         },
                         new
                         {
                             PaymentId = "PAY0254",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 20, 48, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 9, 51, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0254"
                         },
                         new
                         {
                             PaymentId = "PAY0255",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 26, 13, 6, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 16, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0255"
                         },
                         new
                         {
                             PaymentId = "PAY0256",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 16, 55, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 23, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0256"
                         },
                         new
                         {
                             PaymentId = "PAY0257",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 15, 21, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 25, 14, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0257"
                         },
@@ -4652,7 +4613,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0258",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 14, 18, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 22, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0258"
                         },
@@ -4661,7 +4622,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0259",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 18, 59, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 16, 34, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0259"
                         },
@@ -4669,8 +4630,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0260",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 26, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 26, 17, 9, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0260"
                         },
@@ -4679,34 +4640,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0261",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 17, 42, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 13, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0261"
                         },
                         new
                         {
                             PaymentId = "PAY0262",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 26, 23, 44, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 21, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0262"
                         },
                         new
                         {
                             PaymentId = "PAY0263",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 26, 23, 15, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 26, 20, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0263"
                         },
                         new
                         {
                             PaymentId = "PAY0264",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 27, 17, 44, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 18, 51, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0264"
                         },
@@ -4714,17 +4675,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0265",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 27, 17, 24, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 27, 1, 22, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0265"
                         },
                         new
                         {
                             PaymentId = "PAY0266",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 27, 14, 56, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 26, 20, 24, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0266"
                         },
@@ -4732,17 +4693,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0267",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 27, 10, 19, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 26, 19, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0267"
                         },
                         new
                         {
                             PaymentId = "PAY0268",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 27, 16, 23, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 26, 21, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0268"
                         },
@@ -4750,17 +4711,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0269",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 27, 18, 51, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 28, 3, 15, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0269"
                         },
                         new
                         {
                             PaymentId = "PAY0270",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 27, 23, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 0, 41, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0270"
                         },
@@ -4769,7 +4730,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0271",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 23, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 27, 21, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0271"
                         },
@@ -4778,61 +4739,61 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0272",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 18, 9, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 27, 11, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0272"
                         },
                         new
                         {
                             PaymentId = "PAY0273",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 19, 59, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 27, 21, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0273"
                         },
                         new
                         {
                             PaymentId = "PAY0274",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 29, 0, 43, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 27, 21, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0274"
                         },
                         new
                         {
                             PaymentId = "PAY0275",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 27, 23, 11, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0275"
                         },
                         new
                         {
                             PaymentId = "PAY0276",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 14, 21, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 27, 14, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0276"
                         },
                         new
                         {
                             PaymentId = "PAY0277",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 14, 19, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 27, 20, 33, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0277"
                         },
                         new
                         {
                             PaymentId = "PAY0278",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 28, 21, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 27, 23, 58, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0278"
                         },
@@ -4841,25 +4802,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0279",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 13, 34, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 27, 10, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0279"
                         },
                         new
                         {
                             PaymentId = "PAY0280",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 28, 23, 10, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 28, 17, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0280"
                         },
                         new
                         {
                             PaymentId = "PAY0281",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 0, 36, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 12, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0281"
                         },
@@ -4868,43 +4829,43 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0282",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 0, 52, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 15, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0282"
                         },
                         new
                         {
                             PaymentId = "PAY0283",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 29, 19, 4, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 28, 13, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0283"
                         },
                         new
                         {
                             PaymentId = "PAY0284",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 29, 17, 47, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 21, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0284"
                         },
                         new
                         {
                             PaymentId = "PAY0285",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 30, 2, 51, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 21, 28, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0285"
                         },
                         new
                         {
                             PaymentId = "PAY0286",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 30, 1, 28, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 20, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0286"
                         },
@@ -4913,16 +4874,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0287",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 29, 21, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 28, 17, 45, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0287"
                         },
                         new
                         {
                             PaymentId = "PAY0288",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 29, 17, 13, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 28, 20, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0288"
                         },
@@ -4930,17 +4891,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0289",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 29, 17, 10, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 29, 11, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0289"
                         },
                         new
                         {
                             PaymentId = "PAY0290",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 20, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 29, 16, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0290"
                         },
@@ -4948,8 +4909,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0291",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 21, 10, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 4, 29, 23, 47, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0291"
                         },
@@ -4958,43 +4919,43 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0292",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 1, 9, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 30, 1, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0292"
                         },
                         new
                         {
                             PaymentId = "PAY0293",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 8, 12, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 29, 13, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0293"
                         },
                         new
                         {
                             PaymentId = "PAY0294",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 30, 20, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 29, 16, 38, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0294"
                         },
                         new
                         {
                             PaymentId = "PAY0295",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 20, 24, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 29, 10, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0295"
                         },
                         new
                         {
                             PaymentId = "PAY0296",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 13, 9, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 30, 10, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0296"
                         },
@@ -5002,7 +4963,7 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0297",
                             Amount = 15000m,
-                            Method = "Tiền mặt",
+                            Method = "Chuyển khoản",
                             PaymentTime = new DateTime(2026, 4, 30, 15, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0297"
@@ -5010,18 +4971,18 @@ namespace BackendAPI.Migrations
                         new
                         {
                             PaymentId = "PAY0298",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 4, 30, 19, 42, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 1, 4, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0298"
                         },
                         new
                         {
                             PaymentId = "PAY0299",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 30, 15, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0299"
                         },
@@ -5030,25 +4991,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0300",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 19, 27, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 30, 18, 24, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0300"
                         },
                         new
                         {
                             PaymentId = "PAY0301",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 12, 43, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 4, 25, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0301"
                         },
                         new
                         {
                             PaymentId = "PAY0302",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 4, 30, 20, 34, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 30, 17, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0302"
                         },
@@ -5056,8 +5017,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0303",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 12, 17, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 30, 20, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0303"
                         },
@@ -5065,17 +5026,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0304",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 14, 25, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 30, 16, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0304"
                         },
                         new
                         {
                             PaymentId = "PAY0305",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 23, 20, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 30, 12, 58, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0305"
                         },
@@ -5083,17 +5044,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0306",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 2, 2, 15, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 30, 15, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0306"
                         },
                         new
                         {
                             PaymentId = "PAY0307",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 18, 10, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 30, 20, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0307"
                         },
@@ -5102,115 +5063,115 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0308",
                             Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 1, 17, 16, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 4, 30, 20, 12, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0308"
                         },
                         new
                         {
                             PaymentId = "PAY0309",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 14, 5, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 4, 30, 17, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0309"
                         },
                         new
                         {
                             PaymentId = "PAY0310",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 2, 3, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 1, 1, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0310"
                         },
                         new
                         {
                             PaymentId = "PAY0311",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 1, 10, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 21, 53, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0311"
                         },
                         new
                         {
                             PaymentId = "PAY0312",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 21, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 21, 27, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0312"
                         },
                         new
                         {
                             PaymentId = "PAY0313",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 1, 17, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 13, 27, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0313"
                         },
                         new
                         {
                             PaymentId = "PAY0314",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 1, 17, 34, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 1, 10, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0314"
                         },
                         new
                         {
                             PaymentId = "PAY0315",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 1, 19, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 15, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0315"
                         },
                         new
                         {
                             PaymentId = "PAY0316",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 1, 22, 17, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 23, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0316"
                         },
                         new
                         {
                             PaymentId = "PAY0317",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 19, 25, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 2, 1, 38, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0317"
                         },
                         new
                         {
                             PaymentId = "PAY0318",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 2, 14, 45, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 1, 18, 53, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0318"
                         },
                         new
                         {
                             PaymentId = "PAY0319",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 2, 18, 27, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 1, 22, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0319"
                         },
                         new
                         {
                             PaymentId = "PAY0320",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 23, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0320"
                         },
@@ -5219,16 +5180,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0321",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 3, 4, 51, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 1, 9, 47, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0321"
                         },
                         new
                         {
                             PaymentId = "PAY0322",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 7, 52, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 2, 21, 1, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0322"
                         },
@@ -5236,8 +5197,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0323",
                             Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 22, 13, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 2, 16, 50, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0323"
                         },
@@ -5245,8 +5206,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0324",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 22, 59, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 2, 13, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0324"
                         },
@@ -5255,16 +5216,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0325",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 16, 13, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 2, 16, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0325"
                         },
                         new
                         {
                             PaymentId = "PAY0326",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 3, 4, 15, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 2, 13, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0326"
                         },
@@ -5273,16 +5234,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0327",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 3, 3, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0327"
                         },
                         new
                         {
                             PaymentId = "PAY0328",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 2, 12, 5, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 2, 22, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0328"
                         },
@@ -5291,43 +5252,43 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0329",
                             Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 2, 10, 44, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 2, 17, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0329"
                         },
                         new
                         {
                             PaymentId = "PAY0330",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 3, 0, 22, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 2, 18, 1, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0330"
                         },
                         new
                         {
                             PaymentId = "PAY0331",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 4, 0, 32, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 3, 16, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0331"
                         },
                         new
                         {
                             PaymentId = "PAY0332",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 3, 19, 22, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 4, 0, 46, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0332"
                         },
                         new
                         {
                             PaymentId = "PAY0333",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 3, 19, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 4, 0, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0333"
                         },
@@ -5336,16 +5297,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0334",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 3, 17, 11, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 3, 23, 15, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0334"
                         },
                         new
                         {
                             PaymentId = "PAY0335",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 3, 16, 18, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 3, 18, 53, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0335"
                         },
@@ -5354,7 +5315,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0336",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 3, 16, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 4, 14, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0336"
                         },
@@ -5363,52 +5324,52 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0337",
                             Amount = 25000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 4, 22, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 4, 17, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0337"
                         },
                         new
                         {
                             PaymentId = "PAY0338",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 4, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 4, 21, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0338"
                         },
                         new
                         {
                             PaymentId = "PAY0339",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 4, 14, 5, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 4, 14, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0339"
                         },
                         new
                         {
                             PaymentId = "PAY0340",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 4, 16, 43, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 4, 18, 29, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0340"
                         },
                         new
                         {
                             PaymentId = "PAY0341",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 4, 19, 56, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 4, 20, 41, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0341"
                         },
                         new
                         {
                             PaymentId = "PAY0342",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 4, 19, 32, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 4, 22, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0342"
                         },
@@ -5416,17 +5377,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0343",
                             Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 4, 23, 30, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 4, 22, 20, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0343"
                         },
                         new
                         {
                             PaymentId = "PAY0344",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 4, 21, 36, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 4, 19, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0344"
                         },
@@ -5434,44 +5395,44 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0345",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 5, 1, 44, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 5, 20, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0345"
                         },
                         new
                         {
                             PaymentId = "PAY0346",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 5, 2, 51, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 5, 17, 1, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0346"
                         },
                         new
                         {
                             PaymentId = "PAY0347",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 4, 18, 55, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 5, 20, 48, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0347"
                         },
                         new
                         {
                             PaymentId = "PAY0348",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 5, 17, 11, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 5, 23, 56, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0348"
                         },
                         new
                         {
                             PaymentId = "PAY0349",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 5, 11, 36, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 6, 0, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0349"
                         },
@@ -5480,25 +5441,25 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0350",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 5, 19, 1, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 5, 15, 25, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0350"
                         },
                         new
                         {
                             PaymentId = "PAY0351",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 5, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 5, 20, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0351"
                         },
                         new
                         {
                             PaymentId = "PAY0352",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 6, 1, 55, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0352"
                         },
@@ -5507,7 +5468,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0353",
                             Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 5, 23, 54, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 6, 14, 19, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0353"
                         },
@@ -5515,8 +5476,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0354",
                             Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 5, 23, 26, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 6, 16, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0354"
                         },
@@ -5524,134 +5485,134 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0355",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 5, 22, 13, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 6, 10, 23, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0355"
                         },
                         new
                         {
                             PaymentId = "PAY0356",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 0, 44, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 6, 23, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0356"
                         },
                         new
                         {
                             PaymentId = "PAY0357",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 6, 19, 58, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 6, 23, 10, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0357"
                         },
                         new
                         {
                             PaymentId = "PAY0358",
-                            Amount = 5000m,
+                            Amount = 25000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 6, 17, 17, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 6, 22, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0358"
                         },
                         new
                         {
                             PaymentId = "PAY0359",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 6, 14, 34, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 6, 12, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0359"
                         },
                         new
                         {
                             PaymentId = "PAY0360",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 6, 16, 12, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 7, 0, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0360"
                         },
                         new
                         {
                             PaymentId = "PAY0361",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 6, 19, 59, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 8, 0, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0361"
                         },
                         new
                         {
                             PaymentId = "PAY0362",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 7, 0, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 7, 14, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0362"
                         },
                         new
                         {
                             PaymentId = "PAY0363",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 6, 9, 6, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 7, 20, 2, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0363"
                         },
                         new
                         {
                             PaymentId = "PAY0364",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 6, 12, 36, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 8, 0, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0364"
                         },
                         new
                         {
                             PaymentId = "PAY0365",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 6, 15, 54, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 7, 23, 13, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0365"
                         },
                         new
                         {
                             PaymentId = "PAY0366",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 6, 18, 18, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 7, 16, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0366"
                         },
                         new
                         {
                             PaymentId = "PAY0367",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 6, 23, 43, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 7, 21, 55, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0367"
                         },
                         new
                         {
                             PaymentId = "PAY0368",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 6, 15, 17, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 7, 21, 31, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0368"
                         },
                         new
                         {
                             PaymentId = "PAY0369",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 7, 15, 8, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 8, 5, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0369"
                         },
@@ -5659,8 +5620,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0370",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 12, 58, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 7, 19, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0370"
                         },
@@ -5669,34 +5630,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0371",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 23, 6, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 7, 20, 40, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0371"
                         },
                         new
                         {
                             PaymentId = "PAY0372",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 7, 21, 48, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 8, 12, 59, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0372"
                         },
                         new
                         {
                             PaymentId = "PAY0373",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 8, 5, 2, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 8, 14, 35, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0373"
                         },
                         new
                         {
                             PaymentId = "PAY0374",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 10, 17, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 8, 17, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0374"
                         },
@@ -5705,7 +5666,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0375",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 16, 2, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 8, 8, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0375"
                         },
@@ -5713,107 +5674,107 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0376",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 17, 59, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 8, 14, 56, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0376"
                         },
                         new
                         {
                             PaymentId = "PAY0377",
-                            Amount = 15000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 20, 53, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 8, 9, 25, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0377"
                         },
                         new
                         {
                             PaymentId = "PAY0378",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 7, 20, 26, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 9, 20, 55, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0378"
                         },
                         new
                         {
                             PaymentId = "PAY0379",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 7, 11, 53, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 9, 17, 26, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0379"
                         },
                         new
                         {
                             PaymentId = "PAY0380",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 18, 21, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 9, 13, 43, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0380"
                         },
                         new
                         {
                             PaymentId = "PAY0381",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 15, 19, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 9, 15, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0381"
                         },
                         new
                         {
                             PaymentId = "PAY0382",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 7, 16, 11, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 9, 15, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0382"
                         },
                         new
                         {
                             PaymentId = "PAY0383",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 8, 18, 49, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 9, 16, 41, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0383"
                         },
                         new
                         {
                             PaymentId = "PAY0384",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 8, 23, 6, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 10, 3, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0384"
                         },
                         new
                         {
                             PaymentId = "PAY0385",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 8, 21, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 9, 20, 42, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0385"
                         },
                         new
                         {
                             PaymentId = "PAY0386",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 9, 2, 27, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 10, 2, 9, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0386"
                         },
                         new
                         {
                             PaymentId = "PAY0387",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 9, 4, 55, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 9, 20, 34, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0387"
                         },
@@ -5822,16 +5783,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0388",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 8, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 20, 21, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0388"
                         },
                         new
                         {
                             PaymentId = "PAY0389",
-                            Amount = 25000m,
+                            Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 8, 9, 31, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 11, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0389"
                         },
@@ -5840,7 +5801,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0390",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 9, 19, 37, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 19, 11, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0390"
                         },
@@ -5849,7 +5810,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0391",
                             Amount = 5000m,
                             Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 9, 20, 32, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 12, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0391"
                         },
@@ -5858,34 +5819,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0392",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 9, 13, 4, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 16, 45, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0392"
                         },
                         new
                         {
                             PaymentId = "PAY0393",
-                            Amount = 25000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 9, 16, 43, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 22, 1, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0393"
                         },
                         new
                         {
                             PaymentId = "PAY0394",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 9, 15, 27, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 10, 13, 5, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0394"
                         },
                         new
                         {
                             PaymentId = "PAY0395",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 9, 20, 40, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 10, 17, 16, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0395"
                         },
@@ -5894,16 +5855,16 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0396",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 9, 19, 16, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 11, 3, 13, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0396"
                         },
                         new
                         {
                             PaymentId = "PAY0397",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 9, 17, 19, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 10, 22, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0397"
                         },
@@ -5911,17 +5872,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0398",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 10, 15, 8, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 10, 18, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0398"
                         },
                         new
                         {
                             PaymentId = "PAY0399",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 10, 19, 11, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 10, 13, 3, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0399"
                         },
@@ -5929,8 +5890,8 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0400",
                             Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 10, 14, 55, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 11, 0, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0400"
                         },
@@ -5939,7 +5900,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0401",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 20, 28, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 10, 16, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0401"
                         },
@@ -5947,17 +5908,17 @@ namespace BackendAPI.Migrations
                         {
                             PaymentId = "PAY0402",
                             Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 18, 1, 0, 0, DateTimeKind.Unspecified),
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 11, 16, 8, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0402"
                         },
                         new
                         {
                             PaymentId = "PAY0403",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 10, 19, 54, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 11, 23, 44, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0403"
                         },
@@ -5966,7 +5927,7 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0404",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 11, 18, 36, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0404"
                         },
@@ -5975,34 +5936,34 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0405",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 11, 19, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 11, 16, 57, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0405"
                         },
                         new
                         {
                             PaymentId = "PAY0406",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 11, 1, 41, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 11, 22, 17, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0406"
                         },
                         new
                         {
                             PaymentId = "PAY0407",
-                            Amount = 5000m,
+                            Amount = 15000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 21, 28, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 11, 19, 32, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0407"
                         },
                         new
                         {
                             PaymentId = "PAY0408",
-                            Amount = 15000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 12, 37, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 11, 15, 54, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0408"
                         },
@@ -6011,90 +5972,45 @@ namespace BackendAPI.Migrations
                             PaymentId = "PAY0409",
                             Amount = 5000m,
                             Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 10, 9, 47, 0, 0, DateTimeKind.Unspecified),
+                            PaymentTime = new DateTime(2026, 5, 11, 13, 4, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0409"
                         },
                         new
                         {
                             PaymentId = "PAY0410",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 11, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 11, 16, 14, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0410"
                         },
                         new
                         {
                             PaymentId = "PAY0411",
-                            Amount = 5000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 11, 16, 46, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 15000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 11, 15, 50, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0411"
                         },
                         new
                         {
                             PaymentId = "PAY0412",
-                            Amount = 5000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 11, 17, 23, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 25000m,
+                            Method = "Chuyển khoản",
+                            PaymentTime = new DateTime(2026, 5, 11, 19, 6, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0412"
                         },
                         new
                         {
                             PaymentId = "PAY0413",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 11, 16, 32, 0, 0, DateTimeKind.Unspecified),
+                            Amount = 5000m,
+                            Method = "Tiền mặt",
+                            PaymentTime = new DateTime(2026, 5, 11, 7, 52, 0, 0, DateTimeKind.Unspecified),
                             Status = "Thành công",
                             TicketId = "TKT0413"
-                        },
-                        new
-                        {
-                            PaymentId = "PAY0414",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 11, 19, 46, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Thành công",
-                            TicketId = "TKT0414"
-                        },
-                        new
-                        {
-                            PaymentId = "PAY0415",
-                            Amount = 15000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 11, 15, 21, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Thành công",
-                            TicketId = "TKT0415"
-                        },
-                        new
-                        {
-                            PaymentId = "PAY0416",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 11, 16, 56, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Thành công",
-                            TicketId = "TKT0416"
-                        },
-                        new
-                        {
-                            PaymentId = "PAY0417",
-                            Amount = 25000m,
-                            Method = "Tiền mặt",
-                            PaymentTime = new DateTime(2026, 5, 11, 10, 36, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Thành công",
-                            TicketId = "TKT0417"
-                        },
-                        new
-                        {
-                            PaymentId = "PAY0418",
-                            Amount = 25000m,
-                            Method = "Chuyển khoản",
-                            PaymentTime = new DateTime(2026, 5, 11, 22, 39, 0, 0, DateTimeKind.Unspecified),
-                            Status = "Thành công",
-                            TicketId = "TKT0418"
                         });
                 });
 
@@ -6125,7 +6041,7 @@ namespace BackendAPI.Migrations
 
                     b.HasKey("PricingId");
 
-                    b.ToTable("PricingConfigurations", (string)null);
+                    b.ToTable("PricingConfigurations");
 
                     b.HasData(
                         new
@@ -6303,7 +6219,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("VehiclePlate");
 
-                    b.ToTable("Reservations", null, t =>
+                    b.ToTable("Reservations", t =>
                         {
                             t.HasCheckConstraint("CK_Reservation_Status", "Status IN (N'Chờ', N'Đã nhận', N'Hủy', N'Hết hạn')");
                         });
@@ -6355,7 +6271,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("VehiclePlate");
 
-                    b.ToTable("Tickets", null, t =>
+                    b.ToTable("Tickets", t =>
                         {
                             t.HasCheckConstraint("CK_Ticket_Status", "Status IN (N'Đang trong bãi', N'Đã ra')");
                         });
@@ -6364,4750 +6280,4860 @@ namespace BackendAPI.Migrations
                         new
                         {
                             TicketId = "TKT0001",
-                            CheckInTime = new DateTime(2026, 4, 1, 15, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 16, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 1, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 14, 19, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A22",
+                            SlotId = "A48",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-700.89",
+                            VehiclePlate = "92C-373.81",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0002",
-                            CheckInTime = new DateTime(2026, 4, 1, 10, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 18, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 1, 17, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 21, 38, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B29",
+                            SlotId = "B44",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-258.49",
+                            VehiclePlate = "74A-805.37",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0003",
-                            CheckInTime = new DateTime(2026, 4, 1, 16, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 17, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 1, 15, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 19, 4, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A42",
+                            SlotId = "A03",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-555.37",
+                            VehiclePlate = "92C-945.90",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0004",
-                            CheckInTime = new DateTime(2026, 4, 1, 10, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 11, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 1, 8, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 14, 45, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS002",
                             Fee = 5000m,
-                            SlotId = "A38",
+                            SlotId = "A40",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-583.79",
+                            VehiclePlate = "43A-816.83",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0005",
-                            CheckInTime = new DateTime(2026, 4, 1, 18, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 22, 40, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C17",
+                            CheckInTime = new DateTime(2026, 4, 1, 16, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 20, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS011",
+                            Fee = 5000m,
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-277.64",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-505.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0006",
-                            CheckInTime = new DateTime(2026, 4, 1, 7, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 11, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 1, 12, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 19, 9, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A13",
+                            SlotId = "A02",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-247.89",
+                            VehiclePlate = "92C-959.65",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0007",
-                            CheckInTime = new DateTime(2026, 4, 1, 9, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 13, 33, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C03",
+                            CheckInTime = new DateTime(2026, 4, 1, 19, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 2, 1, 52, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
+                            Fee = 5000m,
+                            SlotId = "A47",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-655.70",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-790.42",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0008",
-                            CheckInTime = new DateTime(2026, 4, 1, 18, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 3, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 1, 13, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 1, 19, 49, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B21",
+                            SlotId = "B02",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-953.18",
+                            VehiclePlate = "74A-409.65",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0009",
-                            CheckInTime = new DateTime(2026, 4, 1, 9, 35, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 15, 41, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A07",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-572.26",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0010",
-                            CheckInTime = new DateTime(2026, 4, 1, 9, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 19, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 2, 19, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 2, 22, 31, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B01",
+                            SlotId = "B23",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-690.84",
+                            VehiclePlate = "74A-780.42",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0011",
-                            CheckInTime = new DateTime(2026, 4, 1, 7, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 9, 19, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0010",
+                            CheckInTime = new DateTime(2026, 4, 2, 7, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 2, 17, 17, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A14",
+                            SlotId = "A28",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-532.50",
+                            VehiclePlate = "92C-555.37",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0012",
-                            CheckInTime = new DateTime(2026, 4, 1, 7, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A19",
+                            TicketId = "TKT0011",
+                            CheckInTime = new DateTime(2026, 4, 2, 16, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 2, 18, 21, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
+                            Fee = 15000m,
+                            SlotId = "B41",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-347.44",
+                            VehiclePlate = "43B-422.72",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0012",
+                            CheckInTime = new DateTime(2026, 4, 2, 18, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 3, 28, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS001",
+                            Fee = 5000m,
+                            SlotId = "A12",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-163.78",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0013",
-                            CheckInTime = new DateTime(2026, 4, 1, 6, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 1, 15, 53, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A49",
+                            CheckInTime = new DateTime(2026, 4, 2, 17, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 1, 17, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B47",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-177.66",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-247.89",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0014",
-                            CheckInTime = new DateTime(2026, 4, 2, 18, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 3, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 3, 7, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 10, 28, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B50",
+                            SlotId = "B21",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-898.88",
+                            VehiclePlate = "74A-780.42",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0015",
-                            CheckInTime = new DateTime(2026, 4, 2, 10, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 11, 12, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A06",
+                            CheckInTime = new DateTime(2026, 4, 3, 7, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 9, 49, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
+                            Fee = 25000m,
+                            SlotId = "C10",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-304.14",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-502.53",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0016",
-                            CheckInTime = new DateTime(2026, 4, 2, 12, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 19, 10, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A17",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-283.61",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0017",
-                            CheckInTime = new DateTime(2026, 4, 2, 17, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 19, 30, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A42",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-553.54",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0018",
-                            CheckInTime = new DateTime(2026, 4, 2, 11, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 19, 26, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A16",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-538.87",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0019",
-                            CheckInTime = new DateTime(2026, 4, 2, 8, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 14, 45, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A40",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-365.11",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0020",
-                            CheckInTime = new DateTime(2026, 4, 2, 10, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 19, 32, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A47",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-777.64",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0021",
-                            CheckInTime = new DateTime(2026, 4, 2, 16, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 1, 58, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C13",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-350.12",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0022",
-                            CheckInTime = new DateTime(2026, 4, 2, 19, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 3, 29, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C08",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-902.56",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0023",
-                            CheckInTime = new DateTime(2026, 4, 2, 15, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 2, 16, 57, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C02",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-857.24",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0024",
-                            CheckInTime = new DateTime(2026, 4, 3, 16, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 18, 21, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C17",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-279.16",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0025",
-                            CheckInTime = new DateTime(2026, 4, 3, 17, 36, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 20, 50, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A33",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-891.87",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0026",
-                            CheckInTime = new DateTime(2026, 4, 3, 18, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 4, 4, 28, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A06",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-865.27",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0027",
-                            CheckInTime = new DateTime(2026, 4, 3, 15, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 17, 15, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A09",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-223.45",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0028",
                             CheckInTime = new DateTime(2026, 4, 3, 18, 29, 0, 0, DateTimeKind.Unspecified),
                             CheckOutTime = new DateTime(2026, 4, 4, 1, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
                             SlotId = "A36",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-305.67",
+                            VehiclePlate = "92C-914.30",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0029",
-                            CheckInTime = new DateTime(2026, 4, 3, 17, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 21, 15, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0017",
+                            CheckInTime = new DateTime(2026, 4, 3, 10, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 12, 54, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B07",
+                            SlotId = "B45",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-172.28",
+                            VehiclePlate = "74A-896.89",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0030",
-                            CheckInTime = new DateTime(2026, 4, 3, 16, 39, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 19, 19, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0018",
+                            CheckInTime = new DateTime(2026, 4, 3, 7, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 14, 2, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B43",
+                            SlotId = "B09",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-249.11",
+                            VehiclePlate = "74A-241.24",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0031",
-                            CheckInTime = new DateTime(2026, 4, 3, 13, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 17, 57, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0019",
+                            CheckInTime = new DateTime(2026, 4, 3, 15, 12, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 23, 3, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A16",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-211.12",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0020",
+                            CheckInTime = new DateTime(2026, 4, 3, 16, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 22, 12, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A22",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-475.65",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0021",
+                            CheckInTime = new DateTime(2026, 4, 3, 10, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 12, 39, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS020",
                             Fee = 25000m,
-                            SlotId = "C05",
+                            SlotId = "C16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-742.48",
+                            VehiclePlate = "43C-164.35",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
-                            TicketId = "TKT0032",
-                            CheckInTime = new DateTime(2026, 4, 3, 16, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 19, 54, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B15",
+                            TicketId = "TKT0022",
+                            CheckInTime = new DateTime(2026, 4, 3, 9, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 12, 37, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A21",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-143.80",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-158.68",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0033",
+                            TicketId = "TKT0023",
                             CheckInTime = new DateTime(2026, 4, 3, 13, 33, 0, 0, DateTimeKind.Unspecified),
                             CheckOutTime = new DateTime(2026, 4, 3, 16, 50, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
                             SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-752.97",
+                            VehiclePlate = "92C-288.96",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0034",
-                            CheckInTime = new DateTime(2026, 4, 3, 18, 23, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 22, 36, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0024",
+                            CheckInTime = new DateTime(2026, 4, 3, 9, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 19, 17, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS017",
                             Fee = 5000m,
-                            SlotId = "A30",
+                            SlotId = "A18",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-356.90",
+                            VehiclePlate = "43A-117.87",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0035",
-                            CheckInTime = new DateTime(2026, 4, 3, 8, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 18, 14, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0025",
+                            CheckInTime = new DateTime(2026, 4, 3, 15, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 17, 7, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B20",
+                            SlotId = "B05",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-511.18",
+                            VehiclePlate = "74A-868.58",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0036",
+                            TicketId = "TKT0026",
+                            CheckInTime = new DateTime(2026, 4, 3, 19, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 3, 23, 49, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A13",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-198.21",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0027",
                             CheckInTime = new DateTime(2026, 4, 3, 7, 22, 0, 0, DateTimeKind.Unspecified),
                             CheckOutTime = new DateTime(2026, 4, 3, 11, 16, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
                             SlotId = "A02",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-921.45",
+                            VehiclePlate = "92C-373.81",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0028",
+                            CheckInTime = new DateTime(2026, 4, 4, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 4, 11, 45, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B02",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-347.16",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0029",
+                            CheckInTime = new DateTime(2026, 4, 4, 9, 38, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 4, 14, 10, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B11",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-780.42",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0030",
+                            CheckInTime = new DateTime(2026, 4, 4, 9, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 4, 12, 37, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A10",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-873.64",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0031",
+                            CheckInTime = new DateTime(2026, 4, 4, 18, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 5, 3, 54, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 15000m,
+                            SlotId = "B41",
+                            Status = "Đã ra",
+                            VehiclePlate = "43B-536.32",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0032",
+                            CheckInTime = new DateTime(2026, 4, 4, 14, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 4, 17, 55, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A21",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-555.37",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0033",
+                            CheckInTime = new DateTime(2026, 4, 4, 13, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 4, 21, 21, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A37",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-347.14",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0034",
+                            CheckInTime = new DateTime(2026, 4, 5, 19, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 3, 29, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A34",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-872.82",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0035",
+                            CheckInTime = new DateTime(2026, 4, 5, 14, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 5, 21, 4, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS022",
+                            Fee = 5000m,
+                            SlotId = "A39",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-791.11",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0036",
+                            CheckInTime = new DateTime(2026, 4, 5, 9, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 5, 13, 7, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A10",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-428.76",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0037",
-                            CheckInTime = new DateTime(2026, 4, 3, 13, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 5, 7, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 5, 15, 54, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS013",
                             Fee = 5000m,
-                            SlotId = "A04",
+                            SlotId = "A03",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-880.35",
+                            VehiclePlate = "43A-866.67",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0038",
-                            CheckInTime = new DateTime(2026, 4, 3, 13, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 3, 19, 38, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 5, 12, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 5, 17, 44, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A12",
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-683.48",
+                            VehiclePlate = "92C-847.31",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0039",
-                            CheckInTime = new DateTime(2026, 4, 4, 18, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 5, 3, 54, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B41",
+                            CheckInTime = new DateTime(2026, 4, 5, 9, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 5, 10, 48, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A21",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-604.18",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-316.89",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0040",
-                            CheckInTime = new DateTime(2026, 4, 4, 12, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 4, 20, 48, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
+                            CheckInTime = new DateTime(2026, 4, 5, 18, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 2, 51, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-545.38",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-702.42",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0041",
-                            CheckInTime = new DateTime(2026, 4, 4, 8, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 4, 18, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 18, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 20, 21, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B36",
+                            SlotId = "B30",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-748.32",
+                            VehiclePlate = "74A-868.58",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0042",
-                            CheckInTime = new DateTime(2026, 4, 4, 12, 34, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 4, 19, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 18, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 1, 23, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B21",
+                            SlotId = "B23",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-339.62",
+                            VehiclePlate = "74A-875.32",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0043",
-                            CheckInTime = new DateTime(2026, 4, 4, 18, 11, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 5, 1, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 7, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 15, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS002",
                             Fee = 5000m,
-                            SlotId = "A06",
+                            SlotId = "A32",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-318.29",
+                            VehiclePlate = "43A-816.83",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0044",
-                            CheckInTime = new DateTime(2026, 4, 4, 17, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 4, 22, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C07",
+                            CheckInTime = new DateTime(2026, 4, 6, 8, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 16, 44, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-143.70",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-959.65",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0045",
-                            CheckInTime = new DateTime(2026, 4, 4, 10, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 4, 15, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 19, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 21, 31, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS019",
                             Fee = 5000m,
-                            SlotId = "A16",
+                            SlotId = "A41",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-965.31",
+                            VehiclePlate = "43A-436.67",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0046",
-                            CheckInTime = new DateTime(2026, 4, 4, 19, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 5, 5, 33, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            CheckInTime = new DateTime(2026, 4, 6, 14, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 18, 46, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-819.11",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-175.54",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0047",
-                            CheckInTime = new DateTime(2026, 4, 5, 18, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 1, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C10",
+                            CheckInTime = new DateTime(2026, 4, 6, 7, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 17, 43, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A40",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-850.65",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-347.14",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0048",
-                            CheckInTime = new DateTime(2026, 4, 5, 18, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 0, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 12, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 19, 28, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A47",
+                            SlotId = "A50",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-196.37",
+                            VehiclePlate = "92C-475.65",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0049",
-                            CheckInTime = new DateTime(2026, 4, 5, 9, 14, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 5, 13, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 12, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 14, 37, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A41",
+                            SlotId = "A30",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-799.41",
+                            VehiclePlate = "92C-459.45",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0050",
-                            CheckInTime = new DateTime(2026, 4, 5, 14, 14, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 5, 18, 46, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C03",
+                            CheckInTime = new DateTime(2026, 4, 6, 7, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 15, 10, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-883.59",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-150.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0051",
-                            CheckInTime = new DateTime(2026, 4, 5, 19, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 4, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 7, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 15, 1, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A38",
+                            SlotId = "A21",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-168.88",
+                            VehiclePlate = "92C-254.16",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0052",
-                            CheckInTime = new DateTime(2026, 4, 6, 15, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 18, 37, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B17",
+                            CheckInTime = new DateTime(2026, 4, 6, 13, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 19, 15, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
+                            Fee = 25000m,
+                            SlotId = "C09",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-986.69",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43C-502.53",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0053",
-                            CheckInTime = new DateTime(2026, 4, 6, 13, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 19, 57, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A24",
+                            CheckInTime = new DateTime(2026, 4, 6, 15, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 20, 12, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-934.22",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-502.38",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0054",
-                            CheckInTime = new DateTime(2026, 4, 6, 13, 24, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 18, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 19, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 21, 41, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS016",
                             Fee = 5000m,
-                            SlotId = "A26",
+                            SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-576.75",
+                            VehiclePlate = "43A-405.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0055",
-                            CheckInTime = new DateTime(2026, 4, 6, 12, 29, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 19, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 6, 10, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 6, 13, 46, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
                             SlotId = "A20",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-504.45",
+                            VehiclePlate = "92C-959.65",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0056",
-                            CheckInTime = new DateTime(2026, 4, 6, 19, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 21, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 7, 19, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 1, 55, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A11",
+                            SlotId = "A30",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-862.27",
+                            VehiclePlate = "92C-708.27",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0057",
-                            CheckInTime = new DateTime(2026, 4, 6, 13, 22, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 6, 16, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 7, 15, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 18, 48, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B31",
+                            SlotId = "B22",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-307.30",
+                            VehiclePlate = "74A-493.47",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0058",
-                            CheckInTime = new DateTime(2026, 4, 7, 12, 41, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 21, 52, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B47",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-626.93",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0059",
-                            CheckInTime = new DateTime(2026, 4, 7, 17, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 23, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 7, 10, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 12, 24, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
                             Fee = 5000m,
-                            SlotId = "A07",
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-247.40",
+                            VehiclePlate = "43A-496.54",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0060",
-                            CheckInTime = new DateTime(2026, 4, 7, 8, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 14, 26, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            TicketId = "TKT0059",
+                            CheckInTime = new DateTime(2026, 4, 7, 13, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 16, 2, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 15000m,
+                            SlotId = "B10",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-269.17",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43B-472.76",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0060",
+                            CheckInTime = new DateTime(2026, 4, 7, 9, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 11, 3, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A05",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-428.76",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0061",
-                            CheckInTime = new DateTime(2026, 4, 7, 12, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 15, 38, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 7, 13, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 14, 29, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A14",
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-179.15",
+                            VehiclePlate = "92C-873.64",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0062",
-                            CheckInTime = new DateTime(2026, 4, 7, 10, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 11, 44, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A09",
+                            CheckInTime = new DateTime(2026, 4, 7, 10, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 13, 22, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B24",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-524.38",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-493.47",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0063",
-                            CheckInTime = new DateTime(2026, 4, 7, 6, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 9, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 7, 11, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 18, 32, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A44",
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-566.78",
+                            VehiclePlate = "92C-446.17",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0064",
-                            CheckInTime = new DateTime(2026, 4, 7, 18, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 3, 35, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A38",
+                            CheckInTime = new DateTime(2026, 4, 7, 18, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 7, 19, 47, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B38",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-462.77",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-650.50",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0065",
-                            CheckInTime = new DateTime(2026, 4, 7, 13, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 17, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A34",
+                            CheckInTime = new DateTime(2026, 4, 8, 8, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 13, 8, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B37",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-757.79",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-459.45",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0066",
-                            CheckInTime = new DateTime(2026, 4, 7, 6, 42, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 8, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 19, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 21, 0, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A43",
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-644.90",
+                            VehiclePlate = "92C-852.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0067",
-                            CheckInTime = new DateTime(2026, 4, 7, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 0, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 18, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 1, 3, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A04",
+                            SlotId = "A35",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-247.82",
+                            VehiclePlate = "92C-708.27",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0068",
-                            CheckInTime = new DateTime(2026, 4, 7, 8, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 15, 35, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 9, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 17, 58, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 25000m,
-                            SlotId = "C09",
+                            SlotId = "C01",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-144.38",
+                            VehiclePlate = "43C-325.85",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0069",
-                            CheckInTime = new DateTime(2026, 4, 7, 14, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 16, 35, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C10",
+                            CheckInTime = new DateTime(2026, 4, 8, 7, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 13, 26, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B03",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-471.10",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-532.50",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0070",
-                            CheckInTime = new DateTime(2026, 4, 7, 14, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 21, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 13, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 15, 7, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS015",
                             Fee = 25000m,
-                            SlotId = "C12",
+                            SlotId = "C03",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-265.61",
+                            VehiclePlate = "43C-259.18",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0071",
-                            CheckInTime = new DateTime(2026, 4, 7, 12, 30, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 7, 14, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 17, 20, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A45",
+                            SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-739.87",
+                            VehiclePlate = "92C-477.17",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0072",
-                            CheckInTime = new DateTime(2026, 4, 8, 14, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 23, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 19, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 2, 52, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A08",
+                            SlotId = "A29",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-687.61",
+                            VehiclePlate = "92C-410.25",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0073",
-                            CheckInTime = new DateTime(2026, 4, 8, 11, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 13, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 8, 14, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 8, 21, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A21",
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-819.47",
+                            VehiclePlate = "92C-728.40",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0074",
-                            CheckInTime = new DateTime(2026, 4, 8, 12, 42, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 13, 50, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B36",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-962.24",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0075",
-                            CheckInTime = new DateTime(2026, 4, 8, 10, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 13, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 13, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 21, 57, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A02",
+                            SlotId = "A21",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-578.54",
+                            VehiclePlate = "92C-410.25",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0076",
-                            CheckInTime = new DateTime(2026, 4, 8, 11, 19, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 13, 14, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C14",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-834.16",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0077",
-                            CheckInTime = new DateTime(2026, 4, 8, 11, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 8, 13, 34, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0075",
+                            CheckInTime = new DateTime(2026, 4, 9, 15, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 22, 33, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 15000m,
-                            SlotId = "B11",
+                            SlotId = "B40",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-778.70",
+                            VehiclePlate = "43B-472.76",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0078",
-                            CheckInTime = new DateTime(2026, 4, 8, 18, 39, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 2, 37, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C10",
+                            TicketId = "TKT0076",
+                            CheckInTime = new DateTime(2026, 4, 9, 8, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 16, 53, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
+                            Fee = 5000m,
+                            SlotId = "A18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-857.17",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-496.54",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0077",
+                            CheckInTime = new DateTime(2026, 4, 9, 16, 24, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 22, 6, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS015",
+                            Fee = 5000m,
+                            SlotId = "A14",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-582.73",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0078",
+                            CheckInTime = new DateTime(2026, 4, 9, 12, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 13, 50, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
+                            Fee = 5000m,
+                            SlotId = "A36",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-496.54",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0079",
-                            CheckInTime = new DateTime(2026, 4, 8, 14, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 0, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 17, 20, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A10",
+                            SlotId = "A07",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-553.22",
+                            VehiclePlate = "92C-410.25",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0080",
-                            CheckInTime = new DateTime(2026, 4, 9, 17, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 10, 0, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 8, 35, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 15, 24, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS004",
                             Fee = 5000m,
-                            SlotId = "A43",
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-814.38",
+                            VehiclePlate = "43A-294.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0081",
-                            CheckInTime = new DateTime(2026, 4, 9, 11, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 7, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 15, 16, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS027",
                             Fee = 5000m,
                             SlotId = "A38",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-734.74",
+                            VehiclePlate = "43A-938.25",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0082",
-                            CheckInTime = new DateTime(2026, 4, 9, 7, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 9, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 15, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 17, 30, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A13",
+                            SlotId = "A21",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-779.68",
+                            VehiclePlate = "92C-475.65",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0083",
-                            CheckInTime = new DateTime(2026, 4, 9, 9, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 18, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 18, 35, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 2, 39, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS015",
                             Fee = 5000m,
-                            SlotId = "A40",
+                            SlotId = "A46",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-874.52",
+                            VehiclePlate = "43A-582.73",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0084",
-                            CheckInTime = new DateTime(2026, 4, 9, 10, 55, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 19, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 19, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 1, 41, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A17",
+                            SlotId = "A26",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-143.21",
+                            VehiclePlate = "92C-323.77",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0085",
-                            CheckInTime = new DateTime(2026, 4, 9, 17, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 19, 11, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B40",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-349.36",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0086",
-                            CheckInTime = new DateTime(2026, 4, 9, 15, 41, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 20, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 9, 17, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 3, 4, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A50",
+                            SlotId = "A27",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-417.28",
+                            VehiclePlate = "92C-428.76",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0087",
-                            CheckInTime = new DateTime(2026, 4, 9, 6, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 13, 54, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0086",
+                            CheckInTime = new DateTime(2026, 4, 9, 17, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 2, 16, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 25000m,
-                            SlotId = "C13",
+                            SlotId = "C12",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-870.13",
+                            VehiclePlate = "43C-325.85",
                             VehicleType = "Ô tô lớn"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0087",
+                            CheckInTime = new DateTime(2026, 4, 9, 7, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 9, 14, 51, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A21",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-213.80",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0088",
-                            CheckInTime = new DateTime(2026, 4, 9, 9, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 12, 31, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            CheckInTime = new DateTime(2026, 4, 10, 16, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 19, 29, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B33",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-376.19",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-459.45",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0089",
-                            CheckInTime = new DateTime(2026, 4, 9, 7, 11, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 13, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 10, 7, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 10, 17, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A04",
+                            SlotId = "A09",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-211.90",
+                            VehiclePlate = "92C-814.77",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0090",
-                            CheckInTime = new DateTime(2026, 4, 9, 17, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 22, 16, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A33",
+                            CheckInTime = new DateTime(2026, 4, 10, 9, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 18, 17, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B40",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-911.41",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-493.47",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0091",
-                            CheckInTime = new DateTime(2026, 4, 9, 12, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 15, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 10, 6, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 10, 2, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS023",
                             Fee = 5000m,
-                            SlotId = "A17",
+                            SlotId = "A41",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-162.19",
+                            VehiclePlate = "43A-743.15",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0092",
-                            CheckInTime = new DateTime(2026, 4, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 21, 27, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A17",
+                            CheckInTime = new DateTime(2026, 4, 10, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 19, 46, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS027",
+                            Fee = 15000m,
+                            SlotId = "B15",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-957.14",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-160.85",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0093",
-                            CheckInTime = new DateTime(2026, 4, 9, 13, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 9, 16, 48, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
+                            CheckInTime = new DateTime(2026, 4, 10, 8, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 16, 12, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS013",
+                            Fee = 5000m,
+                            SlotId = "A12",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-866.54",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-866.67",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0094",
-                            CheckInTime = new DateTime(2026, 4, 10, 19, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 2, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 10, 15, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 20, 15, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS017",
                             Fee = 5000m,
-                            SlotId = "A47",
+                            SlotId = "A50",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-679.22",
+                            VehiclePlate = "43A-117.87",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0095",
-                            CheckInTime = new DateTime(2026, 4, 10, 14, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 10, 16, 47, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            CheckInTime = new DateTime(2026, 4, 10, 16, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 10, 17, 54, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A12",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-217.85",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-144.58",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0096",
-                            CheckInTime = new DateTime(2026, 4, 10, 9, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 10, 12, 34, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
+                            CheckInTime = new DateTime(2026, 4, 11, 17, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 2, 7, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-852.74",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-708.27",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0097",
-                            CheckInTime = new DateTime(2026, 4, 10, 12, 18, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 10, 20, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 11, 8, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 16, 56, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A41",
+                            SlotId = "A17",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-433.33",
+                            VehiclePlate = "92C-652.88",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0098",
-                            CheckInTime = new DateTime(2026, 4, 10, 6, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 10, 8, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 11, 7, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 13, 54, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A33",
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-839.91",
+                            VehiclePlate = "92C-702.42",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0099",
-                            CheckInTime = new DateTime(2026, 4, 11, 10, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 18, 41, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A15",
+                            CheckInTime = new DateTime(2026, 4, 11, 18, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 2, 31, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B24",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-566.97",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-650.50",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0100",
-                            CheckInTime = new DateTime(2026, 4, 11, 9, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 16, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 11, 6, 12, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 7, 18, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B23",
+                            SlotId = "B24",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-884.96",
+                            VehiclePlate = "74A-247.89",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0101",
-                            CheckInTime = new DateTime(2026, 4, 11, 9, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 16, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C17",
+                            CheckInTime = new DateTime(2026, 4, 11, 19, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 4, 34, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS017",
+                            Fee = 5000m,
+                            SlotId = "A48",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-887.37",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-117.87",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0102",
-                            CheckInTime = new DateTime(2026, 4, 11, 17, 31, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 2, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 11, 13, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 23, 2, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B04",
+                            SlotId = "B38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-308.28",
+                            VehiclePlate = "74A-175.54",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0103",
-                            CheckInTime = new DateTime(2026, 4, 11, 18, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 1, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 11, 17, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 23, 7, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B34",
+                            SlotId = "B16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-543.70",
+                            VehiclePlate = "74A-266.34",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0104",
-                            CheckInTime = new DateTime(2026, 4, 11, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 14, 12, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C15",
+                            CheckInTime = new DateTime(2026, 4, 11, 12, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 14, 39, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A08",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-723.98",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-959.65",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0105",
-                            CheckInTime = new DateTime(2026, 4, 11, 11, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 20, 25, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B06",
+                            CheckInTime = new DateTime(2026, 4, 11, 15, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 1, 38, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS008",
+                            Fee = 5000m,
+                            SlotId = "A29",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-387.92",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-456.31",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0106",
-                            CheckInTime = new DateTime(2026, 4, 11, 6, 23, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 10, 34, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C08",
+                            CheckInTime = new DateTime(2026, 4, 11, 17, 38, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 22, 45, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS011",
+                            Fee = 5000m,
+                            SlotId = "A17",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-218.75",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-505.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0107",
-                            CheckInTime = new DateTime(2026, 4, 11, 14, 35, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 18, 49, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
+                            CheckInTime = new DateTime(2026, 4, 11, 14, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 11, 23, 34, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-141.35",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-373.81",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0108",
-                            CheckInTime = new DateTime(2026, 4, 11, 8, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 14, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 12, 13, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 15, 50, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A29",
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-766.48",
+                            VehiclePlate = "92C-211.12",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0109",
-                            CheckInTime = new DateTime(2026, 4, 11, 16, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 18, 9, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A42",
+                            CheckInTime = new DateTime(2026, 4, 12, 17, 35, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 1, 39, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
+                            Fee = 25000m,
+                            SlotId = "C10",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-203.92",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-653.47",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0110",
-                            CheckInTime = new DateTime(2026, 4, 11, 17, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 18, 42, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B04",
+                            CheckInTime = new DateTime(2026, 4, 12, 6, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 8, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A33",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-694.95",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-728.40",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0111",
-                            CheckInTime = new DateTime(2026, 4, 11, 14, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 18, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 12, 6, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 15, 49, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A39",
+                            SlotId = "A28",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-790.41",
+                            VehiclePlate = "92C-144.58",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0112",
-                            CheckInTime = new DateTime(2026, 4, 11, 17, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 11, 21, 1, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            CheckInTime = new DateTime(2026, 4, 12, 10, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 20, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
+                            Fee = 5000m,
+                            SlotId = "A44",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-529.60",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-496.54",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0113",
-                            CheckInTime = new DateTime(2026, 4, 12, 12, 15, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 19, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 12, 12, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 15, 9, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS020",
                             Fee = 5000m,
-                            SlotId = "A21",
+                            SlotId = "A33",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-472.77",
+                            VehiclePlate = "43A-333.16",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0114",
-                            CheckInTime = new DateTime(2026, 4, 12, 17, 14, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 23, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 12, 18, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 12, 21, 43, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B25",
+                            SlotId = "B29",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-530.51",
+                            VehiclePlate = "74A-532.50",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0115",
-                            CheckInTime = new DateTime(2026, 4, 12, 6, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 16, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A25",
+                            CheckInTime = new DateTime(2026, 4, 13, 13, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 16, 18, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 15000m,
+                            SlotId = "B43",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-664.33",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-472.76",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0116",
-                            CheckInTime = new DateTime(2026, 4, 12, 8, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 18, 3, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A46",
+                            CheckInTime = new DateTime(2026, 4, 13, 8, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 15, 42, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B08",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-603.37",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-968.18",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0117",
-                            CheckInTime = new DateTime(2026, 4, 12, 19, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 12, 22, 38, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B26",
+                            CheckInTime = new DateTime(2026, 4, 13, 18, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 1, 48, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A34",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-295.18",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-902.88",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0118",
-                            CheckInTime = new DateTime(2026, 4, 13, 18, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 0, 30, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B18",
+                            CheckInTime = new DateTime(2026, 4, 13, 19, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 5, 8, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A01",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-516.68",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-475.65",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0119",
-                            CheckInTime = new DateTime(2026, 4, 13, 10, 19, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 14, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 13, 16, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 1, 59, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS017",
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A17",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-782.27",
+                            VehiclePlate = "43A-117.87",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0120",
-                            CheckInTime = new DateTime(2026, 4, 13, 13, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 13, 16, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 22, 58, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 5000m,
-                            SlotId = "A18",
+                            SlotId = "A36",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-988.39",
+                            VehiclePlate = "43A-860.80",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0121",
-                            CheckInTime = new DateTime(2026, 4, 13, 12, 29, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 19, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 13, 7, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 9, 6, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A38",
+                            SlotId = "A18",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-912.16",
+                            VehiclePlate = "92C-852.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0122",
-                            CheckInTime = new DateTime(2026, 4, 13, 17, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 19, 57, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B31",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-758.57",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0123",
-                            CheckInTime = new DateTime(2026, 4, 13, 17, 18, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 23, 5, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C05",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-529.56",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0124",
-                            CheckInTime = new DateTime(2026, 4, 13, 16, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 21, 20, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C01",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-165.26",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0125",
-                            CheckInTime = new DateTime(2026, 4, 13, 9, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 17, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 13, 9, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 16, 51, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A48",
+                            SlotId = "A15",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-988.60",
+                            VehiclePlate = "92C-373.81",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0126",
-                            CheckInTime = new DateTime(2026, 4, 13, 16, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 18, 29, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B20",
+                            TicketId = "TKT0123",
+                            CheckInTime = new DateTime(2026, 4, 13, 11, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 19, 4, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A19",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-538.57",
+                            VehiclePlate = "92C-428.76",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0124",
+                            CheckInTime = new DateTime(2026, 4, 13, 8, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 14, 33, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B29",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-650.50",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0127",
-                            CheckInTime = new DateTime(2026, 4, 13, 7, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 13, 5, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A11",
+                            TicketId = "TKT0125",
+                            CheckInTime = new DateTime(2026, 4, 13, 7, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 15, 53, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS012",
+                            Fee = 15000m,
+                            SlotId = "B03",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-964.91",
+                            VehiclePlate = "43B-432.85",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0126",
+                            CheckInTime = new DateTime(2026, 4, 13, 19, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 21, 37, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A49",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-936.10",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0127",
+                            CheckInTime = new DateTime(2026, 4, 13, 6, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 7, 17, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A16",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-254.16",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0128",
-                            CheckInTime = new DateTime(2026, 4, 13, 11, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 17, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B03",
+                            CheckInTime = new DateTime(2026, 4, 13, 14, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 13, 18, 14, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
+                            Fee = 5000m,
+                            SlotId = "A39",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-209.40",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-679.92",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0129",
-                            CheckInTime = new DateTime(2026, 4, 13, 14, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 12, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 21, 26, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B01",
+                            SlotId = "B13",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-844.62",
+                            VehiclePlate = "74A-459.45",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0130",
-                            CheckInTime = new DateTime(2026, 4, 13, 13, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 13, 17, 26, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            CheckInTime = new DateTime(2026, 4, 14, 19, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 22, 28, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-647.14",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-409.65",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0131",
-                            CheckInTime = new DateTime(2026, 4, 14, 18, 39, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 19, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 15, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 20, 5, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS021",
                             Fee = 15000m,
-                            SlotId = "B10",
+                            SlotId = "B49",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-934.24",
+                            VehiclePlate = "43B-589.63",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0132",
-                            CheckInTime = new DateTime(2026, 4, 14, 6, 19, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 10, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 12, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 16, 20, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B34",
+                            SlotId = "B40",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-761.86",
+                            VehiclePlate = "74A-493.47",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0133",
-                            CheckInTime = new DateTime(2026, 4, 14, 18, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 0, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 12, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 15, 41, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
                             Fee = 5000m,
-                            SlotId = "A39",
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-207.91",
+                            VehiclePlate = "43A-761.33",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0134",
-                            CheckInTime = new DateTime(2026, 4, 14, 12, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 19, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A45",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-968.92",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0135",
-                            CheckInTime = new DateTime(2026, 4, 14, 17, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 1, 40, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-391.95",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0136",
-                            CheckInTime = new DateTime(2026, 4, 14, 9, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 10, 29, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A38",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-599.92",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0137",
-                            CheckInTime = new DateTime(2026, 4, 14, 10, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 12, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 12, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 14, 25, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B43",
+                            SlotId = "B16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-297.61",
+                            VehiclePlate = "74A-502.38",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
+                            TicketId = "TKT0135",
+                            CheckInTime = new DateTime(2026, 4, 14, 19, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 4, 47, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS022",
+                            Fee = 5000m,
+                            SlotId = "A45",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-791.11",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0136",
+                            CheckInTime = new DateTime(2026, 4, 14, 7, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
+                            Fee = 15000m,
+                            SlotId = "B41",
+                            Status = "Đã ra",
+                            VehiclePlate = "43B-763.73",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0137",
+                            CheckInTime = new DateTime(2026, 4, 14, 16, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 19, 59, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS002",
+                            Fee = 5000m,
+                            SlotId = "A34",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-816.83",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
                             TicketId = "TKT0138",
-                            CheckInTime = new DateTime(2026, 4, 14, 11, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 12, 58, 0, 0, DateTimeKind.Unspecified),
                             CheckOutTime = new DateTime(2026, 4, 14, 17, 50, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A13",
+                            SlotId = "A25",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-297.44",
+                            VehiclePlate = "92C-796.10",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0139",
-                            CheckInTime = new DateTime(2026, 4, 14, 12, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 21, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 10, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 14, 57, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS016",
                             Fee = 5000m,
-                            SlotId = "A47",
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-891.16",
+                            VehiclePlate = "43A-405.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0140",
-                            CheckInTime = new DateTime(2026, 4, 14, 18, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 3, 28, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C11",
+                            CheckInTime = new DateTime(2026, 4, 14, 19, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 1, 13, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-485.24",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-945.90",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0141",
-                            CheckInTime = new DateTime(2026, 4, 14, 16, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 17, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 14, 15, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 0, 29, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A23",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-407.67",
+                            VehiclePlate = "43A-679.92",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0142",
                             CheckInTime = new DateTime(2026, 4, 14, 10, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 19, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 12, 24, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A34",
+                            SlotId = "A15",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-977.75",
+                            VehiclePlate = "92C-211.12",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0143",
-                            CheckInTime = new DateTime(2026, 4, 14, 15, 3, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 14, 21, 10, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B09",
+                            CheckInTime = new DateTime(2026, 4, 14, 17, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 14, 19, 57, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A31",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-732.11",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-555.37",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0144",
-                            CheckInTime = new DateTime(2026, 4, 15, 6, 41, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 9, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 12, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 20, 49, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A34",
+                            SlotId = "A27",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-571.62",
+                            VehiclePlate = "92C-708.27",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0145",
-                            CheckInTime = new DateTime(2026, 4, 15, 18, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 2, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 17, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 22, 38, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
                             Fee = 5000m,
-                            SlotId = "A48",
+                            SlotId = "A10",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-479.26",
+                            VehiclePlate = "43A-790.42",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0146",
-                            CheckInTime = new DateTime(2026, 4, 15, 19, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 21, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 12, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 14, 3, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B02",
+                            SlotId = "B25",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-501.50",
+                            VehiclePlate = "74A-175.54",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0147",
-                            CheckInTime = new DateTime(2026, 4, 15, 12, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 21, 14, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B20",
+                            CheckInTime = new DateTime(2026, 4, 15, 9, 59, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 17, 27, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A48",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-899.88",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-120.57",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0148",
-                            CheckInTime = new DateTime(2026, 4, 15, 13, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 16, 6, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
+                            CheckInTime = new DateTime(2026, 4, 15, 11, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 17, 15, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B29",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-707.79",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-266.34",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0149",
-                            CheckInTime = new DateTime(2026, 4, 15, 12, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 21, 33, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
+                            CheckInTime = new DateTime(2026, 4, 15, 11, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 14, 10, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B46",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-683.75",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-968.18",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0150",
-                            CheckInTime = new DateTime(2026, 4, 15, 7, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 13, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 15, 39, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B35",
+                            SlotId = "B39",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-277.53",
+                            VehiclePlate = "74A-896.89",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0151",
-                            CheckInTime = new DateTime(2026, 4, 15, 9, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 15, 12, 24, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A34",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-278.75",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0152",
-                            CheckInTime = new DateTime(2026, 4, 16, 16, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 21, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 10, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 14, 53, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
                             Fee = 25000m,
-                            SlotId = "C08",
+                            SlotId = "C17",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-734.25",
+                            VehiclePlate = "43C-502.53",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
-                            TicketId = "TKT0153",
-                            CheckInTime = new DateTime(2026, 4, 16, 17, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 21, 38, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B35",
+                            TicketId = "TKT0152",
+                            CheckInTime = new DateTime(2026, 4, 15, 13, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 21, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
+                            Fee = 5000m,
+                            SlotId = "A32",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-147.59",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-790.42",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0153",
+                            CheckInTime = new DateTime(2026, 4, 15, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 10, 37, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A34",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-347.14",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0154",
-                            CheckInTime = new DateTime(2026, 4, 16, 13, 40, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 13, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 17, 26, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
                             Fee = 25000m,
-                            SlotId = "C20",
+                            SlotId = "C18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-592.56",
+                            VehiclePlate = "43C-897.86",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0155",
-                            CheckInTime = new DateTime(2026, 4, 16, 12, 14, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 13, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 18, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 3, 37, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A02",
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-294.89",
+                            VehiclePlate = "92C-872.82",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0156",
-                            CheckInTime = new DateTime(2026, 4, 16, 8, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 14, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 15, 7, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 15, 10, 56, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
                             Fee = 5000m,
-                            SlotId = "A08",
+                            SlotId = "A02",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-512.11",
+                            VehiclePlate = "43A-193.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0157",
-                            CheckInTime = new DateTime(2026, 4, 16, 12, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 16, 16, 20, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A49",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-365.81",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0158",
-                            CheckInTime = new DateTime(2026, 4, 17, 8, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 15, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 16, 10, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 14, 2, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
                             Fee = 15000m,
-                            SlotId = "B08",
+                            SlotId = "B30",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-501.17",
+                            VehiclePlate = "43B-422.72",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0159",
-                            CheckInTime = new DateTime(2026, 4, 17, 10, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 13, 35, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A36",
+                            TicketId = "TKT0158",
+                            CheckInTime = new DateTime(2026, 4, 16, 18, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 20, 34, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
+                            Fee = 25000m,
+                            SlotId = "C02",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-762.96",
+                            VehiclePlate = "43C-502.53",
+                            VehicleType = "Ô tô lớn"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0159",
+                            CheckInTime = new DateTime(2026, 4, 16, 6, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 16, 23, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A24",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-410.25",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0160",
-                            CheckInTime = new DateTime(2026, 4, 17, 6, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 14, 31, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B30",
+                            CheckInTime = new DateTime(2026, 4, 16, 18, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 2, 12, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A17",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-359.57",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-902.88",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0161",
-                            CheckInTime = new DateTime(2026, 4, 17, 10, 23, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 17, 22, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B19",
+                            CheckInTime = new DateTime(2026, 4, 16, 6, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 13, 43, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A10",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-344.76",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-158.68",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0162",
-                            CheckInTime = new DateTime(2026, 4, 17, 7, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 16, 19, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 21, 16, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A17",
+                            SlotId = "A15",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-340.96",
+                            VehiclePlate = "92C-852.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0163",
-                            CheckInTime = new DateTime(2026, 4, 17, 15, 29, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 22, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 16, 19, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 21, 38, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A18",
+                            SlotId = "A15",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-731.27",
+                            VehiclePlate = "92C-852.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0164",
-                            CheckInTime = new DateTime(2026, 4, 17, 12, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 17, 15, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 16, 9, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 16, 6, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
                             Fee = 5000m,
-                            SlotId = "A26",
+                            SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-191.51",
+                            VehiclePlate = "43A-496.54",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0165",
-                            CheckInTime = new DateTime(2026, 4, 18, 16, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 21, 10, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C01",
+                            CheckInTime = new DateTime(2026, 4, 16, 19, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 3, 47, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B25",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-868.34",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-650.50",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0166",
-                            CheckInTime = new DateTime(2026, 4, 18, 6, 34, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 11, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B21",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-363.43",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0167",
-                            CheckInTime = new DateTime(2026, 4, 18, 6, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 9, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 16, 6, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 15, 19, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A31",
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-204.14",
+                            VehiclePlate = "92C-135.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0168",
-                            CheckInTime = new DateTime(2026, 4, 18, 15, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 21, 47, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C09",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-134.83",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0169",
-                            CheckInTime = new DateTime(2026, 4, 18, 8, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 12, 21, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0167",
+                            CheckInTime = new DateTime(2026, 4, 16, 15, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 19, 52, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
                             Fee = 15000m,
-                            SlotId = "B05",
+                            SlotId = "B45",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-431.22",
+                            VehiclePlate = "43B-536.32",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0170",
-                            CheckInTime = new DateTime(2026, 4, 18, 9, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 16, 48, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
+                            TicketId = "TKT0168",
+                            CheckInTime = new DateTime(2026, 4, 16, 11, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 13, 33, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-284.19",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-409.65",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0169",
+                            CheckInTime = new DateTime(2026, 4, 16, 6, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 16, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A06",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-475.65",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0170",
+                            CheckInTime = new DateTime(2026, 4, 16, 16, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 0, 7, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A23",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-288.96",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0171",
-                            CheckInTime = new DateTime(2026, 4, 18, 8, 21, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 16, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 11, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 13, 23, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A17",
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-512.76",
+                            VehiclePlate = "92C-428.76",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0172",
-                            CheckInTime = new DateTime(2026, 4, 18, 18, 34, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 1, 14, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B49",
+                            CheckInTime = new DateTime(2026, 4, 17, 8, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 11, 21, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS011",
+                            Fee = 5000m,
+                            SlotId = "A27",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-479.20",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-505.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0173",
-                            CheckInTime = new DateTime(2026, 4, 18, 8, 39, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 17, 57, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B47",
+                            CheckInTime = new DateTime(2026, 4, 17, 15, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 17, 52, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
+                            Fee = 5000m,
+                            SlotId = "A07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-512.36",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-761.33",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0174",
-                            CheckInTime = new DateTime(2026, 4, 18, 15, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 20, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 8, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 11, 42, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B11",
+                            SlotId = "B07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-724.42",
+                            VehiclePlate = "74A-650.50",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0175",
-                            CheckInTime = new DateTime(2026, 4, 18, 9, 21, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 18, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 15, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 20, 48, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A32",
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-656.95",
+                            VehiclePlate = "92C-373.81",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0176",
-                            CheckInTime = new DateTime(2026, 4, 18, 19, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 0, 17, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C04",
+                            CheckInTime = new DateTime(2026, 4, 17, 12, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 18, 36, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 5000m,
+                            SlotId = "A08",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-339.62",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-289.56",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0177",
-                            CheckInTime = new DateTime(2026, 4, 18, 6, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 15, 24, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 12, 38, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 21, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A40",
+                            SlotId = "A20",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-471.42",
+                            VehiclePlate = "92C-135.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0178",
-                            CheckInTime = new DateTime(2026, 4, 18, 9, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 11, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 13, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 22, 12, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A45",
+                            SlotId = "A44",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-969.28",
+                            VehiclePlate = "92C-914.30",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0179",
-                            CheckInTime = new DateTime(2026, 4, 18, 14, 18, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 18, 15, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 17, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 2, 46, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS020",
                             Fee = 5000m,
-                            SlotId = "A48",
+                            SlotId = "A33",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-946.28",
+                            VehiclePlate = "43A-333.16",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0180",
-                            CheckInTime = new DateTime(2026, 4, 19, 8, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 16, 10, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B07",
+                            CheckInTime = new DateTime(2026, 4, 17, 16, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 1, 25, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A42",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-325.93",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-410.25",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0181",
-                            CheckInTime = new DateTime(2026, 4, 19, 8, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 10, 20, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A17",
+                            CheckInTime = new DateTime(2026, 4, 17, 8, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 10, 27, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS015",
+                            Fee = 25000m,
+                            SlotId = "C04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-464.72",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-259.18",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0182",
-                            CheckInTime = new DateTime(2026, 4, 19, 8, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 11, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B47",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-609.44",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0183",
-                            CheckInTime = new DateTime(2026, 4, 19, 10, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 12, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 17, 9, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 12, 2, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A09",
+                            SlotId = "A12",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-664.81",
+                            VehiclePlate = "92C-655.70",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0184",
-                            CheckInTime = new DateTime(2026, 4, 19, 10, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 12, 6, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0183",
+                            CheckInTime = new DateTime(2026, 4, 17, 15, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 0, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS012",
                             Fee = 15000m,
-                            SlotId = "B12",
+                            SlotId = "B30",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-779.80",
+                            VehiclePlate = "43B-432.85",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0185",
-                            CheckInTime = new DateTime(2026, 4, 19, 14, 42, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 15, 50, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B35",
+                            TicketId = "TKT0184",
+                            CheckInTime = new DateTime(2026, 4, 17, 8, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 15, 16, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A08",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-752.15",
+                            VehiclePlate = "92C-459.45",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0185",
+                            CheckInTime = new DateTime(2026, 4, 17, 16, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 17, 17, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B40",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-908.24",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0186",
-                            CheckInTime = new DateTime(2026, 4, 19, 17, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 2, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 18, 15, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 23, 11, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS016",
                             Fee = 5000m,
-                            SlotId = "A20",
+                            SlotId = "A28",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-994.49",
+                            VehiclePlate = "43A-405.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0187",
-                            CheckInTime = new DateTime(2026, 4, 19, 9, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 17, 22, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B31",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-173.13",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0188",
-                            CheckInTime = new DateTime(2026, 4, 19, 19, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 0, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 18, 15, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 20, 10, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A30",
+                            SlotId = "A18",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-139.95",
+                            VehiclePlate = "92C-796.10",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0189",
-                            CheckInTime = new DateTime(2026, 4, 19, 18, 15, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 19, 20, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A50",
+                            TicketId = "TKT0188",
+                            CheckInTime = new DateTime(2026, 4, 18, 18, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 21, 30, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
+                            Fee = 15000m,
+                            SlotId = "B24",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-657.17",
+                            VehiclePlate = "43B-763.73",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0189",
+                            CheckInTime = new DateTime(2026, 4, 18, 12, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 13, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A48",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-211.12",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0190",
-                            CheckInTime = new DateTime(2026, 4, 20, 16, 41, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 2, 7, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B04",
+                            CheckInTime = new DateTime(2026, 4, 18, 8, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 12, 28, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS021",
+                            Fee = 5000m,
+                            SlotId = "A41",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-381.73",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-890.60",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0191",
-                            CheckInTime = new DateTime(2026, 4, 20, 18, 35, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 19, 46, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C01",
+                            CheckInTime = new DateTime(2026, 4, 18, 10, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 19, 40, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A10",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-690.51",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-316.89",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0192",
-                            CheckInTime = new DateTime(2026, 4, 20, 11, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 16, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 18, 12, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 14, 7, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS008",
                             Fee = 5000m,
-                            SlotId = "A10",
+                            SlotId = "A34",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-364.27",
+                            VehiclePlate = "43A-456.31",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0193",
-                            CheckInTime = new DateTime(2026, 4, 20, 7, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 14, 53, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B17",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-409.83",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0194",
-                            CheckInTime = new DateTime(2026, 4, 20, 18, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 2, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 18, 14, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 18, 22, 17, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS013",
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A16",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-472.94",
+                            VehiclePlate = "43A-866.67",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0195",
-                            CheckInTime = new DateTime(2026, 4, 20, 15, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 1, 33, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A12",
+                            TicketId = "TKT0194",
+                            CheckInTime = new DateTime(2026, 4, 19, 15, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 19, 21, 28, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
+                            Fee = 25000m,
+                            SlotId = "C06",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-698.10",
+                            VehiclePlate = "43C-502.53",
+                            VehicleType = "Ô tô lớn"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0195",
+                            CheckInTime = new DateTime(2026, 4, 19, 19, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 20, 1, 16, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS002",
+                            Fee = 5000m,
+                            SlotId = "A13",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-816.83",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0196",
-                            CheckInTime = new DateTime(2026, 4, 20, 16, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 17, 40, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C08",
+                            CheckInTime = new DateTime(2026, 4, 19, 9, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 19, 13, 8, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS007",
+                            Fee = 5000m,
+                            SlotId = "A32",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-351.30",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-657.75",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0197",
-                            CheckInTime = new DateTime(2026, 4, 20, 16, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 0, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 19, 17, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 19, 21, 4, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 15000m,
-                            SlotId = "B23",
+                            SlotId = "B05",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-191.81",
+                            VehiclePlate = "43B-472.76",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0198",
-                            CheckInTime = new DateTime(2026, 4, 20, 13, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 15, 59, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 19, 15, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 19, 20, 19, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A36",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-593.83",
+                            VehiclePlate = "92C-144.58",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0199",
-                            CheckInTime = new DateTime(2026, 4, 20, 18, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 3, 17, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A47",
+                            CheckInTime = new DateTime(2026, 4, 19, 12, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 19, 15, 2, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B28",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-923.54",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-328.20",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0200",
-                            CheckInTime = new DateTime(2026, 4, 20, 12, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 19, 12, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 19, 13, 46, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
                             Fee = 15000m,
-                            SlotId = "B48",
+                            SlotId = "B30",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-852.18",
+                            VehiclePlate = "43B-536.32",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0201",
-                            CheckInTime = new DateTime(2026, 4, 20, 9, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 17, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 20, 15, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 0, 11, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A19",
+                            SlotId = "A38",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-758.33",
+                            VehiclePlate = "92C-230.97",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0202",
-                            CheckInTime = new DateTime(2026, 4, 20, 7, 22, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 8, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B05",
+                            CheckInTime = new DateTime(2026, 4, 20, 10, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 20, 13, 1, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 5000m,
+                            SlotId = "A08",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-648.51",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-860.80",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0203",
-                            CheckInTime = new DateTime(2026, 4, 20, 15, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 17, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 20, 6, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 20, 11, 56, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 25000m,
-                            SlotId = "C20",
+                            SlotId = "C09",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-911.13",
+                            VehiclePlate = "43C-325.85",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0204",
-                            CheckInTime = new DateTime(2026, 4, 20, 8, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 20, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 20, 7, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 20, 8, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
                             Fee = 5000m,
-                            SlotId = "A06",
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-210.61",
+                            VehiclePlate = "43A-766.27",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0205",
-                            CheckInTime = new DateTime(2026, 4, 21, 8, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 15, 12, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 20, 8, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 20, 13, 42, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A43",
+                            SlotId = "A42",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-295.56",
+                            VehiclePlate = "92C-652.88",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0206",
-                            CheckInTime = new DateTime(2026, 4, 21, 16, 19, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 1, 41, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B35",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-470.36",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0207",
-                            CheckInTime = new DateTime(2026, 4, 21, 10, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 13, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 21, 8, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 14, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A41",
+                            SlotId = "A07",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-997.38",
+                            VehiclePlate = "92C-120.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0208",
-                            CheckInTime = new DateTime(2026, 4, 21, 18, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 1, 47, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A21",
+                            TicketId = "TKT0207",
+                            CheckInTime = new DateTime(2026, 4, 21, 8, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 12, 21, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS012",
+                            Fee = 15000m,
+                            SlotId = "B05",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-478.46",
+                            VehiclePlate = "43B-432.85",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0208",
+                            CheckInTime = new DateTime(2026, 4, 21, 16, 12, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 17, 27, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A48",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-427.61",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0209",
-                            CheckInTime = new DateTime(2026, 4, 21, 9, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 13, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C20",
+                            CheckInTime = new DateTime(2026, 4, 21, 16, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 22, 10, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-995.95",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-347.16",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0210",
-                            CheckInTime = new DateTime(2026, 4, 21, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 14, 52, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C15",
+                            CheckInTime = new DateTime(2026, 4, 21, 15, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 19, 31, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
+                            Fee = 5000m,
+                            SlotId = "A37",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-403.38",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-679.92",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0211",
-                            CheckInTime = new DateTime(2026, 4, 21, 18, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 1, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A16",
+                            CheckInTime = new DateTime(2026, 4, 21, 7, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 14, 34, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B34",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-857.54",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-650.50",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0212",
-                            CheckInTime = new DateTime(2026, 4, 21, 18, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 1, 22, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A31",
+                            CheckInTime = new DateTime(2026, 4, 21, 13, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 18, 33, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B09",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-620.38",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-409.65",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0213",
-                            CheckInTime = new DateTime(2026, 4, 21, 10, 49, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 21, 12, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C17",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-165.72",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0214",
-                            CheckInTime = new DateTime(2026, 4, 22, 16, 29, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 19, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 21, 10, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 17, 40, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A19",
+                            SlotId = "A05",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-855.40",
+                            VehiclePlate = "92C-959.65",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0215",
-                            CheckInTime = new DateTime(2026, 4, 22, 18, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 3, 15, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A25",
+                            TicketId = "TKT0214",
+                            CheckInTime = new DateTime(2026, 4, 21, 15, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 20, 19, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 15000m,
+                            SlotId = "B11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-649.55",
+                            VehiclePlate = "43B-472.76",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0215",
+                            CheckInTime = new DateTime(2026, 4, 21, 14, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 18, 18, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A49",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-945.90",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0216",
-                            CheckInTime = new DateTime(2026, 4, 22, 9, 39, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 12, 29, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C11",
+                            CheckInTime = new DateTime(2026, 4, 21, 9, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 15, 47, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B30",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-494.90",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-875.32",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0217",
-                            CheckInTime = new DateTime(2026, 4, 22, 8, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 10, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C05",
+                            CheckInTime = new DateTime(2026, 4, 21, 12, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 21, 14, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS023",
+                            Fee = 5000m,
+                            SlotId = "A25",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-159.83",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-743.15",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0218",
-                            CheckInTime = new DateTime(2026, 4, 22, 12, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 21, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 22, 16, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 23, 36, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
                             Fee = 5000m,
-                            SlotId = "A50",
+                            SlotId = "A03",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-452.72",
+                            VehiclePlate = "43A-761.33",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0219",
-                            CheckInTime = new DateTime(2026, 4, 22, 14, 3, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 22, 18, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 22, 8, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 13, 26, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B26",
+                            SlotId = "B21",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-618.55",
+                            VehiclePlate = "74A-896.89",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0220",
-                            CheckInTime = new DateTime(2026, 4, 23, 15, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 19, 3, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C07",
+                            CheckInTime = new DateTime(2026, 4, 22, 9, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 12, 30, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
+                            Fee = 5000m,
+                            SlotId = "A16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-678.46",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-329.51",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0221",
-                            CheckInTime = new DateTime(2026, 4, 23, 13, 23, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 23, 22, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C09",
+                            CheckInTime = new DateTime(2026, 4, 22, 19, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 1, 11, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A05",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-111.90",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-373.81",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0222",
-                            CheckInTime = new DateTime(2026, 4, 23, 6, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 10, 32, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B39",
+                            CheckInTime = new DateTime(2026, 4, 22, 8, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 16, 10, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-715.85",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-959.65",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0223",
-                            CheckInTime = new DateTime(2026, 4, 23, 13, 3, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 20, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 22, 11, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 13, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS016",
                             Fee = 5000m,
-                            SlotId = "A15",
+                            SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-685.67",
+                            VehiclePlate = "43A-405.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0224",
-                            CheckInTime = new DateTime(2026, 4, 23, 15, 24, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 0, 11, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A29",
+                            CheckInTime = new DateTime(2026, 4, 22, 10, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 15, 20, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS027",
+                            Fee = 15000m,
+                            SlotId = "B20",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-694.38",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-160.85",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0225",
-                            CheckInTime = new DateTime(2026, 4, 23, 16, 3, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 19, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 22, 9, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 22, 18, 26, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A16",
+                            SlotId = "A17",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-710.46",
+                            VehiclePlate = "92C-198.21",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0226",
-                            CheckInTime = new DateTime(2026, 4, 23, 17, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 22, 19, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B12",
+                            CheckInTime = new DateTime(2026, 4, 23, 8, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 17, 13, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS026",
+                            Fee = 5000m,
+                            SlotId = "A02",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-640.92",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-176.82",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0227",
-                            CheckInTime = new DateTime(2026, 4, 23, 14, 42, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 17, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 16, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 20, 4, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A34",
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-857.80",
+                            VehiclePlate = "92C-254.16",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0228",
-                            CheckInTime = new DateTime(2026, 4, 23, 13, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 17, 48, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B20",
+                            CheckInTime = new DateTime(2026, 4, 23, 6, 31, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 8, 14, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS020",
+                            Fee = 5000m,
+                            SlotId = "A03",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-152.32",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-333.16",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0229",
-                            CheckInTime = new DateTime(2026, 4, 23, 17, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 3, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 7, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 14, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B13",
+                            SlotId = "B08",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-469.76",
+                            VehiclePlate = "74A-316.24",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0230",
-                            CheckInTime = new DateTime(2026, 4, 23, 13, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 23, 15, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 17, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 24, 2, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A15",
+                            SlotId = "A20",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-246.18",
+                            VehiclePlate = "92C-814.77",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0231",
-                            CheckInTime = new DateTime(2026, 4, 23, 18, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 2, 29, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B06",
+                            CheckInTime = new DateTime(2026, 4, 23, 7, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 8, 20, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-827.60",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-796.10",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0232",
-                            CheckInTime = new DateTime(2026, 4, 24, 14, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 20, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 14, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 15, 18, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
                             Fee = 5000m,
-                            SlotId = "A05",
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-948.21",
+                            VehiclePlate = "43A-766.27",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0233",
-                            CheckInTime = new DateTime(2026, 4, 24, 17, 55, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 22, 6, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C10",
+                            CheckInTime = new DateTime(2026, 4, 23, 11, 59, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 18, 33, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS027",
+                            Fee = 15000m,
+                            SlotId = "B09",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-199.98",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43B-160.85",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0234",
-                            CheckInTime = new DateTime(2026, 4, 24, 6, 40, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 10, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 18, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 20, 8, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS008",
                             Fee = 5000m,
-                            SlotId = "A42",
+                            SlotId = "A50",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-966.19",
+                            VehiclePlate = "43A-456.31",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0235",
-                            CheckInTime = new DateTime(2026, 4, 24, 7, 3, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 11, 24, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 13, 29, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 17, 12, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B02",
+                            SlotId = "B38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-301.83",
+                            VehiclePlate = "74A-896.89",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0236",
-                            CheckInTime = new DateTime(2026, 4, 24, 9, 21, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 18, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 12, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 17, 45, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B41",
+                            SlotId = "B39",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-141.70",
+                            VehiclePlate = "74A-177.66",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0237",
-                            CheckInTime = new DateTime(2026, 4, 24, 15, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 18, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B46",
+                            CheckInTime = new DateTime(2026, 4, 23, 18, 35, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 19, 46, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A01",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-548.31",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-254.16",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0238",
-                            CheckInTime = new DateTime(2026, 4, 24, 13, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 24, 22, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 23, 10, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 23, 14, 23, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A48",
+                            SlotId = "A24",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-871.78",
+                            VehiclePlate = "92C-373.81",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0239",
-                            CheckInTime = new DateTime(2026, 4, 25, 15, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 18, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A15",
+                            CheckInTime = new DateTime(2026, 4, 24, 19, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 0, 12, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-620.40",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-867.96",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0240",
-                            CheckInTime = new DateTime(2026, 4, 25, 7, 31, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 14, 7, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C20",
+                            CheckInTime = new DateTime(2026, 4, 24, 17, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 24, 19, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B21",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-911.96",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-266.34",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0241",
-                            CheckInTime = new DateTime(2026, 4, 25, 12, 34, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 14, 38, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A22",
+                            CheckInTime = new DateTime(2026, 4, 24, 8, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 24, 13, 48, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B32",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-838.20",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-177.66",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0242",
-                            CheckInTime = new DateTime(2026, 4, 25, 10, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 15, 14, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B03",
+                            CheckInTime = new DateTime(2026, 4, 24, 6, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 24, 16, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A29",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-917.97",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-323.77",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0243",
-                            CheckInTime = new DateTime(2026, 4, 25, 12, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 19, 38, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B45",
+                            CheckInTime = new DateTime(2026, 4, 24, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 24, 21, 43, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
+                            Fee = 5000m,
+                            SlotId = "A38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-313.94",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-329.51",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0244",
-                            CheckInTime = new DateTime(2026, 4, 25, 12, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 18, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 24, 6, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 24, 15, 56, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS008",
                             Fee = 5000m,
-                            SlotId = "A14",
+                            SlotId = "A19",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-580.36",
+                            VehiclePlate = "43A-456.31",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0245",
-                            CheckInTime = new DateTime(2026, 4, 25, 18, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 23, 28, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B38",
+                            CheckInTime = new DateTime(2026, 4, 25, 19, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 3, 9, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A19",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-535.84",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-953.18",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0246",
-                            CheckInTime = new DateTime(2026, 4, 25, 13, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 17, 33, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A11",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-745.20",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0247",
-                            CheckInTime = new DateTime(2026, 4, 25, 8, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 25, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 1, 37, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B04",
+                            SlotId = "B08",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-868.77",
+                            VehiclePlate = "74A-175.54",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0248",
-                            CheckInTime = new DateTime(2026, 4, 25, 7, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 10, 35, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0247",
+                            CheckInTime = new DateTime(2026, 4, 25, 11, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 17, 46, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A11",
+                            SlotId = "A24",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-760.76",
+                            VehiclePlate = "92C-655.70",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0249",
-                            CheckInTime = new DateTime(2026, 4, 25, 12, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 21, 44, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A49",
+                            TicketId = "TKT0248",
+                            CheckInTime = new DateTime(2026, 4, 25, 19, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 2, 22, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B42",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-302.15",
+                            VehiclePlate = "74A-867.96",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0249",
+                            CheckInTime = new DateTime(2026, 4, 25, 12, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 16, 18, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A44",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-945.90",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0250",
-                            CheckInTime = new DateTime(2026, 4, 25, 19, 22, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 23, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 25, 9, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 12, 3, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A46",
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-566.26",
+                            VehiclePlate = "92C-953.18",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0251",
-                            CheckInTime = new DateTime(2026, 4, 25, 15, 21, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 18, 53, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B43",
+                            CheckInTime = new DateTime(2026, 4, 25, 16, 23, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 22, 51, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-176.48",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-902.88",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0252",
-                            CheckInTime = new DateTime(2026, 4, 25, 7, 14, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 15, 52, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
+                            CheckInTime = new DateTime(2026, 4, 25, 6, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 11, 42, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS002",
+                            Fee = 5000m,
+                            SlotId = "A46",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-317.51",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-816.83",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0253",
-                            CheckInTime = new DateTime(2026, 4, 25, 13, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 25, 19, 16, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C05",
+                            CheckInTime = new DateTime(2026, 4, 25, 15, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 17, 33, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS004",
+                            Fee = 5000m,
+                            SlotId = "A48",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-457.80",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-294.11",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0254",
-                            CheckInTime = new DateTime(2026, 4, 26, 14, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 20, 48, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A27",
+                            CheckInTime = new DateTime(2026, 4, 25, 7, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 9, 51, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 25000m,
+                            SlotId = "C14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-417.42",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-325.85",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0255",
-                            CheckInTime = new DateTime(2026, 4, 26, 11, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 13, 6, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A03",
+                            CheckInTime = new DateTime(2026, 4, 25, 15, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 16, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 15000m,
+                            SlotId = "B27",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-483.98",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-536.32",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0256",
-                            CheckInTime = new DateTime(2026, 4, 26, 8, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 16, 55, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C06",
+                            CheckInTime = new DateTime(2026, 4, 25, 15, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 23, 46, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS013",
+                            Fee = 5000m,
+                            SlotId = "A37",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-638.18",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-866.67",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0257",
-                            CheckInTime = new DateTime(2026, 4, 26, 12, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 15, 21, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
+                            CheckInTime = new DateTime(2026, 4, 25, 10, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 25, 14, 43, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A19",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-166.36",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-983.41",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0258",
-                            CheckInTime = new DateTime(2026, 4, 26, 7, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 14, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 26, 19, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 22, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS017",
                             Fee = 5000m,
-                            SlotId = "A47",
+                            SlotId = "A16",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-805.95",
+                            VehiclePlate = "43A-117.87",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0259",
-                            CheckInTime = new DateTime(2026, 4, 26, 13, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 18, 59, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 26, 12, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 16, 34, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A45",
+                            SlotId = "A46",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-551.32",
+                            VehiclePlate = "92C-158.68",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0260",
-                            CheckInTime = new DateTime(2026, 4, 26, 6, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 26, 12, 24, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 17, 9, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A45",
+                            SlotId = "A44",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-404.77",
+                            VehiclePlate = "92C-211.12",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0261",
-                            CheckInTime = new DateTime(2026, 4, 26, 8, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 17, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 26, 9, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 13, 23, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A46",
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-553.60",
+                            VehiclePlate = "92C-577.72",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0262",
-                            CheckInTime = new DateTime(2026, 4, 26, 13, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 23, 44, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B19",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-313.58",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0263",
-                            CheckInTime = new DateTime(2026, 4, 26, 14, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 26, 23, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 26, 18, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 21, 35, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A27",
+                            SlotId = "A26",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-917.79",
+                            VehiclePlate = "92C-158.68",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0264",
-                            CheckInTime = new DateTime(2026, 4, 27, 13, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 17, 44, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0263",
+                            CheckInTime = new DateTime(2026, 4, 26, 16, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 20, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 25000m,
-                            SlotId = "C06",
+                            SlotId = "C11",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-331.95",
+                            VehiclePlate = "43C-325.85",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
-                            TicketId = "TKT0265",
-                            CheckInTime = new DateTime(2026, 4, 27, 13, 18, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 17, 24, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0264",
+                            CheckInTime = new DateTime(2026, 4, 26, 15, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 18, 51, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A33",
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-393.33",
+                            VehiclePlate = "92C-839.81",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0265",
+                            CheckInTime = new DateTime(2026, 4, 26, 18, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 1, 22, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS026",
+                            Fee = 5000m,
+                            SlotId = "A31",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-176.82",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0266",
-                            CheckInTime = new DateTime(2026, 4, 27, 12, 36, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 14, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B44",
+                            CheckInTime = new DateTime(2026, 4, 26, 13, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 20, 24, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A42",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-380.67",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-211.12",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0267",
-                            CheckInTime = new DateTime(2026, 4, 27, 6, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 10, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 26, 17, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 19, 30, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A12",
+                            SlotId = "A43",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-312.41",
+                            VehiclePlate = "92C-120.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0268",
-                            CheckInTime = new DateTime(2026, 4, 27, 14, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 16, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B33",
+                            CheckInTime = new DateTime(2026, 4, 26, 12, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 26, 21, 32, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-526.56",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-872.82",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0269",
-                            CheckInTime = new DateTime(2026, 4, 27, 15, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 18, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 27, 18, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 3, 15, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A16",
+                            SlotId = "A25",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-595.72",
+                            VehiclePlate = "92C-856.73",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0270",
-                            CheckInTime = new DateTime(2026, 4, 27, 13, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 27, 23, 30, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B01",
+                            CheckInTime = new DateTime(2026, 4, 27, 15, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 0, 41, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A33",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-459.97",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-629.64",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0271",
-                            CheckInTime = new DateTime(2026, 4, 28, 17, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 23, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 27, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 21, 21, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A28",
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-732.26",
+                            VehiclePlate = "92C-959.49",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0272",
-                            CheckInTime = new DateTime(2026, 4, 28, 13, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 18, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 27, 8, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 11, 23, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS016",
                             Fee = 5000m,
-                            SlotId = "A32",
+                            SlotId = "A30",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-438.66",
+                            VehiclePlate = "43A-405.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0273",
-                            CheckInTime = new DateTime(2026, 4, 28, 10, 24, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 19, 59, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C05",
+                            CheckInTime = new DateTime(2026, 4, 27, 15, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 21, 21, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-641.11",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-373.81",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0274",
-                            CheckInTime = new DateTime(2026, 4, 28, 15, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 29, 0, 43, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C08",
+                            CheckInTime = new DateTime(2026, 4, 27, 15, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 21, 57, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
+                            Fee = 5000m,
+                            SlotId = "A31",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-739.14",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-496.54",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0275",
-                            CheckInTime = new DateTime(2026, 4, 28, 13, 34, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A37",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-287.85",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0276",
-                            CheckInTime = new DateTime(2026, 4, 28, 8, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 14, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 27, 16, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 23, 11, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B12",
+                            SlotId = "B27",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-784.36",
+                            VehiclePlate = "74A-241.24",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0277",
-                            CheckInTime = new DateTime(2026, 4, 28, 12, 49, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 14, 19, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C07",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-148.37",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0278",
-                            CheckInTime = new DateTime(2026, 4, 28, 15, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 21, 8, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0276",
+                            CheckInTime = new DateTime(2026, 4, 27, 11, 42, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 14, 57, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A40",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-239.90",
+                            VehiclePlate = "92C-914.30",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0279",
-                            CheckInTime = new DateTime(2026, 4, 28, 8, 41, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 13, 34, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0277",
+                            CheckInTime = new DateTime(2026, 4, 27, 18, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 20, 33, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A48",
+                            SlotId = "A28",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-302.95",
+                            VehiclePlate = "92C-475.65",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0278",
+                            CheckInTime = new DateTime(2026, 4, 27, 19, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 23, 58, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B11",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-459.45",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0279",
+                            CheckInTime = new DateTime(2026, 4, 27, 6, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 27, 10, 32, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A39",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-213.80",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0280",
-                            CheckInTime = new DateTime(2026, 4, 28, 16, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 28, 23, 10, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C20",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-329.24",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0281",
-                            CheckInTime = new DateTime(2026, 4, 29, 17, 29, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 0, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 28, 15, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 17, 17, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B04",
+                            SlotId = "B38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-616.20",
+                            VehiclePlate = "74A-247.89",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0282",
-                            CheckInTime = new DateTime(2026, 4, 29, 16, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 0, 52, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B18",
+                            TicketId = "TKT0281",
+                            CheckInTime = new DateTime(2026, 4, 28, 8, 39, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 12, 19, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A21",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-538.90",
+                            VehiclePlate = "92C-872.82",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0282",
+                            CheckInTime = new DateTime(2026, 4, 28, 13, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 15, 16, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B21",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-501.54",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0283",
-                            CheckInTime = new DateTime(2026, 4, 29, 15, 40, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 29, 19, 4, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C14",
+                            CheckInTime = new DateTime(2026, 4, 28, 9, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 13, 6, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
+                            Fee = 5000m,
+                            SlotId = "A40",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-767.94",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-193.57",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0284",
-                            CheckInTime = new DateTime(2026, 4, 29, 10, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 29, 17, 47, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C09",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-536.62",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0285",
-                            CheckInTime = new DateTime(2026, 4, 29, 19, 36, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 2, 51, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C20",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-888.83",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0286",
-                            CheckInTime = new DateTime(2026, 4, 29, 17, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 1, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 28, 19, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 21, 19, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B22",
+                            SlotId = "B16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-649.96",
+                            VehiclePlate = "74A-868.58",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0287",
-                            CheckInTime = new DateTime(2026, 4, 29, 19, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 29, 21, 15, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0285",
+                            CheckInTime = new DateTime(2026, 4, 28, 12, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 21, 28, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS001",
                             Fee = 5000m,
-                            SlotId = "A46",
+                            SlotId = "A36",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-363.49",
+                            VehiclePlate = "43A-163.78",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0286",
+                            CheckInTime = new DateTime(2026, 4, 28, 15, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 20, 29, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS021",
+                            Fee = 5000m,
+                            SlotId = "A03",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-890.60",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0287",
+                            CheckInTime = new DateTime(2026, 4, 28, 16, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 17, 45, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A37",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-555.37",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0288",
-                            CheckInTime = new DateTime(2026, 4, 29, 8, 14, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 29, 17, 13, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
+                            CheckInTime = new DateTime(2026, 4, 28, 11, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 28, 20, 42, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B47",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-982.36",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-241.24",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0289",
-                            CheckInTime = new DateTime(2026, 4, 29, 12, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 29, 17, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 29, 10, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 29, 11, 43, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A40",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-914.97",
+                            VehiclePlate = "92C-213.80",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0290",
-                            CheckInTime = new DateTime(2026, 4, 30, 11, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 20, 40, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A17",
+                            CheckInTime = new DateTime(2026, 4, 29, 9, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 29, 16, 30, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B41",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-304.11",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-266.34",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0291",
-                            CheckInTime = new DateTime(2026, 4, 30, 18, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 21, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 29, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 29, 23, 47, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A39",
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-938.14",
+                            VehiclePlate = "92C-728.40",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0292",
-                            CheckInTime = new DateTime(2026, 4, 30, 18, 49, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 1, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 29, 19, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 1, 46, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A11",
+                            SlotId = "A30",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-745.11",
+                            VehiclePlate = "92C-586.10",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0293",
-                            CheckInTime = new DateTime(2026, 4, 30, 6, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 8, 12, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
+                            CheckInTime = new DateTime(2026, 4, 29, 6, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 29, 13, 46, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 5000m,
+                            SlotId = "A50",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-654.24",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-289.56",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0294",
-                            CheckInTime = new DateTime(2026, 4, 30, 12, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 20, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B02",
+                            CheckInTime = new DateTime(2026, 4, 29, 11, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 29, 16, 38, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A22",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-294.86",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-150.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0295",
-                            CheckInTime = new DateTime(2026, 4, 30, 14, 36, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 20, 24, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A39",
+                            CheckInTime = new DateTime(2026, 4, 29, 6, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 29, 10, 26, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 15000m,
+                            SlotId = "B42",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-375.17",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-536.32",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0296",
-                            CheckInTime = new DateTime(2026, 4, 30, 7, 39, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 13, 9, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A15",
+                            CheckInTime = new DateTime(2026, 4, 30, 9, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 10, 52, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 15000m,
+                            SlotId = "B22",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-438.15",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-536.32",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0297",
-                            CheckInTime = new DateTime(2026, 4, 30, 13, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 30, 13, 55, 0, 0, DateTimeKind.Unspecified),
                             CheckOutTime = new DateTime(2026, 4, 30, 15, 57, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
                             Fee = 15000m,
-                            SlotId = "B12",
+                            SlotId = "B34",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-767.50",
+                            VehiclePlate = "43B-554.30",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0298",
-                            CheckInTime = new DateTime(2026, 4, 30, 10, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 19, 42, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C15",
+                            CheckInTime = new DateTime(2026, 4, 30, 19, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 4, 5, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 15000m,
+                            SlotId = "B49",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-103.62",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43B-472.76",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0299",
-                            CheckInTime = new DateTime(2026, 4, 30, 14, 11, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 16, 41, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
+                            CheckInTime = new DateTime(2026, 4, 30, 9, 38, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 15, 52, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-306.41",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-502.38",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0300",
-                            CheckInTime = new DateTime(2026, 4, 30, 18, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 19, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 30, 10, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 18, 24, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A44",
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-942.81",
+                            VehiclePlate = "92C-903.72",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0301",
-                            CheckInTime = new DateTime(2026, 4, 30, 9, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 12, 43, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A21",
+                            CheckInTime = new DateTime(2026, 4, 30, 19, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 4, 25, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B29",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-443.68",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-486.69",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0302",
-                            CheckInTime = new DateTime(2026, 4, 30, 16, 15, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 4, 30, 20, 34, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
+                            CheckInTime = new DateTime(2026, 4, 30, 13, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 17, 32, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A41",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-737.10",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-902.88",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0303",
-                            CheckInTime = new DateTime(2026, 5, 1, 6, 40, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 12, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 30, 18, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 20, 29, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A49",
+                            SlotId = "A29",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-913.71",
+                            VehiclePlate = "92C-872.82",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0304",
-                            CheckInTime = new DateTime(2026, 5, 1, 6, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 14, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 30, 8, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 16, 32, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A46",
+                            SlotId = "A23",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-364.87",
+                            VehiclePlate = "92C-288.96",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0305",
-                            CheckInTime = new DateTime(2026, 5, 1, 16, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 23, 20, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A43",
+                            CheckInTime = new DateTime(2026, 4, 30, 7, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 12, 58, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS015",
+                            Fee = 25000m,
+                            SlotId = "C08",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-231.84",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-259.18",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0306",
-                            CheckInTime = new DateTime(2026, 5, 1, 17, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 2, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 30, 10, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 15, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A21",
+                            SlotId = "A03",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-587.53",
+                            VehiclePlate = "92C-230.97",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0307",
-                            CheckInTime = new DateTime(2026, 5, 1, 14, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 18, 10, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C10",
+                            CheckInTime = new DateTime(2026, 4, 30, 11, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 20, 43, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A12",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-632.46",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-655.70",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0308",
-                            CheckInTime = new DateTime(2026, 5, 1, 12, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 17, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 4, 30, 18, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 20, 12, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B01",
+                            SlotId = "B16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-174.63",
+                            VehiclePlate = "74A-650.50",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0309",
-                            CheckInTime = new DateTime(2026, 5, 1, 9, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 14, 5, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
+                            CheckInTime = new DateTime(2026, 4, 30, 14, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 4, 30, 17, 14, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B39",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-108.83",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-266.34",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0310",
-                            CheckInTime = new DateTime(2026, 5, 1, 19, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 3, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B29",
+                            CheckInTime = new DateTime(2026, 4, 30, 17, 53, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 1, 19, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A39",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-439.58",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-945.90",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0311",
-                            CheckInTime = new DateTime(2026, 5, 1, 8, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 10, 1, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C01",
+                            CheckInTime = new DateTime(2026, 5, 1, 16, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 21, 53, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
+                            Fee = 15000m,
+                            SlotId = "B15",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-368.96",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43B-536.32",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0312",
-                            CheckInTime = new DateTime(2026, 5, 1, 14, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 21, 30, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C04",
+                            CheckInTime = new DateTime(2026, 5, 1, 18, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 21, 27, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
+                            Fee = 5000m,
+                            SlotId = "A38",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-128.83",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-790.42",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0313",
-                            CheckInTime = new DateTime(2026, 5, 1, 11, 4, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 17, 54, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A28",
+                            CheckInTime = new DateTime(2026, 5, 1, 12, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 13, 27, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-670.83",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-908.24",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0314",
-                            CheckInTime = new DateTime(2026, 5, 1, 15, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 17, 34, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A32",
+                            CheckInTime = new DateTime(2026, 5, 1, 7, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 10, 35, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-427.65",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-908.24",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0315",
-                            CheckInTime = new DateTime(2026, 5, 1, 14, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 19, 1, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B01",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-438.54",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0316",
-                            CheckInTime = new DateTime(2026, 5, 1, 15, 25, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 1, 22, 17, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B07",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-690.91",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0317",
-                            CheckInTime = new DateTime(2026, 5, 2, 17, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 19, 25, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B03",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-586.36",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0318",
-                            CheckInTime = new DateTime(2026, 5, 2, 6, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 14, 45, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B04",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-626.23",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0319",
-                            CheckInTime = new DateTime(2026, 5, 2, 12, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 18, 27, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C05",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-357.61",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0320",
-                            CheckInTime = new DateTime(2026, 5, 2, 7, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 1, 9, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS028",
                             Fee = 5000m,
-                            SlotId = "A11",
+                            SlotId = "A43",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-517.74",
+                            VehiclePlate = "43A-349.66",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0321",
-                            CheckInTime = new DateTime(2026, 5, 2, 19, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 4, 51, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0316",
+                            CheckInTime = new DateTime(2026, 5, 1, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 23, 10, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A04",
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-329.36",
+                            VehiclePlate = "92C-316.89",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0317",
+                            CheckInTime = new DateTime(2026, 5, 1, 15, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 1, 38, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS021",
+                            Fee = 5000m,
+                            SlotId = "A15",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-890.60",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0318",
+                            CheckInTime = new DateTime(2026, 5, 1, 15, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 18, 53, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A43",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-873.64",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0319",
+                            CheckInTime = new DateTime(2026, 5, 1, 17, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 22, 19, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B13",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-875.32",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0320",
+                            CheckInTime = new DateTime(2026, 5, 1, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 23, 40, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B20",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-247.89",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0321",
+                            CheckInTime = new DateTime(2026, 5, 1, 6, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 1, 9, 47, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A18",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-852.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0322",
-                            CheckInTime = new DateTime(2026, 5, 2, 6, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 7, 52, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C20",
+                            CheckInTime = new DateTime(2026, 5, 2, 11, 34, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 21, 1, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
+                            Fee = 5000m,
+                            SlotId = "A46",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-800.86",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-679.92",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0323",
-                            CheckInTime = new DateTime(2026, 5, 2, 16, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 22, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 2, 7, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 16, 50, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B21",
+                            SlotId = "B18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-995.24",
+                            VehiclePlate = "74A-316.24",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0324",
-                            CheckInTime = new DateTime(2026, 5, 2, 15, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 22, 59, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 2, 6, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 13, 35, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A25",
+                            SlotId = "A30",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-274.91",
+                            VehiclePlate = "92C-503.56",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0325",
-                            CheckInTime = new DateTime(2026, 5, 2, 12, 40, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 16, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 2, 6, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 16, 6, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
                             Fee = 5000m,
-                            SlotId = "A28",
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-639.44",
+                            VehiclePlate = "43A-496.54",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0326",
-                            CheckInTime = new DateTime(2026, 5, 2, 19, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 4, 15, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A26",
+                            CheckInTime = new DateTime(2026, 5, 2, 7, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 13, 8, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B09",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-866.13",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-501.54",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0327",
-                            CheckInTime = new DateTime(2026, 5, 2, 9, 28, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 2, 18, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 3, 3, 8, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A31",
+                            SlotId = "A06",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-604.29",
+                            VehiclePlate = "92C-135.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0328",
-                            CheckInTime = new DateTime(2026, 5, 2, 7, 36, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 12, 5, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B18",
+                            CheckInTime = new DateTime(2026, 5, 2, 12, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 22, 21, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A26",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-669.36",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-652.88",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0329",
-                            CheckInTime = new DateTime(2026, 5, 2, 8, 11, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 2, 10, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 2, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 17, 23, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B21",
+                            SlotId = "B18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-879.25",
+                            VehiclePlate = "74A-502.38",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0330",
-                            CheckInTime = new DateTime(2026, 5, 2, 16, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 0, 22, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A22",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-136.38",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0331",
-                            CheckInTime = new DateTime(2026, 5, 3, 17, 26, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 0, 32, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-164.86",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0332",
-                            CheckInTime = new DateTime(2026, 5, 3, 15, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 19, 22, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 2, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 2, 18, 1, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS027",
                             Fee = 15000m,
-                            SlotId = "B02",
+                            SlotId = "B43",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-563.89",
+                            VehiclePlate = "43B-160.85",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0333",
-                            CheckInTime = new DateTime(2026, 5, 3, 12, 8, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 19, 54, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0331",
+                            CheckInTime = new DateTime(2026, 5, 3, 13, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 3, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS011",
                             Fee = 5000m,
-                            SlotId = "A46",
+                            SlotId = "A45",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-192.30",
+                            VehiclePlate = "43A-505.34",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0334",
-                            CheckInTime = new DateTime(2026, 5, 3, 9, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 17, 11, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0332",
+                            CheckInTime = new DateTime(2026, 5, 3, 19, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 0, 46, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A13",
+                            SlotId = "A28",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-709.91",
+                            VehiclePlate = "92C-702.42",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0333",
+                            CheckInTime = new DateTime(2026, 5, 3, 19, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 0, 16, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B15",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-409.65",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0334",
+                            CheckInTime = new DateTime(2026, 5, 3, 14, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 3, 23, 15, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A27",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-629.64",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0335",
-                            CheckInTime = new DateTime(2026, 5, 3, 6, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 16, 18, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A44",
+                            CheckInTime = new DateTime(2026, 5, 3, 14, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 3, 18, 53, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS015",
+                            Fee = 25000m,
+                            SlotId = "C12",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-769.52",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-259.18",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0336",
-                            CheckInTime = new DateTime(2026, 5, 3, 12, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 3, 16, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 4, 9, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 14, 16, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A39",
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-127.51",
+                            VehiclePlate = "92C-983.41",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0337",
-                            CheckInTime = new DateTime(2026, 5, 4, 17, 16, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 22, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 4, 11, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 17, 52, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
                             Fee = 25000m,
-                            SlotId = "C15",
+                            SlotId = "C18",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-166.68",
+                            VehiclePlate = "43C-653.47",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0338",
-                            CheckInTime = new DateTime(2026, 5, 4, 16, 13, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 17, 30, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A30",
+                            CheckInTime = new DateTime(2026, 5, 4, 15, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 21, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
+                            Fee = 25000m,
+                            SlotId = "C07",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-243.72",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-653.47",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0339",
-                            CheckInTime = new DateTime(2026, 5, 4, 9, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 14, 5, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A19",
+                            CheckInTime = new DateTime(2026, 5, 4, 10, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 14, 17, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B36",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-334.93",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-868.58",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0340",
-                            CheckInTime = new DateTime(2026, 5, 4, 12, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 16, 43, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A15",
+                            CheckInTime = new DateTime(2026, 5, 4, 9, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 18, 29, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B24",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-565.21",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-868.58",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0341",
-                            CheckInTime = new DateTime(2026, 5, 4, 11, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 19, 56, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A12",
+                            CheckInTime = new DateTime(2026, 5, 4, 11, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 20, 41, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-716.75",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-805.37",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0342",
-                            CheckInTime = new DateTime(2026, 5, 4, 13, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 19, 32, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A16",
+                            CheckInTime = new DateTime(2026, 5, 4, 15, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 22, 54, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B06",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-736.32",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-175.54",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0343",
-                            CheckInTime = new DateTime(2026, 5, 4, 18, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 23, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 4, 17, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 22, 20, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS024",
                             Fee = 15000m,
-                            SlotId = "B11",
+                            SlotId = "B28",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-885.36",
+                            VehiclePlate = "43B-452.36",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0344",
-                            CheckInTime = new DateTime(2026, 5, 4, 18, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 21, 36, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B31",
+                            CheckInTime = new DateTime(2026, 5, 4, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 4, 19, 32, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-399.21",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-150.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0345",
-                            CheckInTime = new DateTime(2026, 5, 4, 19, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 1, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 5, 15, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 5, 20, 5, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A34",
+                            SlotId = "A37",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-224.57",
+                            VehiclePlate = "92C-959.49",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0346",
-                            CheckInTime = new DateTime(2026, 5, 4, 17, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 2, 51, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A22",
+                            CheckInTime = new DateTime(2026, 5, 5, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 5, 17, 1, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 25000m,
+                            SlotId = "C01",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-610.11",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-325.85",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0347",
-                            CheckInTime = new DateTime(2026, 5, 4, 14, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 4, 18, 55, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C20",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-983.62",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0348",
-                            CheckInTime = new DateTime(2026, 5, 5, 11, 17, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 17, 11, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-696.83",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0349",
-                            CheckInTime = new DateTime(2026, 5, 5, 6, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 11, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 5, 14, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 5, 20, 48, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A13",
+                            SlotId = "A16",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-305.78",
+                            VehiclePlate = "92C-120.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0350",
-                            CheckInTime = new DateTime(2026, 5, 5, 11, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 19, 1, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A23",
+                            TicketId = "TKT0348",
+                            CheckInTime = new DateTime(2026, 5, 5, 14, 14, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 5, 23, 56, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B33",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-172.35",
+                            VehiclePlate = "74A-177.66",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0349",
+                            CheckInTime = new DateTime(2026, 5, 5, 15, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 0, 43, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
+                            Fee = 25000m,
+                            SlotId = "C08",
+                            Status = "Đã ra",
+                            VehiclePlate = "43C-897.86",
+                            VehicleType = "Ô tô lớn"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0350",
+                            CheckInTime = new DateTime(2026, 5, 5, 8, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 5, 15, 25, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
+                            Fee = 5000m,
+                            SlotId = "A05",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-761.33",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0351",
-                            CheckInTime = new DateTime(2026, 5, 5, 7, 21, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 15, 50, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
+                            CheckInTime = new DateTime(2026, 5, 5, 18, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 5, 20, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B15",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-886.60",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "74A-780.42",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0352",
-                            CheckInTime = new DateTime(2026, 5, 5, 19, 30, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 1, 55, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A31",
+                            CheckInTime = new DateTime(2026, 5, 6, 19, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B46",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-748.45",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-486.69",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0353",
-                            CheckInTime = new DateTime(2026, 5, 5, 19, 40, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 23, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 6, 12, 49, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 14, 19, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
                             Fee = 25000m,
-                            SlotId = "C11",
+                            SlotId = "C07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-359.60",
+                            VehiclePlate = "43C-653.47",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0354",
-                            CheckInTime = new DateTime(2026, 5, 5, 19, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 23, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 6, 8, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 16, 40, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B40",
+                            SlotId = "B28",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-566.84",
+                            VehiclePlate = "74A-241.24",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0355",
-                            CheckInTime = new DateTime(2026, 5, 5, 13, 38, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 5, 22, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 6, 6, 26, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 10, 23, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A40",
+                            SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-282.37",
+                            VehiclePlate = "92C-316.89",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0356",
-                            CheckInTime = new DateTime(2026, 5, 6, 18, 45, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 0, 44, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
+                            CheckInTime = new DateTime(2026, 5, 6, 18, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 23, 30, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A32",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-224.71",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-347.14",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0357",
-                            CheckInTime = new DateTime(2026, 5, 6, 11, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 19, 58, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B20",
+                            CheckInTime = new DateTime(2026, 5, 6, 16, 13, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 23, 10, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS014",
+                            Fee = 5000m,
+                            SlotId = "A49",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-358.98",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43A-496.54",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0358",
-                            CheckInTime = new DateTime(2026, 5, 6, 12, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 17, 17, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A38",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-312.66",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0359",
-                            CheckInTime = new DateTime(2026, 5, 6, 7, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 14, 34, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A47",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-183.63",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0360",
-                            CheckInTime = new DateTime(2026, 5, 6, 11, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 16, 12, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B46",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-643.41",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0361",
-                            CheckInTime = new DateTime(2026, 5, 6, 15, 23, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 19, 59, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A31",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-578.13",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0362",
-                            CheckInTime = new DateTime(2026, 5, 6, 16, 3, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 0, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 6, 16, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 22, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 25000m,
-                            SlotId = "C02",
+                            SlotId = "C16",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-541.33",
+                            VehiclePlate = "43C-325.85",
                             VehicleType = "Ô tô lớn"
                         },
                         new
                         {
-                            TicketId = "TKT0363",
-                            CheckInTime = new DateTime(2026, 5, 6, 6, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 9, 6, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0359",
+                            CheckInTime = new DateTime(2026, 5, 6, 7, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 6, 12, 40, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B42",
+                            SlotId = "B02",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-576.25",
+                            VehiclePlate = "74A-316.24",
                             VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0360",
+                            CheckInTime = new DateTime(2026, 5, 6, 16, 10, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 0, 52, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A18",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-702.42",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0361",
+                            CheckInTime = new DateTime(2026, 5, 7, 16, 56, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 0, 36, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B12",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-347.16",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0362",
+                            CheckInTime = new DateTime(2026, 5, 7, 7, 48, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 14, 17, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B30",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-328.20",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0363",
+                            CheckInTime = new DateTime(2026, 5, 7, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 20, 2, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A35",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-316.89",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0364",
-                            CheckInTime = new DateTime(2026, 5, 6, 8, 34, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 12, 36, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B20",
+                            CheckInTime = new DateTime(2026, 5, 7, 17, 57, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 0, 43, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A13",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-546.51",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-135.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0365",
-                            CheckInTime = new DateTime(2026, 5, 6, 9, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 15, 54, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B43",
+                            CheckInTime = new DateTime(2026, 5, 7, 16, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 23, 13, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
+                            Fee = 25000m,
+                            SlotId = "C17",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-142.78",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "43C-897.86",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0366",
-                            CheckInTime = new DateTime(2026, 5, 6, 11, 57, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 18, 18, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B01",
+                            CheckInTime = new DateTime(2026, 5, 7, 14, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 16, 40, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A15",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-409.36",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-872.82",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0367",
-                            CheckInTime = new DateTime(2026, 5, 6, 17, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 23, 43, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A02",
+                            CheckInTime = new DateTime(2026, 5, 7, 16, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 21, 55, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B31",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-217.79",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-896.89",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0368",
-                            CheckInTime = new DateTime(2026, 5, 6, 11, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 6, 15, 17, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A15",
+                            CheckInTime = new DateTime(2026, 5, 7, 19, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 21, 31, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B40",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-696.82",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-426.12",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0369",
-                            CheckInTime = new DateTime(2026, 5, 7, 11, 32, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 15, 8, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A35",
+                            CheckInTime = new DateTime(2026, 5, 7, 19, 5, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 5, 3, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B23",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-494.25",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "74A-177.66",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0370",
-                            CheckInTime = new DateTime(2026, 5, 7, 6, 1, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 12, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 7, 13, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 19, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
                             Fee = 5000m,
-                            SlotId = "A32",
+                            SlotId = "A22",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-296.93",
+                            VehiclePlate = "43A-679.92",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0371",
-                            CheckInTime = new DateTime(2026, 5, 7, 13, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 23, 6, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 7, 11, 17, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 7, 20, 40, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
                             Fee = 5000m,
-                            SlotId = "A32",
+                            SlotId = "A17",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-477.67",
+                            VehiclePlate = "43A-761.33",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0372",
-                            CheckInTime = new DateTime(2026, 5, 7, 15, 52, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 21, 48, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B18",
+                            CheckInTime = new DateTime(2026, 5, 8, 6, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 12, 59, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A27",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-135.95",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-150.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0373",
-                            CheckInTime = new DateTime(2026, 5, 7, 19, 11, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 8, 5, 2, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B12",
+                            CheckInTime = new DateTime(2026, 5, 8, 12, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 14, 35, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A41",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-593.75",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-577.72",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0374",
-                            CheckInTime = new DateTime(2026, 5, 7, 6, 2, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 10, 17, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C11",
+                            CheckInTime = new DateTime(2026, 5, 8, 8, 16, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 17, 5, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS028",
+                            Fee = 5000m,
+                            SlotId = "A31",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-932.66",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-349.66",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0375",
-                            CheckInTime = new DateTime(2026, 5, 7, 12, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 16, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 8, 6, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 8, 42, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
                             Fee = 5000m,
-                            SlotId = "A08",
+                            SlotId = "A26",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-725.91",
+                            VehiclePlate = "43A-193.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0376",
-                            CheckInTime = new DateTime(2026, 5, 7, 9, 53, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 17, 59, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 8, 9, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 14, 56, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS001",
                             Fee = 5000m,
-                            SlotId = "A36",
+                            SlotId = "A41",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-627.16",
+                            VehiclePlate = "43A-163.78",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0377",
-                            CheckInTime = new DateTime(2026, 5, 7, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 20, 53, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B27",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-575.12",
-                            VehicleType = "Ô tô nhỏ"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0378",
-                            CheckInTime = new DateTime(2026, 5, 7, 12, 22, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 20, 26, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C07",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-575.27",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0379",
-                            CheckInTime = new DateTime(2026, 5, 7, 10, 10, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 11, 53, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C12",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-122.79",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0380",
-                            CheckInTime = new DateTime(2026, 5, 7, 13, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 18, 21, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C06",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-398.69",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0381",
-                            CheckInTime = new DateTime(2026, 5, 7, 9, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 15, 19, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C13",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-739.77",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0382",
-                            CheckInTime = new DateTime(2026, 5, 7, 14, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 7, 16, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 8, 6, 20, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 8, 9, 25, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS004",
                             Fee = 5000m,
-                            SlotId = "A38",
+                            SlotId = "A30",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-803.80",
+                            VehiclePlate = "43A-294.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0383",
-                            CheckInTime = new DateTime(2026, 5, 8, 14, 58, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 8, 18, 49, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0378",
+                            CheckInTime = new DateTime(2026, 5, 9, 16, 33, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 20, 55, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B33",
+                            SlotId = "B04",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-386.54",
+                            VehiclePlate = "74A-501.54",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0384",
-                            CheckInTime = new DateTime(2026, 5, 8, 13, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 8, 23, 6, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C11",
+                            TicketId = "TKT0379",
+                            CheckInTime = new DateTime(2026, 5, 9, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 17, 26, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A44",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-821.46",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-182.35",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0380",
+                            CheckInTime = new DateTime(2026, 5, 9, 12, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 13, 43, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A48",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-872.82",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0381",
+                            CheckInTime = new DateTime(2026, 5, 9, 13, 46, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 15, 21, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A16",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-213.80",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0382",
+                            CheckInTime = new DateTime(2026, 5, 9, 13, 44, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 15, 17, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B28",
+                            Status = "Đã ra",
+                            VehiclePlate = "74A-968.18",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0383",
+                            CheckInTime = new DateTime(2026, 5, 9, 14, 11, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 16, 41, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
+                            Fee = 5000m,
+                            SlotId = "A47",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-679.92",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0384",
+                            CheckInTime = new DateTime(2026, 5, 9, 19, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 3, 57, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS026",
+                            Fee = 5000m,
+                            SlotId = "A01",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-176.82",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0385",
-                            CheckInTime = new DateTime(2026, 5, 8, 18, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 8, 21, 40, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C17",
+                            CheckInTime = new DateTime(2026, 5, 9, 16, 3, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 20, 42, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A14",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-175.73",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-135.34",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0386",
-                            CheckInTime = new DateTime(2026, 5, 8, 19, 15, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 2, 27, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C03",
+                            CheckInTime = new DateTime(2026, 5, 9, 17, 24, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 2, 9, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS018",
+                            Fee = 5000m,
+                            SlotId = "A46",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-574.11",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-790.42",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0387",
-                            CheckInTime = new DateTime(2026, 5, 8, 19, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 4, 55, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C02",
+                            CheckInTime = new DateTime(2026, 5, 9, 16, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 9, 20, 34, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS001",
+                            Fee = 5000m,
+                            SlotId = "A40",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-764.39",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43A-163.78",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0388",
-                            CheckInTime = new DateTime(2026, 5, 8, 10, 36, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 8, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 18, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 20, 21, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
                             Fee = 5000m,
-                            SlotId = "A31",
+                            SlotId = "A27",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-170.28",
+                            VehiclePlate = "43A-860.80",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0389",
-                            CheckInTime = new DateTime(2026, 5, 8, 7, 31, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 8, 9, 31, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
+                            CheckInTime = new DateTime(2026, 5, 10, 7, 24, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 11, 16, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A04",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-635.13",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-288.96",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0390",
-                            CheckInTime = new DateTime(2026, 5, 9, 9, 43, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 19, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 15, 54, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 19, 11, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A38",
+                            SlotId = "A08",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-799.23",
+                            VehiclePlate = "92C-655.70",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0391",
-                            CheckInTime = new DateTime(2026, 5, 9, 14, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 20, 32, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 10, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 12, 36, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A26",
+                            SlotId = "A16",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-112.78",
+                            VehiclePlate = "92C-629.64",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0392",
-                            CheckInTime = new DateTime(2026, 5, 9, 7, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 13, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 12, 51, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 16, 45, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A03",
+                            SlotId = "A02",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-661.18",
+                            VehiclePlate = "92C-796.10",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0393",
-                            CheckInTime = new DateTime(2026, 5, 9, 8, 54, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 16, 43, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C05",
+                            CheckInTime = new DateTime(2026, 5, 10, 15, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 22, 1, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS012",
+                            Fee = 15000m,
+                            SlotId = "B30",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-771.59",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "43B-432.85",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0394",
-                            CheckInTime = new DateTime(2026, 5, 9, 11, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 15, 27, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C01",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-679.46",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0395",
-                            CheckInTime = new DateTime(2026, 5, 9, 15, 50, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 20, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 11, 27, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 13, 5, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS023",
                             Fee = 5000m,
-                            SlotId = "A11",
+                            SlotId = "A12",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-602.82",
+                            VehiclePlate = "43A-743.15",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
-                            TicketId = "TKT0396",
-                            CheckInTime = new DateTime(2026, 5, 9, 15, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 19, 16, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A01",
+                            TicketId = "TKT0395",
+                            CheckInTime = new DateTime(2026, 5, 10, 12, 2, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 17, 16, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B01",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-695.82",
+                            VehiclePlate = "74A-868.58",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0396",
+                            CheckInTime = new DateTime(2026, 5, 10, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 3, 13, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A23",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-120.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0397",
-                            CheckInTime = new DateTime(2026, 5, 9, 10, 46, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 9, 17, 19, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C16",
+                            CheckInTime = new DateTime(2026, 5, 10, 13, 4, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 22, 6, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A19",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-861.11",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-914.30",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0398",
-                            CheckInTime = new DateTime(2026, 5, 10, 11, 4, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 15, 8, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 9, 41, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 18, 14, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A50",
+                            SlotId = "A02",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-461.87",
+                            VehiclePlate = "92C-577.72",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0399",
-                            CheckInTime = new DateTime(2026, 5, 10, 16, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 19, 11, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C19",
+                            CheckInTime = new DateTime(2026, 5, 10, 10, 58, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 13, 3, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A05",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-152.60",
-                            VehicleType = "Ô tô lớn"
+                            VehiclePlate = "92C-316.89",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0400",
-                            CheckInTime = new DateTime(2026, 5, 10, 12, 48, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 14, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 17, 43, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 0, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
                             Fee = 5000m,
-                            SlotId = "A10",
+                            SlotId = "A42",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-532.83",
+                            VehiclePlate = "43A-761.33",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0401",
-                            CheckInTime = new DateTime(2026, 5, 10, 14, 37, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 20, 28, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 10, 14, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 10, 16, 52, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A38",
+                            SlotId = "A19",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-221.34",
+                            VehiclePlate = "92C-503.56",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0402",
-                            CheckInTime = new DateTime(2026, 5, 10, 8, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 18, 1, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 11, 7, 36, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 16, 8, 0, 0, DateTimeKind.Unspecified),
                             Fee = 5000m,
-                            SlotId = "A01",
+                            SlotId = "A33",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-643.91",
+                            VehiclePlate = "92C-373.81",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0403",
-                            CheckInTime = new DateTime(2026, 5, 10, 13, 27, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 19, 54, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A04",
+                            CheckInTime = new DateTime(2026, 5, 11, 14, 40, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 23, 44, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS030",
+                            Fee = 15000m,
+                            SlotId = "B31",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-360.29",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-472.76",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0404",
-                            CheckInTime = new DateTime(2026, 5, 10, 9, 56, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 13, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 11, 14, 7, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 18, 36, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS004",
                             Fee = 5000m,
-                            SlotId = "A48",
+                            SlotId = "A31",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-975.15",
+                            VehiclePlate = "43A-294.11",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0405",
-                            CheckInTime = new DateTime(2026, 5, 10, 6, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 11, 19, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 11, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 16, 57, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS029",
                             Fee = 5000m,
-                            SlotId = "A36",
+                            SlotId = "A10",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-277.47",
+                            VehiclePlate = "43A-679.92",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0406",
-                            CheckInTime = new DateTime(2026, 5, 10, 17, 20, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 1, 41, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A43",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-964.58",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0407",
-                            CheckInTime = new DateTime(2026, 5, 10, 15, 9, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 21, 28, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A24",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-581.70",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0408",
-                            CheckInTime = new DateTime(2026, 5, 10, 10, 59, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 12, 37, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 11, 15, 25, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 22, 17, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B41",
+                            SlotId = "B07",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-693.70",
+                            VehiclePlate = "74A-177.66",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0409",
-                            CheckInTime = new DateTime(2026, 5, 10, 6, 44, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 10, 9, 47, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A06",
+                            TicketId = "TKT0407",
+                            CheckInTime = new DateTime(2026, 5, 11, 14, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 19, 32, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 15000m,
+                            SlotId = "B42",
                             Status = "Đã ra",
-                            VehiclePlate = "43A-486.87",
+                            VehiclePlate = "74A-409.65",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0408",
+                            CheckInTime = new DateTime(2026, 5, 11, 14, 9, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 15, 54, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS011",
+                            Fee = 5000m,
+                            SlotId = "A44",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-505.34",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0409",
+                            CheckInTime = new DateTime(2026, 5, 11, 6, 47, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 13, 4, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS007",
+                            Fee = 5000m,
+                            SlotId = "A30",
+                            Status = "Đã ra",
+                            VehiclePlate = "43A-657.75",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0410",
-                            CheckInTime = new DateTime(2026, 5, 11, 10, 47, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 15000m,
-                            SlotId = "B40",
+                            CheckInTime = new DateTime(2026, 5, 11, 12, 55, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 16, 14, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A11",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-882.18",
-                            VehicleType = "Ô tô nhỏ"
+                            VehiclePlate = "92C-796.10",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0411",
-                            CheckInTime = new DateTime(2026, 5, 11, 11, 6, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 16, 46, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A46",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-546.93",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0412",
-                            CheckInTime = new DateTime(2026, 5, 11, 10, 33, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 17, 23, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 5000m,
-                            SlotId = "A43",
-                            Status = "Đã ra",
-                            VehiclePlate = "43A-373.60",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0413",
-                            CheckInTime = new DateTime(2026, 5, 11, 10, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 16, 32, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C10",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-128.36",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0414",
-                            CheckInTime = new DateTime(2026, 5, 11, 12, 51, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 19, 46, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C06",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-332.89",
-                            VehicleType = "Ô tô lớn"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0415",
-                            CheckInTime = new DateTime(2026, 5, 11, 12, 15, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 15, 21, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 11, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 15, 50, 0, 0, DateTimeKind.Unspecified),
                             Fee = 15000m,
-                            SlotId = "B20",
+                            SlotId = "B11",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-139.53",
+                            VehiclePlate = "74A-780.42",
                             VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
-                            TicketId = "TKT0416",
-                            CheckInTime = new DateTime(2026, 5, 11, 12, 5, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 16, 56, 0, 0, DateTimeKind.Unspecified),
+                            TicketId = "TKT0412",
+                            CheckInTime = new DateTime(2026, 5, 11, 9, 18, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 19, 6, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS025",
                             Fee = 25000m,
-                            SlotId = "C04",
+                            SlotId = "C20",
                             Status = "Đã ra",
-                            VehiclePlate = "43B-875.30",
+                            VehiclePlate = "43C-653.47",
                             VehicleType = "Ô tô lớn"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0413",
+                            CheckInTime = new DateTime(2026, 5, 11, 6, 52, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 5, 11, 7, 52, 0, 0, DateTimeKind.Unspecified),
+                            Fee = 5000m,
+                            SlotId = "A49",
+                            Status = "Đã ra",
+                            VehiclePlate = "92C-213.80",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0414",
+                            CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS001",
+                            Fee = 0m,
+                            SlotId = "A01",
+                            Status = "Đang trong bãi",
+                            VehiclePlate = "43A-163.78",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0415",
+                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS002",
+                            Fee = 0m,
+                            SlotId = "A02",
+                            Status = "Đang trong bãi",
+                            VehiclePlate = "43A-816.83",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            TicketId = "TKT0416",
+                            CheckInTime = new DateTime(2026, 5, 12, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
+                            Fee = 0m,
+                            SlotId = "A03",
+                            Status = "Đang trong bãi",
+                            VehiclePlate = "43A-761.33",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0417",
-                            CheckInTime = new DateTime(2026, 5, 11, 8, 12, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 10, 36, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C02",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-966.61",
-                            VehicleType = "Ô tô lớn"
+                            CheckInTime = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS003",
+                            Fee = 0m,
+                            SlotId = "B04",
+                            Status = "Đang trong bãi",
+                            VehiclePlate = "43B-554.30",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0418",
-                            CheckInTime = new DateTime(2026, 5, 11, 17, 7, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutTime = new DateTime(2026, 5, 11, 22, 39, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 25000m,
-                            SlotId = "C18",
-                            Status = "Đã ra",
-                            VehiclePlate = "43B-597.45",
-                            VehicleType = "Ô tô lớn"
+                            CheckInTime = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS004",
+                            Fee = 0m,
+                            SlotId = "A05",
+                            Status = "Đang trong bãi",
+                            VehiclePlate = "43A-294.11",
+                            VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0419",
-                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
                             Fee = 0m,
-                            SlotId = "A01",
+                            SlotId = "A06",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-375.98",
+                            VehiclePlate = "43A-766.27",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0420",
-                            CheckInTime = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS005",
                             Fee = 0m,
-                            SlotId = "A02",
+                            SlotId = "C07",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-967.54",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-897.86",
+                            VehicleType = "Ô tô lớn"
                         },
                         new
                         {
                             TicketId = "TKT0421",
-                            CheckInTime = new DateTime(2026, 5, 12, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
                             Fee = 0m,
-                            SlotId = "A03",
+                            SlotId = "A08",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-872.50",
+                            VehiclePlate = "43A-193.57",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0422",
-                            CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS006",
                             Fee = 0m,
-                            SlotId = "A04",
+                            SlotId = "B09",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-305.71",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-422.72",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0423",
                             CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS007",
                             Fee = 0m,
-                            SlotId = "A05",
+                            SlotId = "A10",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-775.33",
+                            VehiclePlate = "43A-657.75",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0424",
-                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS008",
                             Fee = 0m,
-                            SlotId = "A06",
+                            SlotId = "A11",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-571.37",
+                            VehiclePlate = "43A-456.31",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0425",
                             CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
                             Fee = 0m,
-                            SlotId = "A07",
+                            SlotId = "A12",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-500.40",
+                            VehiclePlate = "43A-289.56",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0426",
-                            CheckInTime = new DateTime(2026, 5, 12, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS009",
                             Fee = 0m,
-                            SlotId = "A08",
+                            SlotId = "B13",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-198.29",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43B-536.32",
+                            VehicleType = "Ô tô nhỏ"
                         },
                         new
                         {
                             TicketId = "TKT0427",
-                            CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
                             Fee = 0m,
-                            SlotId = "A09",
+                            SlotId = "A14",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-377.84",
+                            VehiclePlate = "43A-102.53",
                             VehicleType = "Xe máy"
                         },
                         new
                         {
                             TicketId = "TKT0428",
-                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 0m,
-                            SlotId = "A10",
-                            Status = "Đang trong bãi",
-                            VehiclePlate = "43A-476.77",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0429",
-                            CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 0m,
-                            SlotId = "A11",
-                            Status = "Đang trong bãi",
-                            VehiclePlate = "43A-331.65",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0430",
-                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 0m,
-                            SlotId = "A12",
-                            Status = "Đang trong bãi",
-                            VehiclePlate = "43A-820.47",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0431",
                             CheckInTime = new DateTime(2026, 5, 12, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = "CUS010",
                             Fee = 0m,
-                            SlotId = "A13",
+                            SlotId = "C15",
                             Status = "Đang trong bãi",
-                            VehiclePlate = "43A-722.61",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0432",
-                            CheckInTime = new DateTime(2026, 5, 12, 6, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 0m,
-                            SlotId = "A14",
-                            Status = "Đang trong bãi",
-                            VehiclePlate = "43A-729.68",
-                            VehicleType = "Xe máy"
-                        },
-                        new
-                        {
-                            TicketId = "TKT0433",
-                            CheckInTime = new DateTime(2026, 5, 12, 7, 0, 0, 0, DateTimeKind.Unspecified),
-                            Fee = 0m,
-                            SlotId = "A15",
-                            Status = "Đang trong bãi",
-                            VehiclePlate = "43A-890.95",
-                            VehicleType = "Xe máy"
+                            VehiclePlate = "43C-502.53",
+                            VehicleType = "Ô tô lớn"
                         });
                 });
 
@@ -11130,7 +11156,7 @@ namespace BackendAPI.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Vehicles", null, t =>
+                    b.ToTable("Vehicles", t =>
                         {
                             t.HasCheckConstraint("CK_Vehicle_Type", "VehicleType IN (N'Xe máy', N'Ô tô nhỏ', N'Ô tô lớn')");
                         });
@@ -11411,6 +11437,381 @@ namespace BackendAPI.Migrations
                             VehiclePlate = "43C-325.85",
                             CustomerId = "CUS030",
                             VehicleType = "Ô tô lớn"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-347.14",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-373.81",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-241.24",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-983.41",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-586.10",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-650.50",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-873.64",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-814.77",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-486.69",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-903.72",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-254.16",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-493.47",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-945.90",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-410.25",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-502.38",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-856.73",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-427.61",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-426.12",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-555.37",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-796.10",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-175.54",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-852.34",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-120.57",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-805.37",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-477.17",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-428.76",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-868.58",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-708.27",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-652.88",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-875.32",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-839.81",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-914.30",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-247.89",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-182.35",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-323.77",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-328.20",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-902.88",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-655.70",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-316.24",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-459.45",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-211.12",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-780.42",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-953.18",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-872.82",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-908.24",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-475.65",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-503.56",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-266.34",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-629.64",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-198.21",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-501.54",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-158.68",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-847.31",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-867.96",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-936.10",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-959.49",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-532.50",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-213.80",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-144.58",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-347.16",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-135.34",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-446.17",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-409.65",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-702.42",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-728.40",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-177.66",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-150.34",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-959.65",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-968.18",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-577.72",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-316.89",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-896.89",
+                            VehicleType = "Ô tô nhỏ"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-288.96",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "92C-230.97",
+                            VehicleType = "Xe máy"
+                        },
+                        new
+                        {
+                            VehiclePlate = "74A-459.45",
+                            VehicleType = "Ô tô nhỏ"
                         });
                 });
 

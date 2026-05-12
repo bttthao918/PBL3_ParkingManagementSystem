@@ -62,9 +62,9 @@
     <div class="action-grid">
         <a asp-page="/Customer/Booking/Create"><i class="fa-solid fa-plus"></i> Đặt chỗ mới</a>
         <a asp-page="/Customer/Booking/Index"><i class="fa-solid fa-list"></i> Xem đơn đặt chỗ</a>
-        <a href="#"><i class="fa-solid fa-ticket"></i> Vé của tôi</a>
-        <a href="#"><i class="fa-solid fa-credit-card"></i> Đăng ký vé tháng</a>
-        <a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử thanh toán</a>
+        <a asp-page="/Customer/Booking/Index"><i class="fa-solid fa-ticket"></i> Vé của tôi</a>
+        <a asp-page="/Customer/Booking/Create"><i class="fa-solid fa-credit-card"></i> Đăng ký vé tháng</a>
+        <a asp-page="/Customer/Booking/Index"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử thanh toán</a>
     </div>
 </div>
 
@@ -145,7 +145,7 @@
         @if (Model.Dashboard.CurrentMonthlyTicket == null)
         {
             <p style="margin-top:16px;">Bạn chưa có vé tháng đang hiển thị.</p>
-            <a href="#" style="display:block;margin-top:20px;text-align:center;background:#0d6efd;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
+            <a asp-page="/Customer/Booking/Create" style="display:block;margin-top:20px;text-align:center;background:#0d6efd;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
                 Đăng ký vé tháng
             </a>
         }
@@ -160,7 +160,7 @@
                 <span class="badge-danger">@Model.MonthlyTicketBadge</span>
             </p>
 
-            <a href="#" style="display:block;margin-top:20px;text-align:center;background:#ef4444;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
+            <a asp-page="/Customer/Booking/Create" style="display:block;margin-top:20px;text-align:center;background:#ef4444;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
                 Gia hạn ngay
             </a>
         }

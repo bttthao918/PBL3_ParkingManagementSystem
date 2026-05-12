@@ -14,5 +14,6 @@ namespace ParkingManagement.BLL.Services.Interfaces
 
         // Hàm chuyên biệt để gửi OTP (UI nằm trong này)
         Task SendOtpEmailAsync(string email, string fullName, string otp);
+        Task SendEmployeeInviteConfirmationEmailAsync(string email, string fullName, string employeeCode, string confirmationUrl, DateTime expiryTime);
     }
 }
