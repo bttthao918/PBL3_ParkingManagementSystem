@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\pages\\admin\\ticketmanagement.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|solutionrelative:parkingmanagement.fe\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{FCD06C93-51E4-DFBF-82A5-12AAEE31A079}|ParkingManagement.BE\\BackendAPI.csproj|solutionrelative:parkingmanagement.be\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{38F69F40-8332-14EE-09C8-7B0FD2CBF26D}|ParkingManagement.FE\\ParkingManagement.FE.csproj|c:\\users\\fpt acer\\source\\repos\\pbl3_parkingmanagementsystem\\parkingmanagement.fe\\pages\\shared\\_employeelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -325,33 +325,16 @@
           "SelectedChildIndex": 4,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "TicketManagement.cshtml.cs",
               "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
               "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
               "RelativeToolTip": "ParkingManagement.FE\\Pages\\Admin\\TicketManagement.cshtml.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAcwFwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFwAAAAAAAAAAAAAAFwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T01:34:41.935Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-12T01:34:41.935Z"
             },
             {
               "$type": "Document",
@@ -379,7 +362,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\appsettings.json",
               "RelativeDocumentMoniker": "ParkingManagement.FE\\appsettings.json",
@@ -387,20 +370,20 @@
               "RelativeToolTip": "ParkingManagement.FE\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-05-12T02:32:28.948Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-12T02:32:28.948Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\appsettings.json",
               "RelativeDocumentMoniker": "ParkingManagement.BE\\appsettings.json",
               "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.BE\\appsettings.json",
               "RelativeToolTip": "ParkingManagement.BE\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAwAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-05-09T02:00:31.661Z"
+              "WhenOpened": "2026-05-09T02:00:31.661Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -723,8 +706,7 @@
               "ToolTip": "C:\\Users\\FPT ACER\\source\\repos\\PBL3_ParkingManagementSystem\\ParkingManagement.FE\\ParkingManagement.FE.csproj",
               "RelativeToolTip": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-09T02:23:22.534Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-09T02:23:22.534Z"
             },
             {
               "$type": "Document",
