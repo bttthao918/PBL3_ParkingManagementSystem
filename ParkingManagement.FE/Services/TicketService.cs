@@ -1,4 +1,5 @@
 using ParkingManagement.FE.Models;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace ParkingManagement.FE.Services
@@ -6,6 +7,7 @@ namespace ParkingManagement.FE.Services
     public interface ITicketService
     {
         Task<ListEmployeeTicketDto?> SearchTicketsAsync(EmployeeTicketSearchDto search);
+        Task<TicketSummaryDto?> GetTicketSummaryAsync();
         Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt");
     }
 
@@ -24,25 +26,15 @@ namespace ParkingManagement.FE.Services
 
         public async Task<ListEmployeeTicketDto?> SearchTicketsAsync(EmployeeTicketSearchDto search)
         {
-            var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt_token")?.Value;
-            if (string.IsNullOrEmpty(token))
-            {
-                token = _httpContextAccessor.HttpContext?.Session.GetString("jwt_token");
-            }
-            if (string.IsNullOrEmpty(token))
-            {
-                token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = !string.IsNullOrEmpty(token)
-                ? new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token)
-                : null;
+            var token = ApplyAuthorizationHeader(requireToken: false);
 
             // Construct query parameters
             var queryParams = new List<string>();
             if (!string.IsNullOrEmpty(search.SearchKeyword)) queryParams.Add($"SearchKeyword={Uri.EscapeDataString(search.SearchKeyword)}");
             if (!string.IsNullOrEmpty(search.Status)) queryParams.Add($"Status={Uri.EscapeDataString(search.Status)}");
             if (!string.IsNullOrEmpty(search.VehicleType)) queryParams.Add($"VehicleType={Uri.EscapeDataString(search.VehicleType)}");
+            if (search.FromDate.HasValue) queryParams.Add($"FromDate={Uri.EscapeDataString(search.FromDate.Value.ToString("yyyy-MM-dd"))}");
+            if (search.ToDate.HasValue) queryParams.Add($"ToDate={Uri.EscapeDataString(search.ToDate.Value.ToString("yyyy-MM-dd"))}");
             queryParams.Add($"PageNumber={search.PageNumber}");
             queryParams.Add($"PageSize={search.PageSize}");
 
@@ -54,9 +46,34 @@ namespace ParkingManagement.FE.Services
             {
                 return await response.Content.ReadFromJsonAsync<ListEmployeeTicketDto>();
             }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Phiên đăng nhập API đã hết hạn.");
+            }
             
             var errorContent = await response.Content.ReadAsStringAsync();
             throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent} - Token: {!string.IsNullOrEmpty(token)} - URL: {url}");
+        }
+
+        public async Task<TicketSummaryDto?> GetTicketSummaryAsync()
+        {
+            ApplyAuthorizationHeader(requireToken: false);
+
+            var response = await _httpClient.GetAsync("api/tickets/summary");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<TicketSummaryDto>();
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Phiên đăng nhập API đã hết hạn.");
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("GetTicketSummaryAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return null;
         }
 
         public async Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt")
@@ -84,6 +101,35 @@ namespace ParkingManagement.FE.Services
             var errorContent = await response.Content.ReadAsStringAsync();
             _logger.LogWarning("CheckOutAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
             return false;
+        }
+
+        private string? ApplyAuthorizationHeader(bool requireToken = true)
+        {
+            var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt_token")?.Value;
+            if (string.IsNullOrEmpty(token))
+            {
+                token = _httpContextAccessor.HttpContext?.Session.GetString("jwt_token");
+            }
+            if (string.IsNullOrEmpty(token))
+            {
+                token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
+            }
+
+            if (string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+                if (requireToken)
+                {
+                    throw new UnauthorizedAccessException("Không tìm thấy JWT để gọi Backend API.");
+                }
+
+                return null;
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            return token;
         }
     }
 }

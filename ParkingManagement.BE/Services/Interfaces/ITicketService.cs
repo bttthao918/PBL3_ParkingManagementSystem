@@ -6,6 +6,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
     {
         // ── General Ticket Management (Manager & Employee) ──
         Task<ListTicketDto> GetTicketsAsync(TicketFilterDto filter);
+        Task<TicketSummaryDto> GetTicketSummaryAsync();
         Task<TicketDetailDto> GetTicketDetailAsync(string ticketId);
         Task<ListEmployeeTicketDto> SearchTicketsAsync(EmployeeTicketSearchDto search);
 

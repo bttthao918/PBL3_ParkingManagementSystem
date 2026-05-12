@@ -13,8 +13,14 @@
 <div class="dashboard-content employee-page">
     @if (!string.IsNullOrWhiteSpace(Model.CreateEmployeeMessage))
     {
-        <div class="card" style="margin-bottom:12px; border-left:4px solid @(Model.CreateEmployeeSuccess ? "#2e7d32" : "#c62828");">
-            <p style="margin:0; color:@(Model.CreateEmployeeSuccess ? "#2e7d32" : "#c62828");">
+        var statusColor = Model.CreateEmployeePendingVerification
+            ? "#1565c0"
+            : Model.CreateEmployeeSuccess
+                ? "#2e7d32"
+                : "#c62828";
+
+        <div class="card" style="margin-bottom:12px; border-left:4px solid @statusColor;">
+            <p style="margin:0; color:@statusColor;">
                 @Model.CreateEmployeeMessage
             </p>
         </div>
@@ -39,7 +45,7 @@
             </div>
             <div>
                 <p>Tổng nhân viên</p>
-                <h2>24</h2>
+                <h2>@Model.TotalEmployees</h2>
                 <span>Tất cả nhân viên</span>
             </div>
         </div>
@@ -160,7 +166,7 @@
 
             <div class="card emp-table-card">
                 <div class="emp-table-title">
-                    <h3>Danh sách nhân viên (24)</h3>
+                    <h3>Danh sách nhân viên (@Model.TotalEmployees)</h3>
                 </div>
 
                 <table class="emp-table">
@@ -214,7 +220,7 @@
                 </table>
 
                 <div class="emp-pagination">
-                    <span>Hiển thị 1 đến 8 trong tổng số 24 nhân viên</span>
+                    <span>Hiển thị @Model.Employees.Count trong tổng số @Model.TotalEmployees nhân viên</span>
 
                     <div>
                         <button>‹</button>

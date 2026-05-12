@@ -19,10 +19,12 @@ namespace ParkingManagement.FE.Pages.Admin
         }
 
         public List<EmployeeViewModel> Employees { get; set; } = new();
+        public int TotalEmployees { get; set; }
         [BindProperty]
         public CreateEmployeeFormInput CreateEmployeeInput { get; set; } = new();
         public string? CreateEmployeeMessage { get; set; }
         public bool CreateEmployeeSuccess { get; set; }
+        public bool CreateEmployeePendingVerification { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -31,10 +33,9 @@ namespace ParkingManagement.FE.Pages.Admin
 
         public async Task<IActionResult> OnPostCreateEmployeeAsync()
         {
-            await LoadEmployeesAsync();
-
             if (!ModelState.IsValid)
             {
+                await LoadEmployeesAsync();
                 CreateEmployeeSuccess = false;
                 CreateEmployeeMessage = "Vui lòng kiểm tra lại dữ liệu nhập.";
                 return Page();
@@ -53,7 +54,15 @@ namespace ParkingManagement.FE.Pages.Admin
             var result = await _employeeService.CreateEmployeeInviteAsync(request);
             CreateEmployeeSuccess = result?.Success == true;
             CreateEmployeeMessage = result?.Message ?? "Không thể tạo nhân viên.";
+            CreateEmployeePendingVerification = CreateEmployeeSuccess && result?.InviteExpiry != null;
 
+            if (CreateEmployeeSuccess)
+            {
+                ModelState.Clear();
+                CreateEmployeeInput = new CreateEmployeeFormInput();
+            }
+
+            await LoadEmployeesAsync();
             return Page();
         }
 
@@ -69,6 +78,7 @@ namespace ParkingManagement.FE.Pages.Admin
 
             if (result != null && result.Items != null)
             {
+                TotalEmployees = result.TotalItems;
                 Employees = result.Items.Select(e => new EmployeeViewModel(
                     e.EmployeeId,
                     e.FullName,

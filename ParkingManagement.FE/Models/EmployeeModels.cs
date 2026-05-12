@@ -47,5 +47,6 @@ namespace ParkingManagement.FE.Models
         public bool Success { get; set; }
         public string? Message { get; set; }
         public string? EmployeeCode { get; set; }
+        public DateTime? InviteExpiry { get; set; }
     }
 }

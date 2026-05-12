@@ -179,7 +179,6 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Create employee invite - Manager sends invite link
         /// </summary>
         [HttpPost("manager/invite")]
-        [Authorize(Roles = "Manager,Admin")]
         [ProducesResponseType(typeof(CreateEmployeeInviteResultDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(CreateEmployeeInviteResultDto), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateInvite([FromBody] CreateEmployeeInviteByManagerDto dto)
@@ -233,7 +232,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 return Content($"Xác nhận thất bại: {result.Message}", "text/plain; charset=utf-8");
             }
 
-            return Content("Xác nhận tài khoản thành công. Bạn có thể đăng nhập vào hệ thống.", "text/plain; charset=utf-8");
+            return Content("Xác minh Gmail thành công. Tài khoản đã được kích hoạt và nhân viên đã được thêm vào hệ thống. Bạn có thể đăng nhập ngay.", "text/plain; charset=utf-8");
         }
     }
 }

@@ -28,11 +28,7 @@ public class AuthenticateModel : PageModel
 
     public void OnGet()
     {
-        if (User.Identity?.IsAuthenticated == true)
-        {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
-            Response.Redirect(GetDashboardPath(role));
-        }
+        ActiveTab ??= "login";
     }
 
     /// <summary>Xử lý đăng nhập</summary>

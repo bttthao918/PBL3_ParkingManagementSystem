@@ -30,6 +30,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Get all tickets with filtering and pagination
         /// </summary>
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ListTicketDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll([FromQuery] TicketFilterDto filter)
         {
@@ -41,6 +42,26 @@ namespace ParkingManagement.Web.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError($"GetAll error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Get ticket summary directly from database
+        /// </summary>
+        [HttpGet("summary")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(TicketSummaryDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSummary()
+        {
+            try
+            {
+                var result = await _ticketService.GetTicketSummaryAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"GetSummary error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }

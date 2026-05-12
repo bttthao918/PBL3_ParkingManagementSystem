@@ -5,6 +5,8 @@ namespace ParkingManagement.FE.Models
         public string? SearchKeyword { get; set; }
         public string? Status { get; set; }
         public string? VehicleType { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 20;
     }
@@ -29,5 +31,13 @@ namespace ParkingManagement.FE.Models
         public int PageSize { get; set; }
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
+    }
+
+    public class TicketSummaryDto
+    {
+        public int TotalTickets { get; set; }
+        public int ActiveTickets { get; set; }
+        public int CheckedOutTickets { get; set; }
+        public decimal TotalRevenue { get; set; }
     }
 }

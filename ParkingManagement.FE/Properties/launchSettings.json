@@ -3,10 +3,11 @@
     "ParkingManagement.FE": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "Auth/Authenticate",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:63491;http://localhost:63492"
+      "applicationUrl": "https://localhost:63501;http://localhost:63502"
     }
   }
 }

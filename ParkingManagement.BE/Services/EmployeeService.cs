@@ -77,11 +77,11 @@ namespace ParkingManagement.BLL.Services.Implementations
             };
             await _accountRepo.AddAsync(account);
 
-            var employeeId = $"EMP{DateTime.Now.Ticks % 100000:D6}";
+            var employeeId = await GenerateNextEmployeeCodeAsync();
             var employee = new DAL.Models.Employee
             {
                 EmployeeId = employeeId,
-                EmployeeCode = $"EMP{DateTime.Now.Ticks % 100000:D5}",
+                EmployeeCode = employeeId,
                 AccountId = accountId,
                 FullName = dto.FullName.Trim(),
                 PhoneNumber = dto.PhoneNumber,
@@ -292,37 +292,60 @@ namespace ParkingManagement.BLL.Services.Implementations
                     return new CreateEmployeeInviteResultDto { Success = false, Message = "Mật khẩu xác nhận không khớp." };
 
                 var email = request.Email.Trim().ToLower();
+                var existingInvite = await _inviteRepo.GetByEmailAsync(email);
                 var existingAccount = await _accountRepo.GetByEmailAsync(email);
+                var refreshedPendingInvite = existingInvite != null || existingAccount != null;
+
+                Account account;
                 if (existingAccount != null)
-                    return new CreateEmployeeInviteResultDto { Success = false, Message = "Email này đã được đăng ký" };
-
-                var employeeCode = $"EMP{DateTime.UtcNow.Ticks % 100000:D5}";
-                var employeeId = $"EMP{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
-
-                var accountId = $"ACC{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
-                var account = new Account
                 {
-                    AccountId = accountId,
-                    Email = email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12),
-                    Role = "Employee",
-                    IsActive = false, // Chỉ active sau khi nhân viên xác nhận email
-                    RequirePasswordChange = false,
-                    CreatedAt = DateTime.UtcNow
-                };
-                await _accountRepo.AddAsync(account);
+                    if (existingAccount.Role != "Employee")
+                    {
+                        return new CreateEmployeeInviteResultDto
+                        {
+                            Success = false,
+                            Message = "Email này đã thuộc về một tài khoản khác trong hệ thống."
+                        };
+                    }
 
-                var employee = new Employee
+                    var existingEmployee = await _repo.GetByAccountIdAsync(existingAccount.AccountId);
+                    if (existingAccount.IsActive || existingEmployee != null)
+                    {
+                        return new CreateEmployeeInviteResultDto
+                        {
+                            Success = false,
+                            Message = "Email này đã có tài khoản nhân viên đang hoạt động."
+                        };
+                    }
+
+                    existingAccount.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
+                    existingAccount.IsActive = false;
+                    existingAccount.RequirePasswordChange = false;
+                    await _accountRepo.UpdateAsync(existingAccount);
+                    account = existingAccount;
+                }
+                else
                 {
-                    EmployeeId = employeeId,
-                    EmployeeCode = employeeCode,
-                    AccountId = accountId,
-                    FullName = request.FullName.Trim(),
-                    PhoneNumber = request.PhoneNumber.Trim(),
-                    Shift = request.Shift,
-                    IsDeleted = false
-                };
-                await _repo.AddAsync(employee);
+                    var accountId = $"ACC{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+                    account = new Account
+                    {
+                        AccountId = accountId,
+                        Email = email,
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12),
+                        Role = "Employee",
+                        IsActive = false, // Chỉ active sau khi nhân viên xác nhận email
+                        RequirePasswordChange = false,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    await _accountRepo.AddAsync(account);
+                }
+
+                if (existingInvite != null && !existingInvite.IsUsed)
+                {
+                    await _inviteRepo.DeleteAsync(existingInvite.InviteToken);
+                }
+
+                var employeeCode = await GenerateNextEmployeeCodeAsync();
 
                 var inviteToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
                     .Replace("/", "_")
@@ -344,19 +367,37 @@ namespace ParkingManagement.BLL.Services.Implementations
                 };
                 await _inviteRepo.AddAsync(invite);
 
+                var emailSent = false;
+                string? emailError = null;
+
                 if (request.SendInvitationEmail)
                 {
-                    var backendBaseUrl = _configuration["BackendBaseUrl"] ?? "http://localhost:5178";
+                    var backendBaseUrl = _configuration["BackendBaseUrl"] ?? "http://localhost:5188";
                     var confirmationUrl = $"{backendBaseUrl.TrimEnd('/')}/api/employees/invite/confirm?token={Uri.EscapeDataString(inviteToken)}";
-                    await _emailService.SendEmployeeInviteConfirmationEmailAsync(email, request.FullName.Trim(), employeeCode, confirmationUrl, inviteExpiry);
+                    try
+                    {
+                        await _emailService.SendEmployeeInviteConfirmationEmailAsync(email, request.FullName.Trim(), employeeCode, confirmationUrl, inviteExpiry);
+                        emailSent = true;
+                    }
+                    catch (Exception mailEx)
+                    {
+                        emailError = mailEx.Message;
+                        _logger.LogError(mailEx, "Employee invite email failed for {Email}.", email);
+                    }
                 }
 
                 return new CreateEmployeeInviteResultDto
                 {
                     Success = true,
-                    Message = request.SendInvitationEmail
-                        ? "Tạo nhân viên thành công. Email xác nhận đã được gửi cho nhân viên."
-                        : "Tạo nhân viên thành công. Tài khoản đang chờ xác nhận email.",
+                    Message = !request.SendInvitationEmail
+                        ? refreshedPendingInvite
+                            ? "Đã làm mới lời mời đang chờ xác nhận email."
+                            : "Đã tạo lời mời nhân viên. Tài khoản đang chờ xác nhận email."
+                        : emailSent
+                            ? refreshedPendingInvite
+                                ? "Đã gửi lại email xác nhận. Nhân viên sẽ được thêm vào hệ thống sau khi hoàn tất xác minh Gmail."
+                                : "Đã tạo lời mời nhân viên. Email xác nhận đã được gửi; nhân viên sẽ được thêm vào hệ thống sau khi hoàn tất xác minh Gmail."
+                            : $"Đã tạo lời mời nhân viên nhưng chưa gửi được email. Vui lòng kiểm tra cấu hình Gmail. Chi tiết: {emailError}",
                     EmployeeCode = employeeCode,
                     InviteToken = inviteToken,
                     InviteExpiry = inviteExpiry
@@ -442,7 +483,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (existingInvite != null && !existingInvite.IsUsed)
                 return ServiceResult<EmployeeInviteDto>.Fail("Email này đã có lời mời chưa sử dụng.");
 
-            var employeeCode = $"EMP{DateTime.Now.Ticks % 100000:D6}";
+            var employeeCode = await GenerateNextEmployeeCodeAsync();
             var inviteToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
             var invite = new EmployeeInvite
@@ -453,8 +494,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                 FullName = dto.FullName.Trim(),
                 PhoneNumber = dto.PhoneNumber.Trim(),
                 Shift = dto.Shift?.Trim(),
-                CreatedAt = DateTime.Now,
-                ExpiryTime = DateTime.Now.AddHours(24),
+                CreatedAt = DateTime.UtcNow,
+                ExpiryTime = DateTime.UtcNow.AddHours(24),
                 IsUsed = false
             };
 
@@ -477,7 +518,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var invite = await _inviteRepo.GetByTokenAsync(token);
             if (invite == null) return ServiceResult<EmployeeInviteDto>.Fail("Link invite không hợp lệ.");
             if (invite.IsUsed) return ServiceResult<EmployeeInviteDto>.Fail("Link invite này đã được sử dụng.");
-            if (DateTime.Now > invite.ExpiryTime) return ServiceResult<EmployeeInviteDto>.Fail("Link invite đã hết hạn.");
+            if (DateTime.UtcNow > invite.ExpiryTime) return ServiceResult<EmployeeInviteDto>.Fail("Link invite đã hết hạn.");
 
             var dto = new EmployeeInviteDto
             {
@@ -507,11 +548,21 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (account == null || account.Role != "Employee")
                     return new ConfirmEmployeeInviteResultDto { Success = false, Message = "Không tìm thấy tài khoản nhân viên chờ xác nhận." };
 
-                var employee = (await _repo.GetAllAsync(includeDeleted: true))
-                    .FirstOrDefault(e => e.AccountId == account.AccountId && e.EmployeeCode == invite.EmployeeCode);
+                var employee = await _repo.GetByAccountIdAsync(account.AccountId);
                 if (employee == null)
-                    return new ConfirmEmployeeInviteResultDto { Success = false, Message = "Không tìm thấy hồ sơ nhân viên." };
-
+                {
+                    employee = new Employee
+                    {
+                        EmployeeId = invite.EmployeeCode,
+                        EmployeeCode = invite.EmployeeCode,
+                        AccountId = account.AccountId,
+                        FullName = invite.FullName.Trim(),
+                        PhoneNumber = invite.PhoneNumber?.Trim(),
+                        Shift = invite.Shift?.Trim(),
+                        IsDeleted = false
+                    };
+                    await _repo.AddAsync(employee);
+                }
                 invite.IsUsed = true;
                 await _inviteRepo.UpdateAsync(invite);
 
@@ -521,7 +572,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return new ConfirmEmployeeInviteResultDto
                 {
                     Success = true,
-                    Message = "Xác nhận invite thành công! Tài khoản của bạn đã được kích hoạt.",
+                    Message = "Xác minh Gmail thành công. Tài khoản đã được kích hoạt và nhân viên đã được thêm vào hệ thống.",
                     EmployeeCode = invite.EmployeeCode,
                     EmployeeId = employee.EmployeeId
                 };
@@ -531,6 +582,42 @@ namespace ParkingManagement.BLL.Services.Implementations
                 _logger.LogError(ex, "ConfirmInviteAsync failed.");
                 return new ConfirmEmployeeInviteResultDto { Success = false, Message = $"Lỗi xác nhận invite: {ex.Message}" };
             }
+        }
+
+        private async Task<string> GenerateNextEmployeeCodeAsync()
+        {
+            var employees = await _repo.GetAllAsync(includeDeleted: true);
+            var pendingInvites = await _inviteRepo.GetPendingAsync();
+
+            var maxEmployeeNumber = employees
+                .Select(e => ParseSequentialEmployeeNumber(e.EmployeeCode))
+                .Where(number => number.HasValue)
+                .Select(number => number!.Value)
+                .DefaultIfEmpty(0)
+                .Max();
+
+            var maxPendingInviteNumber = pendingInvites
+                .Select(invite => ParseSequentialEmployeeNumber(invite.EmployeeCode))
+                .Where(number => number.HasValue)
+                .Select(number => number!.Value)
+                .DefaultIfEmpty(0)
+                .Max();
+
+            var nextNumber = Math.Max(maxEmployeeNumber, maxPendingInviteNumber) + 1;
+            return $"EMP{nextNumber:D3}";
+        }
+
+        private static int? ParseSequentialEmployeeNumber(string? employeeCode)
+        {
+            if (string.IsNullOrWhiteSpace(employeeCode))
+            {
+                return null;
+            }
+
+            var match = Regex.Match(employeeCode.Trim(), @"^EMP(?<number>\d{3})$");
+            return match.Success && int.TryParse(match.Groups["number"].Value, out var number)
+                ? number
+                : null;
         }
 
         private (bool IsValid, string? ErrorMessage) ValidateFullName(string fullName)

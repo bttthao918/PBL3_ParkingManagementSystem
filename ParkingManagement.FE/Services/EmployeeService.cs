@@ -6,6 +6,7 @@ namespace ParkingManagement.FE.Services
 {
     public interface IEmployeeService
     {
+        bool LastRequestUnauthorized { get; }
         Task<ListManagerEmployeeDto?> GetEmployeesAsync(ManagerEmployeeFilterDto filter);
         Task<CreateEmployeeInviteResultDto?> CreateEmployeeInviteAsync(CreateEmployeeInviteByManagerDto dto);
     }
@@ -15,6 +16,7 @@ namespace ParkingManagement.FE.Services
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<EmployeeService> _logger;
+        public bool LastRequestUnauthorized { get; private set; }
 
         public EmployeeService(
             HttpClient httpClient,
@@ -30,6 +32,7 @@ namespace ParkingManagement.FE.Services
         {
             try
             {
+                LastRequestUnauthorized = false;
                 AttachBearerToken();
                 
                 var url = $"api/employees/manager/list?PageNumber={filter.PageNumber}&PageSize={filter.PageSize}";
@@ -52,6 +55,11 @@ namespace ParkingManagement.FE.Services
                     return await response.Content.ReadFromJsonAsync<ListManagerEmployeeDto>();
                 }
 
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
                 var errorContent = await response.Content.ReadAsStringAsync();
                 _logger.LogWarning("Employee API call failed: {StatusCode} {Url} {Body}", response.StatusCode, url, errorContent);
                 return null;
@@ -67,6 +75,7 @@ namespace ParkingManagement.FE.Services
         {
             try
             {
+                LastRequestUnauthorized = false;
                 AttachBearerToken();
                 var response = await _httpClient.PostAsJsonAsync("api/employees/manager/invite", dto);
                 CreateEmployeeInviteResultDto? result = null;
@@ -85,6 +94,10 @@ namespace ParkingManagement.FE.Services
                 }
 
                 _logger.LogWarning("CreateEmployeeInviteAsync failed: {StatusCode}", response.StatusCode);
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
                 if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 {
                     return new CreateEmployeeInviteResultDto { Success = false, Message = "Bạn không có quyền thêm nhân viên." };
@@ -125,6 +138,10 @@ namespace ParkingManagement.FE.Services
             if (!string.IsNullOrWhiteSpace(token))
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
             }
         }
     }
