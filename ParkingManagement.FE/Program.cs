@@ -10,12 +10,15 @@ builder.Services.AddRazorPages();
 var backendBaseUrl = builder.Configuration["BackendApi:BaseUrl"]
     ?? throw new InvalidOperationException("BackendApi:BaseUrl not configured");
 
+// Đăng ký Handler đính kèm JWT Token
+builder.Services.AddTransient<AuthDelegatingHandler>();
+
 builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
 {
     client.BaseAddress = new Uri(backendBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
-});
+}).AddHttpMessageHandler<AuthDelegatingHandler>();
 
 // ── Cookie Authentication ──────────────────────────
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
