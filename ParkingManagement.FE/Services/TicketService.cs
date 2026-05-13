@@ -8,6 +8,9 @@ namespace ParkingManagement.FE.Services
     {
         Task<ListEmployeeTicketDto?> SearchTicketsAsync(EmployeeTicketSearchDto search);
         Task<TicketSummaryDto?> GetTicketSummaryAsync();
+        Task<TicketDetailDto?> GetTicketDetailAsync(string ticketId);
+        Task<bool> UpdateTicketAsync(string ticketId, UpdateTicketRequestDto input);
+        Task<bool> DeleteTicketAsync(string ticketId);
         Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt");
     }
 
@@ -74,6 +77,60 @@ namespace ParkingManagement.FE.Services
             var errorContent = await response.Content.ReadAsStringAsync();
             _logger.LogWarning("GetTicketSummaryAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
             return null;
+        }
+
+        public async Task<TicketDetailDto?> GetTicketDetailAsync(string ticketId)
+        {
+            ApplyAuthorizationHeader();
+
+            var response = await _httpClient.GetAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<TicketDetailDto>();
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Phiên đăng nhập API đã hết hạn.");
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent}");
+        }
+
+        public async Task<bool> UpdateTicketAsync(string ticketId, UpdateTicketRequestDto input)
+        {
+            ApplyAuthorizationHeader();
+
+            var response = await _httpClient.PutAsJsonAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}", input);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("UpdateTicketAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return false;
+        }
+
+        public async Task<bool> DeleteTicketAsync(string ticketId)
+        {
+            ApplyAuthorizationHeader();
+
+            var response = await _httpClient.DeleteAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}");
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("DeleteTicketAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return false;
         }
 
         public async Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt")

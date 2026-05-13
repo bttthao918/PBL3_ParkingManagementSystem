@@ -90,6 +90,63 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Update ticket information (Manager/Admin)
+        /// </summary>
+        [HttpPut("{ticketId}")]
+        [Authorize(Roles = "Manager,Admin")]
+        [ProducesResponseType(typeof(TicketDetailDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(string ticketId, [FromBody] UpdateTicketDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var ticket = await _ticketService.UpdateTicketAsync(ticketId, input);
+                return Ok(ticket);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Update error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Delete ticket (Manager/Admin)
+        /// </summary>
+        [HttpDelete("{ticketId}")]
+        [Authorize(Roles = "Manager,Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(string ticketId)
+        {
+            try
+            {
+                var deleted = await _ticketService.DeleteTicketAsync(ticketId);
+                if (!deleted)
+                    return NotFound(new { message = "Khong tim thay ve" });
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Delete error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Check-in vehicle (Employee only)
         /// </summary>
         [HttpPost("checkin")]
