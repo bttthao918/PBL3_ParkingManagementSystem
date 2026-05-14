@@ -243,7 +243,7 @@ namespace ParkingManagement.Web.Controllers.Api
 
         [HttpGet("profile")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(AccountProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CurrentUserProfileDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProfile([FromQuery] string? accountId = null)
@@ -261,20 +261,17 @@ namespace ParkingManagement.Web.Controllers.Api
 
         [HttpPut("profile")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(AccountProfileUpdateResponseDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(AccountProfileUpdateResponseDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(UpdateCurrentProfileResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UpdateCurrentProfileResponseDto), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateAccountProfileDto dto, [FromQuery] string? accountId = null)
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateCurrentProfileDto dto, [FromQuery] string? accountId = null)
         {
             var resolvedAccountId = ResolveProfileAccountId(accountId);
             if (string.IsNullOrWhiteSpace(resolvedAccountId))
                 return Unauthorized(new ErrorResponse { Message = "Invalid token" });
 
             if (string.IsNullOrWhiteSpace(dto.FullName))
-                return BadRequest(new AccountProfileUpdateResponseDto { Success = false, Message = "Họ và tên không được để trống." });
-
-            if (string.IsNullOrWhiteSpace(dto.Email))
-                return BadRequest(new AccountProfileUpdateResponseDto { Success = false, Message = "Email không được để trống." });
+                return BadRequest(new UpdateCurrentProfileResponseDto { Success = false, Message = "Họ và tên không được để trống." });
 
             var account = await _db.Accounts
                 .Include(a => a.Manager)
@@ -283,14 +280,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 .FirstOrDefaultAsync(a => a.AccountId == resolvedAccountId);
 
             if (account == null)
-                return BadRequest(new AccountProfileUpdateResponseDto { Success = false, Message = "Không tìm thấy tài khoản." });
-
-            var email = dto.Email.Trim().ToLowerInvariant();
-            var emailExists = await _db.Accounts.AnyAsync(a => a.AccountId != resolvedAccountId && a.Email == email);
-            if (emailExists)
-                return BadRequest(new AccountProfileUpdateResponseDto { Success = false, Message = "Email này đã được sử dụng bởi tài khoản khác." });
-
-            account.Email = email;
+                return BadRequest(new UpdateCurrentProfileResponseDto { Success = false, Message = "Không tìm thấy tài khoản." });
 
             var fullName = dto.FullName.Trim();
             var phoneNumber = string.IsNullOrWhiteSpace(dto.PhoneNumber) ? null : dto.PhoneNumber.Trim();
@@ -314,12 +304,12 @@ namespace ParkingManagement.Web.Controllers.Api
                     account.Customer.Gender = gender;
                     break;
                 default:
-                    return BadRequest(new AccountProfileUpdateResponseDto { Success = false, Message = "Không tìm thấy hồ sơ tương ứng với vai trò tài khoản." });
+                    return BadRequest(new UpdateCurrentProfileResponseDto { Success = false, Message = "Không tìm thấy hồ sơ tương ứng với vai trò tài khoản." });
             }
 
             await _db.SaveChangesAsync();
 
-            return Ok(new AccountProfileUpdateResponseDto
+            return Ok(new UpdateCurrentProfileResponseDto
             {
                 Success = true,
                 Message = "Cập nhật thông tin thành công.",
@@ -340,7 +330,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 : fallbackAccountId.Trim();
         }
 
-        private async Task<AccountProfileDto?> BuildProfileAsync(string accountId)
+        private async Task<CurrentUserProfileDto?> BuildProfileAsync(string accountId)
         {
             var account = await _db.Accounts
                 .Include(a => a.Manager)
@@ -375,13 +365,13 @@ namespace ParkingManagement.Web.Controllers.Api
                 _ => null
             };
 
-            return new AccountProfileDto
+            return new CurrentUserProfileDto
             {
                 AccountId = account.AccountId,
                 FullName = fullName ?? "",
                 Email = account.Email,
                 PhoneNumber = phoneNumber ?? "",
-                RoleName = account.Role,
+                Role = account.Role,
                 Gender = NormalizeGenderToDisplay(gender),
                 CreatedAt = account.CreatedAt
             };
