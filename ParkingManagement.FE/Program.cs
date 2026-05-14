@@ -48,6 +48,13 @@ builder.Services.AddHttpClient<IParkingOperationService, ParkingOperationService
 builder.Services.AddHttpClient<IWorkLogService, WorkLogService>(client => ConfigureHttpClient(client))
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
+builder.Services.AddHttpClient<IAccountProfileService, AccountProfileService>(client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 // ── Cookie Authentication ──────────────────────────
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

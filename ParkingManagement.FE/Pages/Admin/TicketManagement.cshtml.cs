@@ -25,8 +25,13 @@ namespace ParkingManagement.FE.Pages.Admin
         public int TotalPages { get; set; }
         public int ShowingFrom { get; set; }
         public int ShowingTo { get; set; }
-        public int PageSize { get; } = 10;
         public string? LoadErrorMessage { get; set; }
+
+        [TempData]
+        public string? ActionMessage { get; set; }
+
+        [TempData]
+        public bool ActionSuccess { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string? Keyword { get; set; }
@@ -46,6 +51,9 @@ namespace ParkingManagement.FE.Pages.Admin
         [BindProperty(SupportsGet = true)]
         public int PageNumber { get; set; } = 1;
 
+        [BindProperty(SupportsGet = true)]
+        public int PageSize { get; set; } = 10;
+
         public int StartPage => TotalPages == 0 ? 0 : Math.Max(1, PageNumber - 2);
         public int EndPage => TotalPages == 0 ? 0 : Math.Min(TotalPages, PageNumber + 2);
         public bool HasPreviousPage => PageNumber > 1;
@@ -56,6 +64,7 @@ namespace ParkingManagement.FE.Pages.Admin
         public async Task<IActionResult> OnGetAsync()
         {
             PageNumber = PageNumber < 1 ? 1 : PageNumber;
+            PageSize = PageSize <= 0 ? 10 : Math.Min(PageSize, 100);
 
             var searchDto = new EmployeeTicketSearchDto
             {
@@ -91,6 +100,12 @@ namespace ParkingManagement.FE.Pages.Admin
             try
             {
                 var result = await _ticketService.SearchTicketsAsync(searchDto);
+                if (result != null && result.TotalPages > 0 && PageNumber > result.TotalPages)
+                {
+                    PageNumber = result.TotalPages;
+                    searchDto.PageNumber = PageNumber;
+                    result = await _ticketService.SearchTicketsAsync(searchDto);
+                }
                 if (result == null)
                 {
                     LoadErrorMessage ??= "Không tải được danh sách vé từ Backend API.";
@@ -112,7 +127,8 @@ namespace ParkingManagement.FE.Pages.Admin
                     t.CheckInTime,
                     t.CheckOutTime ?? DateTime.MinValue,
                     t.Status,
-                    GetStatusClass(t.Status)
+                    GetStatusClass(t.Status),
+                    t.SlotId ?? ""
                 )).ToList();
             }
             catch (UnauthorizedAccessException ex)
@@ -126,6 +142,116 @@ namespace ParkingManagement.FE.Pages.Admin
             }
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostCreateTicketAsync(
+            string vehiclePlate,
+            string vehicleType,
+            string? slotId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(vehiclePlate) || string.IsNullOrWhiteSpace(vehicleType))
+                {
+                    ActionSuccess = false;
+                    ActionMessage = "Vui lòng nhập biển số xe và loại xe.";
+                    return RedirectToPage(BuildRouteValues());
+                }
+
+                var input = new CreateTicketRequestDto
+                {
+                    VehiclePlate = vehiclePlate.Trim(),
+                    VehicleType = vehicleType,
+                    SlotId = string.IsNullOrWhiteSpace(slotId) ? null : slotId.Trim()
+                };
+
+                var result = await _ticketService.CreateTicketAsync(input);
+                ActionSuccess = result?.Success == true;
+                ActionMessage = ActionSuccess
+                    ? $"Đã tạo vé {result?.TicketId ?? "mới"}{(string.IsNullOrWhiteSpace(result?.SlotId) ? "" : $" tại vị trí {result.SlotId}")}."
+                    : result?.Message ?? "Không thể tạo vé mới.";
+
+                if (ActionSuccess)
+                {
+                    PageNumber = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                ActionSuccess = false;
+                ActionMessage = BuildLoadErrorMessage(ex);
+            }
+
+            return RedirectToPage(BuildRouteValues());
+        }
+
+        public async Task<IActionResult> OnPostUpdateTicketAsync(
+            string ticketId,
+            string vehiclePlate,
+            string vehicleType,
+            DateTime checkInTime,
+            DateTime? checkOutTime,
+            string ticketStatus,
+            decimal fee,
+            string? slotId)
+        {
+            try
+            {
+                var input = new UpdateTicketRequestDto
+                {
+                    VehiclePlate = vehiclePlate,
+                    VehicleType = vehicleType,
+                    CheckInTime = checkInTime,
+                    CheckOutTime = ticketStatus == "Đang trong bãi" ? null : checkOutTime,
+                    Status = ticketStatus,
+                    Fee = fee,
+                    SlotId = slotId
+                };
+
+                ActionSuccess = await _ticketService.UpdateTicketAsync(ticketId, input);
+                ActionMessage = ActionSuccess
+                    ? $"Đã cập nhật vé {ticketId}."
+                    : $"Không thể cập nhật vé {ticketId}.";
+            }
+            catch (Exception ex)
+            {
+                ActionSuccess = false;
+                ActionMessage = BuildLoadErrorMessage(ex);
+            }
+
+            return RedirectToPage(BuildRouteValues());
+        }
+
+        public async Task<IActionResult> OnPostDeleteTicketAsync(string deleteTicketId)
+        {
+            try
+            {
+                ActionSuccess = await _ticketService.DeleteTicketAsync(deleteTicketId);
+                ActionMessage = ActionSuccess
+                    ? $"Đã xóa vé {deleteTicketId}."
+                    : $"Không thể xóa vé {deleteTicketId}.";
+            }
+            catch (Exception ex)
+            {
+                ActionSuccess = false;
+                ActionMessage = BuildLoadErrorMessage(ex);
+            }
+
+            return RedirectToPage(BuildRouteValues());
+        }
+
+        private object BuildRouteValues()
+        {
+            return new
+            {
+                Keyword,
+                Status,
+                Type,
+                FromDate,
+                ToDate,
+                PageNumber,
+                PageSize
+            };
         }
 
         private static string BuildLoadErrorMessage(Exception ex)
@@ -171,6 +297,7 @@ namespace ParkingManagement.FE.Pages.Admin
         public DateTime CheckOutTime { get; set; }
         public string Status { get; set; }
         public string StatusClass { get; set; }
+        public string SlotId { get; set; }
 
         public TicketViewModel(
             string code,
@@ -181,7 +308,8 @@ namespace ParkingManagement.FE.Pages.Admin
             DateTime checkInTime,
             DateTime checkOutTime,
             string status,
-            string statusClass)
+            string statusClass,
+            string slotId)
         {
             Code = code;
             PlateNumber = plateNumber;
@@ -192,6 +320,7 @@ namespace ParkingManagement.FE.Pages.Admin
             CheckOutTime = checkOutTime;
             Status = status;
             StatusClass = statusClass;
+            SlotId = slotId;
         }
     }
 }

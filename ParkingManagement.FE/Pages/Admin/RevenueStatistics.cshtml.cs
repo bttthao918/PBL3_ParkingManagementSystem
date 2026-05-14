@@ -7,7 +7,7 @@ using ParkingManagement.FE.Services;
 namespace ParkingManagement.FE.Pages.Admin
 {
     [Authorize(Roles = "Manager")]
-    public class RevenueStatisticsModel : PageModel
+    public class RevenueStatisticsModel : PageModel, IRevenueStatisticsViewModel
     {
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();

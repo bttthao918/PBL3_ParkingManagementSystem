@@ -43,6 +43,20 @@
     border: 1px solid #d7e2f2;
 }
 
+.ticket-btn-danger {
+    height: 46px;
+    border-radius: 12px;
+    padding: 0 18px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: white;
+    background: #ef4444;
+}
+
 .ticket-kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -260,6 +274,15 @@
     .ticket-pagination div {
         display: flex;
         gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .ticket-pagination .ticket-page-summary {
+        color: #334155;
+        font-weight: 700;
+        margin-right: 4px;
+        white-space: nowrap;
     }
 
     .ticket-pagination button,
@@ -293,6 +316,117 @@
     color: #64748b;
     font-weight: 600;
     text-align: center;
+}
+
+.ticket-modal[hidden] {
+    display: none;
+}
+
+.ticket-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.ticket-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.48);
+}
+
+.ticket-modal-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(680px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
+    padding: 22px;
+}
+
+.ticket-modal-dialog.small {
+    width: min(440px, 100%);
+}
+
+.ticket-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.ticket-modal-header h3 {
+    margin: 0;
+    color: #102033;
+}
+
+.ticket-modal-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d7e2f2;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    color: #334155;
+}
+
+.ticket-detail-grid,
+.ticket-modal-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.ticket-detail-grid div,
+.ticket-modal-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.ticket-detail-grid span,
+.ticket-modal-form span {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ticket-detail-grid strong {
+    color: #102033;
+    min-height: 22px;
+}
+
+.ticket-modal-form input,
+.ticket-modal-form select {
+    height: 44px;
+    border: 1px solid #d7e2f2;
+    border-radius: 10px;
+    padding: 0 12px;
+    outline: none;
+}
+
+.ticket-modal-form input:focus,
+.ticket-modal-form select:focus {
+    border-color: #0d8bff;
+}
+
+.ticket-modal-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.ticket-delete-message {
+    color: #334155;
+    margin: 0 0 18px;
 }
 
 @media (max-width: 1300px) {

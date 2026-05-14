@@ -3,7 +3,7 @@ using ParkingManagement.FE.Models.ViewModels;
 
 namespace ParkingManagement.FE.Pages.Shared.Statistics
 {
-    public class RevenueStatisticsModel : PageModel
+    public class RevenueStatisticsModel : PageModel, IRevenueStatisticsViewModel
     {
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();

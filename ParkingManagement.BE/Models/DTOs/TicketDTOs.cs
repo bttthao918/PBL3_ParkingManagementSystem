@@ -122,6 +122,25 @@ namespace ParkingManagement.BLL.DTOs
         public decimal TotalRevenue { get; set; }
     }
 
+    public class UpdateTicketDto
+    {
+        public string VehiclePlate { get; set; } = null!;
+        public string VehicleType { get; set; } = null!;
+        public DateTime CheckInTime { get; set; }
+        public DateTime? CheckOutTime { get; set; }
+        public string Status { get; set; } = null!;
+        public decimal Fee { get; set; }
+        public string? SlotId { get; set; }
+    }
+
+    public class CreateTicketDto
+    {
+        public string VehiclePlate { get; set; } = null!;
+        public string VehicleType { get; set; } = null!;
+        public string? SlotId { get; set; }
+        public string? CustomerId { get; set; }
+    }
+
     /// <summary>
     /// UC017.1 - Lấy giá vé hiện tại
     /// </summary>

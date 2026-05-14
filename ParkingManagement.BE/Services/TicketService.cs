@@ -199,6 +199,85 @@ namespace ParkingManagement.BLL.Services.Implementations
             };
         }
 
+        public async Task<TicketDetailDto> UpdateTicketAsync(string ticketId, UpdateTicketDto input)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            if (ticket == null)
+                throw new KeyNotFoundException($"Không tìm thấy vé: {ticketId}");
+
+            var vehiclePlate = input.VehiclePlate.Trim().ToUpperInvariant();
+            if (string.IsNullOrWhiteSpace(vehiclePlate))
+                throw new ArgumentException("Biển số xe không được để trống.");
+
+            if (input.Status != "Đang trong bãi" && input.Status != "Đã ra")
+                throw new ArgumentException("Trạng thái vé không hợp lệ.");
+
+            var vehicle = await _vehicleRepo.GetByPlateAsync(vehiclePlate);
+            if (vehicle == null)
+            {
+                vehicle = new Vehicle
+                {
+                    VehiclePlate = vehiclePlate,
+                    VehicleType = input.VehicleType,
+                    CustomerId = ticket.CustomerId
+                };
+                await _vehicleRepo.AddAsync(vehicle);
+            }
+            else if (vehicle.VehicleType != input.VehicleType)
+            {
+                vehicle.VehicleType = input.VehicleType;
+                await _vehicleRepo.UpdateAsync(vehicle);
+            }
+
+            var previousSlotId = ticket.SlotId;
+            var previousStatus = ticket.Status;
+            var newSlotId = string.IsNullOrWhiteSpace(input.SlotId) ? null : input.SlotId.Trim();
+
+            if (!string.IsNullOrEmpty(newSlotId) && await _slotRepo.GetByIdAsync(newSlotId) == null)
+                throw new ArgumentException("Vị trí đỗ không tồn tại.");
+
+            ticket.VehiclePlate = vehiclePlate;
+            ticket.VehicleType = input.VehicleType;
+            ticket.CheckInTime = input.CheckInTime;
+            ticket.Status = input.Status;
+            ticket.Fee = input.Fee < 0 ? 0 : input.Fee;
+            ticket.SlotId = newSlotId;
+            ticket.CheckOutTime = input.Status == "Đang trong bãi"
+                ? null
+                : input.CheckOutTime ?? ticket.CheckOutTime ?? DateTime.Now;
+
+            await _ticketRepository.UpdateAsync(ticket);
+
+            if (!string.IsNullOrEmpty(previousSlotId) &&
+                (previousSlotId != ticket.SlotId || previousStatus != ticket.Status) &&
+                (ticket.Status == "Đã ra" || previousSlotId != ticket.SlotId))
+            {
+                await _slotRepo.UpdateStatusAsync(previousSlotId, "Trống");
+            }
+
+            if (ticket.Status == "Đang trong bãi" && !string.IsNullOrEmpty(ticket.SlotId))
+            {
+                await _slotRepo.UpdateStatusAsync(ticket.SlotId, "Đang sử dụng");
+            }
+
+            return await GetTicketDetailAsync(ticketId);
+        }
+
+        public async Task<bool> DeleteTicketAsync(string ticketId)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            if (ticket == null)
+                return false;
+
+            if (ticket.Status == "Đang trong bãi" && !string.IsNullOrEmpty(ticket.SlotId))
+            {
+                await _slotRepo.UpdateStatusAsync(ticket.SlotId, "Trống");
+            }
+
+            await _ticketRepository.DeleteAsync(ticketId);
+            return true;
+        }
+
         public async Task<ListEmployeeTicketDto> SearchTicketsAsync(EmployeeTicketSearchDto search)
         {
             try

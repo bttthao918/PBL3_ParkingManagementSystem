@@ -79,6 +79,7 @@ namespace ParkingManagement.DAL.Interfaces
         Task<string> GenerateIdAsync();
         Task AddAsync(Ticket ticket);
         Task UpdateAsync(Ticket ticket);
+        Task DeleteAsync(string id);
     }
 
     public interface IMonthlyTicketRepository
