@@ -87,4 +87,44 @@ namespace ParkingManagement.FE.Models
         public string? SlotId { get; set; }
         public DateTime? CheckInTime { get; set; }
     }
+
+    public class PricingDto
+    {
+        public Dictionary<string, decimal> HourlyRate { get; set; } = new();
+        public Dictionary<string, decimal> MaxDailyFee { get; set; } = new();
+        public Dictionary<string, MonthlyPricingDto> MonthlyTicketPrice { get; set; } = new();
+        public DateTime LastUpdatedAt { get; set; }
+        public string? LastUpdatedBy { get; set; }
+    }
+
+    public class MonthlyPricingDto
+    {
+        public decimal OneMonth { get; set; }
+        public decimal ThreeMonth { get; set; }
+        public decimal SixMonth { get; set; }
+    }
+
+    public class UpdatePricingDto
+    {
+        public Dictionary<string, decimal>? HourlyRate { get; set; }
+        public Dictionary<string, decimal>? MaxDailyFee { get; set; }
+        public Dictionary<string, UpdateMonthlyPricingDto>? MonthlyTicketPrice { get; set; }
+    }
+
+    public class UpdateMonthlyPricingDto
+    {
+        public decimal? OneMonth { get; set; }
+        public decimal? ThreeMonth { get; set; }
+        public decimal? SixMonth { get; set; }
+    }
+
+    public class PricingInputModel
+    {
+        public decimal MotorcycleHourlyRate { get; set; }
+        public decimal MotorcycleMaxDailyFee { get; set; }
+        public decimal SmallCarHourlyRate { get; set; }
+        public decimal SmallCarMaxDailyFee { get; set; }
+        public decimal LargeCarHourlyRate { get; set; }
+        public decimal LargeCarMaxDailyFee { get; set; }
+    }
 }

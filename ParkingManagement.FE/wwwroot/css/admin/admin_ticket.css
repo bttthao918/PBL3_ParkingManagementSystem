@@ -19,6 +19,13 @@
         color: #66758d;
     }
 
+.ticket-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .ticket-btn-primary,
 .ticket-btn-outline {
     height: 46px;
@@ -55,6 +62,159 @@
     gap: 9px;
     color: white;
     background: #ef4444;
+}
+
+.ticket-pricing-card {
+    margin-bottom: 22px;
+    border: 1px solid #dbe8f7;
+}
+
+.ticket-pricing-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.ticket-pricing-heading h3 {
+    margin: 0 0 6px;
+    color: #102033;
+}
+
+.ticket-pricing-heading p {
+    margin: 0;
+    color: #66758d;
+}
+
+.ticket-pricing-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #d7e2f2;
+    background: white;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.ticket-pricing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ticket-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ticket-price-editor {
+    overflow: hidden;
+    border: 1px solid #d7e2f2;
+    border-radius: 8px;
+    background: white;
+}
+
+.ticket-price-editor-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: #eef6ff;
+}
+
+.ticket-price-editor-head > div > span {
+    display: block;
+    color: #52627a;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.ticket-price-editor-head strong {
+    color: #102033;
+    font-size: 22px;
+}
+
+.ticket-price-editor-head small {
+    color: #52627a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ticket-price-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+}
+
+.ticket-price-icon.motorcycle {
+    color: #7c3aed;
+    background: #ede9fe;
+}
+
+.ticket-price-icon.small-car {
+    color: #0066ff;
+    background: #dbeafe;
+}
+
+.ticket-price-icon.large-car {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+.ticket-price-editor label,
+.ticket-price-minimum {
+    min-height: 52px;
+    padding: 0 18px;
+    display: grid;
+    grid-template-columns: 1fr minmax(136px, 170px);
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #edf2f8;
+}
+
+.ticket-price-editor label span,
+.ticket-price-minimum span {
+    color: #52627a;
+    font-weight: 600;
+}
+
+.ticket-price-editor input {
+    height: 38px;
+    width: 100%;
+    border: 1px solid #d7e2f2;
+    border-radius: 8px;
+    padding: 0 10px;
+    color: #102033;
+    font-weight: 700;
+    text-align: right;
+    outline: none;
+}
+
+.ticket-price-editor input:focus {
+    border-color: #0d8bff;
+    box-shadow: 0 0 0 3px rgba(13, 139, 255, 0.12);
+}
+
+.ticket-price-minimum strong {
+    color: #102033;
+    text-align: right;
+}
+
+.ticket-pricing-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.ticket-pricing-actions span {
+    color: #66758d;
+    font-weight: 600;
 }
 
 .ticket-kpi-grid {
@@ -436,6 +596,15 @@
 
     .ticket-filter-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ticket-pricing-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ticket-pricing-actions {
+        align-items: stretch;
+        flex-direction: column;
     }
 
     .ticket-toolbar {

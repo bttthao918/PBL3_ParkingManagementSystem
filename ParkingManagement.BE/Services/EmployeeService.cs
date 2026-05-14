@@ -16,7 +16,6 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly IParkingSlotAuditLogRepository _auditLogRepo;
         private readonly ITicketRepository _ticketRepo;
         private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
         private readonly ILogger<EmployeeService> _logger;
 
         public EmployeeService(
@@ -26,7 +25,6 @@ namespace ParkingManagement.BLL.Services.Implementations
             IParkingSlotAuditLogRepository auditLogRepo,
             ITicketRepository ticketRepo,
             IEmailService emailService,
-            IConfiguration configuration,
             ILogger<EmployeeService> logger)
         {
             _repo = repo;
@@ -35,7 +33,6 @@ namespace ParkingManagement.BLL.Services.Implementations
             _auditLogRepo = auditLogRepo;
             _ticketRepo = ticketRepo;
             _emailService = emailService;
-            _configuration = configuration;
             _logger = logger;
         }
 
@@ -295,7 +292,6 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var email = request.Email.Trim().ToLower();
                 var existingInvite = await _inviteRepo.GetByEmailAsync(email);
                 var existingAccount = await _accountRepo.GetByEmailAsync(email);
-                var refreshedPendingInvite = existingInvite != null || existingAccount != null;
 
                 Account account;
                 if (existingAccount != null)
@@ -309,8 +305,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                         };
                     }
 
-                    var existingEmployee = await _repo.GetByAccountIdAsync(existingAccount.AccountId);
-                    if (existingAccount.IsActive || existingEmployee != null)
+                    var existingEmployee = (await _repo.GetAllAsync(includeDeleted: true))
+                        .FirstOrDefault(e => e.AccountId == existingAccount.AccountId);
+                    if (existingAccount.IsActive && existingEmployee is { IsDeleted: false })
                     {
                         return new CreateEmployeeInviteResultDto
                         {
@@ -320,7 +317,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     }
 
                     existingAccount.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
-                    existingAccount.IsActive = false;
+                    existingAccount.IsActive = true;
                     existingAccount.RequirePasswordChange = false;
                     await _accountRepo.UpdateAsync(existingAccount);
                     account = existingAccount;
@@ -334,7 +331,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                         Email = email,
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12),
                         Role = "Employee",
-                        IsActive = false, // Chỉ active sau khi nhân viên xác nhận email
+                        IsActive = true,
                         RequirePasswordChange = false,
                         CreatedAt = DateTime.UtcNow
                     };
@@ -346,38 +343,54 @@ namespace ParkingManagement.BLL.Services.Implementations
                     await _inviteRepo.DeleteAsync(existingInvite.InviteToken);
                 }
 
-                var employeeCode = await GenerateNextEmployeeCodeAsync();
-
-                var inviteToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
-                    .Replace("/", "_")
-                    .Replace("+", "-")
-                    .Replace("=", string.Empty);
-                var inviteExpiry = DateTime.UtcNow.AddDays(3);
-
-                var invite = new EmployeeInvite
+                var employee = (await _repo.GetAllAsync(includeDeleted: true))
+                    .FirstOrDefault(e => e.AccountId == account.AccountId);
+                if (employee == null)
                 {
-                    InviteToken = inviteToken,
-                    EmployeeCode = employeeCode,
-                    Email = email,
-                    FullName = request.FullName.Trim(),
-                    PhoneNumber = request.PhoneNumber.Trim(),
-                    Shift = request.Shift?.Trim(),
-                    CreatedAt = DateTime.UtcNow,
-                    ExpiryTime = inviteExpiry,
-                    IsUsed = false
-                };
-                await _inviteRepo.AddAsync(invite);
+                    var employeeCode = await GenerateNextEmployeeCodeAsync();
+                    employee = new Employee
+                    {
+                        EmployeeId = employeeCode,
+                        EmployeeCode = employeeCode,
+                        AccountId = account.AccountId,
+                        FullName = request.FullName.Trim(),
+                        PhoneNumber = request.PhoneNumber.Trim(),
+                        Shift = request.Shift?.Trim(),
+                        IsDeleted = false
+                    };
+                    await _repo.AddAsync(employee);
+                }
+                else
+                {
+                    employee.FullName = request.FullName.Trim();
+                    employee.PhoneNumber = request.PhoneNumber.Trim();
+                    employee.Shift = request.Shift?.Trim();
+                    employee.IsDeleted = false;
+                    await _repo.UpdateAsync(employee);
+                }
 
                 var emailSent = false;
                 string? emailError = null;
 
                 if (request.SendInvitationEmail)
                 {
-                    var backendBaseUrl = _configuration["BackendBaseUrl"] ?? "http://localhost:5188";
-                    var confirmationUrl = $"{backendBaseUrl.TrimEnd('/')}/api/employees/invite/confirm?token={Uri.EscapeDataString(inviteToken)}";
                     try
                     {
-                        await _emailService.SendEmployeeInviteConfirmationEmailAsync(email, request.FullName.Trim(), employeeCode, confirmationUrl, inviteExpiry);
+                        await _emailService.SendEmailAsync(
+                            email,
+                            "Tài khoản nhân viên ParkSmart đã được tạo",
+                            $@"
+                            <div style='font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif; max-width: 560px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;'>
+                                <div style='background-color: #1e88e5; padding: 20px; text-align: center;'>
+                                    <h2 style='color: white; margin: 0;'>ParkSmart Employee Account</h2>
+                                </div>
+                                <div style='padding: 24px; line-height: 1.6; color: #333;'>
+                                    <p>Xin chào <strong>{request.FullName.Trim()}</strong>,</p>
+                                    <p>Quản lý đã tạo tài khoản nhân viên cho bạn trên hệ thống ParkSmart.</p>
+                                    <p>Mã nhân viên của bạn: <strong>{employee.EmployeeCode}</strong></p>
+                                    <p>Tài khoản đã được kích hoạt. Bạn có thể đăng nhập bằng email này và mật khẩu do quản lý cung cấp.</p>
+                                </div>
+                            </div>");
                         emailSent = true;
                     }
                     catch (Exception mailEx)
@@ -391,17 +404,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                 {
                     Success = true,
                     Message = !request.SendInvitationEmail
-                        ? refreshedPendingInvite
-                            ? "Đã làm mới lời mời đang chờ xác nhận email."
-                            : "Đã tạo lời mời nhân viên. Tài khoản đang chờ xác nhận email."
+                        ? "Đã tạo nhân viên. Tài khoản đã được kích hoạt và có thể đăng nhập ngay."
                         : emailSent
-                            ? refreshedPendingInvite
-                                ? "Đã gửi lại email xác nhận. Nhân viên sẽ được thêm vào hệ thống sau khi hoàn tất xác minh Gmail."
-                                : "Đã tạo lời mời nhân viên. Email xác nhận đã được gửi; nhân viên sẽ được thêm vào hệ thống sau khi hoàn tất xác minh Gmail."
-                            : $"Đã tạo lời mời nhân viên nhưng chưa gửi được email. Vui lòng kiểm tra cấu hình Gmail. Chi tiết: {emailError}",
-                    EmployeeCode = employeeCode,
-                    InviteToken = inviteToken,
-                    InviteExpiry = inviteExpiry
+                            ? "Đã tạo nhân viên và gửi email thông báo. Tài khoản đã được kích hoạt và có thể đăng nhập ngay."
+                            : $"Đã tạo nhân viên và kích hoạt tài khoản nhưng chưa gửi được email thông báo. Chi tiết: {emailError}",
+                    EmployeeCode = employee.EmployeeCode
                 };
             }
             catch (Exception ex)
