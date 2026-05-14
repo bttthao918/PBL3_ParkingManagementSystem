@@ -1,8 +1,8 @@
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Validators;
-using ParkingManagement.DAL.Models;
 using ParkingManagement.DAL.Interfaces;
+using ParkingManagement.DAL.Models;
 
 namespace ParkingManagement.BLL.Services.Implementations
 {
@@ -52,13 +52,14 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         public async Task<MonthlyTicketDto?> GetByIdAsync(string id)
         {
-            var m = await _repo.GetByIdAsync(id);
-            return m == null ? null : MapToDto(m);
+            var ticket = await _repo.GetByIdAsync(id);
+            return ticket == null ? null : MapToDto(ticket);
         }
 
         public async Task<ServiceResult<MonthlyTicketDto>> RegisterAsync(RegisterMonthlyTicketDto dto)
         {
-            // Validate DTO
+            dto.VehiclePlate = dto.VehiclePlate.Trim().ToUpperInvariant();
+
             var (isValid, errorMessage) = MonthlyTicketValidator.Validate(dto);
             if (!isValid)
                 return ServiceResult<MonthlyTicketDto>.Fail(errorMessage ?? "Dữ liệu không hợp lệ.");
@@ -71,27 +72,19 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy khách hàng.");
 
-            decimal fee = CalculateFee(dto.VehicleType, dto.PackageType);
+            var fee = CalculateFee(dto.VehicleType!, dto.PackageType);
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
             var start = DateTime.Today;
-            int months = dto.PackageType switch
-            {
-                "1 tháng" => 1,
-                "3 tháng" => 3,
-                "6 tháng" => 6,
-                _ => 0
-            };
-            if (months == 0) return ServiceResult<MonthlyTicketDto>.Fail("Gói thời gian không hợp lệ.");
-            var end = start.AddMonths(months).AddDays(-1);
+            var end = start.AddMonths(GetPackageMonths(dto.PackageType)).AddDays(-1);
 
             if (!await _vehicleRepo.ExistsAsync(dto.VehiclePlate))
             {
                 await _vehicleRepo.AddAsync(new Vehicle
                 {
                     VehiclePlate = dto.VehiclePlate,
-                    VehicleType = dto.VehicleType,
+                    VehicleType = dto.VehicleType!,
                     CustomerId = dto.CustomerId
                 });
             }
@@ -102,7 +95,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 MonthlyTicketId = id,
                 CustomerId = dto.CustomerId,
                 VehiclePlate = dto.VehiclePlate,
-                VehicleType = dto.VehicleType,
+                VehicleType = dto.VehicleType!,
                 StartDate = start,
                 EndDate = end,
                 PackageType = dto.PackageType,
@@ -110,31 +103,56 @@ namespace ParkingManagement.BLL.Services.Implementations
                 Status = "Hoạt động",
                 CreatedAt = DateTime.Now
             };
-            await _repo.AddAsync(monthly);
 
-            var paymentId = await _paymentRepo.GenerateIdAsync();
-            await _paymentRepo.AddAsync(new Payment
-            {
-                PaymentId = paymentId,
-                TicketId = null,
-                MonthlyTicketId = id,
-                Amount = fee,
-                Method = dto.PaymentMethod,
-                PaymentTime = DateTime.Now,
-                Status = "Thành công"
-            });
+            await _repo.AddAsync(monthly);
+            await AddPaymentAsync(id, fee, dto.PaymentMethod);
 
             return ServiceResult<MonthlyTicketDto>.Ok(MapToDto(monthly), "Đăng ký vé tháng thành công!");
         }
 
+        public async Task<ServiceResult<MonthlyTicketDto>> RenewAsync(string monthlyTicketId, RenewMonthlyTicketDto dto)
+        {
+            var ticket = await _repo.GetByIdAsync(monthlyTicketId);
+            if (ticket == null)
+                return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy vé tháng.");
+
+            if (ticket.Status == "Đã hủy")
+                return ServiceResult<MonthlyTicketDto>.Fail("Vé tháng đã hủy không thể gia hạn.");
+
+            if (string.IsNullOrWhiteSpace(dto.PackageType))
+                return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không được để trống.");
+
+            var fee = CalculateFee(ticket.VehicleType, dto.PackageType);
+            if (fee == 0)
+                return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
+
+            var extensionStart = ticket.EndDate.Date >= DateTime.Today
+                ? ticket.EndDate.Date.AddDays(1)
+                : DateTime.Today;
+
+            ticket.EndDate = extensionStart.AddMonths(GetPackageMonths(dto.PackageType)).AddDays(-1);
+            ticket.PackageType = dto.PackageType;
+            ticket.TotalFee += fee;
+            ticket.Status = "Hoạt động";
+
+            await _repo.UpdateAsync(ticket);
+            await AddPaymentAsync(ticket.MonthlyTicketId, fee, dto.PaymentMethod);
+
+            return ServiceResult<MonthlyTicketDto>.Ok(MapToDto(ticket), "Gia hạn vé tháng thành công!");
+        }
+
         public async Task<ServiceResult<string>> CancelAsync(string id)
         {
-            var m = await _repo.GetByIdAsync(id);
-            if (m == null) return ServiceResult<string>.Fail("Không tìm thấy vé tháng.");
-            if (m.Status != "Hoạt động") return ServiceResult<string>.Fail("Vé tháng đã không còn hoạt động.");
+            var ticket = await _repo.GetByIdAsync(id);
+            if (ticket == null)
+                return ServiceResult<string>.Fail("Không tìm thấy vé tháng.");
 
-            m.Status = "Đã hủy";
-            await _repo.UpdateAsync(m);
+            if (ticket.Status != "Hoạt động")
+                return ServiceResult<string>.Fail("Vé tháng đã không còn hoạt động.");
+
+            ticket.Status = "Đã hủy";
+            await _repo.UpdateAsync(ticket);
+
             return ServiceResult<string>.Ok(id, "Hủy vé tháng thành công.");
         }
 
@@ -150,19 +168,42 @@ namespace ParkingManagement.BLL.Services.Implementations
             return fee;
         }
 
-        private static MonthlyTicketDto MapToDto(MonthlyTicket m) => new()
+        private async Task AddPaymentAsync(string monthlyTicketId, decimal fee, string? paymentMethod)
         {
-            MonthlyTicketId = m.MonthlyTicketId,
-            CustomerName = m.Customer?.FullName ?? "",
-            VehiclePlate = m.VehiclePlate,
-            VehicleType = m.VehicleType,
-            PackageType = m.PackageType,
-            StartDate = m.StartDate,
-            EndDate = m.EndDate,
-            TotalFee = m.TotalFee,
-            Status = m.Status,
-            DaysRemaining = m.Status == "Hoạt động"
-                ? Math.Max(0, (int)(m.EndDate - DateTime.Today).TotalDays)
+            var paymentId = await _paymentRepo.GenerateIdAsync();
+            await _paymentRepo.AddAsync(new Payment
+            {
+                PaymentId = paymentId,
+                TicketId = null,
+                MonthlyTicketId = monthlyTicketId,
+                Amount = fee,
+                Method = string.IsNullOrWhiteSpace(paymentMethod) ? "Chuyển khoản" : paymentMethod,
+                PaymentTime = DateTime.Now,
+                Status = "Thành công"
+            });
+        }
+
+        private static int GetPackageMonths(string packageType) => packageType switch
+        {
+            "1 tháng" => 1,
+            "3 tháng" => 3,
+            "6 tháng" => 6,
+            _ => 0
+        };
+
+        private static MonthlyTicketDto MapToDto(MonthlyTicket ticket) => new()
+        {
+            MonthlyTicketId = ticket.MonthlyTicketId,
+            CustomerName = ticket.Customer?.FullName ?? "",
+            VehiclePlate = ticket.VehiclePlate,
+            VehicleType = ticket.VehicleType,
+            PackageType = ticket.PackageType,
+            StartDate = ticket.StartDate,
+            EndDate = ticket.EndDate,
+            TotalFee = ticket.TotalFee,
+            Status = ticket.Status,
+            DaysRemaining = ticket.Status == "Hoạt động"
+                ? Math.Max(0, (int)(ticket.EndDate.Date - DateTime.Today).TotalDays)
                 : 0
         };
     }

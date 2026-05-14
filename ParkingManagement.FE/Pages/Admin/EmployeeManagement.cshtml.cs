@@ -1,29 +1,125 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Services;
+using ParkingManagement.FE.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ParkingManagement.FE.Pages.Admin
 {
     [Authorize(Roles = "Manager")]
     public class EmployeeManagementModel : PageModel
     {
-        public List<EmployeeViewModel> Employees { get; set; } = new();
+        private readonly IEmployeeService _employeeService;
 
-        public void OnGet()
+        public EmployeeManagementModel(IEmployeeService employeeService)
         {
-            Employees = new List<EmployeeViewModel>
-            {
-                new("NV0001", "Nguyễn Văn An", "Nhân viên bãi xe", "Bãi xe A", "0901 234 567", 1256, 1198, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0002", "Trần Thị Bình", "Nhân viên bãi xe", "Bãi xe B", "0902 345 678", 980, 872, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0003", "Lê Văn Cường", "Tổ trưởng", "Bãi xe A", "0903 456 789", 1562, 1430, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0004", "Phạm Thị Dung", "Nhân viên bãi xe", "Bãi xe C", "0904 567 890", 753, 690, "Nghỉ phép", "leave", "/images/avatar-demo.jpg"),
-                new("NV0005", "Hoàng Văn Em", "Nhân viên bãi xe", "Bãi xe B", "0905 678 901", 612, 580, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0006", "Đỗ Thị Hương", "Nhân viên bãi xe", "Bãi xe A", "0906 789 012", 1102, 1002, "Tạm nghỉ", "inactive", "/images/avatar-demo.jpg"),
-                new("NV0007", "Vũ Văn Kiên", "Tổ trưởng", "Bãi xe C", "0907 890 123", 890, 812, "Đang làm việc", "active", "/images/avatar-demo.jpg"),
-                new("NV0008", "Bùi Thị Lan", "Nhân viên bãi xe", "Bãi xe A", "0908 901 234", 567, 498, "Đang làm việc", "active", "/images/avatar-demo.jpg")
-            };
+            _employeeService = employeeService;
         }
+
+        public List<EmployeeViewModel> Employees { get; set; } = new();
+        public int TotalEmployees { get; set; }
+        [BindProperty]
+        public CreateEmployeeFormInput CreateEmployeeInput { get; set; } = new();
+        public string? CreateEmployeeMessage { get; set; }
+        public bool CreateEmployeeSuccess { get; set; }
+        public bool CreateEmployeePendingVerification { get; set; }
+
+        public async Task OnGetAsync()
+        {
+            await LoadEmployeesAsync();
+        }
+
+        public async Task<IActionResult> OnPostCreateEmployeeAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                await LoadEmployeesAsync();
+                CreateEmployeeSuccess = false;
+                CreateEmployeeMessage = "Vui lòng kiểm tra lại dữ liệu nhập.";
+                return Page();
+            }
+
+            var request = new CreateEmployeeInviteByManagerDto
+            {
+                FullName = CreateEmployeeInput.FullName.Trim(),
+                Email = CreateEmployeeInput.Email.Trim(),
+                PhoneNumber = CreateEmployeeInput.PhoneNumber.Trim(),
+                Password = CreateEmployeeInput.Password,
+                ConfirmPassword = CreateEmployeeInput.ConfirmPassword,
+                SendInvitationEmail = CreateEmployeeInput.SendInvitationEmail
+            };
+
+            var result = await _employeeService.CreateEmployeeInviteAsync(request);
+            CreateEmployeeSuccess = result?.Success == true;
+            CreateEmployeeMessage = result?.Message ?? "Không thể tạo nhân viên.";
+            CreateEmployeePendingVerification = CreateEmployeeSuccess && result?.InviteExpiry != null;
+
+            if (CreateEmployeeSuccess)
+            {
+                ModelState.Clear();
+                CreateEmployeeInput = new CreateEmployeeFormInput();
+            }
+
+            await LoadEmployeesAsync();
+            return Page();
+        }
+
+        private async Task LoadEmployeesAsync()
+        {
+            var filter = new ManagerEmployeeFilterDto
+            {
+                PageNumber = 1,
+                PageSize = 100
+            };
+
+            var result = await _employeeService.GetEmployeesAsync(filter);
+
+            if (result != null && result.Items != null)
+            {
+                TotalEmployees = result.TotalItems;
+                Employees = result.Items.Select(e => new EmployeeViewModel(
+                    e.EmployeeId,
+                    e.FullName,
+                    "Nhân viên bãi xe", // Temporarily hardcoded or mapped if BE provides it
+                    "Bãi xe A", // Temporarily hardcoded
+                    e.PhoneNumber,
+                    0, // TotalTickets (BE detail endpoint has this, list doesn't)
+                    0, // ProcessedTickets
+                    e.Status,
+                    e.Status == "Hoạt động" ? "active" : "inactive",
+                    "/images/avatar-demo.jpg"
+                )).ToList();
+            }
+        }
+    }
+
+    public class CreateEmployeeFormInput
+    {
+        [Required(ErrorMessage = "Họ tên là bắt buộc.")]
+        [MinLength(3)]
+        [MaxLength(100)]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email là bắt buộc.")]
+        [EmailAddress(ErrorMessage = "Email không đúng định dạng.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
+        [RegularExpression(@"^\d{10,15}$", ErrorMessage = "Số điện thoại phải từ 10-15 chữ số.")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"",.<>?/\\|`~]).{8,}$",
+            ErrorMessage = "Mật khẩu tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Xác nhận mật khẩu là bắt buộc.")]
+        [Compare(nameof(Password), ErrorMessage = "Mật khẩu xác nhận không khớp.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+
+        public bool SendInvitationEmail { get; set; } = true;
     }
 
     [Authorize(Roles = "Manager")]

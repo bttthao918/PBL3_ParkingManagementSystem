@@ -28,16 +28,16 @@ public class AuthenticateModel : PageModel
 
     public void OnGet()
     {
-        if (User.Identity?.IsAuthenticated == true)
-        {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
-            Response.Redirect(GetDashboardPath(role));
-        }
+        ActiveTab ??= "login";
     }
 
     /// <summary>Xử lý đăng nhập</summary>
     public async Task<IActionResult> OnPostLoginAsync()
     {
+        BindLoginInputFromForm();
+        ModelState.Clear();
+        TryValidateModel(LoginInput, nameof(LoginInput));
+
         // ✅ FIX: Chỉ validate LoginInput, bỏ qua RegisterInput
         foreach (var key in ModelState.Keys.Where(k => k.StartsWith("RegisterInput")).ToList())
             ModelState.Remove(key);
@@ -73,6 +73,16 @@ public class AuthenticateModel : PageModel
         HttpContext.Session.SetString("related_id", data.RelatedId ?? "");
         HttpContext.Session.SetString("email", data.Email);
 
+        HttpContext.Response.Cookies.Append("jwt_token", data.Token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = LoginInput.RememberMe
+                ? DateTimeOffset.UtcNow.AddDays(7)
+                : DateTimeOffset.UtcNow.AddHours(24)
+        });
+
         // Tạo Cookie Claims
         var claims = new List<Claim>
         {
@@ -103,6 +113,10 @@ public class AuthenticateModel : PageModel
     /// <summary>Xử lý đăng ký → gửi OTP email</summary>
     public async Task<IActionResult> OnPostRegisterAsync()
     {
+        BindRegisterInputFromForm();
+        ModelState.Clear();
+        TryValidateModel(RegisterInput, nameof(RegisterInput));
+
         // ✅ FIX: Chỉ validate RegisterInput, bỏ qua LoginInput
         foreach (var key in ModelState.Keys.Where(k => k.StartsWith("LoginInput")).ToList())
             ModelState.Remove(key);
@@ -144,6 +158,23 @@ public class AuthenticateModel : PageModel
         "Customer" => "/Customer/Dashboard",
         _ => "/Auth/Authenticate"
     };
+
+    private void BindLoginInputFromForm()
+    {
+        LoginInput.Email = Request.Form["LoginInput.Email"].ToString().Trim();
+        LoginInput.Password = Request.Form["LoginInput.Password"].ToString();
+        LoginInput.RememberMe = Request.Form["LoginInput.RememberMe"]
+            .Any(value => string.Equals(value, "true", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void BindRegisterInputFromForm()
+    {
+        RegisterInput.FullName = Request.Form["RegisterInput.FullName"].ToString().Trim();
+        RegisterInput.Email = Request.Form["RegisterInput.Email"].ToString().Trim();
+        RegisterInput.PhoneNumber = Request.Form["RegisterInput.PhoneNumber"].ToString().Trim();
+        RegisterInput.Password = Request.Form["RegisterInput.Password"].ToString();
+        RegisterInput.ConfirmPassword = Request.Form["RegisterInput.ConfirmPassword"].ToString();
+    }
 
     // ── Input Models ──────────────────────────────────────────────
 

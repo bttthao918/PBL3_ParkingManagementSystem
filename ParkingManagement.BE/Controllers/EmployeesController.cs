@@ -207,6 +207,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Confirm invite and activate account
         /// </summary>
         [HttpPost("invite/confirm")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ConfirmEmployeeInviteResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ConfirmEmployeeInviteResultDto), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ConfirmInvite([FromBody] ConfirmEmployeeInviteDto dto)
@@ -215,6 +216,23 @@ namespace ParkingManagement.Web.Controllers.Api
             if (!result.Success)
                 return BadRequest(result);
             return Ok(result);
+        }
+
+        [HttpGet("invite/confirm")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmInviteByLink([FromQuery] string token)
+        {
+            var result = await _employeeService.ConfirmInviteAsync(new ConfirmEmployeeInviteDto
+            {
+                InviteToken = token
+            });
+
+            if (!result.Success)
+            {
+                return Content($"Xác nhận thất bại: {result.Message}", "text/plain; charset=utf-8");
+            }
+
+            return Content("Xác minh Gmail thành công. Tài khoản đã được kích hoạt và nhân viên đã được thêm vào hệ thống. Bạn có thể đăng nhập ngay.", "text/plain; charset=utf-8");
         }
     }
 }

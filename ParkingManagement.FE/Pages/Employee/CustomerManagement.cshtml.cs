@@ -1,13 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Models.ViewModels;
+using ParkingManagement.FE.Models;
 
 namespace ParkingManagement.FE.Pages.Employee
 {
         [Authorize(Roles = "Employee")]
     public class CustomerManagementModel : PageModel
         {
+            private readonly Services.ICustomerApiService _customerService;
+
+            public CustomerManagementModel(Services.ICustomerApiService customerService)
+            {
+                _customerService = customerService;
+            }
+
             public int TotalCustomers { get; set; }
             public int ActiveCustomers { get; set; }
             public int VipCustomers { get; set; }
@@ -35,118 +44,40 @@ namespace ParkingManagement.FE.Pages.Employee
 
             public CustomerDetailVM? SelectedCustomer { get; set; }
 
-            public void OnGet()
+            public async Task OnGetAsync()
             {
-                Customers = new List<CustomerItemVM>
-            {
-                new CustomerItemVM
+                var filter = new EmployeeCustomerSearchFilterDto
                 {
-                    Id = 1,
-                    FullName = "Nguyễn Văn A",
-                    CustomerCode = "KH001",
-                    Phone = "0905 123 456",
-                    MainPlate = "43A-12345",
-                    VehicleCount = 3,
-                    VehicleTooltip = "43A-56789, 43A-99999",
-                    VehicleType = "Ô tô",
-                    VipLevel = "Gold",
-                    StatusText = "Đang gửi xe",
-                    StatusClass = "parking"
-                },
-                new CustomerItemVM
+                    SearchKeyword = Search ?? "",
+                    PageNumber = 1,
+                    PageSize = 100
+                };
+
+                var result = await _customerService.SearchForEmployeeAsync(filter);
+
+                if (result != null && result.Items != null)
                 {
-                    Id = 2,
-                    FullName = "Trần Thị B",
-                    CustomerCode = "KH002",
-                    Phone = "0912 345 678",
-                    MainPlate = "43B-67890",
-                    VehicleCount = 2,
-                    VehicleTooltip = "43B-22222",
-                    VehicleType = "Xe máy",
-                    VipLevel = "Silver",
-                    StatusText = "Đang gửi xe",
-                    StatusClass = "parking"
-                },
-                new CustomerItemVM
-                {
-                    Id = 3,
-                    FullName = "Lê Quang C",
-                    CustomerCode = "KH003",
-                    Phone = "0934 567 890",
-                    MainPlate = "43A-56789",
-                    VehicleCount = 4,
-                    VehicleTooltip = "43A-99999, 43A-10101, 43A-20202",
-                    VehicleType = "Ô tô",
-                    VipLevel = "Platinum",
-                    StatusText = "Đã rời bãi",
-                    StatusClass = "left"
-                },
-                new CustomerItemVM
-                {
-                    Id = 4,
-                    FullName = "Phạm Thị D",
-                    CustomerCode = "KH004",
-                    Phone = "0987 654 321",
-                    MainPlate = "43C-24680",
-                    VehicleCount = 1,
-                    VehicleTooltip = "",
-                    VehicleType = "Xe máy",
-                    VipLevel = "Silver",
-                    StatusText = "Nợ phí",
-                    StatusClass = "debt"
-                },
-                new CustomerItemVM
-                {
-                    Id = 5,
-                    FullName = "Hoàng Văn E",
-                    CustomerCode = "KH005",
-                    Phone = "0333 222 111",
-                    MainPlate = "43A-11111",
-                    VehicleCount = 1,
-                    VehicleTooltip = "",
-                    VehicleType = "Ô tô",
-                    VipLevel = "Thường",
-                    StatusText = "Đang gửi xe",
-                    StatusClass = "parking"
+                    Customers = result.Items.Select((c, index) => new CustomerItemVM
+                    {
+                        Id = index + 1, // Temporary, until BE returns integer IDs or FE uses string ID
+                        FullName = c.FullName,
+                        CustomerCode = c.CustomerId,
+                        Phone = c.PhoneNumber,
+                        MainPlate = "-", // BE currently doesn't return this in list
+                        VehicleCount = c.TotalTickets > 0 ? 1 : 0, 
+                        VehicleTooltip = "",
+                        VehicleType = "-",
+                        VipLevel = c.HasActiveMonthlyTicket ? "Tháng" : "Thường",
+                        StatusText = c.LastVisit.HasValue ? c.LastVisit.Value.ToString("dd/MM/yyyy") : "Chưa gửi",
+                        StatusClass = c.HasActiveMonthlyTicket ? "parking" : "left"
+                    }).ToList();
+
+                    TotalCustomers = result.TotalItems;
+                    ActiveCustomers = result.Items.Count(x => x.HasActiveMonthlyTicket);
+                    VipCustomers = result.Items.Count(x => x.HasActiveMonthlyTicket);
+                    NewCustomers = 0;
                 }
-            };
-
-                if (!string.IsNullOrWhiteSpace(Search))
-                {
-                    Customers = Customers
-                        .Where(x =>
-                            x.FullName.Contains(Search, StringComparison.OrdinalIgnoreCase) ||
-                            x.CustomerCode.Contains(Search, StringComparison.OrdinalIgnoreCase) ||
-                            x.Phone.Contains(Search, StringComparison.OrdinalIgnoreCase) ||
-                            x.MainPlate.Contains(Search, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-                }
-
-                if (!string.IsNullOrWhiteSpace(StatusFilter))
-                {
-                    Customers = Customers
-                        .Where(x => x.StatusClass.Equals(StatusFilter.ToLower(), StringComparison.OrdinalIgnoreCase)
-                                 || x.StatusText.Contains(StatusFilter, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-                }
-
-                if (!string.IsNullOrWhiteSpace(VehicleFilter))
-                {
-                    var vehicleText = VehicleFilter == "Car" ? "Ô tô" : "Xe máy";
-                    Customers = Customers.Where(x => x.VehicleType == vehicleText).ToList();
-                }
-
-                if (!string.IsNullOrWhiteSpace(VipFilter))
-                {
-                    var vipText = VipFilter == "Normal" ? "Thường" : VipFilter;
-                    Customers = Customers.Where(x => x.VipLevel == vipText).ToList();
-                }
-
-                TotalCustomers = 1248;
-                ActiveCustomers = 320;
-                VipCustomers = 186;
-                NewCustomers = 42;
-
+                
                 var selectedCustomerId = SelectedId ?? 1;
                 var selected = Customers.FirstOrDefault(x => x.Id == selectedCustomerId)
                                ?? Customers.FirstOrDefault();
@@ -159,61 +90,18 @@ namespace ParkingManagement.FE.Pages.Employee
                         FullName = selected.FullName,
                         CustomerCode = selected.CustomerCode,
                         Phone = selected.Phone,
-                        Email = "nguyenvana@gmail.com",
-                        Address = "123 Lê Duẩn, Hải Châu, Đà Nẵng",
-                        DateOfBirth = "12/05/1990",
-                        RegisterDate = "01/01/2023",
+                        Email = "-",
+                        Address = "-",
+                        DateOfBirth = "-",
+                        RegisterDate = "-",
                         VipLevel = selected.VipLevel,
-                        TotalSpent = 8500000,
-                        TotalTickets = 245,
+                        TotalSpent = 0,
+                        TotalTickets = 0, // Should be fetched from detail endpoint if BE had one
                         DiscountPercent = selected.VipLevel == "Thường" ? 0 : 10,
-                        VipProgress = 85,
-                        AmountToNextLevel = 1500000,
-                        Vehicles = new List<CustomerVehicleVM>
-                    {
-                        new CustomerVehicleVM
-                        {
-                            PlateNumber = "43A-12345",
-                            Type = "Ô tô",
-                            IsActive = true
-                        },
-                        new CustomerVehicleVM
-                        {
-                            PlateNumber = "43A-56789",
-                            Type = "Ô tô",
-                            IsActive = false
-                        },
-                        new CustomerVehicleVM
-                        {
-                            PlateNumber = "43A-99999",
-                            Type = "Ô tô",
-                            IsActive = false
-                        }
-                    },
-                        Histories = new List<CustomerParkingHistoryVM>
-                    {
-                        new CustomerParkingHistoryVM
-                        {
-                            Date = "20/05/2024",
-                            CheckIn = "08:10",
-                            CheckOut = "11:45",
-                            Fee = 25000
-                        },
-                        new CustomerParkingHistoryVM
-                        {
-                            Date = "18/05/2024",
-                            CheckIn = "09:20",
-                            CheckOut = "10:30",
-                            Fee = 20000
-                        },
-                        new CustomerParkingHistoryVM
-                        {
-                            Date = "16/05/2024",
-                            CheckIn = "07:50",
-                            CheckOut = "12:10",
-                            Fee = 30000
-                        }
-                    }
+                        VipProgress = 0,
+                        AmountToNextLevel = 0,
+                        Vehicles = new List<CustomerVehicleVM>(),
+                        Histories = new List<CustomerParkingHistoryVM>()
                     };
                 }
             }

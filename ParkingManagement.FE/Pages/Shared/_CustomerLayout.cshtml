@@ -15,18 +15,18 @@
 
     <p>QUẢN LÝ</p>
 
-    <a asp-page="/Customer/Booking/Index"
-           class="@(currentPath.Contains("/Customer/Booking/Index", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+    <a asp-page="/Customer/Booking"
+           class="@(currentPath.Contains("/Customer/Booking", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
         <i class="fa-solid fa-calendar-check"></i> Đơn đặt chỗ
     </a>
 
-    <a asp-page="/Customer/MyTickets"
-           class="@(currentPath.Contains("/Customer/MyTickets", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+    <a asp-page="/Customer/Ticket"
+           class="@(currentPath.Contains("/Customer/Ticket", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
         <i class="fa-solid fa-ticket"></i> Vé xe
     </a>
 
-    <a asp-page="/Customer/MonthlyPass"
-           class="@(currentPath.Contains("/Customer/MonthlyPass", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+    <a asp-page="/Customer/MonthlyTicket"
+           class="@(currentPath.Contains("/Customer/MonthlyTicket", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
         <i class="fa-solid fa-credit-card"></i> Vé tháng
     </a>
 

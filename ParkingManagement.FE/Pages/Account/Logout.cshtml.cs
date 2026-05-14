@@ -11,6 +11,7 @@ namespace ParkingManagement.FE.Pages.Account
         {
             // Xóa session
             HttpContext.Session.Clear();
+            Response.Cookies.Delete("jwt_token");
 
             // Xóa cookie auth
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

@@ -66,5 +66,37 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             await SendEmailAsync(email, subject, body);
         }
+
+        public async Task SendEmployeeInviteConfirmationEmailAsync(string email, string fullName, string employeeCode, string confirmationUrl, DateTime expiryTime)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(confirmationUrl))
+            {
+                return;
+            }
+
+            var safeName = string.IsNullOrWhiteSpace(fullName) ? "bạn" : fullName.Trim();
+            var subject = "Xác nhận tài khoản nhân viên - ParkSmart";
+            var body = $@"
+        <div style='font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif; max-width: 560px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;'>
+            <div style='background-color: #1e88e5; padding: 20px; text-align: center;'>
+                <h2 style='color: white; margin: 0;'>ParkSmart Employee Account</h2>
+            </div>
+            <div style='padding: 24px; line-height: 1.6; color: #333;'>
+                <p>Xin chào <strong>{safeName}</strong>,</p>
+                <p>Quản lý đã tạo tài khoản nhân viên cho bạn trên hệ thống ParkSmart.</p>
+                <p>Mã nhân viên của bạn: <strong>{employeeCode}</strong></p>
+                <p>Vui lòng xác nhận thông tin để kích hoạt tài khoản:</p>
+                <p style='text-align:center; margin: 24px 0;'>
+                    <a href='{confirmationUrl}' style='background:#1e88e5; color:#fff; text-decoration:none; padding:12px 18px; border-radius:8px; display:inline-block; font-weight:600;'>
+                        Xác nhận kích hoạt tài khoản
+                    </a>
+                </p>
+                <p style='font-size:13px; color:#666;'>Link có hiệu lực đến: <strong>{expiryTime:dd/MM/yyyy HH:mm}</strong>.</p>
+                <p style='font-size:13px; color:#666;'>Nếu bạn không mong đợi email này, vui lòng liên hệ quản lý.</p>
+            </div>
+        </div>";
+
+            await SendEmailAsync(email, subject, body);
+        }
     }
 }

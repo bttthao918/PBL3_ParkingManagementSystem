@@ -108,6 +108,19 @@ namespace ParkingManagement.BLL.Services.Implementations
             };
         }
 
+        public async Task<TicketSummaryDto> GetTicketSummaryAsync()
+        {
+            var tickets = await _ticketRepository.GetAllAsync();
+
+            return new TicketSummaryDto
+            {
+                TotalTickets = tickets.Count,
+                ActiveTickets = tickets.Count(t => t.Status == "Đang trong bãi"),
+                CheckedOutTickets = tickets.Count(t => t.Status == "Đã ra"),
+                TotalRevenue = tickets.Sum(t => t.Fee)
+            };
+        }
+
         public async Task<TicketDetailDto> GetTicketDetailAsync(string ticketId)
         {
             var ticket = await _ticketRepository.GetByIdAsync(ticketId);

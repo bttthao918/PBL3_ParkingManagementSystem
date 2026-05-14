@@ -1,13 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Services;
+using ParkingManagement.FE.Models;
 
 namespace ParkingManagement.FE.Pages.Employee
 {
     [Authorize(Roles = "Employee")]
     public class TicketManagementModel : PageModel
     {
+        private readonly ITicketService _ticketService;
+
+        public TicketManagementModel(ITicketService ticketService)
+        {
+            _ticketService = ticketService;
+        }
+
         public int TotalTickets { get; set; }
         public int ActiveTickets { get; set; }
         public int PaidTickets { get; set; }
@@ -35,85 +44,58 @@ namespace ParkingManagement.FE.Pages.Employee
         public List<TicketItemVM> Tickets { get; set; } = new List<TicketItemVM>();
 
         public TicketDetailVM? SelectedTicket { get; set; }
-        public void OnGet()
+        [TempData]
+        public string? ActionMessage { get; set; }
+        [TempData]
+        public bool ActionSuccess { get; set; }
+        public async Task OnGetAsync()
         {
-            Tickets = new List<TicketItemVM>
-    {
-        new TicketItemVM
-        {
-            Id = 1,
-            TicketCode = "VE20240520001",
-            CreatedAt = "20/05/2024 08:10",
-            CustomerName = "Nguyễn Văn A",
-            Phone = "0905 123 456",
-            PlateNumber = "43A-12345",
-            VehicleType = "Ô tô",
-            Area = "B1-15",
-            AreaClass = "b",
-            CheckInTime = "08:10",
-            CheckInDate = "20/05/2024",
-            StatusText = "Đang gửi",
-            StatusClass = "active",
-            TotalPrice = null
-        },
-        new TicketItemVM
-        {
-            Id = 2,
-            TicketCode = "VE20240520002",
-            CreatedAt = "20/05/2024 07:45",
-            CustomerName = "Trần Thị B",
-            Phone = "0912 345 678",
-            PlateNumber = "43B-67890",
-            VehicleType = "Xe máy",
-            Area = "A2-08",
-            AreaClass = "a",
-            CheckInTime = "07:45",
-            CheckInDate = "20/05/2024",
-            StatusText = "Đang gửi",
-            StatusClass = "active",
-            TotalPrice = null
-        },
-        new TicketItemVM
-        {
-            Id = 3,
-            TicketCode = "VE20240519045",
-            CreatedAt = "19/05/2024 18:20",
-            CustomerName = "Phạm Thị D",
-            Phone = "0987 654 321",
-            PlateNumber = "43C-24680",
-            VehicleType = "Xe máy",
-            Area = "A1-05",
-            AreaClass = "c",
-            CheckInTime = "18:20",
-            CheckInDate = "19/05/2024",
-            StatusText = "Đã thanh toán",
-            StatusClass = "paid",
-            TotalPrice = 25000
-        },
-        new TicketItemVM
-        {
-            Id = 4,
-            TicketCode = "VE20240519043",
-            CreatedAt = "19/05/2024 16:05",
-            CustomerName = "Đỗ Thị F",
-            Phone = "0901 234 567",
-            PlateNumber = "43B-22222",
-            VehicleType = "Xe máy",
-            Area = "A2-10",
-            AreaClass = "a",
-            CheckInTime = "16:05",
-            CheckInDate = "19/05/2024",
-            StatusText = "Quá hạn",
-            StatusClass = "expired",
-            TotalPrice = 30000
-        }
-    };
+            var searchDto = new EmployeeTicketSearchDto
+            {
+                SearchKeyword = Search,
+                Status = StatusFilter,
+                VehicleType = VehicleFilter,
+                PageNumber = 1,
+                PageSize = 50
+            };
 
-            TotalTickets = 1248;
-            ActiveTickets = 320;
-            PaidTickets = 856;
-            ExpiredTickets = 72;
-            CancelledTickets = 28;
+            var result = await _ticketService.SearchTicketsAsync(searchDto);
+
+            if (result != null && result.Items != null)
+            {
+                TotalTickets = result.TotalItems;
+                ActiveTickets = result.Items.Count(t => t.Status == "Đang trong bãi");
+                PaidTickets = result.Items.Count(t => t.Status == "Đã ra");
+                ExpiredTickets = 0;
+                CancelledTickets = 0;
+
+                Tickets = result.Items.Select((t, index) => new TicketItemVM
+                {
+                    Id = index + 1, // ID tạm thời cho FE
+                    TicketCode = t.TicketId,
+                    CreatedAt = t.CheckInTime.ToString("dd/MM/yyyy HH:mm"),
+                    CustomerName = t.CustomerName ?? "Khách vãng lai",
+                    Phone = "", 
+                    PlateNumber = t.VehiclePlate,
+                    VehicleType = t.VehicleType,
+                    Area = t.SlotId ?? "Chưa xếp chỗ",
+                    AreaClass = string.IsNullOrEmpty(t.SlotId) ? "" : t.SlotId.Substring(0, 1).ToLower(),
+                    CheckInTime = t.CheckInTime.ToString("HH:mm"),
+                    CheckInDate = t.CheckInTime.ToString("dd/MM/yyyy"),
+                    StatusText = t.Status,
+                    StatusClass = t.Status == "Đang trong bãi" ? "active" : (t.Status == "Đã ra" ? "paid" : "expired"),
+                    TotalPrice = t.Fee
+                }).ToList();
+            }
+            else
+            {
+                Tickets = new List<TicketItemVM>();
+                TotalTickets = 0;
+                ActiveTickets = 0;
+                PaidTickets = 0;
+                ExpiredTickets = 0;
+                CancelledTickets = 0;
+            }
 
             if (SelectedId.HasValue)
             {
@@ -130,24 +112,41 @@ namespace ParkingManagement.FE.Pages.Employee
                         Phone = selected.Phone,
                         PlateNumber = selected.PlateNumber,
                         VehicleType = selected.VehicleType,
-                        Area = "B1 - Tầng hầm 1",
+                        Area = selected.Area,
                         AreaClass = selected.AreaClass,
                         Position = selected.Area,
                         CheckInTime = selected.CheckInTime,
                         CheckInDate = selected.CheckInDate,
                         StatusText = selected.StatusText,
                         StatusClass = selected.StatusClass,
-                        EmployeeName = "Nguyễn Văn An",
-                        VehicleColor = "Trắng",
-                        Brand = "Toyota",
-                        CheckInFull = "20/05/2024 08:10",
-                        DurationText = "2 giờ 35 phút",
-                        BasePrice = 15000,
-                        ServiceFee = 2000,
-                        PaymentTotal = 17000
+                        EmployeeName = User.Identity?.Name ?? "Employee",
+                        VehicleColor = "N/A",
+                        Brand = "N/A",
+                        CheckInFull = selected.CheckInDate + " " + selected.CheckInTime,
+                        DurationText = "",
+                        BasePrice = selected.TotalPrice ?? 0,
+                        ServiceFee = 0,
+                        PaymentTotal = selected.TotalPrice ?? 0
                     };
                 }
             }
+        }
+
+        public async Task<IActionResult> OnPostCheckOutAsync(string ticketId, decimal fee, int? selectedId)
+        {
+            var ok = await _ticketService.CheckOutAsync(ticketId, fee);
+            ActionSuccess = ok;
+            ActionMessage = ok ? $"Đã check-out vé {ticketId}." : $"Check-out thất bại cho vé {ticketId}.";
+
+            return RedirectToPage(new
+            {
+                Search,
+                StatusFilter,
+                VehicleFilter,
+                AreaFilter,
+                CreatedDate,
+                SelectedId = selectedId
+            });
         }
 
         [Authorize(Roles = "Employee")]

@@ -431,7 +431,7 @@ namespace ParkingManagement.DAL.Implementations
 
         public Task<List<EmployeeInvite>> GetPendingAsync() =>
             _db.EmployeeInvites
-               .Where(i => !i.IsUsed && i.ExpiryTime > DateTime.Now)
+               .Where(i => !i.IsUsed && i.ExpiryTime > DateTime.UtcNow)
                .ToListAsync();
 
         public async Task AddAsync(EmployeeInvite invite)

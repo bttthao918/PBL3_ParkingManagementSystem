@@ -111,6 +111,14 @@ namespace ParkingManagement.BLL.DTOs
         public int TotalPages { get; set; }
     }
 
+    public class TicketSummaryDto
+    {
+        public int TotalTickets { get; set; }
+        public int ActiveTickets { get; set; }
+        public int CheckedOutTickets { get; set; }
+        public decimal TotalRevenue { get; set; }
+    }
+
     /// <summary>
     /// UC017.1 - Lấy giá vé hiện tại
     /// </summary>

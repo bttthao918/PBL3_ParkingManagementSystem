@@ -6,6 +6,13 @@ namespace ParkingManagement.FE.Pages.Shared.ParkingSlotManagement
 {
         public class ParkingSlotManagementModel : PageModel
         {
+            private readonly Services.IParkingSlotService _parkingSlotService;
+
+            public ParkingSlotManagementModel(Services.IParkingSlotService parkingSlotService)
+            {
+                _parkingSlotService = parkingSlotService;
+            }
+
             public List<ParkingSlotViewModel> Slots { get; set; } = new();
 
             public string SlotsJson { get; set; } = "[]";
@@ -14,91 +21,30 @@ namespace ParkingManagement.FE.Pages.Shared.ParkingSlotManagement
             public int UsingCount => Slots.Count(x => x.Status == "Đang sử dụng");
             public int BookedCount => Slots.Count(x => x.Status == "Đã đặt");
 
-            public void OnGet()
+            public async Task OnGetAsync()
             {
-                Slots = GenerateSlots();
+                var result = await _parkingSlotService.GetEmployeeSlotsAsync(new Models.EmployeeSlotFilterDto
+                {
+                    PageNumber = 1,
+                    PageSize = 200
+                });
+
+                if (result != null && result.Items != null && result.Items.Any())
+                {
+                    Slots = result.Items.Select(s => new ParkingSlotViewModel
+                    {
+                        SlotId = s.SlotId,
+                        Location = s.Location,
+                        VehicleType = s.VehicleType,
+                        Status = s.Status,
+                        LastUpdated = s.OccupiedSince ?? DateTime.Now
+                    }).ToList();
+                }
 
                 SlotsJson = JsonSerializer.Serialize(Slots, new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
-            }
-
-            private List<ParkingSlotViewModel> GenerateSlots()
-            {
-                var slots = new List<ParkingSlotViewModel>();
-
-                for (int i = 1; i <= 50; i++)
-                {
-                    var id = $"A{i:00}";
-
-                    slots.Add(new ParkingSlotViewModel
-                    {
-                        SlotId = id,
-                        Location = $"Khu A - Ô {i:00}",
-                        VehicleType = "Xe máy",
-                        Status = id switch
-                        {
-                            "A01" => "Đang sử dụng",
-                            "A04" => "Đã đặt",
-                            _ => "Trống"
-                        },
-                        LastUpdated = id switch
-                        {
-                            "A01" => new DateTime(2026, 5, 10, 8, 23, 0),
-                            "A02" => new DateTime(2026, 5, 9, 17, 30, 0),
-                            "A03" => new DateTime(2026, 5, 8, 12, 0, 0),
-                            "A04" => new DateTime(2026, 5, 10, 10, 0, 0),
-                            _ => new DateTime(2026, 5, 10, 0, 0, 0)
-                        }
-                    });
-                }
-
-                for (int i = 1; i <= 50; i++)
-                {
-                    var id = $"B{i:00}";
-
-                    slots.Add(new ParkingSlotViewModel
-                    {
-                        SlotId = id,
-                        Location = $"Khu B - Ô {i:00}",
-                        VehicleType = "Ô tô nhỏ",
-                        Status = id switch
-                        {
-                            "B01" => "Đang sử dụng",
-                            _ => "Trống"
-                        },
-                        LastUpdated = id switch
-                        {
-                            "B01" => new DateTime(2026, 5, 10, 9, 5, 0),
-                            _ => new DateTime(2026, 5, 10, 0, 0, 0)
-                        }
-                    });
-                }
-
-                for (int i = 1; i <= 20; i++)
-                {
-                    var id = $"C{i:00}";
-
-                    slots.Add(new ParkingSlotViewModel
-                    {
-                        SlotId = id,
-                        Location = $"Khu C - Ô {i:00}",
-                        VehicleType = "Ô tô lớn",
-                        Status = id switch
-                        {
-                            "C01" => "Đang sử dụng",
-                            _ => "Trống"
-                        },
-                        LastUpdated = id switch
-                        {
-                            "C01" => new DateTime(2026, 5, 1, 0, 0, 0),
-                            _ => new DateTime(2026, 5, 10, 0, 0, 0)
-                        }
-                    });
-                }
-
-                return slots;
             }
         }
 

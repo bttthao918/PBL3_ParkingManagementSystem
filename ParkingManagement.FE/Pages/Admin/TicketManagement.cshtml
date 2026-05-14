@@ -10,20 +10,24 @@
     <link rel="stylesheet" href="/css/admin/admin_ticket.css" />
 }
 
-
-
 <div class="dashboard-content ticket-page">
+    @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+    {
+        <div class="card" style="margin-bottom:12px; border-left:4px solid #c62828;">
+            <p style="margin:0; color:#c62828;">@Model.LoadErrorMessage</p>
+        </div>
+    }
 
     <div class="ticket-header">
         <div>
             <h2>Quản lý vé</h2>
-            <p>Quản lý danh sách vé, tìm kiếm vé và cấu hình giá vé</p>
+            <p>Quản lý danh sách vé lượt, tìm kiếm vé và theo dõi số liệu từ database</p>
         </div>
 
-        <button class="ticket-btn-primary">
+        <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
             <i class="fa-solid fa-plus"></i>
             Thêm vé mới
-        </button>
+        </a>
     </div>
 
     <div class="ticket-kpi-grid">
@@ -33,41 +37,41 @@
             </div>
             <div>
                 <p>Tổng số vé</p>
-                <h2>2,345</h2>
-                <span>Tất cả vé</span>
+                <h2>@Model.TotalTickets.ToString("N0")</h2>
+                <span>Tất cả vé trong hệ thống</span>
             </div>
         </div>
 
         <div class="card ticket-kpi-card">
             <div class="ticket-kpi-icon green">
-                <i class="fa-solid fa-circle-check"></i>
+                <i class="fa-solid fa-car"></i>
             </div>
             <div>
-                <p>Vé hoạt động</p>
-                <h2>1,568</h2>
-                <span>67.0%</span>
+                <p>Đang trong bãi</p>
+                <h2>@Model.ActiveTickets.ToString("N0")</h2>
+                <span>@Model.ActiveRate.ToString("0.0")%</span>
             </div>
         </div>
 
         <div class="card ticket-kpi-card">
             <div class="ticket-kpi-icon orange">
-                <i class="fa-solid fa-clock"></i>
+                <i class="fa-solid fa-circle-check"></i>
             </div>
             <div>
-                <p>Vé hết hạn</p>
-                <h2>457</h2>
-                <span>19.5%</span>
+                <p>Đã ra</p>
+                <h2>@Model.CheckedOutTickets.ToString("N0")</h2>
+                <span>@Model.CheckedOutRate.ToString("0.0")%</span>
             </div>
         </div>
 
         <div class="card ticket-kpi-card">
             <div class="ticket-kpi-icon red">
-                <i class="fa-solid fa-circle-xmark"></i>
+                <i class="fa-solid fa-coins"></i>
             </div>
             <div>
-                <p>Vé đã hủy</p>
-                <h2>320</h2>
-                <span>13.5%</span>
+                <p>Doanh thu vé lượt</p>
+                <h2>@Model.TotalRevenue.ToString("N0") đ</h2>
+                <span>Phí đã ghi nhận</span>
             </div>
         </div>
     </div>
@@ -78,36 +82,36 @@
         <form method="get" class="ticket-filter-grid">
             <div class="ticket-input-group large">
                 <label>Từ khóa</label>
-                <input type="text" name="keyword" placeholder="Nhập mã vé, biển số xe, tên khách hàng..." />
+                <input type="text" asp-for="Keyword" placeholder="Nhập mã vé hoặc biển số xe..." />
             </div>
 
             <div class="ticket-input-group">
                 <label>Trạng thái</label>
-                <select name="status">
+                <select asp-for="Status">
                     <option value="">Tất cả</option>
-                    <option>Đang hoạt động</option>
-                    <option>Hết hạn</option>
-                    <option>Đã hủy</option>
+                    <option value="Đang trong bãi">Đang trong bãi</option>
+                    <option value="Đã ra">Đã ra</option>
                 </select>
             </div>
 
             <div class="ticket-input-group">
-                <label>Loại vé</label>
-                <select name="type">
+                <label>Loại xe</label>
+                <select asp-for="Type">
                     <option value="">Tất cả</option>
-                    <option>Vé ngày</option>
-                    <option>Vé tháng</option>
+                    <option value="Xe máy">Xe máy</option>
+                    <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                    <option value="Ô tô lớn">Ô tô lớn</option>
                 </select>
             </div>
 
             <div class="ticket-input-group">
                 <label>Từ ngày</label>
-                <input type="date" name="fromDate" />
+                <input type="date" asp-for="FromDate" />
             </div>
 
             <div class="ticket-input-group">
                 <label>Đến ngày</label>
-                <input type="date" name="toDate" />
+                <input type="date" asp-for="ToDate" />
             </div>
 
             <button class="ticket-btn-primary search-btn" type="submit">
@@ -116,34 +120,30 @@
             </button>
         </form>
 
-        <button class="ticket-btn-outline">
+        <a asp-page="/Admin/TicketManagement" class="ticket-btn-outline" style="text-decoration:none;">
             <i class="fa-solid fa-filter-circle-xmark"></i>
             Xóa bộ lọc
-        </button>
+        </a>
     </div>
 
     <div class="ticket-toolbar">
         <div class="ticket-tabs">
-            <button class="active">
+            <button class="active" type="button">
                 <i class="fa-solid fa-list"></i>
                 Danh sách vé
-            </button>
-            <button>
-                <i class="fa-solid fa-tag"></i>
-                Giá vé
             </button>
         </div>
 
         <div class="ticket-toolbar-actions">
-            <button class="ticket-btn-outline">
-                <i class="fa-solid fa-file-export"></i>
-                Xuất Excel
+            <button class="ticket-btn-outline" type="button" onclick="window.print()">
+                <i class="fa-solid fa-print"></i>
+                In danh sách
             </button>
 
-            <button class="ticket-btn-primary">
+            <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
                 <i class="fa-solid fa-plus"></i>
                 Thêm vé mới
-            </button>
+            </a>
         </div>
     </div>
 
@@ -155,55 +155,100 @@
                     <th>Mã vé</th>
                     <th>Biển số xe</th>
                     <th>Khách hàng</th>
-                    <th>Loại vé</th>
-                    <th>Giá vé</th>
+                    <th>Loại xe</th>
+                    <th>Phí</th>
                     <th>Ngày vào</th>
-                    <th>Ngày hết hạn</th>
+                    <th>Ngày ra</th>
                     <th>Trạng thái</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach (var ticket in Model.Tickets)
+                @if (Model.Tickets.Count == 0)
                 {
                     <tr>
-                        <td><input type="checkbox" /></td>
-                        <td class="ticket-code">@ticket.Code</td>
-                        <td>@ticket.PlateNumber</td>
-                        <td>@ticket.CustomerName</td>
-                        <td>@ticket.Type</td>
-                        <td>@ticket.Price.ToString("N0") đ</td>
-                        <td>@ticket.StartDate.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@ticket.EndDate.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>
-                            <span class="ticket-status @ticket.StatusClass">
-                                @ticket.Status
-                            </span>
-                        </td>
-                        <td>
-                            <div class="ticket-actions">
-                                <button class="view"><i class="fa-solid fa-eye"></i></button>
-                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
-                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
+                        <td colspan="10" class="ticket-empty-state">Không có vé phù hợp với bộ lọc hiện tại.</td>
                     </tr>
+                }
+                else
+                {
+                    @foreach (var ticket in Model.Tickets)
+                    {
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td class="ticket-code">@ticket.Code</td>
+                            <td>@ticket.PlateNumber</td>
+                            <td>@ticket.CustomerName</td>
+                            <td>@ticket.Type</td>
+                            <td>@ticket.Price.ToString("N0") đ</td>
+                            <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@(ticket.CheckOutTime != DateTime.MinValue ? ticket.CheckOutTime.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+                            <td>
+                                <span class="ticket-status @ticket.StatusClass">
+                                    @ticket.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div class="ticket-actions">
+                                    <button class="view" type="button" title="Xem"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="edit" type="button" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="delete" type="button" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
 
         <div class="ticket-pagination">
-            <span>Hiển thị 1 đến 7 trong tổng số 2,345 vé</span>
+            <span>Hiển thị @Model.ShowingFrom đến @Model.ShowingTo trong tổng số @Model.TotalItems.ToString("N0") vé</span>
 
             <div>
-                <button>‹</button>
-                <button class="active">1</button>
-                <button>2</button>
-                <button>3</button>
-                <button>...</button>
-                <button>335</button>
-                <button>›</button>
+                @if (Model.HasPreviousPage)
+                {
+                    <a class="ticket-page-link"
+                       asp-page="/Admin/TicketManagement"
+                       asp-route-keyword="@Model.Keyword"
+                       asp-route-status="@Model.Status"
+                       asp-route-type="@Model.Type"
+                       asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       asp-route-pageNumber="@(Model.PageNumber - 1)">‹</a>
+                }
+                else
+                {
+                    <span class="ticket-page-link disabled">‹</span>
+                }
+
+                @for (var page = Model.StartPage; page <= Model.EndPage; page++)
+                {
+                    <a class="ticket-page-link @(page == Model.PageNumber ? "active" : "")"
+                       asp-page="/Admin/TicketManagement"
+                       asp-route-keyword="@Model.Keyword"
+                       asp-route-status="@Model.Status"
+                       asp-route-type="@Model.Type"
+                       asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       asp-route-pageNumber="@(page)">@(page)</a>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <a class="ticket-page-link"
+                       asp-page="/Admin/TicketManagement"
+                       asp-route-keyword="@Model.Keyword"
+                       asp-route-status="@Model.Status"
+                       asp-route-type="@Model.Type"
+                       asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       asp-route-pageNumber="@(Model.PageNumber + 1)">›</a>
+                }
+                else
+                {
+                    <span class="ticket-page-link disabled">›</span>
+                }
             </div>
         </div>
     </div>

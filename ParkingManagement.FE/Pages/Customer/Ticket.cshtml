@@ -1,0 +1,260 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Customer.TicketModel
+
+@{
+    ViewData["Title"] = "Quản lý vé xe";
+    ViewData["UserName"] = Model.UserName;
+    ViewData["Role"] = "Khách hàng";
+}
+
+<link rel="stylesheet" href="~/css/customer/ticket.css" asp-append-version="true" />
+
+<div class="ticket-page">
+
+    <div class="card ticket-hero">
+        <div>
+            <h2>Quản lý vé xe</h2>
+            <p>Xem bảng giá, tra cứu danh sách vé và kiểm tra chi tiết từng vé.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-header">
+            <div>
+                <h3>Bảng giá vé</h3>
+                <p>Áp dụng cho các loại xe trong hệ thống bãi giữ xe.</p>
+            </div>
+
+            <span class="updated-date">
+                <i class="fa-solid fa-calendar-days"></i>
+                Cập nhật: 01/05/2024
+            </span>
+        </div>
+
+        <div class="price-grid">
+            @foreach (var price in Model.PriceCards)
+            {
+                <div class="price-card @price.ColorClass">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="@price.Icon"></i>
+                        </div>
+
+                        <div>
+                            <h4>@price.VehicleType</h4>
+                            <h2>@price.FirstHourPrice.ToString("N0") đ <span>/ lượt</span></h2>
+                        </div>
+                    </div>
+
+                    <div class="price-lines">
+                        <div>
+                            <span>Theo giờ đầu</span>
+                            <strong>@price.FirstHourPrice.ToString("N0") đ</strong>
+                        </div>
+
+                        <div>
+                            <span>Từ giờ thứ 2</span>
+                            <strong>@price.NextHourPrice.ToString("N0") đ/giờ</strong>
+                        </div>
+
+                        <div>
+                            <span>Qua đêm (22:00 - 06:00)</span>
+                            <strong>@price.OvernightPrice.ToString("N0") đ/đêm</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div id="ticketContent" class="ticket-content no-detail">
+
+        <div class="card ticket-list-card">
+            <div class="section-header">
+                <div>
+                    <h3>Danh sách vé</h3>
+                    <p>Click vào một vé để xem chi tiết. Click lại để ẩn chi tiết.</p>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <input type="date" id="ticketDateFilter" value="2024-05-01" />
+
+                <select id="ticketVehicleFilter">
+                    <option value="">Tất cả loại xe</option>
+                    <option value="Xe máy">Xe máy</option>
+                    <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                    <option value="Ô tô lớn">Ô tô lớn</option>
+                </select>
+
+                <select id="ticketStatusFilter">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Đã thanh toán">Đã thanh toán</option>
+                    <option value="Chưa thanh toán">Chưa thanh toán</option>
+                </select>
+
+                <div class="search-box">
+                    <input type="text" id="ticketSearchFilter" placeholder="Tìm kiếm vé, biển số..." />
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <button type="button" id="applyTicketFilterBtn" class="filter-btn">
+                    <i class="fa-solid fa-filter"></i>
+                    Lọc
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table class="ticket-table">
+                    <thead>
+                        <tr>
+                            <th>Mã vé</th>
+                            <th>Biển số xe</th>
+                            <th>Loại xe</th>
+                            <th>Giờ vào</th>
+                            <th>Giờ ra</th>
+                            <th>Thành tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var ticket in Model.Tickets)
+                        {
+                            <tr class="ticket-row"
+                                data-ticket-id="@ticket.Id"
+                                data-code="@ticket.Code"
+                                data-plate="@ticket.VehiclePlate"
+                                data-type="@ticket.VehicleType"
+                                data-icon="@ticket.Icon"
+                                data-icon-class="@ticket.IconClass"
+                                data-filter-date="@ticket.CheckInTime.ToString("yyyy-MM-dd")"
+                                data-checkin="@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")"
+                                data-checkout="@ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm")"
+                                data-duration="@ticket.Duration"
+                                data-parking-fee="@ticket.ParkingFee.ToString("N0") đ"
+                                data-discount="@ticket.Discount.ToString("N0") đ"
+                                data-total="@ticket.TotalAmount.ToString("N0") đ"
+                                data-status="@ticket.Status"
+                                data-payment-method="@ticket.PaymentMethod"
+                                data-created-by="@ticket.CreatedBy"
+                                data-note="@ticket.Note">
+
+                                <td>@ticket.Code</td>
+                                <td>@ticket.VehiclePlate</td>
+                                <td>
+                                    <span class="vehicle-pill @ticket.IconClass">
+                                        <i class="@ticket.Icon"></i>
+                                        @ticket.VehicleType
+                                    </span>
+                                </td>
+                                <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@(ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                                <td>@ticket.TotalAmount.ToString("N0") đ</td>
+                                <td>
+                                    <span class="status-badge paid">@ticket.Status</span>
+                                </td>
+                            </tr>
+                        }
+                        <tr id="ticketNoResults" class="hidden">
+                            <td colspan="7">Không có vé phù hợp với bộ lọc hiện tại.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <aside id="ticketDetailPanel" class="card ticket-detail-panel hidden">
+            <div class="detail-header">
+                <div>
+                    <p>Chi tiết vé</p>
+                    <h3 id="detailCode">VE240501-0001</h3>
+                </div>
+
+                <button type="button" id="closeDetailBtn" class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="detail-status">
+                <span id="detailStatus">Đã thanh toán</span>
+            </div>
+
+            <div class="detail-vehicle">
+                <div id="detailVehicleIcon" class="detail-vehicle-icon">
+                    <i class="fa-solid fa-motorcycle"></i>
+                </div>
+
+                <div>
+                    <h4 id="detailVehicleType">Xe máy</h4>
+                    <p id="detailPlate">59C1-123.45</p>
+                </div>
+            </div>
+
+            <div class="detail-lines">
+                <div>
+                    <span>Giờ vào</span>
+                    <strong id="detailCheckIn"></strong>
+                </div>
+
+                <div>
+                    <span>Giờ ra</span>
+                    <strong id="detailCheckOut"></strong>
+                </div>
+
+                <div>
+                    <span>Thời gian gửi</span>
+                    <strong id="detailDuration"></strong>
+                </div>
+            </div>
+
+            <div class="money-box">
+                <div>
+                    <span>Phí giữ xe</span>
+                    <strong id="detailParkingFee"></strong>
+                </div>
+
+                <div>
+                    <span>Giảm giá</span>
+                    <strong id="detailDiscount"></strong>
+                </div>
+
+                <div class="total-line">
+                    <span>Thành tiền</span>
+                    <strong id="detailTotal"></strong>
+                </div>
+            </div>
+
+            <div class="detail-lines">
+                <div>
+                    <span>Phương thức thanh toán</span>
+                    <strong id="detailPaymentMethod"></strong>
+                </div>
+
+                <div>
+                    <span>Nhân viên tạo vé</span>
+                    <strong id="detailCreatedBy"></strong>
+                </div>
+
+                <div>
+                    <span>Ghi chú</span>
+                    <strong id="detailNote"></strong>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <button type="button" class="outline-btn">
+                    <i class="fa-solid fa-download"></i>
+                    Tải vé PDF
+                </button>
+
+                <button type="button" id="bottomCloseDetailBtn" class="primary-btn">
+                    Đóng
+                </button>
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+<script src="~/js/customer_ticket.js" asp-append-version="true"></script>

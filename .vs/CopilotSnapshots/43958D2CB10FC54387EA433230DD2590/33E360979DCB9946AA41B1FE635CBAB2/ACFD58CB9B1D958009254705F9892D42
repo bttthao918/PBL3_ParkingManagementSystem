@@ -1,9 +1,0 @@
-﻿@page
-@model ParkingManagement.FE.Pages.Employee.ParkingSlotManagementModel
-
-@{
-    Layout = "_EmployeeLayout";
-    ViewData["Title"] = "Quản lý chỗ đỗ";
-}
-
-<partial name="/Pages/Shared/ParkingSlotManagement/Index.cshtml" />

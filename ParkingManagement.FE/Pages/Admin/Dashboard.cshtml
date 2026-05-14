@@ -13,27 +13,27 @@
     <div class="card kpi-card">
         <div class="kpi-icon blue"><i class="fa-solid fa-dollar-sign"></i></div>
         <div>
-            <p>Tổng doanh thu</p>
-            <h2>125,430,000 đ</h2>
-            <span class="up">↑ 12.5%</span>
+            <p>Doanh thu hôm nay</p>
+            <h2>@Model.Summary.TodayRevenue.ToString("N0") đ</h2>
+            <span class="up">Tháng: @Model.Summary.ThisMonthRevenue.ToString("N0") đ</span>
         </div>
     </div>
 
     <div class="card kpi-card">
         <div class="kpi-icon green"><i class="fa-solid fa-ticket"></i></div>
         <div>
-            <p>Tổng vé</p>
-            <h2>2,345</h2>
-            <span class="up">↑ 8.2%</span>
+            <p>Tổng vé hôm nay</p>
+            <h2>@Model.Summary.TodayTickets.ToString("N0")</h2>
+            <span class="up">Tháng: @Model.Summary.ThisMonthTickets.ToString("N0")</span>
         </div>
     </div>
 
     <div class="card kpi-card">
-        <div class="kpi-icon purple"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-icon purple"><i class="fa-solid fa-users"></i></div>
         <div>
-            <p>Vé đã xử lý</p>
-            <h2>2,134</h2>
-            <span class="up">↑ 9.1%</span>
+            <p>Nhân sự & Khách</p>
+            <h2>@Model.Summary.EmployeesOnline / @Model.Summary.TotalActiveEmployees NV</h2>
+            <span class="up">Khách hàng: @Model.Summary.TotalCustomers.ToString("N0")</span>
         </div>
     </div>
 
@@ -41,11 +41,11 @@
         <div class="kpi-icon orange"><i class="fa-solid fa-square-parking"></i></div>
         <div>
             <p>Tổng chỗ đỗ</p>
-            <h2>855 / 1,250</h2>
+            <h2>@Model.Summary.OccupiedSlots / @Model.Summary.TotalSlots</h2>
             <div style="height:8px;background:#e5ecf5;border-radius:999px;margin:8px 0;width:160px;">
-                <div style="height:100%;width:68.4%;background:#0d8bff;border-radius:999px;"></div>
+                <div style="height:100%;width:@(Model.Summary.SlotUtilizationRate.ToString(System.Globalization.CultureInfo.InvariantCulture))%;background:#0d8bff;border-radius:999px;"></div>
             </div>
-            <span>68.4% đang sử dụng</span>
+            <span>@Model.Summary.SlotUtilizationRate.ToString("0.0")% đang sử dụng</span>
         </div>
     </div>
 
@@ -55,11 +55,11 @@
     <h3>Thao tác nhanh</h3>
 
     <div class="action-grid">
-        <a href="#"><i class="fa-solid fa-user-plus"></i> Thêm nhân viên</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Giá vé</a>
-        <a href="#"><i class="fa-solid fa-ticket"></i> Tìm vé</a>
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu</a>
-        <a href="#"><i class="fa-solid fa-square-parking"></i> Báo cáo chỗ đỗ</a>
+        <a asp-page="/Admin/EmployeeManagement"><i class="fa-solid fa-user-plus"></i> Thêm nhân viên</a>
+        <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-tags"></i> Giá vé</a>
+        <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-ticket"></i> Tìm vé</a>
+        <a asp-page="/Admin/RevenueStatistics"><i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu</a>
+        <a asp-page="/Admin/ParkingSlotManagement"><i class="fa-solid fa-square-parking"></i> Báo cáo chỗ đỗ</a>
     </div>
 </div>
 
