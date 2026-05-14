@@ -69,6 +69,8 @@
 
     function showDetail(slot) {
         currentSlot = slot;
+        document.getElementById('detailPanel').style.display = 'block';
+
         const statusClass = getStatusClass(slot.status);
         const zoneName = slot.slotId.startsWith("A") ? "Khu A" : slot.slotId.startsWith("B") ? "Khu B" : "Khu C";
 
