@@ -11,12 +11,14 @@ namespace ParkingManagement.FE.Pages.Admin
     public class EmployeeManagementModel : PageModel
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IShiftScheduleService _shiftService;
         private const string ActiveStatus = "Hoạt động";
         private const string DisabledStatus = "Vô hiệu hóa";
 
-        public EmployeeManagementModel(IEmployeeService employeeService)
+        public EmployeeManagementModel(IEmployeeService employeeService, IShiftScheduleService shiftService)
         {
             _employeeService = employeeService;
+            _shiftService = shiftService;
         }
 
         public List<EmployeeViewModel> Employees { get; set; } = new();
@@ -166,6 +168,14 @@ namespace ParkingManagement.FE.Pages.Admin
                 ActionMessage = updateResult?.Message ?? (ActionSuccess ? "Đã kích hoạt nhân viên." : "Không thể kích hoạt nhân viên.");
             }
 
+            return RedirectToPage(BuildRouteValues(employeeId));
+        }
+
+        public async Task<IActionResult> OnPostCreateShiftAsync(string employeeId, DateTime workDate, string shiftType)
+        {
+            var result = await _shiftService.CreateAsync(employeeId, workDate, shiftType);
+            ActionSuccess = result?.Success ?? false;
+            ActionMessage = result?.Message ?? "Không thể tạo ca.";
             return RedirectToPage(BuildRouteValues(employeeId));
         }
 

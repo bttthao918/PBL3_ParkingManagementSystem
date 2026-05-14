@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace ParkingManagement.FE.Pages.Account;
 
@@ -58,6 +60,23 @@ public class ProfileModel : PageModel
         {
             ErrorMessage = result.Message;
             return Page();
+        }
+
+        // Cập nhật lại claim Name trong Cookie để hiển thị Topbar thay đổi ngay lập tức
+        if (User.Identity is ClaimsIdentity identity)
+        {
+            var existingClaim = identity.FindFirst(ClaimTypes.Name);
+            if (existingClaim != null)
+            {
+                identity.RemoveClaim(existingClaim);
+            }
+            identity.AddClaim(new Claim(ClaimTypes.Name, Input.FullName.Trim()));
+            
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(identity),
+                new AuthenticationProperties { IsPersistent = true }
+            );
         }
 
         TempData["Success"] = result.Message;

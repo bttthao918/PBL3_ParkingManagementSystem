@@ -326,6 +326,32 @@ namespace BackendAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShiftSchedules",
+                columns: table => new
+                {
+                    ScheduleId = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    EmployeeId = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    WorkDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShiftType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShiftSchedules", x => x.ScheduleId);
+                    table.ForeignKey(
+                        name: "FK_ShiftSchedules_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WorkLogs",
                 columns: table => new
                 {
@@ -934,6 +960,11 @@ namespace BackendAPI.Migrations
                 column: "VehiclePlate");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShiftSchedules_EmployeeId",
+                table: "ShiftSchedules",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tickets_CustomerId",
                 table: "Tickets",
                 column: "CustomerId");
@@ -979,6 +1010,9 @@ namespace BackendAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reservations");
+
+            migrationBuilder.DropTable(
+                name: "ShiftSchedules");
 
             migrationBuilder.DropTable(
                 name: "WorkLogs");

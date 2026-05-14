@@ -56,7 +56,11 @@
 
     <div class="shift-header">
         <h3><i class="fa-solid fa-clock"></i> Ca làm việc</h3>
-        @if (Model.MonthlySummary != null)
+        @if (Model.TodayShift?.HasShift == true)
+        {
+            <span class="shift-summary">Ca hôm nay: <strong>@Model.TodayShift.Shift?.ShiftType (@Model.TodayShift.Shift?.StartTime - @Model.TodayShift.Shift?.EndTime)</strong></span>
+        }
+        else if (Model.MonthlySummary != null)
         {
             <span class="shift-summary">Tháng @Model.MonthlySummary.Month: <strong>@Model.MonthlySummary.TotalDays ngày</strong> · <strong>@Model.MonthlySummary.TotalHours giờ</strong></span>
         }
@@ -169,22 +173,42 @@
                 <th>Ca làm</th>
                 <th>Giờ vào</th>
                 <th>Giờ ra</th>
-                <th>Tổng giờ</th>
+                <th>Trạng thái</th>
             </tr>
-            <tr>
-                <td>@DateTime.Now.ToString("dd/MM/yyyy")</td>
-                <td>Ca sáng</td>
-                <td>07:00</td>
-                <td>15:00</td>
-                <td>8 giờ</td>
-            </tr>
-            <tr>
-                <td>@DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy")</td>
-                <td>Ca chiều</td>
-                <td>15:00</td>
-                <td>23:00</td>
-                <td>8 giờ</td>
-            </tr>
+            @if (Model.MyWeekShifts.Count == 0)
+            {
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">
+                        Chưa có lịch phân ca trong tuần này.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var shift in Model.MyWeekShifts)
+                {
+                    <tr>
+                        <td>@shift.WorkDate.ToString("dd/MM/yyyy")</td>
+                        <td>@shift.ShiftType</td>
+                        <td>@shift.StartTime</td>
+                        <td>@shift.EndTime</td>
+                        <td>
+                            @if (shift.Status == "Đang làm")
+                            {
+                                <span class="status-warning">@shift.Status</span>
+                            }
+                            else if (shift.Status == "Hoàn thành")
+                            {
+                                <span class="status-success">@shift.Status</span>
+                            }
+                            else
+                            {
+                                <span style="color: #64748b;">@shift.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
         </table>
     </div>
 

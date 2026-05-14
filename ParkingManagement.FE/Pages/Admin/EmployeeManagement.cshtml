@@ -343,7 +343,7 @@
 
                 <div class="emp-detail-tabs">
                     <button class="active" type="button" onclick="showEmpTab('info')">Thông tin</button>
-                    <button type="button" onclick="showEmpTab('shift')">Thống kê</button>
+                    <button type="button" onclick="showEmpTab('shift')">Lịch ca</button>
                 </div>
 
                 <div id="empInfoTab" class="emp-tab-content active">
@@ -381,16 +381,47 @@
                 </div>
 
                 <div id="empShiftTab" class="emp-tab-content">
-                    <div class="emp-shift-list">
-                        <div>
-                            <strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong>
-                            <span>@(detail.Shift ?? "Chưa phân ca")</span>
-                            <em>@detail.Status</em>
-                        </div>
-                        <div>
-                            <strong>Ngày đầu làm việc</strong>
-                            <span>@(detail.FirstWorkDay?.ToString("dd/MM/yyyy") ?? "-")</span>
-                            <em>@detail.WorkDaysCount.ToString("N0") ngày có dữ liệu vé</em>
+                    <div class="emp-shift-section">
+                        <h4 style="margin:0 0 12px; font-size:14px; color:#475569;">
+                            <i class="fa-solid fa-calendar-days"></i> Phân ca tuần này
+                        </h4>
+
+                        <!-- Form thêm ca nhanh -->
+                        <form method="post" asp-page-handler="CreateShift" class="emp-shift-form">
+                            <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
+                            <input type="hidden" asp-for="Keyword" />
+                            <input type="hidden" asp-for="Status" />
+                            <input type="hidden" asp-for="Shift" />
+                            <input type="hidden" asp-for="PageNumber" />
+                            <input type="hidden" asp-for="PageSize" />
+                            <input type="hidden" asp-for="SelectedEmployeeId" />
+                            <div style="display:flex; gap:8px; margin-bottom:12px;">
+                                <input type="date" name="workDate" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;" />
+                                <select name="shiftType" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;">
+                                    <option value="Sáng">Sáng (6-14h)</option>
+                                    <option value="Chiều">Chiều (14-22h)</option>
+                                    <option value="Tối">Tối (22-6h)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="emp-btn-primary" style="width:100%; height:36px; font-size:13px;">
+                                <i class="fa-solid fa-plus"></i> Thêm ca
+                            </button>
+                        </form>
+
+                        <!-- Thông tin ca mặc định -->
+                        <div class="emp-shift-list" style="margin-top:14px;">
+                            <div style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
+                                <span style="font-size:12px; color:#94a3b8;">Ca mặc định</span>
+                                <strong style="display:block; font-size:14px; color:#10233f;">@(detail.Shift ?? "Chưa phân ca")</strong>
+                            </div>
+                            <div style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
+                                <span style="font-size:12px; color:#94a3b8;">Tổng ngày làm</span>
+                                <strong style="display:block; font-size:14px; color:#10233f;">@detail.WorkDaysCount ngày</strong>
+                            </div>
+                            <div style="padding:10px 0;">
+                                <span style="font-size:12px; color:#94a3b8;">Vé xử lý tháng này</span>
+                                <strong style="display:block; font-size:14px; color:#10233f;">@detail.TicketsProcessedThisMonth vé</strong>
+                            </div>
                         </div>
                     </div>
                 </div>

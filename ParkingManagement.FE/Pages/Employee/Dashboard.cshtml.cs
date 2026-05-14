@@ -11,15 +11,18 @@ namespace ParkingManagement.FE.Pages.Employee
         private readonly Services.IReportService _reportService;
         private readonly Services.ITicketService _ticketService;
         private readonly Services.IWorkLogService _workLogService;
+        private readonly Services.IShiftScheduleService _shiftService;
 
         public DashboardModel(
             Services.IReportService reportService,
             Services.ITicketService ticketService,
-            Services.IWorkLogService workLogService)
+            Services.IWorkLogService workLogService,
+            Services.IShiftScheduleService shiftService)
         {
             _reportService = reportService;
             _ticketService = ticketService;
             _workLogService = workLogService;
+            _shiftService = shiftService;
         }
 
         public Models.EmployeeDashboardDto Stats { get; set; } = CreateFallbackStats();
@@ -28,6 +31,8 @@ namespace ParkingManagement.FE.Pages.Employee
         // Work Log
         public Services.WorkLogStatusResponse? WorkStatus { get; set; }
         public Services.WorkLogMonthlySummaryResponse? MonthlySummary { get; set; }
+        public Services.ShiftTodayResponse? TodayShift { get; set; }
+        public List<Services.ShiftMyWeekItem> MyWeekShifts { get; set; } = new();
 
         [TempData]
         public string? ShiftMessage { get; set; }
@@ -66,6 +71,8 @@ namespace ParkingManagement.FE.Pages.Employee
             // Work status
             WorkStatus = await _workLogService.GetCurrentStatusAsync();
             MonthlySummary = await _workLogService.GetMonthlySummaryAsync();
+            TodayShift = await _shiftService.GetMyTodayShiftAsync();
+            MyWeekShifts = await _shiftService.GetMyWeekAsync() ?? new List<Services.ShiftMyWeekItem>();
         }
 
         public async Task<IActionResult> OnPostStartShiftAsync()

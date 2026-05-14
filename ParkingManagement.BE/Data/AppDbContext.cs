@@ -23,6 +23,7 @@ namespace ParkingManagement.DAL.Data
         public DbSet<Otp> Otps { get; set; }
         public DbSet<PricingConfiguration> PricingConfigurations { get; set; }
         public DbSet<WorkLog> WorkLogs { get; set; }
+        public DbSet<ShiftSchedule> ShiftSchedules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

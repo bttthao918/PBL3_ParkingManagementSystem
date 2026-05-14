@@ -47,6 +47,8 @@ builder.Services.AddHttpClient<IParkingOperationService, ParkingOperationService
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IWorkLogService, WorkLogService>(client => ConfigureHttpClient(client))
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IShiftScheduleService, ShiftScheduleService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 builder.Services.AddHttpClient<IAccountProfileService, AccountProfileService>(client =>
 {

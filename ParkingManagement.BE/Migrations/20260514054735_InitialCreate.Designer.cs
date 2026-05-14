@@ -12,7 +12,7 @@ using ParkingManagement.DAL.Data;
 namespace BackendAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260514041806_InitialCreate")]
+    [Migration("20260514054735_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -3008,6 +3008,55 @@ namespace BackendAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ParkingManagement.DAL.Models.ShiftSchedule", b =>
+                {
+                    b.Property<string>("ScheduleId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ShiftType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("WorkDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ScheduleId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("ShiftSchedules");
+                });
+
             modelBuilder.Entity("ParkingManagement.DAL.Models.Ticket", b =>
                 {
                     b.Property<string>("TicketId")
@@ -4048,6 +4097,17 @@ namespace BackendAPI.Migrations
                     b.Navigation("ParkingSlot");
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("ParkingManagement.DAL.Models.ShiftSchedule", b =>
+                {
+                    b.HasOne("ParkingManagement.DAL.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.Ticket", b =>
