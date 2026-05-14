@@ -36,6 +36,15 @@
     {
         <div class="alert-success">@TempData["Success"]</div>
     }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-error">@TempData["Error"]</div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert-danger">@Model.ErrorMessage</div>
+    }
 
     <div class="account-grid">
         <!-- LEFT: PROFILE VIEW -->
@@ -72,7 +81,7 @@
 
                 <div class="info-row">
                     <span><i class="fa-solid fa-mobile-screen"></i> Số điện thoại</span>
-                    <strong>@Model.Account.PhoneNumber</strong>
+                    <strong>@Model.Account.PhoneNumberDisplay</strong>
                 </div>
 
                 <div class="info-row">
@@ -82,7 +91,7 @@
 
                 <div class="info-row">
                     <span><i class="fa-regular fa-circle-user"></i> Giới tính</span>
-                    <strong>@Model.Account.Gender</strong>
+                    <strong>@Model.Account.GenderDisplay</strong>
                 </div>
 
                 <div class="info-row">
@@ -119,9 +128,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Input.Email">Email <b>*</b></label>
-                    <input asp-for="Input.Email" />
-                    <span asp-validation-for="Input.Email"></span>
+                    <label>Email</label>
+                    <div class="readonly-input">
+                        <span>@Model.Account.Email</span>
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -141,15 +152,18 @@
                 <div class="form-group">
                     <label asp-for="Input.Gender">Giới tính <b>*</b></label>
                     <select asp-for="Input.Gender">
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                        <option value="Khác">Khác</option>
+                        <option value="">Chọn giới tính</option>
+                        <option value="Male">Nam</option>
+                        <option value="Female">Nữ</option>
+                        <option value="Other">Khác</option>
                     </select>
+                    <span asp-validation-for="Input.Gender"></span>
                 </div>
 
                 <div class="form-actions">
                     <button type="reset" class="btn-secondary">Hủy</button>
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary"
+                            onclick="return confirmSubmit(this.form, 'Cập nhật thông tin', 'Bạn có chắc muốn lưu thay đổi thông tin cá nhân?', 'info')">
                         <i class="fa-regular fa-floppy-disk"></i>
                         Lưu thay đổi
                     </button>

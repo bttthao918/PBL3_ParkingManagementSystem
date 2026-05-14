@@ -7,13 +7,12 @@
     </div>
 
     <div class="stat-date-filter">
-        <button>
+        <span class="stat-date-range">
             <i class="fa-solid fa-calendar-days"></i>
             @Model.DateRangeText
-        </button>
-        <button>Hôm nay</button>
-        <button>7 ngày</button>
-        <button class="active">30 ngày</button>
-        <button>Tùy chọn <i class="fa-solid fa-chevron-down"></i></button>
+        </span>
+        <a href="?period=today" class="@(Model.ActivePeriod == "today" ? "active" : "")">Hôm nay</a>
+        <a href="?period=7days" class="@(Model.ActivePeriod == "7days" ? "active" : "")">7 ngày</a>
+        <a href="?period=30days" class="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "active" : "")">30 ngày</a>
     </div>
 </div>

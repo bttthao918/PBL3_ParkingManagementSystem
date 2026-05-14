@@ -2,7 +2,7 @@
 @model ParkingManagement.FE.Pages.Admin.TicketManagementModel
 @{
     ViewData["Title"] = "Quản lý vé";
-    ViewData["UserName"] = "Admin";
+    ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
     ViewData["Role"] = "Quản trị hệ thống";
 }
 
@@ -17,6 +17,12 @@
             <p style="margin:0; color:#c62828;">@Model.LoadErrorMessage</p>
         </div>
     }
+    @if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+    {
+        <div class="card" style="margin-bottom:12px; border-left:4px solid @(Model.ActionSuccess ? "#2e7d32" : "#c62828");">
+            <p style="margin:0; color:@(Model.ActionSuccess ? "#2e7d32" : "#c62828");">@Model.ActionMessage</p>
+        </div>
+    }
 
     <div class="ticket-header">
         <div>
@@ -24,10 +30,10 @@
             <p>Quản lý danh sách vé lượt, tìm kiếm vé và theo dõi số liệu từ database</p>
         </div>
 
-        <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
+        <button class="ticket-btn-primary js-ticket-create" type="button">
             <i class="fa-solid fa-plus"></i>
             Thêm vé mới
-        </a>
+        </button>
     </div>
 
     <div class="ticket-kpi-grid">
@@ -80,6 +86,8 @@
         <h3>Tìm kiếm vé</h3>
 
         <form method="get" class="ticket-filter-grid">
+            <input type="hidden" name="PageNumber" value="1" />
+            <input type="hidden" asp-for="PageSize" />
             <div class="ticket-input-group large">
                 <label>Từ khóa</label>
                 <input type="text" asp-for="Keyword" placeholder="Nhập mã vé hoặc biển số xe..." />
@@ -140,10 +148,10 @@
                 In danh sách
             </button>
 
-            <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
+            <button class="ticket-btn-primary js-ticket-create" type="button">
                 <i class="fa-solid fa-plus"></i>
                 Thêm vé mới
-            </a>
+            </button>
         </div>
     </div>
 
@@ -191,7 +199,23 @@
                             </td>
                             <td>
                                 <div class="ticket-actions">
-                                    <button class="view" type="button" title="Xem"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="view js-ticket-view"
+                                            type="button"
+                                            title="Xem"
+                                            data-ticket-id="@ticket.Code"
+                                            data-ticket-plate="@ticket.PlateNumber"
+                                            data-ticket-customer="@ticket.CustomerName"
+                                            data-ticket-type="@ticket.Type"
+                                            data-ticket-fee="@ticket.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                            data-ticket-fee-text="@($"{ticket.Price:N0} đ")"
+                                            data-ticket-checkin="@ticket.CheckInTime.ToString("yyyy-MM-ddTHH:mm")"
+                                            data-ticket-checkin-text="@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")"
+                                            data-ticket-checkout="@(ticket.CheckOutTime != DateTime.MinValue ? ticket.CheckOutTime.ToString("yyyy-MM-ddTHH:mm") : "")"
+                                            data-ticket-checkout-text="@(ticket.CheckOutTime != DateTime.MinValue ? ticket.CheckOutTime.ToString("dd/MM/yyyy HH:mm") : "-")"
+                                            data-ticket-status="@ticket.Status"
+                                            data-ticket-slot="@ticket.SlotId">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
                                     <button class="edit" type="button" title="Sửa"><i class="fa-solid fa-pen"></i></button>
                                     <button class="delete" type="button" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                                 </div>
@@ -206,6 +230,25 @@
             <span>Hiển thị @Model.ShowingFrom đến @Model.ShowingTo trong tổng số @Model.TotalItems.ToString("N0") vé</span>
 
             <div>
+                <span class="ticket-page-summary">Trang @Model.PageNumber/@Model.TotalPages</span>
+
+                @if (Model.PageNumber > 1)
+                {
+                    <a class="ticket-page-link"
+                       asp-page="/Admin/TicketManagement"
+                       asp-route-keyword="@Model.Keyword"
+                       asp-route-status="@Model.Status"
+                       asp-route-type="@Model.Type"
+                       asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-pageNumber="1">&laquo;</a>
+                }
+                else
+                {
+                    <span class="ticket-page-link disabled">&laquo;</span>
+                }
+
                 @if (Model.HasPreviousPage)
                 {
                     <a class="ticket-page-link"
@@ -234,6 +277,20 @@
                        asp-route-pageNumber="@(page)">@(page)</a>
                 }
 
+                @if (Model.EndPage < Model.TotalPages)
+                {
+                    <span class="ticket-page-link disabled">...</span>
+                    <a class="ticket-page-link"
+                       asp-page="/Admin/TicketManagement"
+                       asp-route-keyword="@Model.Keyword"
+                       asp-route-status="@Model.Status"
+                       asp-route-type="@Model.Type"
+                       asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-pageNumber="@Model.TotalPages">@Model.TotalPages</a>
+                }
+
                 @if (Model.HasNextPage)
                 {
                     <a class="ticket-page-link"
@@ -249,8 +306,289 @@
                 {
                     <span class="ticket-page-link disabled">›</span>
                 }
+
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <a class="ticket-page-link"
+                       asp-page="/Admin/TicketManagement"
+                       asp-route-keyword="@Model.Keyword"
+                       asp-route-status="@Model.Status"
+                       asp-route-type="@Model.Type"
+                       asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")"
+                       asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-pageNumber="@Model.TotalPages">&raquo;</a>
+                }
+                else
+                {
+                    <span class="ticket-page-link disabled">&raquo;</span>
+                }
             </div>
         </div>
     </div>
 
+    <div id="ticketCreateModal" class="ticket-modal" hidden>
+        <div class="ticket-modal-backdrop" data-close-modal></div>
+        <div class="ticket-modal-dialog">
+            <div class="ticket-modal-header">
+                <h3>Thêm vé mới</h3>
+                <button type="button" class="ticket-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form method="post" asp-page-handler="CreateTicket" class="ticket-modal-form">
+                <input type="hidden" asp-for="Keyword" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="Type" />
+                <input type="hidden" name="FromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="ToDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" asp-for="PageNumber" />
+                <input type="hidden" asp-for="PageSize" />
+
+                <label>
+                    <span>Biển số xe</span>
+                    <input name="vehiclePlate" id="createPlate" required maxlength="20" autocomplete="off" />
+                </label>
+
+                <label>
+                    <span>Loại xe</span>
+                    <select name="vehicleType" id="createType" required>
+                        <option value="Xe máy">Xe máy</option>
+                        <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                        <option value="Ô tô lớn">Ô tô lớn</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Vị trí</span>
+                    <input name="slotId" id="createSlot" maxlength="20" placeholder="Tự chọn chỗ trống" />
+                </label>
+
+                <div class="ticket-modal-actions">
+                    <button type="button" class="ticket-btn-outline" data-close-modal>Hủy</button>
+                    <button type="submit" class="ticket-btn-primary">Tạo vé</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="ticketViewModal" class="ticket-modal" hidden>
+        <div class="ticket-modal-backdrop" data-close-modal></div>
+        <div class="ticket-modal-dialog">
+            <div class="ticket-modal-header">
+                <h3>Chi tiết vé <span id="viewTicketId"></span></h3>
+                <button type="button" class="ticket-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="ticket-detail-grid">
+                <div><span>Mã vé</span><strong id="viewCode"></strong></div>
+                <div><span>Biển số xe</span><strong id="viewPlate"></strong></div>
+                <div><span>Khách hàng</span><strong id="viewCustomer"></strong></div>
+                <div><span>Loại xe</span><strong id="viewType"></strong></div>
+                <div><span>Vị trí</span><strong id="viewSlot"></strong></div>
+                <div><span>Phí</span><strong id="viewFee"></strong></div>
+                <div><span>Ngày vào</span><strong id="viewCheckIn"></strong></div>
+                <div><span>Ngày ra</span><strong id="viewCheckOut"></strong></div>
+                <div><span>Trạng thái</span><strong id="viewStatus"></strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ticketEditModal" class="ticket-modal" hidden>
+        <div class="ticket-modal-backdrop" data-close-modal></div>
+        <div class="ticket-modal-dialog">
+            <div class="ticket-modal-header">
+                <h3>Sửa vé <span id="editTicketTitle"></span></h3>
+                <button type="button" class="ticket-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form method="post" asp-page-handler="UpdateTicket" class="ticket-modal-form">
+                <input type="hidden" name="ticketId" id="editTicketId" />
+                <input type="hidden" asp-for="Keyword" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="Type" />
+                <input type="hidden" name="FromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="ToDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" asp-for="PageNumber" />
+                <input type="hidden" asp-for="PageSize" />
+
+                <label>
+                    <span>Biển số xe</span>
+                    <input name="vehiclePlate" id="editPlate" required maxlength="20" />
+                </label>
+
+                <label>
+                    <span>Loại xe</span>
+                    <select name="vehicleType" id="editType" required>
+                        <option value="Xe máy">Xe máy</option>
+                        <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                        <option value="Ô tô lớn">Ô tô lớn</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Ngày vào</span>
+                    <input type="datetime-local" name="checkInTime" id="editCheckIn" required />
+                </label>
+
+                <label>
+                    <span>Ngày ra</span>
+                    <input type="datetime-local" name="checkOutTime" id="editCheckOut" />
+                </label>
+
+                <label>
+                    <span>Trạng thái</span>
+                    <select name="ticketStatus" id="editStatus" required>
+                        <option value="Đang trong bãi">Đang trong bãi</option>
+                        <option value="Đã ra">Đã ra</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Phí</span>
+                    <input type="number" name="fee" id="editFee" min="0" step="1000" required />
+                </label>
+
+                <label>
+                    <span>Vị trí</span>
+                    <input name="slotId" id="editSlot" maxlength="20" />
+                </label>
+
+                <div class="ticket-modal-actions">
+                    <button type="button" class="ticket-btn-outline" data-close-modal>Hủy</button>
+                    <button type="submit" class="ticket-btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="ticketDeleteModal" class="ticket-modal" hidden>
+        <div class="ticket-modal-backdrop" data-close-modal></div>
+        <div class="ticket-modal-dialog small">
+            <div class="ticket-modal-header">
+                <h3>Xóa vé</h3>
+                <button type="button" class="ticket-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="ticket-delete-message">Bạn chắc chắn muốn xóa vé <strong id="deleteTicketTitle"></strong>?</p>
+
+            <form method="post" asp-page-handler="DeleteTicket" class="ticket-modal-form">
+                <input type="hidden" name="deleteTicketId" id="deleteTicketId" />
+                <input type="hidden" asp-for="Keyword" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="Type" />
+                <input type="hidden" name="FromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="ToDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" asp-for="PageNumber" />
+                <input type="hidden" asp-for="PageSize" />
+
+                <div class="ticket-modal-actions">
+                    <button type="button" class="ticket-btn-outline" data-close-modal>Hủy</button>
+                    <button type="submit" class="ticket-btn-danger">Xóa vé</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const createModal = document.getElementById("ticketCreateModal");
+            const viewModal = document.getElementById("ticketViewModal");
+            const editModal = document.getElementById("ticketEditModal");
+            const deleteModal = document.getElementById("ticketDeleteModal");
+
+            const openModal = (modal) => {
+                if (modal) modal.hidden = false;
+            };
+
+            const closeModals = () => {
+                [createModal, viewModal, editModal, deleteModal].forEach((modal) => {
+                    if (modal) modal.hidden = true;
+                });
+            };
+
+            const text = (id, value) => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = value || "-";
+            };
+
+            const getTicketData = (button) => {
+                const actions = button.closest(".ticket-actions");
+                const source = button.classList.contains("js-ticket-view")
+                    ? button
+                    : actions?.querySelector(".js-ticket-view");
+
+                return source?.dataset || {};
+            };
+
+            document.querySelectorAll("[data-close-modal]").forEach((element) => {
+                element.addEventListener("click", closeModals);
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") closeModals();
+            });
+
+            document.querySelectorAll(".js-ticket-create").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const form = createModal?.querySelector("form");
+                    if (form instanceof HTMLFormElement) form.reset();
+                    openModal(createModal);
+                    document.getElementById("createPlate")?.focus();
+                });
+            });
+
+            document.querySelectorAll(".js-ticket-view").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const data = getTicketData(button);
+                    text("viewTicketId", data.ticketId);
+                    text("viewCode", data.ticketId);
+                    text("viewPlate", data.ticketPlate);
+                    text("viewCustomer", data.ticketCustomer);
+                    text("viewType", data.ticketType);
+                    text("viewSlot", data.ticketSlot);
+                    text("viewFee", data.ticketFeeText);
+                    text("viewCheckIn", data.ticketCheckinText);
+                    text("viewCheckOut", data.ticketCheckoutText);
+                    text("viewStatus", data.ticketStatus);
+                    openModal(viewModal);
+                });
+            });
+
+            document.querySelectorAll(".ticket-actions .edit").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const data = getTicketData(button);
+                    document.getElementById("editTicketId").value = data.ticketId || "";
+                    document.getElementById("editTicketTitle").textContent = data.ticketId || "";
+                    document.getElementById("editPlate").value = data.ticketPlate || "";
+                    document.getElementById("editType").value = data.ticketType || "Xe máy";
+                    document.getElementById("editCheckIn").value = data.ticketCheckin || "";
+                    document.getElementById("editCheckOut").value = data.ticketCheckout || "";
+                    document.getElementById("editStatus").value = data.ticketStatus || "Đang trong bãi";
+                    document.getElementById("editFee").value = data.ticketFee || "0";
+                    document.getElementById("editSlot").value = data.ticketSlot || "";
+                    openModal(editModal);
+                });
+            });
+
+            document.querySelectorAll(".ticket-actions .delete").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const data = getTicketData(button);
+                    document.getElementById("deleteTicketId").value = data.ticketId || "";
+                    document.getElementById("deleteTicketTitle").textContent = data.ticketId || "";
+                    openModal(deleteModal);
+                });
+            });
+        })();
+    </script>
+}

@@ -8,6 +8,8 @@ namespace ParkingManagement.BLL.Services.Interfaces
         Task<ListTicketDto> GetTicketsAsync(TicketFilterDto filter);
         Task<TicketSummaryDto> GetTicketSummaryAsync();
         Task<TicketDetailDto> GetTicketDetailAsync(string ticketId);
+        Task<TicketDetailDto> UpdateTicketAsync(string ticketId, UpdateTicketDto input);
+        Task<bool> DeleteTicketAsync(string ticketId);
         Task<ListEmployeeTicketDto> SearchTicketsAsync(EmployeeTicketSearchDto search);
 
         // ── Customer Specific ──

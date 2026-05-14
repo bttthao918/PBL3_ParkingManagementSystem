@@ -939,7 +939,7 @@
 
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 20px;
 }
@@ -1441,4 +1441,229 @@
     font-weight: 900;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(20, 121, 255, .2);
+}
+
+.ticket-page .filter-top {
+    grid-template-columns: minmax(0, 1fr) 120px;
+}
+
+.ticket-page .pagination-row {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 16px;
+    color: #71809a;
+    font-size: 13px;
+}
+
+.ticket-page .pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid #e3ebf6;
+    border-radius: 14px;
+    background: #f8fbff;
+}
+
+.ticket-page .pagination a,
+.ticket-page .pagination span {
+    min-width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: white;
+    color: #40516d;
+    display: inline-grid;
+    place-items: center;
+    text-decoration: none;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(15, 35, 68, 0.05);
+}
+
+.ticket-page .pagination a:hover {
+    border-color: #b9d4ff;
+    color: #1479ff;
+}
+
+.ticket-page .pagination a.active {
+    background: #1479ff;
+    color: white;
+    border-color: #1479ff;
+    box-shadow: 0 8px 18px rgba(20, 121, 255, 0.24);
+}
+
+.ticket-page .pagination span.disabled {
+    color: #a8b3c4;
+    background: #edf2f8;
+    cursor: default;
+    box-shadow: none;
+}
+
+.ticket-page .page-size-form {
+    margin: 0;
+}
+
+.ticket-page .page-size-form select {
+    height: 44px;
+    border: 1px solid #dbe5f2;
+    border-radius: 12px;
+    padding: 0 12px;
+    background: white;
+    color: #10233f;
+    font-family: inherit;
+}
+
+@media (max-width: 992px) {
+    .ticket-page .pagination-row {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+}
+
+/* Pricing Collapse */
+.pricing-collapse {
+    display: none;
+    margin-bottom: 20px;
+}
+
+.pricing-collapse.open {
+    display: block;
+}
+
+.pricing-section {
+    background: white;
+    border: 1px solid #e3ebf6;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pricing-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.pricing-section-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #10233f;
+}
+
+.pricing-section-header p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #71809a;
+}
+
+.pricing-close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.pricing-close-btn:hover {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.pricing-cards-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pricing-vehicle-card {
+    border: 1px solid #e3ebf6;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.pricing-vehicle-header {
+    background: linear-gradient(135deg, #e8f4fd, #f0f7ff);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.pricing-vehicle-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.pricing-vehicle-icon.motorcycle { background: #ede9fe; color: #7c3aed; }
+.pricing-vehicle-icon.car { background: #dbeafe; color: #2563eb; }
+.pricing-vehicle-icon.truck { background: #fef3c7; color: #d97706; }
+
+.pricing-vehicle-name {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.pricing-vehicle-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #10233f;
+    margin-top: 2px;
+}
+
+.pricing-vehicle-price small {
+    font-size: 13px;
+    font-weight: 400;
+    color: #64748b;
+}
+
+.pricing-vehicle-details {
+    padding: 16px 20px;
+}
+
+.pricing-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.pricing-detail-row:last-child {
+    border-bottom: none;
+}
+
+.pricing-detail-row span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.pricing-detail-row strong {
+    font-size: 13px;
+    color: #10233f;
+}
+
+.pricing-note {
+    margin: 16px 0 0;
+    font-size: 12px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pricing-note i {
+    color: #94a3b8;
 }

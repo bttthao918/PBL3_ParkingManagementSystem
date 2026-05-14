@@ -1,6 +1,7 @@
 using ParkingManagement.FE.Models;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace ParkingManagement.FE.Services
 {
@@ -8,6 +9,10 @@ namespace ParkingManagement.FE.Services
     {
         Task<ListEmployeeTicketDto?> SearchTicketsAsync(EmployeeTicketSearchDto search);
         Task<TicketSummaryDto?> GetTicketSummaryAsync();
+        Task<TicketDetailDto?> GetTicketDetailAsync(string ticketId);
+        Task<CreateTicketResultDto?> CreateTicketAsync(CreateTicketRequestDto input);
+        Task<bool> UpdateTicketAsync(string ticketId, UpdateTicketRequestDto input);
+        Task<bool> DeleteTicketAsync(string ticketId);
         Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt");
     }
 
@@ -33,17 +38,21 @@ namespace ParkingManagement.FE.Services
             if (!string.IsNullOrEmpty(search.SearchKeyword)) queryParams.Add($"SearchKeyword={Uri.EscapeDataString(search.SearchKeyword)}");
             if (!string.IsNullOrEmpty(search.Status)) queryParams.Add($"Status={Uri.EscapeDataString(search.Status)}");
             if (!string.IsNullOrEmpty(search.VehicleType)) queryParams.Add($"VehicleType={Uri.EscapeDataString(search.VehicleType)}");
+            if (!string.IsNullOrEmpty(search.AreaFilter)) queryParams.Add($"AreaFilter={Uri.EscapeDataString(search.AreaFilter)}");
             if (search.FromDate.HasValue) queryParams.Add($"FromDate={Uri.EscapeDataString(search.FromDate.Value.ToString("yyyy-MM-dd"))}");
             if (search.ToDate.HasValue) queryParams.Add($"ToDate={Uri.EscapeDataString(search.ToDate.Value.ToString("yyyy-MM-dd"))}");
             queryParams.Add($"PageNumber={search.PageNumber}");
             queryParams.Add($"PageSize={search.PageSize}");
 
             var queryString = string.Join("&", queryParams);
+            // Sử dụng api/tickets (endpoint chung) - BE trả về ListTicketDto có cùng cấu trúc với ListEmployeeTicketDto
             var url = $"api/tickets?{queryString}";
 
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
+                // BE trả về ListTicketDto nhưng có cùng cấu trúc với ListEmployeeTicketDto
+                // Deserialize trực tiếp vì JSON property names giống nhau
                 return await response.Content.ReadFromJsonAsync<ListEmployeeTicketDto>();
             }
 
@@ -53,7 +62,8 @@ namespace ParkingManagement.FE.Services
             }
             
             var errorContent = await response.Content.ReadAsStringAsync();
-            throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent} - Token: {!string.IsNullOrEmpty(token)} - URL: {url}");
+            _logger.LogWarning("SearchTicketsAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return null;
         }
 
         public async Task<TicketSummaryDto?> GetTicketSummaryAsync()
@@ -74,6 +84,98 @@ namespace ParkingManagement.FE.Services
             var errorContent = await response.Content.ReadAsStringAsync();
             _logger.LogWarning("GetTicketSummaryAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
             return null;
+        }
+
+        public async Task<TicketDetailDto?> GetTicketDetailAsync(string ticketId)
+        {
+            ApplyAuthorizationHeader();
+
+            var response = await _httpClient.GetAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<TicketDetailDto>();
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Phiên đăng nhập API đã hết hạn.");
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent}");
+        }
+
+        public async Task<CreateTicketResultDto?> CreateTicketAsync(CreateTicketRequestDto input)
+        {
+            ApplyAuthorizationHeader(requireToken: false);
+
+            var response = await _httpClient.PostAsJsonAsync("api/tickets", input);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            CreateTicketResultDto? result = null;
+
+            if (!string.IsNullOrWhiteSpace(responseBody))
+            {
+                try
+                {
+                    result = JsonSerializer.Deserialize<CreateTicketResultDto>(
+                        responseBody,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "CreateTicketAsync could not parse response body.");
+                }
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                return result ?? new CreateTicketResultDto { Success = true };
+            }
+
+            _logger.LogWarning("CreateTicketAsync failed: {StatusCode} {Body}", response.StatusCode, responseBody);
+
+            return result ?? new CreateTicketResultDto
+            {
+                Success = false,
+                Message = string.IsNullOrWhiteSpace(responseBody)
+                    ? "Không thể tạo vé mới."
+                    : $"Không thể tạo vé mới. Chi tiết: {responseBody}"
+            };
+        }
+
+        public async Task<bool> UpdateTicketAsync(string ticketId, UpdateTicketRequestDto input)
+        {
+            ApplyAuthorizationHeader(requireToken: false);
+
+            var response = await _httpClient.PutAsJsonAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}", input);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("UpdateTicketAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return false;
+        }
+
+        public async Task<bool> DeleteTicketAsync(string ticketId)
+        {
+            ApplyAuthorizationHeader(requireToken: false);
+
+            var response = await _httpClient.DeleteAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}");
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("DeleteTicketAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return false;
         }
 
         public async Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt")

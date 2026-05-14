@@ -90,6 +90,131 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Update ticket information (Manager/Admin)
+        /// </summary>
+        [HttpPut("{ticketId}")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(TicketDetailDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(string ticketId, [FromBody] UpdateTicketDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var ticket = await _ticketService.UpdateTicketAsync(ticketId, input);
+                return Ok(ticket);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Update error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Delete ticket (Manager/Admin)
+        /// </summary>
+        [HttpDelete("{ticketId}")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(string ticketId)
+        {
+            try
+            {
+                var deleted = await _ticketService.DeleteTicketAsync(ticketId);
+                if (!deleted)
+                    return NotFound(new { message = "Khong tim thay ve" });
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Delete error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Create a new parking ticket from the manager/admin page.
+        /// </summary>
+        [HttpPost]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(CheckInResultDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] CreateTicketDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                if (string.IsNullOrWhiteSpace(input.VehiclePlate) || string.IsNullOrWhiteSpace(input.VehicleType))
+                {
+                    return BadRequest(new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = "Vui lòng nhập biển số xe và loại xe."
+                    });
+                }
+
+                var validation = await _ticketService.ValidateAndPrepareCheckInAsync(new CheckInInputDto
+                {
+                    VehiclePlate = input.VehiclePlate,
+                    VehicleType = input.VehicleType,
+                    CustomerId = input.CustomerId
+                });
+
+                var slotId = string.IsNullOrWhiteSpace(input.SlotId)
+                    ? validation.PreferredSlotId ?? validation.AvailableSlots.FirstOrDefault()?.SlotId
+                    : input.SlotId.Trim();
+
+                if (string.IsNullOrWhiteSpace(slotId))
+                {
+                    return BadRequest(new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = validation.Message ?? "Không còn chỗ trống phù hợp để tạo vé."
+                    });
+                }
+
+                var result = await _ticketService.ConfirmCheckInAsync(new ConfirmCheckInDto
+                {
+                    VehiclePlate = input.VehiclePlate,
+                    VehicleType = input.VehicleType,
+                    SlotId = slotId,
+                    CustomerId = validation.CustomerId ?? input.CustomerId
+                });
+
+                if (!result.Success)
+                    return BadRequest(result);
+
+                _logger.LogInformation($"Ticket created from admin page: {result.TicketId}");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Create ticket error: {ex.Message}");
+                return StatusCode(500, new CheckInResultDto
+                {
+                    Success = false,
+                    Message = "Internal server error"
+                });
+            }
+        }
+
+        /// <summary>
         /// Check-in vehicle (Employee only)
         /// </summary>
         [HttpPost("checkin")]
@@ -118,6 +243,29 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Validate check-in: kiểm tra biển số, vé tháng, đặt chỗ, gợi ý slot trống (Employee only)
+        /// </summary>
+        [HttpPost("checkin/validate")]
+        [Authorize(Roles = "Employee")]
+        [ProducesResponseType(typeof(CheckInValidationDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ValidateCheckIn([FromBody] CheckInInputDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var result = await _ticketService.ValidateAndPrepareCheckInAsync(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ValidateCheckIn error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Check-out vehicle and process payment (Employee only)
         /// </summary>
         [HttpPost("{ticketId}/checkout")]
@@ -139,6 +287,29 @@ namespace ParkingManagement.Web.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError($"CheckOut error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Validate check-out: tính phí, kiểm tra vé tháng (Employee only)
+        /// </summary>
+        [HttpPost("checkout/validate")]
+        [Authorize(Roles = "Employee")]
+        [ProducesResponseType(typeof(CheckOutValidationDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ValidateCheckOut([FromBody] CheckOutInputDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var result = await _ticketService.ValidateAndPrepareCheckOutAsync(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ValidateCheckOut error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }

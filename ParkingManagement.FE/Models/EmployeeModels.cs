@@ -12,6 +12,7 @@ namespace ParkingManagement.FE.Models
     public class ManagerEmployeeListDto
     {
         public string EmployeeId { get; set; } = null!;
+        public string EmployeeCode { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
@@ -48,5 +49,51 @@ namespace ParkingManagement.FE.Models
         public string? Message { get; set; }
         public string? EmployeeCode { get; set; }
         public DateTime? InviteExpiry { get; set; }
+    }
+
+    public class ManagerEmployeeDetailDto
+    {
+        public string EmployeeId { get; set; } = "";
+        public string EmployeeCode { get; set; } = "";
+        public string FullName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
+        public string? Shift { get; set; }
+        public string Status { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastLoginAt { get; set; }
+        public int TotalTicketsProcessed { get; set; }
+        public int TicketsProcessedToday { get; set; }
+        public int TicketsProcessedThisMonth { get; set; }
+        public DateTime? FirstWorkDay { get; set; }
+        public int WorkDaysCount { get; set; }
+    }
+
+    public class UpdateEmployeeByManagerDto
+    {
+        public string? FullName { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Shift { get; set; }
+        public string? Status { get; set; }
+    }
+
+    public class UpdateEmployeeResultDto
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+    }
+
+    public class DeleteEmployeeDto
+    {
+        public string EmployeeId { get; set; } = "";
+        public string? Reason { get; set; }
+    }
+
+    public class DeleteEmployeeResultDto
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public string EmployeeId { get; set; } = "";
+        public string NewStatus { get; set; } = "";
     }
 }

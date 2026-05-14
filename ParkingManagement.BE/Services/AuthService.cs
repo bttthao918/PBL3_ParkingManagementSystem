@@ -83,8 +83,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                 }
                 else if (account.Role == "Manager")
                 {
-                    relatedId = account.AccountId;  // Manager doesn't need separate ID
-                    fullName = "Manager";  // TODO: Get from Account navigation if available
+                    var manager = await GetManagerByAccountIdAsync(account.AccountId);
+                    relatedId = manager?.ManagerId ?? account.AccountId;
+                    fullName = manager?.FullName ?? "Manager";
                 }
 
                 _logger.LogInformation($"Login successful for {account.Role}: {account.Email}");
@@ -318,6 +319,170 @@ namespace ParkingManagement.BLL.Services.Implementations
                 _logger.LogError($"ChangePasswordAsync error: {ex.Message}");
                 return ServiceResult.Fail("Lỗi hệ thống.");
             }
+        }
+
+        public async Task<ServiceResult<CurrentUserProfileDto>> GetCurrentProfileAsync(string accountId)
+        {
+            try
+            {
+                var account = await _accountRepo.GetByIdAsync(accountId);
+                if (account == null || !account.IsActive)
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Tài khoản không tồn tại hoặc đã bị khóa.");
+
+                var profile = await BuildCurrentProfileAsync(account);
+                if (profile == null)
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Không tìm thấy hồ sơ tài khoản.");
+
+                return ServiceResult<CurrentUserProfileDto>.Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"GetCurrentProfileAsync error: {ex.Message}");
+                return ServiceResult<CurrentUserProfileDto>.Fail("Lỗi hệ thống.");
+            }
+        }
+
+        public async Task<ServiceResult<CurrentUserProfileDto>> UpdateCurrentProfileAsync(string accountId, UpdateCurrentProfileDto dto)
+        {
+            try
+            {
+                var account = await _accountRepo.GetByIdAsync(accountId);
+                if (account == null || !account.IsActive)
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Tài khoản không tồn tại hoặc đã bị khóa.");
+
+                var fullName = dto.FullName?.Trim() ?? "";
+                if (fullName.Length < 3 || fullName.Length > 100)
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Họ và tên phải có từ 3 đến 100 ký tự.");
+
+                var phoneNumber = NormalizePhoneNumber(dto.PhoneNumber);
+                if (phoneNumber == null)
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Số điện thoại không hợp lệ.");
+
+                var gender = NormalizeGender(dto.Gender);
+                if (gender == null)
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Giới tính không hợp lệ.");
+
+                if (account.Role == "Customer")
+                {
+                    var customer = await _customerRepo.GetByAccountIdAsync(account.AccountId);
+                    if (customer == null)
+                        return ServiceResult<CurrentUserProfileDto>.Fail("Không tìm thấy hồ sơ khách hàng.");
+
+                    customer.FullName = fullName;
+                    customer.PhoneNumber = phoneNumber;
+                    customer.Gender = gender;
+                    await _customerRepo.UpdateAsync(customer);
+                }
+                else if (account.Role == "Employee")
+                {
+                    var employee = await _employeeRepo.GetByAccountIdAsync(account.AccountId);
+                    if (employee == null)
+                        return ServiceResult<CurrentUserProfileDto>.Fail("Không tìm thấy hồ sơ nhân viên.");
+
+                    employee.FullName = fullName;
+                    employee.PhoneNumber = phoneNumber;
+                    employee.Gender = gender;
+                    await _employeeRepo.UpdateAsync(employee);
+                }
+                else if (account.Role == "Manager")
+                {
+                    var manager = await GetManagerByAccountIdAsync(account.AccountId);
+                    if (manager == null)
+                        return ServiceResult<CurrentUserProfileDto>.Fail("Không tìm thấy hồ sơ quản lý.");
+
+                    manager.FullName = fullName;
+                    manager.PhoneNumber = phoneNumber;
+                    manager.Gender = gender;
+                    await _managerRepo.UpdateAsync(manager);
+                }
+                else
+                {
+                    return ServiceResult<CurrentUserProfileDto>.Fail("Vai trò tài khoản không hợp lệ.");
+                }
+
+                var profile = await BuildCurrentProfileAsync(account);
+                return profile == null
+                    ? ServiceResult<CurrentUserProfileDto>.Fail("Không tìm thấy hồ sơ tài khoản.")
+                    : ServiceResult<CurrentUserProfileDto>.Ok(profile, "Cập nhật thông tin thành công.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"UpdateCurrentProfileAsync error: {ex.Message}");
+                return ServiceResult<CurrentUserProfileDto>.Fail("Lỗi hệ thống.");
+            }
+        }
+
+        private async Task<CurrentUserProfileDto?> BuildCurrentProfileAsync(Account account)
+        {
+            if (account.Role == "Customer")
+            {
+                var customer = await _customerRepo.GetByAccountIdAsync(account.AccountId);
+                return customer == null
+                    ? null
+                    : CreateProfile(account, customer.CustomerId, customer.FullName, customer.PhoneNumber, customer.Gender);
+            }
+
+            if (account.Role == "Employee")
+            {
+                var employee = await _employeeRepo.GetByAccountIdAsync(account.AccountId);
+                return employee == null
+                    ? null
+                    : CreateProfile(account, employee.EmployeeId, employee.FullName, employee.PhoneNumber, employee.Gender);
+            }
+
+            if (account.Role == "Manager")
+            {
+                var manager = await GetManagerByAccountIdAsync(account.AccountId);
+                return manager == null
+                    ? CreateProfile(account, account.AccountId, "Manager", null, null)
+                    : CreateProfile(account, manager.ManagerId, manager.FullName, manager.PhoneNumber, manager.Gender);
+            }
+
+            return null;
+        }
+
+        private static CurrentUserProfileDto CreateProfile(Account account, string relatedId, string fullName, string? phoneNumber, string? gender)
+        {
+            return new CurrentUserProfileDto
+            {
+                AccountId = account.AccountId,
+                Role = account.Role,
+                Email = account.Email,
+                FullName = fullName,
+                PhoneNumber = phoneNumber,
+                Gender = gender,
+                CreatedAt = account.CreatedAt,
+                RelatedId = relatedId
+            };
+        }
+
+        private async Task<Manager?> GetManagerByAccountIdAsync(string accountId)
+        {
+            var managers = await _managerRepo.GetAllAsync();
+            return managers.FirstOrDefault(m => m.AccountId == accountId && !m.IsDeleted);
+        }
+
+        private static string? NormalizePhoneNumber(string? phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                return null;
+
+            var compact = Regex.Replace(phoneNumber.Trim(), @"[\s\-.]", "");
+            return Regex.IsMatch(compact, @"^\+?[0-9]{9,15}$") ? compact : null;
+        }
+
+        private static string? NormalizeGender(string? gender)
+        {
+            if (string.IsNullOrWhiteSpace(gender))
+                return null;
+
+            return gender.Trim().ToLowerInvariant() switch
+            {
+                "male" or "nam" => "Male",
+                "female" or "nu" or "nữ" => "Female",
+                "other" or "khac" or "khác" => "Other",
+                _ => null
+            };
         }
 
         private bool IsValidEmail(string email)

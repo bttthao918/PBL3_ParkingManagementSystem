@@ -1,6 +1,9 @@
 @{
     Layout = "/Pages/Shared/_DashboardLayout.cshtml";
     var currentPath = ViewContext.HttpContext.Request.Path.Value ?? "";
+    var dashboardView = ViewContext.HttpContext.Request.Query["view"].ToString();
+    var isDashboardPath = currentPath.Equals("/Admin/Dashboard", StringComparison.OrdinalIgnoreCase);
+    var isSummaryView = dashboardView.Equals("summary", StringComparison.OrdinalIgnoreCase);
 }
 
 @* Cho phép các trang con nhúng CSS riêng *@
@@ -10,7 +13,7 @@
 
 @* KHUNG SIDEBAR DÙNG CHUNG CHO TOÀN BỘ ADMIN *@
 @section Sidebar {
-    <a asp-page="/Admin/Dashboard" class="@(currentPath.Equals("/Admin/Dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+    <a asp-page="/Admin/Dashboard" class="@(isDashboardPath && !isSummaryView ? "active" : "")">
         <i class="fa-solid fa-house"></i> Tổng quan
     </a>
 
@@ -38,7 +41,7 @@
            class="@(currentPath.Contains("/Admin/CustomerStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
         <i class="fa-solid fa-user-group"></i> Khách hàng
     </a>
-    <a asp-page="/Admin/Dashboard" class="@(currentPath.Equals("/Admin/Dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+    <a asp-page="/Admin/Dashboard" asp-route-view="summary" class="@(isDashboardPath && isSummaryView ? "active" : "")">
         <i class="fa-solid fa-chart-column"></i> Tổng hợp
     </a>
 

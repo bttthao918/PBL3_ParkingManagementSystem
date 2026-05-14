@@ -1,0 +1,134 @@
+/* Custom Confirm Modal */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+}
+
+.confirm-overlay.open {
+    display: flex;
+}
+
+.confirm-box {
+    background: white;
+    border-radius: 18px;
+    padding: 32px;
+    width: 380px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.confirm-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 24px;
+}
+
+.confirm-icon.info {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.confirm-icon.warning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.confirm-icon.danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.confirm-icon.success {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.confirm-box h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #10233f;
+}
+
+.confirm-box p {
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-btn-cancel,
+.confirm-btn-ok {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s;
+}
+
+.confirm-btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.confirm-btn-cancel:hover {
+    background: #e2e8f0;
+}
+
+.confirm-btn-ok {
+    color: white;
+}
+
+.confirm-btn-ok.info {
+    background: #2563eb;
+}
+
+.confirm-btn-ok.warning {
+    background: #d97706;
+}
+
+.confirm-btn-ok.danger {
+    background: #dc2626;
+}
+
+.confirm-btn-ok.success {
+    background: #16a34a;
+}
+
+.confirm-btn-ok:hover {
+    transform: translateY(-1px);
+}

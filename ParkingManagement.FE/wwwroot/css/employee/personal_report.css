@@ -51,6 +51,7 @@
 .download-btn {
     margin-left: auto;
     cursor: pointer;
+    display: none;
 }
 
 .report-layout {
@@ -122,6 +123,17 @@
 .kpi-card small {
     color: #16a34a;
     font-weight: 700;
+}
+
+.kpi-card.clickable {
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.kpi-card.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 .chart-grid {

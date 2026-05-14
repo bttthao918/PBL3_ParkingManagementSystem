@@ -2,15 +2,20 @@
 @model ParkingManagement.FE.Pages.Employee.CustomerManagementModel
 
 @{
-    ViewData["Title"] = "Quản lý khách hàng";
-    ViewData["Role"] = "Nhân viên";
-    ViewData["UserName"] = "Nguyễn Văn An";
+    // ViewData is set in code-behind (CustomerManagement.cshtml.cs)
 }
 @section Styles{
-    <link rel="stylesheet" href="/css/employee/customer_manage.css" />
+    <link rel="stylesheet" href="/css/employee/customer_manage.css" asp-append-version="true" />
 }
 
 <div class="customer-page">
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div style="background:#fff3cd;border:1px solid #ffc107;padding:10px;margin-bottom:15px;border-radius:5px;">
+            <strong>⚠️ Debug:</strong> @Model.ErrorMessage
+        </div>
+    }
 
     <div class="customer-toolbar">
         <div>
@@ -22,11 +27,6 @@
             <button class="secondary-btn" type="button">
                 <i class="fa-solid fa-file-export"></i>
                 Xuất Excel
-            </button>
-
-            <button class="primary-btn" type="button">
-                <i class="fa-solid fa-user-plus"></i>
-                Thêm khách hàng
             </button>
         </div>
     </div>
@@ -79,7 +79,7 @@
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input asp-for="Search"
-                               placeholder="Tìm theo tên, SĐT, biển số, mã khách hàng..." />
+                               placeholder="Tìm theo tên, SĐT, mã khách hàng..." />
                     </div>
 
                     <button type="submit" class="secondary-btn filter-btn">
@@ -94,12 +94,6 @@
                         <option value="Parking">Đang gửi xe</option>
                         <option value="Left">Đã rời bãi</option>
                         <option value="Debt">Nợ phí</option>
-                    </select>
-
-                    <select asp-for="VehicleFilter">
-                        <option value="">Loại xe: Tất cả</option>
-                        <option value="Car">Ô tô</option>
-                        <option value="Motorbike">Xe máy</option>
                     </select>
 
                     <select asp-for="VipFilter">
@@ -129,8 +123,6 @@
                             </th>
                             <th>Khách hàng</th>
                             <th>SĐT</th>
-                            <th>Xe (biển số)</th>
-                            <th>Loại xe</th>
                             <th>VIP Level</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
@@ -159,26 +151,6 @@
                                 </td>
 
                                 <td>@item.Phone</td>
-
-                                <td>
-                                    <div class="plate-list">
-                                        <span class="plate">@item.MainPlate</span>
-
-                                        @if (item.VehicleCount > 1)
-                                        {
-                                            <span class="more-vehicles" title="@item.VehicleTooltip">
-                                                +@(item.VehicleCount - 1)
-                                            </span>
-                                        }
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <span class="vehicle-type">
-                                        <i class="fa-solid @(item.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
-                                        @item.VehicleType
-                                    </span>
-                                </td>
 
                                 <td>
                                     <span class="vip-badge @item.VipLevel.ToLower()">
@@ -222,21 +194,6 @@
                                                     <i class="fa-solid fa-clock-rotate-left"></i>
                                                     Lịch sử gửi xe
                                                 </a>
-
-                                                <a asp-page="./CustomerManagement" asp-route-selectedId="@item.Id">
-                                                    <i class="fa-solid fa-car"></i>
-                                                    Xe của khách
-                                                </a>
-
-                                                <a asp-page="./CustomerManagement" asp-route-selectedId="@item.Id">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                    Cập nhật
-                                                </a>
-
-                                                <a href="tel:@item.Phone">
-                                                    <i class="fa-solid fa-phone"></i>
-                                                    Gọi điện
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -248,24 +205,64 @@
             </div>
 
             <div class="pagination-row">
-                <span>Hiển thị 1 - @Model.Customers.Count trong @Model.TotalCustomers khách hàng</span>
+                <span>Hiển thị @Model.FirstItemIndex - @Model.LastItemIndex trong @Model.TotalCustomers khách hàng</span>
 
                 <div class="pagination">
-                    <button type="button">‹</button>
-                    <button type="button" class="active">1</button>
-                    <button type="button">2</button>
-                    <button type="button">3</button>
-                    <button type="button">4</button>
-                    <button type="button">...</button>
-                    <button type="button">250</button>
-                    <button type="button">›</button>
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-page="./CustomerManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vipFilter="@Model.VipFilter"
+                           asp-route-registerDate="@(Model.RegisterDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@(Model.PageNumber - 1)"
+                           asp-route-pageSize="@Model.PageSize">‹</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">‹</span>
+                    }
+
+                    @foreach (var pageIndex in Model.VisiblePages)
+                    {
+                        <a asp-page="./CustomerManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vipFilter="@Model.VipFilter"
+                           asp-route-registerDate="@(Model.RegisterDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@pageIndex"
+                           asp-route-pageSize="@Model.PageSize"
+                           class="@(pageIndex == Model.PageNumber ? "active" : "")">@pageIndex</a>
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-page="./CustomerManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vipFilter="@Model.VipFilter"
+                           asp-route-registerDate="@(Model.RegisterDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@(Model.PageNumber + 1)"
+                           asp-route-pageSize="@Model.PageSize">›</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">›</span>
+                    }
                 </div>
 
-                <select>
-                    <option>5 / trang</option>
-                    <option>10 / trang</option>
-                    <option>20 / trang</option>
-                </select>
+                <form method="get" class="page-size-form">
+                    <input type="hidden" name="Search" value="@Model.Search" />
+                    <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+                    <input type="hidden" name="VipFilter" value="@Model.VipFilter" />
+                    <input type="hidden" name="RegisterDate" value="@(Model.RegisterDate?.ToString("yyyy-MM-dd"))" />
+                    <input type="hidden" name="PageNumber" value="1" />
+                    <select asp-for="PageSize" onchange="this.form.submit()">
+                        <option value="5">5 / trang</option>
+                        <option value="10">10 / trang</option>
+                        <option value="20">20 / trang</option>
+                    </select>
+                </form>
             </div>
         </div>
 
@@ -307,39 +304,20 @@
                 </div>
 
                 <div class="quick-actions">
-                    <a href="tel:@Model.SelectedCustomer.Phone" class="quick-btn">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>Gọi</span>
-                    </a>
-
-                    <button type="button" class="quick-btn">
-                        <i class="fa-solid fa-message"></i>
-                        <span>Nhắn tin</span>
-                    </button>
-
-                    <button type="button" class="quick-btn">
+                    <a asp-page="./TicketManagement" asp-route-search="@Model.SelectedCustomer.Phone" class="quick-btn">
                         <i class="fa-solid fa-ticket"></i>
                         <span>Vé xe</span>
-                    </button>
+                    </a>
 
-                    <button type="button" class="quick-btn">
-                        <i class="fa-solid fa-car"></i>
+                    <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id" class="quick-btn">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
                         <span>Lịch sử</span>
-                    </button>
-
-                    <button type="button" class="quick-btn">
-                        <i class="fa-solid fa-ellipsis"></i>
-                        <span>Khác</span>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="detail-card">
                     <div class="detail-card-title">
                         <h4>Thông tin cơ bản</h4>
-
-                        <button type="button" class="small-icon-btn">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
                     </div>
 
                     <div class="info-row">
@@ -358,13 +336,8 @@
                     </div>
 
                     <div class="info-row">
-                        <span>Địa chỉ</span>
-                        <strong>@Model.SelectedCustomer.Address</strong>
-                    </div>
-
-                    <div class="info-row">
-                        <span>Ngày sinh</span>
-                        <strong>@Model.SelectedCustomer.DateOfBirth</strong>
+                        <span>Giới tính</span>
+                        <strong>@(Model.SelectedCustomer.Gender ?? "Chưa cập nhật")</strong>
                     </div>
 
                     <div class="info-row">
@@ -410,65 +383,6 @@
                             @Model.SelectedCustomer.VipProgress%
                         </div>
                     </div>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-card-title">
-                        <h4>Thông tin xe (@Model.SelectedCustomer.Vehicles.Count xe)</h4>
-                        <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id">+ Thêm xe</a>
-                    </div>
-
-                    <div class="vehicle-list">
-                        @foreach (var vehicle in Model.SelectedCustomer.Vehicles)
-                        {
-                            <div class="vehicle-item">
-                                <div>
-                                    <strong>
-                                        <i class="fa-solid @(vehicle.Type == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
-                                        @vehicle.PlateNumber
-                                    </strong>
-                                    <span>@vehicle.Type</span>
-                                </div>
-
-                                @if (vehicle.IsActive)
-                                {
-                                    <label>Đang sử dụng</label>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id" class="view-all-link">Xem tất cả xe</a>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-card-title">
-                        <h4>Lịch sử gửi xe</h4>
-                        <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id">Xem tất cả</a>
-                    </div>
-
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>Ngày</th>
-                                <th>Check-in</th>
-                                <th>Check-out</th>
-                                <th>Phí</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach (var history in Model.SelectedCustomer.Histories)
-                            {
-                                <tr>
-                                    <td>@history.Date</td>
-                                    <td>@history.CheckIn</td>
-                                    <td>@history.CheckOut</td>
-                                    <td>@history.Fee.ToString("N0") đ</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
                 </div>
 
             </aside>

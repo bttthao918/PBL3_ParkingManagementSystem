@@ -25,6 +25,7 @@ namespace ParkingManagement.BLL.DTOs
     public class ManagerEmployeeListDto
     {
         public string EmployeeId { get; set; } = null!;
+        public string EmployeeCode { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
@@ -54,6 +55,7 @@ namespace ParkingManagement.BLL.DTOs
     public class ManagerEmployeeDetailDto
     {
         public string EmployeeId { get; set; } = null!;
+        public string EmployeeCode { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;

@@ -1,5 +1,12 @@
 ﻿namespace ParkingManagement.FE.Models.ViewModels
 {
+    public interface IRevenueStatisticsViewModel
+    {
+        StatisticsHeaderViewModel Header { get; }
+        List<StatisticsKpiCardViewModel> Kpis { get; }
+        StatisticsTableViewModel Table { get; }
+    }
+
     public class StatisticsKpiCardViewModel
     {
         public string Title { get; set; } = "";
@@ -20,5 +27,6 @@
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string DateRangeText { get; set; } = "";
+        public string ActivePeriod { get; set; } = "30days";
     }
 }

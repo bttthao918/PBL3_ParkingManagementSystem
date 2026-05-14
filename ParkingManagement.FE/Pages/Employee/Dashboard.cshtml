@@ -1,9 +1,7 @@
 @page
 @model ParkingManagement.FE.Pages.Employee.DashboardModel
 @{
-    ViewData["Title"] = "Tổng quan Nhân viên";
-    ViewData["UserName"] = "Nguyễn Văn An";
-    ViewData["Role"] = "Nhân viên";
+    // ViewData is set in code-behind (Dashboard.cshtml.cs)
 }
 
 <div class="kpi-grid">
@@ -44,6 +42,63 @@
         </div>
     </div>
 
+</div>
+
+<!-- Chấm công -->
+<div class="card shift-card">
+    @if (!string.IsNullOrWhiteSpace(Model.ShiftMessage))
+    {
+        <div class="shift-alert @(Model.ShiftSuccess ? "success" : "error")">
+            <i class="fa-solid @(Model.ShiftSuccess ? "fa-circle-check" : "fa-circle-xmark")"></i>
+            @Model.ShiftMessage
+        </div>
+    }
+
+    <div class="shift-header">
+        <h3><i class="fa-solid fa-clock"></i> Ca làm việc</h3>
+        @if (Model.MonthlySummary != null)
+        {
+            <span class="shift-summary">Tháng @Model.MonthlySummary.Month: <strong>@Model.MonthlySummary.TotalDays ngày</strong> · <strong>@Model.MonthlySummary.TotalHours giờ</strong></span>
+        }
+    </div>
+
+    <div class="shift-body">
+        @if (Model.WorkStatus?.IsWorking == true)
+        {
+            var dur = Model.WorkStatus.DurationMinutes;
+            var h = dur / 60;
+            var m = dur % 60;
+            <div class="shift-status working">
+                <div class="shift-indicator pulse"></div>
+                <div>
+                    <strong>Đang trong ca</strong>
+                    <span>Bắt đầu lúc @Model.WorkStatus.StartTime?.ToString("HH:mm") · Đã làm @(h > 0 ? $"{h}h {m}p" : $"{m} phút")</span>
+                </div>
+            </div>
+            <form method="post" asp-page-handler="EndShift">
+                <button type="submit" class="shift-btn end"
+                        onclick="return confirmSubmit(this.form, 'Kết thúc ca', 'Xác nhận kết thúc ca làm việc?', 'warning')">
+                    <i class="fa-solid fa-stop"></i> Kết thúc ca
+                </button>
+            </form>
+        }
+        else
+        {
+            <div class="shift-status idle">
+                <div class="shift-indicator"></div>
+                <div>
+                    <strong>Chưa bắt đầu ca</strong>
+                    <span>Bấm nút bên dưới để bắt đầu ca làm việc</span>
+                </div>
+            </div>
+            <form method="post" asp-page-handler="StartShift">
+                <button type="submit" class="shift-btn start"
+                        onclick="return confirmSubmit(this.form, 'Bắt đầu ca', 'Xác nhận bắt đầu ca làm việc?', 'success')">
+                    <i class="fa-solid fa-play"></i> Bắt đầu ca
+                </button>
+            </form>
+        }
+    </div>
 </div>
 
 <div class="card quick-actions">

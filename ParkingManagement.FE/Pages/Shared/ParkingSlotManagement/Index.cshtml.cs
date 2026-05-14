@@ -55,6 +55,7 @@ namespace ParkingManagement.FE.Pages.Shared.ParkingSlotManagement
             public string VehicleType { get; set; } = "";
             public string Status { get; set; } = "";
             public DateTime LastUpdated { get; set; }
+            public string? CurrentOccupant { get; set; }
 
             public string LastUpdatedText => LastUpdated.ToString("HH:mm");
             public string LastUpdatedFull => LastUpdated.ToString("dd/MM/yyyy HH:mm");

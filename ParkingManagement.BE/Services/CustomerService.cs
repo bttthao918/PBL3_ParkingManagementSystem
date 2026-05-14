@@ -193,8 +193,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalPages = totalPages
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Log the error so we can debug
+                Console.WriteLine($"[CustomerService.SearchCustomersAsync] ERROR: {ex.Message}");
                 return new ListEmployeeCustomerSearchDto
                 {
                     Items = new(),

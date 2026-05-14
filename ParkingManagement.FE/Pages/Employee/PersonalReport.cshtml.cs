@@ -33,7 +33,12 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public async Task OnGetAsync()
         {
-            var employeeId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ViewData["Title"] = "Báo cáo cá nhân";
+            ViewData["Role"] = "Nhân viên";
+            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
+
+            // Lấy employeeId từ related_id claim (không phải NameIdentifier vì đó là AccountId)
+            var employeeId = User.FindFirst("related_id")?.Value;
             if (!string.IsNullOrEmpty(employeeId))
             {
                 var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, "month");
@@ -76,7 +81,7 @@ namespace ParkingManagement.FE.Pages.Employee
                         Shifts = attendanceReport.Details.OrderByDescending(d => d.Date).Select(d => new ShiftReportVM
                         {
                             WorkDate = d.Date.ToString("dd/MM/yyyy"),
-                            DayName = "Thứ " + ((int)d.Date.DayOfWeek + 1 == 1 ? "Chủ nhật" : ((int)d.Date.DayOfWeek + 1).ToString()),
+                            DayName = GetDayName(d.Date.DayOfWeek),
                             ShiftName = "Ca " + d.Shift,
                             StartTime = d.CheckInTime?.ToString("HH:mm") ?? "-",
                             EndTime = d.CheckOutTime?.ToString("HH:mm") ?? "-",
@@ -89,41 +94,29 @@ namespace ParkingManagement.FE.Pages.Employee
                 }
             }
 
-            if (TotalTickets == 0)
-            {
-                // Fallback to fake data if API returns null/empty
-                TotalTickets = 1248;
-                TotalRevenue = 45680000;
-                TotalWorkingHours = "176 giờ 30 phút";
-                TotalShifts = 24;
-                AverageHoursPerShift = 7.4;
-                AverageRevenuePerHour = 259250;
-
-                Shifts = new List<ShiftReportVM>
-                {
-                    new ShiftReportVM
-                    {
-                        WorkDate = "20/05/2024",
-                        DayName = "Thứ hai",
-                        ShiftName = "Ca sáng",
-                        StartTime = "07:00",
-                        EndTime = "15:00",
-                        TotalHours = "8 giờ",
-                        TicketCount = 48,
-                        Revenue = 2450000,
-                        Status = "Đã hoàn thành"
-                    }
-                };
-            }
-
-            // Fake Calendar Days (keep UI nice)
-            CalendarDays = Enumerable.Range(1, 31)
+            // Calendar Days
+            CalendarDays = Enumerable.Range(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
                 .Select(d => new CalendarDayVM
                 {
                     Day = d,
                     IsToday = d == DateTime.Now.Day,
-                    HasWorked = (d % 2 != 0 && d <= 20)
+                    HasWorked = Shifts.Any(s => s.WorkDate.StartsWith($"{d:00}/"))
                 }).ToList();
+        }
+
+        private static string GetDayName(DayOfWeek dayOfWeek)
+        {
+            return dayOfWeek switch
+            {
+                DayOfWeek.Monday => "Thứ hai",
+                DayOfWeek.Tuesday => "Thứ ba",
+                DayOfWeek.Wednesday => "Thứ tư",
+                DayOfWeek.Thursday => "Thứ năm",
+                DayOfWeek.Friday => "Thứ sáu",
+                DayOfWeek.Saturday => "Thứ bảy",
+                DayOfWeek.Sunday => "Chủ nhật",
+                _ => ""
+            };
         }
     }
 

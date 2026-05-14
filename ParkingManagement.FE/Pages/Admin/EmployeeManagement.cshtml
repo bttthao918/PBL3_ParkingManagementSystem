@@ -1,8 +1,8 @@
-﻿@page
+@page
 @model ParkingManagement.FE.Pages.Admin.EmployeeManagementModel
 @{
     ViewData["Title"] = "Quản lý nhân viên";
-    ViewData["UserName"] = "Admin";
+    ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
     ViewData["Role"] = "Quản trị hệ thống";
 }
 
@@ -11,6 +11,20 @@
 }
 
 <div class="dashboard-content employee-page">
+    @if (!string.IsNullOrWhiteSpace(Model.LoadErrorMessage))
+    {
+        <div class="card" style="margin-bottom:12px; border-left:4px solid #c62828;">
+            <p style="margin:0; color:#c62828;">@Model.LoadErrorMessage</p>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+    {
+        <div class="card" style="margin-bottom:12px; border-left:4px solid @(Model.ActionSuccess ? "#2e7d32" : "#c62828");">
+            <p style="margin:0; color:@(Model.ActionSuccess ? "#2e7d32" : "#c62828");">@Model.ActionMessage</p>
+        </div>
+    }
+
     @if (!string.IsNullOrWhiteSpace(Model.CreateEmployeeMessage))
     {
         var statusColor = Model.CreateEmployeePendingVerification
@@ -20,9 +34,7 @@
                 : "#c62828";
 
         <div class="card" style="margin-bottom:12px; border-left:4px solid @statusColor;">
-            <p style="margin:0; color:@statusColor;">
-                @Model.CreateEmployeeMessage
-            </p>
+            <p style="margin:0; color:@statusColor;">@Model.CreateEmployeeMessage</p>
         </div>
     }
 
@@ -32,7 +44,7 @@
             <p>Quản lý thông tin, ca làm việc và hiệu suất nhân viên</p>
         </div>
 
-        <button class="emp-btn-primary" onclick="openCreateModal()">
+        <button class="emp-btn-primary" type="button" onclick="openCreateModal()">
             <i class="fa-solid fa-plus"></i>
             Thêm nhân viên
         </button>
@@ -45,7 +57,7 @@
             </div>
             <div>
                 <p>Tổng nhân viên</p>
-                <h2>@Model.TotalEmployees</h2>
+                <h2>@Model.TotalEmployees.ToString("N0")</h2>
                 <span>Tất cả nhân viên</span>
             </div>
         </div>
@@ -56,8 +68,8 @@
             </div>
             <div>
                 <p>Đang làm việc</p>
-                <h2>20</h2>
-                <span>83.3%</span>
+                <h2>@Model.TotalActive.ToString("N0")</h2>
+                <span>@Model.ActiveRate.ToString("0.0")%</span>
             </div>
         </div>
 
@@ -66,9 +78,9 @@
                 <i class="fa-solid fa-user-clock"></i>
             </div>
             <div>
-                <p>Nghỉ phép</p>
-                <h2>4</h2>
-                <span>16.7%</span>
+                <p>Vô hiệu hóa</p>
+                <h2>@Model.TotalInactive.ToString("N0")</h2>
+                <span>@Model.InactiveRate.ToString("0.0")%</span>
             </div>
         </div>
 
@@ -77,9 +89,9 @@
                 <i class="fa-solid fa-calendar-days"></i>
             </div>
             <div>
-                <p>Tổng ca hôm nay</p>
-                <h2>32</h2>
-                <span>Ca làm việc</span>
+                <p>Trang hiện tại</p>
+                <h2>@Model.PageNumber/@(Model.TotalPages == 0 ? 1 : Model.TotalPages)</h2>
+                <span>Phân trang từ database</span>
             </div>
         </div>
     </div>
@@ -88,59 +100,55 @@
         <h3>Tìm kiếm nhân viên</h3>
 
         <form method="get" class="emp-filter-grid">
+            <input type="hidden" name="PageNumber" value="1" />
+
             <div class="emp-field large">
                 <label>Từ khóa</label>
-                <input type="text" placeholder="Nhập tên, SĐT, email, mã nhân viên..." />
+                <input asp-for="Keyword" type="text" placeholder="Nhập tên, SĐT, email, mã nhân viên..." />
             </div>
 
             <div class="emp-field">
-                <label>Phòng ban</label>
-                <select>
-                    <option>Tất cả</option>
-                    <option>Bãi xe A</option>
-                    <option>Bãi xe B</option>
-                    <option>Bãi xe C</option>
-                </select>
-            </div>
-
-            <div class="emp-field">
-                <label>Vị trí</label>
-                <select>
-                    <option>Tất cả</option>
-                    <option>Nhân viên bãi xe</option>
-                    <option>Tổ trưởng</option>
+                <label>Ca làm</label>
+                <select asp-for="Shift">
+                    <option value="">Tất cả</option>
+                    <option value="Sáng">Sáng</option>
+                    <option value="Chiều">Chiều</option>
+                    <option value="Tối">Tối</option>
                 </select>
             </div>
 
             <div class="emp-field">
                 <label>Trạng thái</label>
-                <select>
-                    <option>Tất cả</option>
-                    <option>Đang làm việc</option>
-                    <option>Nghỉ phép</option>
-                    <option>Tạm nghỉ</option>
-                    <option>Vô hiệu hóa</option>
+                <select asp-for="Status">
+                    <option value="">Tất cả</option>
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Vô hiệu hóa">Vô hiệu hóa</option>
                 </select>
             </div>
 
             <div class="emp-field">
-                <label>Khoảng ngày</label>
-                <input type="text" value="01/05/2024 - 31/05/2024" />
+                <label>Số dòng</label>
+                <select asp-for="PageSize">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
             </div>
 
-            <button class="emp-btn-primary">
+            <button class="emp-btn-primary" type="submit">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 Tìm kiếm
             </button>
         </form>
 
         <div class="emp-filter-actions">
-            <button class="emp-btn-outline">
+            <a asp-page="/Admin/EmployeeManagement" class="emp-btn-outline" style="text-decoration:none;">
                 <i class="fa-solid fa-filter-circle-xmark"></i>
                 Xóa bộ lọc
-            </button>
+            </a>
 
-            <button class="emp-btn-outline">
+            <button class="emp-btn-outline" type="button" onclick="window.print()">
                 <i class="fa-solid fa-download"></i>
                 Export
             </button>
@@ -148,35 +156,34 @@
     </div>
 
     <div class="employee-main-grid">
-
         <div>
             <div class="card emp-bulk-bar">
                 <div>
-                    <input type="checkbox" checked />
-                    <span>Đã chọn 3 nhân viên</span>
+                    <input id="empSelectAll" type="checkbox" />
+                    <span id="selectedEmployeeCount">Chưa chọn nhân viên</span>
                 </div>
 
                 <div class="emp-bulk-actions">
-                    <button class="success">Kích hoạt</button>
-                    <button class="danger">Vô hiệu hóa</button>
-                    <button>Phân ca</button>
-                    <button>Xuất dữ liệu</button>
+                    <button type="button" disabled>Kích hoạt</button>
+                    <button type="button" disabled>Vô hiệu hóa</button>
+                    <button type="button" disabled>Phân ca</button>
+                    <button type="button" onclick="window.print()">Xuất dữ liệu</button>
                 </div>
             </div>
 
             <div class="card emp-table-card">
                 <div class="emp-table-title">
-                    <h3>Danh sách nhân viên (@Model.TotalEmployees)</h3>
+                    <h3>Danh sách nhân viên (@Model.TotalEmployees.ToString("N0"))</h3>
                 </div>
 
                 <table class="emp-table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" /></th>
+                            <th><input id="empSelectAllTable" type="checkbox" /></th>
                             <th>Mã NV</th>
                             <th>Họ tên</th>
                             <th>Vị trí</th>
-                            <th>Phòng ban</th>
+                            <th>Ca làm</th>
                             <th>SĐT</th>
                             <th>Tổng vé</th>
                             <th>Vé xử lý</th>
@@ -186,130 +193,231 @@
                     </thead>
 
                     <tbody>
-                        @foreach (var emp in Model.Employees)
+                        @if (Model.Employees.Count == 0)
                         {
                             <tr>
-                                <td><input type="checkbox" /></td>
-                                <td class="emp-code">@emp.Code</td>
-                                <td>
-                                    <div class="emp-name-cell">
-                                        <img src="@emp.Avatar" />
-                                        <span>@emp.Name</span>
-                                    </div>
-                                </td>
-                                <td>@emp.Position</td>
-                                <td>@emp.Department</td>
-                                <td>@emp.Phone</td>
-                                <td>@emp.TotalTickets</td>
-                                <td>@emp.ProcessedTickets</td>
-                                <td>
-                                    <span class="emp-status @emp.StatusClass">
-                                        @emp.Status
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="emp-actions">
-                                        <button><i class="fa-solid fa-eye"></i></button>
-                                        <button><i class="fa-solid fa-pen"></i></button>
-                                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                    </div>
-                                </td>
+                                <td colspan="10" class="emp-empty-state">Không có nhân viên phù hợp với bộ lọc hiện tại.</td>
                             </tr>
+                        }
+                        else
+                        {
+                            @foreach (var emp in Model.Employees)
+                            {
+                                var targetStatus = emp.StatusClass == "active" ? "Vô hiệu hóa" : "Hoạt động";
+                                var statusActionText = emp.StatusClass == "active" ? "vô hiệu hóa" : "kích hoạt";
+
+                                <tr class="@(emp.Id == Model.SelectedEmployeeId ? "selected" : "")">
+                                    <td><input class="emp-row-check" type="checkbox" /></td>
+                                    <td class="emp-code">@emp.Code</td>
+                                    <td>
+                                        <div class="emp-name-cell">
+                                            <span class="emp-avatar">@emp.Initials</span>
+                                            <span>@emp.Name</span>
+                                        </div>
+                                    </td>
+                                    <td>@emp.Position</td>
+                                    <td>@emp.Department</td>
+                                    <td>@emp.Phone</td>
+                                    <td>@emp.TotalTickets</td>
+                                    <td>@emp.ProcessedTickets</td>
+                                    <td>
+                                        <span class="emp-status @emp.StatusClass">
+                                            @emp.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="emp-actions">
+                                            <a class="emp-action-btn"
+                                               title="Xem"
+                                               asp-page="/Admin/EmployeeManagement"
+                                               asp-route-keyword="@Model.Keyword"
+                                               asp-route-status="@Model.Status"
+                                               asp-route-shift="@Model.Shift"
+                                               asp-route-pageNumber="@Model.PageNumber"
+                                               asp-route-pageSize="@Model.PageSize"
+                                               asp-route-selectedEmployeeId="@emp.Id">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <button class="js-emp-edit"
+                                                    type="button"
+                                                    title="Sửa"
+                                                    data-employee-id="@emp.Id"
+                                                    data-employee-code="@emp.Code"
+                                                    data-employee-name="@emp.Name"
+                                                    data-employee-phone="@emp.Phone"
+                                                    data-employee-shift="@emp.Department"
+                                                    data-employee-status="@emp.Status">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button class="js-emp-status"
+                                                    type="button"
+                                                    title="@statusActionText"
+                                                    data-employee-id="@emp.Id"
+                                                    data-employee-code="@emp.Code"
+                                                    data-employee-name="@emp.Name"
+                                                    data-target-status="@targetStatus"
+                                                    data-action-text="@statusActionText">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
 
                 <div class="emp-pagination">
-                    <span>Hiển thị @Model.Employees.Count trong tổng số @Model.TotalEmployees nhân viên</span>
+                    <span>Hiển thị @Model.ShowingFrom đến @Model.ShowingTo trong tổng số @Model.TotalEmployees.ToString("N0") nhân viên</span>
 
                     <div>
-                        <button>‹</button>
-                        <button class="active">1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>›</button>
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a asp-page="/Admin/EmployeeManagement"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-status="@Model.Status"
+                               asp-route-shift="@Model.Shift"
+                               asp-route-pageSize="@Model.PageSize"
+                               asp-route-pageNumber="@(Model.PageNumber - 1)"
+                               asp-route-selectedEmployeeId="@Model.SelectedEmployeeId">‹</a>
+                        }
+                        else
+                        {
+                            <span class="disabled">‹</span>
+                        }
+
+                        @for (var pageIndex = Model.StartPage; pageIndex <= Model.EndPage; pageIndex++)
+                        {
+                            <a class="@(pageIndex == Model.PageNumber ? "active" : "")"
+                               asp-page="/Admin/EmployeeManagement"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-status="@Model.Status"
+                               asp-route-shift="@Model.Shift"
+                               asp-route-pageSize="@Model.PageSize"
+                               asp-route-pageNumber="@pageIndex"
+                               asp-route-selectedEmployeeId="@Model.SelectedEmployeeId">@pageIndex</a>
+                        }
+
+                        @if (Model.HasNextPage)
+                        {
+                            <a asp-page="/Admin/EmployeeManagement"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-status="@Model.Status"
+                               asp-route-shift="@Model.Shift"
+                               asp-route-pageSize="@Model.PageSize"
+                               asp-route-pageNumber="@(Model.PageNumber + 1)"
+                               asp-route-selectedEmployeeId="@Model.SelectedEmployeeId">›</a>
+                        }
+                        else
+                        {
+                            <span class="disabled">›</span>
+                        }
                     </div>
                 </div>
             </div>
         </div>
 
         <aside class="card emp-detail-panel">
-            <button class="emp-close">×</button>
+            @if (Model.SelectedEmployee == null)
+            {
+                <div class="emp-empty-detail">
+                    <i class="fa-solid fa-user"></i>
+                    <strong>Chưa chọn nhân viên</strong>
+                    <span>Bấm biểu tượng mắt trong bảng để xem chi tiết.</span>
+                </div>
+            }
+            else
+            {
+                var detail = Model.SelectedEmployee;
+                var detailStatusClass = EmployeeManagementModel.GetStatusClass(detail.Status);
+                var detailTargetStatus = detailStatusClass == "active" ? "Vô hiệu hóa" : "Hoạt động";
+                var detailActionText = detailStatusClass == "active" ? "vô hiệu hóa" : "kích hoạt";
+                var detailInitial = string.IsNullOrWhiteSpace(detail.FullName) ? "NV" : detail.FullName.Trim()[0].ToString().ToUpperInvariant();
 
-            <div class="emp-profile">
-                <img src="/images/avatar-demo.jpg" />
-                <h3>Nguyễn Văn An</h3>
-                <span class="emp-status active">Đang làm việc</span>
-                <p>Nhân viên bãi xe · Bãi xe A</p>
-            </div>
+                <div class="emp-profile">
+                    <span class="emp-profile-avatar">@detailInitial</span>
+                    <h3>@detail.FullName</h3>
+                    <span class="emp-status @detailStatusClass">@detail.Status</span>
+                    <p>@(detail.Shift ?? "Chưa phân ca") · Mã @detail.EmployeeCode</p>
+                </div>
 
-            <div class="emp-detail-tabs">
-                <button class="active" onclick="showEmpTab('info')">Thông tin</button>
-                <button onclick="showEmpTab('shift')">Lịch sử ca</button>
-            </div>
+                <div class="emp-detail-tabs">
+                    <button class="active" type="button" onclick="showEmpTab('info')">Thông tin</button>
+                    <button type="button" onclick="showEmpTab('shift')">Thống kê</button>
+                </div>
 
-            <div id="empInfoTab" class="emp-tab-content active">
-                <div class="emp-detail-stats">
-                    <div>
-                        <i class="fa-solid fa-ticket"></i>
-                        <strong>1,256</strong>
-                        <span>Tổng vé</span>
+                <div id="empInfoTab" class="emp-tab-content active">
+                    <div class="emp-detail-stats">
+                        <div>
+                            <i class="fa-solid fa-ticket"></i>
+                            <strong>@detail.TotalTicketsProcessed.ToString("N0")</strong>
+                            <span>Tổng vé</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <strong>@detail.TicketsProcessedToday.ToString("N0")</strong>
+                            <span>Hôm nay</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-calendar"></i>
+                            <strong>@detail.TicketsProcessedThisMonth.ToString("N0")</strong>
+                            <span>Tháng này</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-clock"></i>
+                            <strong>@detail.WorkDaysCount.ToString("N0")</strong>
+                            <span>Ngày làm</span>
+                        </div>
                     </div>
-                    <div>
-                        <i class="fa-solid fa-circle-check"></i>
-                        <strong>1,198</strong>
-                        <span>Vé xử lý</span>
-                    </div>
-                    <div>
-                        <i class="fa-solid fa-calendar"></i>
-                        <strong>45</strong>
-                        <span>Tổng ca</span>
-                    </div>
-                    <div>
-                        <i class="fa-solid fa-clock"></i>
-                        <strong>356h</strong>
-                        <span>Giờ làm</span>
+
+                    <div class="emp-info-list">
+                        <div><span>Mã nhân viên</span><strong>@detail.EmployeeCode</strong></div>
+                        <div><span>ID hệ thống</span><strong>@detail.EmployeeId</strong></div>
+                        <div><span>SĐT</span><strong>@detail.PhoneNumber</strong></div>
+                        <div><span>Email</span><strong>@detail.Email</strong></div>
+                        <div><span>Ca làm</span><strong>@(detail.Shift ?? "Chưa phân ca")</strong></div>
+                        <div><span>Ngày tạo</span><strong>@detail.CreatedAt.ToString("dd/MM/yyyy")</strong></div>
                     </div>
                 </div>
 
-                <div class="emp-info-list">
-                    <div><span>Mã nhân viên</span><strong>NV0001</strong></div>
-                    <div><span>Ngày sinh</span><strong>15/06/1992</strong></div>
-                    <div><span>Giới tính</span><strong>Nam</strong></div>
-                    <div><span>SĐT</span><strong>0901 234 567</strong></div>
-                    <div><span>Email</span><strong>nguyenvanan@gmail.com</strong></div>
-                    <div><span>Địa chỉ</span><strong>123 Đường ABC, Quận 1</strong></div>
-                    <div><span>Ngày vào làm</span><strong>01/03/2023</strong></div>
-                </div>
-            </div>
-
-            <div id="empShiftTab" class="emp-tab-content">
-                <div class="emp-shift-list">
-                    <div>
-                        <strong>01/05/2024</strong>
-                        <span>Ca sáng · 08:00 - 12:00</span>
-                        <em>Hoàn thành</em>
-                    </div>
-                    <div>
-                        <strong>02/05/2024</strong>
-                        <span>Ca chiều · 13:00 - 17:00</span>
-                        <em>Hoàn thành</em>
-                    </div>
-                    <div>
-                        <strong>03/05/2024</strong>
-                        <span>Ca tối · 18:00 - 22:00</span>
-                        <em>Hoàn thành</em>
+                <div id="empShiftTab" class="emp-tab-content">
+                    <div class="emp-shift-list">
+                        <div>
+                            <strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong>
+                            <span>@(detail.Shift ?? "Chưa phân ca")</span>
+                            <em>@detail.Status</em>
+                        </div>
+                        <div>
+                            <strong>Ngày đầu làm việc</strong>
+                            <span>@(detail.FirstWorkDay?.ToString("dd/MM/yyyy") ?? "-")</span>
+                            <em>@detail.WorkDaysCount.ToString("N0") ngày có dữ liệu vé</em>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="emp-detail-actions">
-                <button class="emp-btn-primary">Cập nhật thông tin</button>
-                <button class="emp-btn-danger">Vô hiệu hóa tài khoản</button>
-                <button class="emp-btn-outline">Đổi mật khẩu</button>
-            </div>
+                <div class="emp-detail-actions">
+                    <button class="emp-btn-primary js-emp-edit"
+                            type="button"
+                            data-employee-id="@detail.EmployeeId"
+                            data-employee-code="@detail.EmployeeCode"
+                            data-employee-name="@detail.FullName"
+                            data-employee-phone="@detail.PhoneNumber"
+                            data-employee-shift="@detail.Shift"
+                            data-employee-status="@detail.Status">
+                        Cập nhật thông tin
+                    </button>
+                    <button class="emp-btn-danger js-emp-status"
+                            type="button"
+                            data-employee-id="@detail.EmployeeId"
+                            data-employee-code="@detail.EmployeeCode"
+                            data-employee-name="@detail.FullName"
+                            data-target-status="@detailTargetStatus"
+                            data-action-text="@detailActionText">
+                        @(detailStatusClass == "active" ? "Vô hiệu hóa tài khoản" : "Kích hoạt tài khoản")
+                    </button>
+                </div>
+            }
         </aside>
-
     </div>
 </div>
 
@@ -317,14 +425,13 @@
     <div class="emp-modal-box">
         <div class="emp-modal-header">
             <h3>Thêm nhân viên mới</h3>
-            <button onclick="closeCreateModal()">×</button>
+            <button type="button" onclick="closeCreateModal()">×</button>
         </div>
 
         <form method="post" asp-page-handler="CreateEmployee" class="emp-modal-form">
             <input asp-for="CreateEmployeeInput.FullName" placeholder="Họ và tên" />
             <input asp-for="CreateEmployeeInput.Email" placeholder="Email" />
             <input asp-for="CreateEmployeeInput.PhoneNumber" placeholder="Số điện thoại" />
-
             <input asp-for="CreateEmployeeInput.Password" type="password" placeholder="Mật khẩu cấp tài khoản" />
             <input asp-for="CreateEmployeeInput.ConfirmPassword" type="password" placeholder="Xác nhận mật khẩu" />
 
@@ -341,22 +448,103 @@
     </div>
 </div>
 
+<div id="editEmployeeModal" class="emp-modal">
+    <div class="emp-modal-box">
+        <div class="emp-modal-header">
+            <h3>Sửa nhân viên <span id="editEmployeeTitle"></span></h3>
+            <button type="button" onclick="closeEmployeeModal('editEmployeeModal')">×</button>
+        </div>
+
+        <form method="post" asp-page-handler="UpdateEmployee" class="emp-modal-form">
+            <input type="hidden" name="employeeId" id="editEmployeeId" />
+            <input type="hidden" asp-for="Keyword" />
+            <input type="hidden" asp-for="Status" />
+            <input type="hidden" asp-for="Shift" />
+            <input type="hidden" asp-for="PageNumber" />
+            <input type="hidden" asp-for="PageSize" />
+            <input type="hidden" asp-for="SelectedEmployeeId" />
+
+            <label>
+                <span>Họ tên</span>
+                <input name="fullName" id="editFullName" required maxlength="100" />
+            </label>
+
+            <label>
+                <span>Số điện thoại</span>
+                <input name="phoneNumber" id="editPhone" required maxlength="15" />
+            </label>
+
+            <label>
+                <span>Ca làm</span>
+                <select name="employeeShift" id="editShift">
+                    <option value="">Chưa phân ca</option>
+                    <option value="Sáng">Sáng</option>
+                    <option value="Chiều">Chiều</option>
+                    <option value="Tối">Tối</option>
+                </select>
+            </label>
+
+            <label>
+                <span>Trạng thái</span>
+                <select name="employeeStatus" id="editStatus" required>
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Vô hiệu hóa">Vô hiệu hóa</option>
+                </select>
+            </label>
+
+            <div class="emp-modal-actions">
+                <button type="button" class="emp-btn-outline" onclick="closeEmployeeModal('editEmployeeModal')">Hủy</button>
+                <button type="submit" class="emp-btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="employeeStatusModal" class="emp-modal">
+    <div class="emp-modal-box small">
+        <div class="emp-modal-header">
+            <h3 id="statusModalTitle">Cập nhật trạng thái</h3>
+            <button type="button" onclick="closeEmployeeModal('employeeStatusModal')">×</button>
+        </div>
+
+        <p class="emp-confirm-message" id="statusModalMessage"></p>
+
+        <form method="post" asp-page-handler="SetEmployeeStatus" class="emp-modal-form">
+            <input type="hidden" name="employeeId" id="statusEmployeeId" />
+            <input type="hidden" name="targetStatus" id="statusTargetStatus" />
+            <input type="hidden" asp-for="Keyword" />
+            <input type="hidden" asp-for="Status" />
+            <input type="hidden" asp-for="Shift" />
+            <input type="hidden" asp-for="PageNumber" />
+            <input type="hidden" asp-for="PageSize" />
+            <input type="hidden" asp-for="SelectedEmployeeId" />
+
+            <textarea name="reason" id="statusReason" rows="3" placeholder="Lý do (không bắt buộc)"></textarea>
+
+            <div class="emp-modal-actions">
+                <button type="button" class="emp-btn-outline" onclick="closeEmployeeModal('employeeStatusModal')">Hủy</button>
+                <button type="submit" class="emp-btn-danger" id="statusSubmitButton">Xác nhận</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         function showEmpTab(tab) {
-            document.getElementById("empInfoTab").classList.remove("active");
-            document.getElementById("empShiftTab").classList.remove("active");
+            document.getElementById("empInfoTab")?.classList.remove("active");
+            document.getElementById("empShiftTab")?.classList.remove("active");
 
             document.querySelectorAll(".emp-detail-tabs button").forEach(btn => {
                 btn.classList.remove("active");
             });
 
             if (tab === "info") {
-                document.getElementById("empInfoTab").classList.add("active");
-                document.querySelectorAll(".emp-detail-tabs button")[0].classList.add("active");
+                document.getElementById("empInfoTab")?.classList.add("active");
+                document.querySelectorAll(".emp-detail-tabs button")[0]?.classList.add("active");
             } else {
-                document.getElementById("empShiftTab").classList.add("active");
-                document.querySelectorAll(".emp-detail-tabs button")[1].classList.add("active");
+                document.getElementById("empShiftTab")?.classList.add("active");
+                document.querySelectorAll(".emp-detail-tabs button")[1]?.classList.add("active");
             }
         }
 
@@ -367,7 +555,58 @@
         function closeCreateModal() {
             document.getElementById("createEmployeeModal").classList.remove("show");
         }
+
+        function closeEmployeeModal(id) {
+            document.getElementById(id)?.classList.remove("show");
+        }
+
+        document.querySelectorAll(".js-emp-edit").forEach(button => {
+            button.addEventListener("click", () => {
+                const data = button.dataset;
+                document.getElementById("editEmployeeId").value = data.employeeId || "";
+                document.getElementById("editEmployeeTitle").textContent = data.employeeCode || "";
+                document.getElementById("editFullName").value = data.employeeName || "";
+                document.getElementById("editPhone").value = data.employeePhone || "";
+                document.getElementById("editShift").value = data.employeeShift || "";
+                document.getElementById("editStatus").value = data.employeeStatus || "Hoạt động";
+                document.getElementById("editEmployeeModal").classList.add("show");
+            });
+        });
+
+        document.querySelectorAll(".js-emp-status").forEach(button => {
+            button.addEventListener("click", () => {
+                const data = button.dataset;
+                const actionText = data.actionText || "cập nhật";
+                document.getElementById("statusEmployeeId").value = data.employeeId || "";
+                document.getElementById("statusTargetStatus").value = data.targetStatus || "";
+                document.getElementById("statusModalTitle").textContent = data.targetStatus || "Cập nhật trạng thái";
+                document.getElementById("statusModalMessage").innerHTML = `Bạn chắc chắn muốn ${actionText} nhân viên <strong>${data.employeeCode || ""} - ${data.employeeName || ""}</strong>?`;
+                document.getElementById("statusSubmitButton").textContent = data.targetStatus || "Xác nhận";
+                document.getElementById("employeeStatusModal").classList.add("show");
+            });
+        });
+
+        const rowChecks = Array.from(document.querySelectorAll(".emp-row-check"));
+        const headerChecks = [document.getElementById("empSelectAll"), document.getElementById("empSelectAllTable")].filter(Boolean);
+        const selectedCount = document.getElementById("selectedEmployeeCount");
+
+        function updateSelectedCount() {
+            const count = rowChecks.filter(check => check.checked).length;
+            selectedCount.textContent = count > 0 ? `Đã chọn ${count} nhân viên` : "Chưa chọn nhân viên";
+            headerChecks.forEach(check => {
+                check.checked = rowChecks.length > 0 && count === rowChecks.length;
+                check.indeterminate = count > 0 && count < rowChecks.length;
+            });
+        }
+
+        headerChecks.forEach(check => {
+            check.addEventListener("change", () => {
+                rowChecks.forEach(rowCheck => rowCheck.checked = check.checked);
+                updateSelectedCount();
+            });
+        });
+
+        rowChecks.forEach(check => check.addEventListener("change", updateSelectedCount));
+        updateSelectedCount();
     </script>
 }
-
-

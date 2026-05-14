@@ -3,6 +3,8 @@
 
 @{
     ViewData["Title"] = "Báo cáo doanh thu";
+    ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
+    ViewData["Role"] = "Quản trị hệ thống";
 }
 
 @section Styles {

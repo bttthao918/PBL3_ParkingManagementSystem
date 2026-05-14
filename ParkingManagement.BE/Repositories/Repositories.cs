@@ -259,6 +259,20 @@ namespace ParkingManagement.DAL.Implementations
             _db.Tickets.Update(ticket);
             await _db.SaveChangesAsync();
         }
+
+        public async Task DeleteAsync(string id)
+        {
+            var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.TicketId == id);
+            if (ticket == null)
+                return;
+
+            var payments = await _db.Payments.Where(p => p.TicketId == id).ToListAsync();
+            if (payments.Any())
+                _db.Payments.RemoveRange(payments);
+
+            _db.Tickets.Remove(ticket);
+            await _db.SaveChangesAsync();
+        }
     }
 
     // ── MonthlyTicketRepository ──────────────────────────────
@@ -323,7 +337,10 @@ namespace ParkingManagement.DAL.Implementations
                             .ToListAsync();
 
         public Task<List<Reservation>> GetAllAsync() =>
-            _db.Reservations.ToListAsync();
+            _db.Reservations.Include(r => r.Customer)
+                            .Include(r => r.Vehicle)
+                            .Include(r => r.ParkingSlot)
+                            .ToListAsync();
 
         public Task<Reservation?> GetActiveByPlateAsync(string plate) =>
             _db.Reservations.FirstOrDefaultAsync(r => r.VehiclePlate == plate && r.Status == "Chờ");

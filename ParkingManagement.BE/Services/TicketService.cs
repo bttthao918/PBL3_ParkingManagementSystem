@@ -57,16 +57,30 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (!string.IsNullOrEmpty(filter.VehicleType))
                 filtered = filtered.Where(t => t.VehicleType == filter.VehicleType);
 
+            if (!string.IsNullOrEmpty(filter.AreaFilter))
+                filtered = filtered.Where(t => !string.IsNullOrEmpty(t.SlotId) &&
+                                               t.SlotId.StartsWith(filter.AreaFilter, StringComparison.OrdinalIgnoreCase));
+
             if (filter.FromDate.HasValue)
                 filtered = filtered.Where(t => t.CheckInTime.Date >= filter.FromDate.Value.Date);
 
             if (filter.ToDate.HasValue)
                 filtered = filtered.Where(t => t.CheckInTime.Date <= filter.ToDate.Value.Date);
 
+            Dictionary<string, Customer>? customerLookup = null;
             if (!string.IsNullOrEmpty(filter.SearchKeyword))
+            {
+                var customers = await _customerRepository.GetAllAsync();
+                customerLookup = customers.ToDictionary(c => c.CustomerId, c => c);
+                var keyword = filter.SearchKeyword.Trim();
                 filtered = filtered.Where(t =>
-                    t.VehiclePlate.Contains(filter.SearchKeyword, StringComparison.OrdinalIgnoreCase) ||
-                    t.TicketId.Contains(filter.SearchKeyword, StringComparison.OrdinalIgnoreCase));
+                    t.VehiclePlate.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                    t.TicketId.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                    (t.CustomerId != null &&
+                     customerLookup.TryGetValue(t.CustomerId, out var customer) &&
+                     (customer.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                      (customer.PhoneNumber?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false))));
+            }
 
             var sorted = filtered.OrderByDescending(t => t.CheckInTime).ToList();
 
@@ -80,9 +94,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var ticketListDtos = new List<TicketListDto>();
             foreach (var ticket in items)
             {
-                var customerName = ticket.CustomerId != null
-                    ? (await _customerRepository.GetByIdAsync(ticket.CustomerId))?.FullName
-                    : null;
+                var customerName = await ResolveCustomerNameAsync(ticket.CustomerId, customerLookup);
 
                 ticketListDtos.Add(new TicketListDto
                 {
@@ -106,6 +118,17 @@ namespace ParkingManagement.BLL.Services.Implementations
                 TotalItems = totalItems,
                 TotalPages = totalPages
             };
+        }
+
+        private async Task<string?> ResolveCustomerNameAsync(string? customerId, Dictionary<string, Customer>? customerLookup = null)
+        {
+            if (string.IsNullOrEmpty(customerId))
+                return null;
+
+            if (customerLookup != null && customerLookup.TryGetValue(customerId, out var cachedCustomer))
+                return cachedCustomer.FullName;
+
+            return (await _customerRepository.GetByIdAsync(customerId))?.FullName;
         }
 
         public async Task<TicketSummaryDto> GetTicketSummaryAsync()
@@ -176,32 +199,106 @@ namespace ParkingManagement.BLL.Services.Implementations
             };
         }
 
+        public async Task<TicketDetailDto> UpdateTicketAsync(string ticketId, UpdateTicketDto input)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            if (ticket == null)
+                throw new KeyNotFoundException($"Không tìm thấy vé: {ticketId}");
+
+            var vehiclePlate = input.VehiclePlate.Trim().ToUpperInvariant();
+            if (string.IsNullOrWhiteSpace(vehiclePlate))
+                throw new ArgumentException("Biển số xe không được để trống.");
+
+            if (input.Status != "Đang trong bãi" && input.Status != "Đã ra")
+                throw new ArgumentException("Trạng thái vé không hợp lệ.");
+
+            var vehicle = await _vehicleRepo.GetByPlateAsync(vehiclePlate);
+            if (vehicle == null)
+            {
+                vehicle = new Vehicle
+                {
+                    VehiclePlate = vehiclePlate,
+                    VehicleType = input.VehicleType,
+                    CustomerId = ticket.CustomerId
+                };
+                await _vehicleRepo.AddAsync(vehicle);
+            }
+            else if (vehicle.VehicleType != input.VehicleType)
+            {
+                vehicle.VehicleType = input.VehicleType;
+                await _vehicleRepo.UpdateAsync(vehicle);
+            }
+
+            var previousSlotId = ticket.SlotId;
+            var previousStatus = ticket.Status;
+            var newSlotId = string.IsNullOrWhiteSpace(input.SlotId) ? null : input.SlotId.Trim();
+
+            if (!string.IsNullOrEmpty(newSlotId) && await _slotRepo.GetByIdAsync(newSlotId) == null)
+                throw new ArgumentException("Vị trí đỗ không tồn tại.");
+
+            ticket.VehiclePlate = vehiclePlate;
+            ticket.VehicleType = input.VehicleType;
+            ticket.CheckInTime = input.CheckInTime;
+            ticket.Status = input.Status;
+            ticket.Fee = input.Fee < 0 ? 0 : input.Fee;
+            ticket.SlotId = newSlotId;
+            ticket.CheckOutTime = input.Status == "Đang trong bãi"
+                ? null
+                : input.CheckOutTime ?? ticket.CheckOutTime ?? DateTime.Now;
+
+            await _ticketRepository.UpdateAsync(ticket);
+
+            if (!string.IsNullOrEmpty(previousSlotId) &&
+                (previousSlotId != ticket.SlotId || previousStatus != ticket.Status) &&
+                (ticket.Status == "Đã ra" || previousSlotId != ticket.SlotId))
+            {
+                await _slotRepo.UpdateStatusAsync(previousSlotId, "Trống");
+            }
+
+            if (ticket.Status == "Đang trong bãi" && !string.IsNullOrEmpty(ticket.SlotId))
+            {
+                await _slotRepo.UpdateStatusAsync(ticket.SlotId, "Đang sử dụng");
+            }
+
+            return await GetTicketDetailAsync(ticketId);
+        }
+
+        public async Task<bool> DeleteTicketAsync(string ticketId)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            if (ticket == null)
+                return false;
+
+            if (ticket.Status == "Đang trong bãi" && !string.IsNullOrEmpty(ticket.SlotId))
+            {
+                await _slotRepo.UpdateStatusAsync(ticket.SlotId, "Trống");
+            }
+
+            await _ticketRepository.DeleteAsync(ticketId);
+            return true;
+        }
+
         public async Task<ListEmployeeTicketDto> SearchTicketsAsync(EmployeeTicketSearchDto search)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(search.SearchKeyword))
-                    return new ListEmployeeTicketDto
-                    {
-                        Items = new(),
-                        PageNumber = search.PageNumber,
-                        PageSize = search.PageSize,
-                        TotalItems = 0,
-                        TotalPages = 0
-                    };
-
                 var allTickets = await _ticketRepository.GetAllAsync();
-                var keyword = search.SearchKeyword.Trim();
-                var searched = allTickets
-                    .Where(t =>
-                        t.VehiclePlate.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                        t.TicketId.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    .OrderByDescending(t => t.CheckInTime)
-                    .ToList();
+                var searched = allTickets.AsEnumerable();
 
-                var totalItems = searched.Count;
+                // Nếu có keyword thì filter, không thì lấy tất cả
+                if (!string.IsNullOrWhiteSpace(search.SearchKeyword))
+                {
+                    var keyword = search.SearchKeyword.Trim();
+                    searched = searched.Where(t =>
+                        t.VehiclePlate.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                        t.TicketId.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                }
+
+                var sorted = searched.OrderByDescending(t => t.CheckInTime).ToList();
+
+                var totalItems = sorted.Count;
                 var totalPages = totalItems == 0 ? 0 : (int)Math.Ceiling(totalItems / (double)search.PageSize);
-                var items = searched
+                var items = sorted
                     .Skip((search.PageNumber - 1) * search.PageSize)
                     .Take(search.PageSize)
                     .ToList();
@@ -606,7 +703,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             decimal calculatedFee = 0;
             if (!isFreeTicket)
-                calculatedFee = CalculateFee(durationMinutes);
+                calculatedFee = CalculateFee(durationMinutes, ticket.VehicleType);
 
             string? customerName = null;
             if (ticket.CustomerId != null)
@@ -644,9 +741,20 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (ticket.CheckOutTime != null)
                 return new CheckOutResultDto { Success = false, Message = "Vé này đã được check-out rồi." };
 
+            var validation = await ValidateAndPrepareCheckOutAsync(new CheckOutInputDto
+            {
+                VehiclePlateOrTicketId = input.TicketId,
+                PaymentMethod = input.PaymentMethod
+            });
+
+            if (!validation.Success)
+                return new CheckOutResultDto { Success = false, Message = validation.Message };
+
+            var finalFee = input.Fee > 0 ? input.Fee : validation.CalculatedFee;
+
             var currentTime = DateTime.Now;
             ticket.CheckOutTime = currentTime;
-            ticket.Fee = input.Fee;
+            ticket.Fee = finalFee;
             ticket.Status = "Đã ra";
             await _ticketRepository.UpdateAsync(ticket);
 
@@ -654,13 +762,13 @@ namespace ParkingManagement.BLL.Services.Implementations
                 await _slotRepo.UpdateStatusAsync(ticket.SlotId, "Trống");
 
             string? paymentId = null;
-            if (input.Fee > 0)
+            if (finalFee > 0)
             {
                 var payment = new Payment
                 {
                     PaymentId = await _paymentRepo.GenerateIdAsync(),
                     TicketId = ticket.TicketId,
-                    Amount = input.Fee,
+                    Amount = finalFee,
                     PaymentTime = currentTime,
                     Status = "Hoàn tất"
                 };
@@ -679,28 +787,47 @@ namespace ParkingManagement.BLL.Services.Implementations
                 CheckInTime = ticket.CheckInTime,
                 CheckOutTime = currentTime,
                 DurationMinutes = durationMinutes,
-                Fee = input.Fee,
-                IsFree = input.Fee == 0,
+                Fee = finalFee,
+                IsFree = finalFee == 0,
                 PaymentId = paymentId
             };
         }
 
-        private decimal CalculateFee(int durationMinutes)
+        /// <summary>
+        /// Tính phí gửi xe:
+        /// - Giờ đầu: Xe máy 5k, Ô tô nhỏ 15k, Ô tô lớn 25k
+        /// - Từ giờ thứ 2: Xe máy 2k/h, Ô tô nhỏ 5k/h, Ô tô lớn 8k/h
+        /// - Qua đêm (22:00-06:00): Xe máy 10k, Ô tô nhỏ 40k, Ô tô lớn 60k
+        /// </summary>
+        private decimal CalculateFee(int durationMinutes, string vehicleType)
         {
-            int chargeMinutes = durationMinutes < MIN_CHARGE_MINUTES ? MIN_CHARGE_MINUTES : durationMinutes;
+            if (durationMinutes < MIN_CHARGE_MINUTES)
+                durationMinutes = MIN_CHARGE_MINUTES;
 
-            if (durationMinutes >= 1440)
+            var hours = Math.Ceiling(durationMinutes / 60.0);
+
+            decimal firstHourFee, perHourFee;
+            switch (vehicleType)
             {
-                int days = durationMinutes / 1440;
-                int remainingMinutes = durationMinutes % 1440;
-                decimal fee = days * DAILY_RATE;
-                if (remainingMinutes > 0)
-                    fee += ((decimal)remainingMinutes / 60) * HOURLY_RATE;
-                return fee;
+                case "Ô tô nhỏ":
+                    firstHourFee = 15_000;
+                    perHourFee = 5_000;
+                    break;
+                case "Ô tô lớn":
+                    firstHourFee = 25_000;
+                    perHourFee = 8_000;
+                    break;
+                default: // Xe máy
+                    firstHourFee = 5_000;
+                    perHourFee = 2_000;
+                    break;
             }
 
-            decimal hours = (decimal)chargeMinutes / 60;
-            return hours * HOURLY_RATE;
+            if (hours <= 1)
+                return firstHourFee;
+
+            var additionalHours = (int)hours - 1;
+            return firstHourFee + (additionalHours * perHourFee);
         }
 
         private string BuildCheckOutMessage(string ticketType, int durationMinutes, decimal fee, bool isFree)

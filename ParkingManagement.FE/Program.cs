@@ -13,48 +13,59 @@ var backendBaseUrl = builder.Configuration["BackendApi:BaseUrl"]
 // Đăng ký Handler đính kèm JWT Token
 builder.Services.AddTransient<AuthDelegatingHandler>();
 
-builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+void ConfigureHttpClient(HttpClient client)
 {
     client.BaseAddress = new Uri(backendBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
-}).AddHttpMessageHandler<AuthDelegatingHandler>();
+}
 
-
-builder.Services.AddHttpClient<ITicketService, TicketService>(client =>
+// Handler that trusts dev certs and doesn't lose auth headers on redirect
+HttpClientHandler CreateHandler() => new HttpClientHandler
 {
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
+    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+};
 
-builder.Services.AddHttpClient<IReportService, ReportService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
+builder.Services.AddHttpClient<IAuthService, AuthService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<ITicketService, TicketService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IReportService, ReportService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<ICustomerApiService, CustomerApiService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IParkingSlotService, ParkingSlotService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IEmployeeService, EmployeeService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IMonthlyTicketService, MonthlyTicketService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IReservationService, ReservationService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IPaymentService, PaymentService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IEmployeeMonthlyTicketService, EmployeeMonthlyTicketService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IParkingOperationService, ParkingOperationService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IWorkLogService, WorkLogService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
-builder.Services.AddHttpClient<ICustomerApiService, CustomerApiService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-builder.Services.AddHttpClient<IParkingSlotService, ParkingSlotService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-builder.Services.AddHttpClient<IEmployeeService, EmployeeService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
+builder.Services.AddHttpClient<IAccountProfileService, AccountProfileService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 // ── Cookie Authentication ──────────────────────────
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
