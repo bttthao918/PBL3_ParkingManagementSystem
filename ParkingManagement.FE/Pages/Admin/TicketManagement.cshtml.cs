@@ -10,10 +10,15 @@ namespace ParkingManagement.FE.Pages.Admin
     public class TicketManagementModel : PageModel
     {
         private readonly ITicketService _ticketService;
+        private readonly IPricingService _pricingService;
+        private const string MotorcycleType = "Xe máy";
+        private const string SmallCarType = "Ô tô nhỏ";
+        private const string LargeCarType = "Ô tô lớn";
 
-        public TicketManagementModel(ITicketService ticketService)
+        public TicketManagementModel(ITicketService ticketService, IPricingService pricingService)
         {
             _ticketService = ticketService;
+            _pricingService = pricingService;
         }
 
         public List<TicketViewModel> Tickets { get; set; } = new();
@@ -26,6 +31,10 @@ namespace ParkingManagement.FE.Pages.Admin
         public int ShowingFrom { get; set; }
         public int ShowingTo { get; set; }
         public string? LoadErrorMessage { get; set; }
+        public PricingDto Pricing { get; set; } = new();
+
+        [BindProperty]
+        public PricingInputModel PricingInput { get; set; } = new();
 
         [TempData]
         public string? ActionMessage { get; set; }
@@ -65,6 +74,8 @@ namespace ParkingManagement.FE.Pages.Admin
         {
             PageNumber = PageNumber < 1 ? 1 : PageNumber;
             PageSize = PageSize <= 0 ? 10 : Math.Min(PageSize, 100);
+
+            await LoadPricingAsync();
 
             var searchDto = new EmployeeTicketSearchDto
             {
@@ -142,6 +153,53 @@ namespace ParkingManagement.FE.Pages.Admin
             }
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostUpdatePricingAsync()
+        {
+            try
+            {
+                if (PricingInput.MotorcycleHourlyRate <= 0 ||
+                    PricingInput.MotorcycleMaxDailyFee <= 0 ||
+                    PricingInput.SmallCarHourlyRate <= 0 ||
+                    PricingInput.SmallCarMaxDailyFee <= 0 ||
+                    PricingInput.LargeCarHourlyRate <= 0 ||
+                    PricingInput.LargeCarMaxDailyFee <= 0)
+                {
+                    ActionSuccess = false;
+                    ActionMessage = "Giá vé phải lớn hơn 0.";
+                    return RedirectToPage(BuildRouteValues());
+                }
+
+                var input = new UpdatePricingDto
+                {
+                    HourlyRate = new Dictionary<string, decimal>
+                    {
+                        [MotorcycleType] = PricingInput.MotorcycleHourlyRate,
+                        [SmallCarType] = PricingInput.SmallCarHourlyRate,
+                        [LargeCarType] = PricingInput.LargeCarHourlyRate
+                    },
+                    MaxDailyFee = new Dictionary<string, decimal>
+                    {
+                        [MotorcycleType] = PricingInput.MotorcycleMaxDailyFee,
+                        [SmallCarType] = PricingInput.SmallCarMaxDailyFee,
+                        [LargeCarType] = PricingInput.LargeCarMaxDailyFee
+                    }
+                };
+
+                var result = await _pricingService.UpdatePricingAsync(input);
+                ActionSuccess = result?.Success == true;
+                ActionMessage = ActionSuccess
+                    ? "Đã cập nhật bảng giá vé."
+                    : result?.Message ?? "Không thể cập nhật bảng giá vé.";
+            }
+            catch (Exception ex)
+            {
+                ActionSuccess = false;
+                ActionMessage = BuildLoadErrorMessage(ex);
+            }
+
+            return RedirectToPage(BuildRouteValues());
         }
 
         public async Task<IActionResult> OnPostCreateTicketAsync(
@@ -238,6 +296,61 @@ namespace ParkingManagement.FE.Pages.Admin
             }
 
             return RedirectToPage(BuildRouteValues());
+        }
+
+        private async Task LoadPricingAsync()
+        {
+            try
+            {
+                Pricing = await _pricingService.GetCurrentPricingAsync() ?? CreateDefaultPricing();
+            }
+            catch (Exception ex)
+            {
+                LoadErrorMessage ??= BuildLoadErrorMessage(ex);
+                Pricing = CreateDefaultPricing();
+            }
+
+            PricingInput = new PricingInputModel
+            {
+                MotorcycleHourlyRate = GetPricingValue(Pricing.HourlyRate, MotorcycleType, 3000m),
+                MotorcycleMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, MotorcycleType, 30000m),
+                SmallCarHourlyRate = GetPricingValue(Pricing.HourlyRate, SmallCarType, 5000m),
+                SmallCarMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, SmallCarType, 50000m),
+                LargeCarHourlyRate = GetPricingValue(Pricing.HourlyRate, LargeCarType, 8000m),
+                LargeCarMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, LargeCarType, 80000m)
+            };
+        }
+
+        private static decimal GetPricingValue(Dictionary<string, decimal> pricing, string vehicleType, decimal fallback)
+        {
+            if (pricing.TryGetValue(vehicleType, out var value) && value > 0)
+                return value;
+
+            var matchedValue = pricing
+                .FirstOrDefault(item => string.Equals(item.Key, vehicleType, StringComparison.OrdinalIgnoreCase))
+                .Value;
+
+            return matchedValue > 0 ? matchedValue : fallback;
+        }
+
+        private static PricingDto CreateDefaultPricing()
+        {
+            return new PricingDto
+            {
+                HourlyRate = new Dictionary<string, decimal>
+                {
+                    [MotorcycleType] = 3000m,
+                    [SmallCarType] = 5000m,
+                    [LargeCarType] = 8000m
+                },
+                MaxDailyFee = new Dictionary<string, decimal>
+                {
+                    [MotorcycleType] = 30000m,
+                    [SmallCarType] = 50000m,
+                    [LargeCarType] = 80000m
+                },
+                LastUpdatedAt = DateTime.UtcNow
+            };
         }
 
         private object BuildRouteValues()

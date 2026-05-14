@@ -113,14 +113,43 @@ var app = builder.Build();
 // ✅ Auto migrate + seed — dùng AppDbContext
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
     try
     {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         db.Database.Migrate();
     }
     catch (Exception ex)
     {
         Console.WriteLine($"Database migration was skipped. Check the SQL Server connection before using data endpoints. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
+            IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NULL
+            BEGIN
+                CREATE TABLE [dbo].[WorkLogs] (
+                    [WorkLogId] nvarchar(20) NOT NULL,
+                    [EmployeeId] nvarchar(20) NOT NULL,
+                    [WorkDate] datetime2 NOT NULL,
+                    [StartTime] datetime2 NOT NULL,
+                    [EndTime] datetime2 NULL,
+                    [TotalMinutes] int NULL,
+                    [Note] nvarchar(200) NULL,
+                    [Status] nvarchar(20) NOT NULL,
+                    CONSTRAINT [PK_WorkLogs] PRIMARY KEY ([WorkLogId]),
+                    CONSTRAINT [FK_WorkLogs_Employees_EmployeeId]
+                        FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId]) ON DELETE CASCADE
+                );
+
+                CREATE INDEX [IX_WorkLogs_EmployeeId] ON [dbo].[WorkLogs] ([EmployeeId]);
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"WorkLogs schema repair was skipped. {ex.Message}");
     }
 }
 

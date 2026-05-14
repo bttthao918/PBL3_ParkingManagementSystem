@@ -30,10 +30,125 @@
             <p>Quản lý danh sách vé lượt, tìm kiếm vé và theo dõi số liệu từ database</p>
         </div>
 
-        <button class="ticket-btn-primary js-ticket-create" type="button">
-            <i class="fa-solid fa-plus"></i>
-            Thêm vé mới
-        </button>
+        <div class="ticket-header-actions">
+            <button class="ticket-btn-outline js-pricing-toggle" type="button">
+                <i class="fa-solid fa-tags"></i>
+                Xem bảng giá
+            </button>
+
+            <button class="ticket-btn-primary js-ticket-create" type="button">
+                <i class="fa-solid fa-plus"></i>
+                Thêm vé mới
+            </button>
+        </div>
+    </div>
+
+    <div id="adminPricingPanel" class="card ticket-pricing-card">
+        <div class="ticket-pricing-heading">
+            <div>
+                <h3>Bảng giá vé</h3>
+                <p>Áp dụng cho vé lượt khi nhân viên check-out xe.</p>
+            </div>
+
+            <button class="ticket-pricing-close js-pricing-toggle" type="button" title="Đóng bảng giá">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form method="post" asp-page-handler="UpdatePricing" class="ticket-pricing-form">
+            <input type="hidden" asp-for="Keyword" />
+            <input type="hidden" asp-for="Status" />
+            <input type="hidden" asp-for="Type" />
+            <input type="hidden" name="FromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+            <input type="hidden" name="ToDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+            <input type="hidden" asp-for="PageNumber" />
+            <input type="hidden" asp-for="PageSize" />
+
+            <div class="ticket-pricing-grid">
+                <div class="ticket-price-editor">
+                    <div class="ticket-price-editor-head">
+                        <span class="ticket-price-icon motorcycle"><i class="fa-solid fa-motorcycle"></i></span>
+                        <div>
+                            <span>Xe máy</span>
+                            <strong>@Model.PricingInput.MotorcycleHourlyRate.ToString("N0") đ <small>/ giờ</small></strong>
+                        </div>
+                    </div>
+
+                    <label>
+                        <span>Theo giờ</span>
+                        <input asp-for="PricingInput.MotorcycleHourlyRate" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>Tối đa / ngày</span>
+                        <input asp-for="PricingInput.MotorcycleMaxDailyFee" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <div class="ticket-price-minimum">
+                        <span>Tối thiểu</span>
+                        <strong>15 phút</strong>
+                    </div>
+                </div>
+
+                <div class="ticket-price-editor">
+                    <div class="ticket-price-editor-head">
+                        <span class="ticket-price-icon small-car"><i class="fa-solid fa-car"></i></span>
+                        <div>
+                            <span>Ô tô nhỏ</span>
+                            <strong>@Model.PricingInput.SmallCarHourlyRate.ToString("N0") đ <small>/ giờ</small></strong>
+                        </div>
+                    </div>
+
+                    <label>
+                        <span>Theo giờ</span>
+                        <input asp-for="PricingInput.SmallCarHourlyRate" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>Tối đa / ngày</span>
+                        <input asp-for="PricingInput.SmallCarMaxDailyFee" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <div class="ticket-price-minimum">
+                        <span>Tối thiểu</span>
+                        <strong>15 phút</strong>
+                    </div>
+                </div>
+
+                <div class="ticket-price-editor">
+                    <div class="ticket-price-editor-head">
+                        <span class="ticket-price-icon large-car"><i class="fa-solid fa-truck"></i></span>
+                        <div>
+                            <span>Ô tô lớn</span>
+                            <strong>@Model.PricingInput.LargeCarHourlyRate.ToString("N0") đ <small>/ giờ</small></strong>
+                        </div>
+                    </div>
+
+                    <label>
+                        <span>Theo giờ</span>
+                        <input asp-for="PricingInput.LargeCarHourlyRate" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>Tối đa / ngày</span>
+                        <input asp-for="PricingInput.LargeCarMaxDailyFee" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <div class="ticket-price-minimum">
+                        <span>Tối thiểu</span>
+                        <strong>15 phút</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-pricing-actions">
+                <span>Cập nhật gần nhất: @Model.Pricing.LastUpdatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                <button class="ticket-btn-primary" type="submit">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Lưu bảng giá
+                </button>
+            </div>
+        </form>
     </div>
 
     <div class="ticket-kpi-grid">
@@ -506,6 +621,7 @@
             const viewModal = document.getElementById("ticketViewModal");
             const editModal = document.getElementById("ticketEditModal");
             const deleteModal = document.getElementById("ticketDeleteModal");
+            const pricingPanel = document.getElementById("adminPricingPanel");
 
             const openModal = (modal) => {
                 if (modal) modal.hidden = false;
@@ -533,6 +649,12 @@
 
             document.querySelectorAll("[data-close-modal]").forEach((element) => {
                 element.addEventListener("click", closeModals);
+            });
+
+            document.querySelectorAll(".js-pricing-toggle").forEach((button) => {
+                button.addEventListener("click", () => {
+                    if (pricingPanel) pricingPanel.hidden = !pricingPanel.hidden;
+                });
             });
 
             document.addEventListener("keydown", (event) => {

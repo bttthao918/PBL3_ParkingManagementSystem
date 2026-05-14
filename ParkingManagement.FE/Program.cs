@@ -32,6 +32,8 @@ builder.Services.AddHttpClient<IAuthService, AuthService>(client => ConfigureHtt
 builder.Services.AddHttpClient<ITicketService, TicketService>(client => ConfigureHttpClient(client))
     .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IPricingService, PricingService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IReportService, ReportService>(client => ConfigureHttpClient(client))
     .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
