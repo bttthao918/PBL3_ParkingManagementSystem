@@ -36,6 +36,8 @@ namespace ParkingManagement.BLL.DTOs
     {
         public string? Status { get; set; }
         public string? VehiclePlate { get; set; }
+        public string? VehicleType { get; set; }
+        public string? SearchKeyword { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public int PageNumber { get; set; } = 1;
@@ -76,6 +78,7 @@ namespace ParkingManagement.BLL.DTOs
     {
         public string? Status { get; set; }           // "Đang trong bãi", "Đã ra", "Chờ thanh toán"
         public string? VehicleType { get; set; }      // "Xe máy", "Ô tô nhỏ", "Ô tô lớn"
+        public string? AreaFilter { get; set; }       // "A", "B", "C"
         public DateTime? FromDate { get; set; }       // Từ ngày
         public DateTime? ToDate { get; set; }         // Đến ngày
         public string? SearchKeyword { get; set; }    // Biển số hoặc TicketId

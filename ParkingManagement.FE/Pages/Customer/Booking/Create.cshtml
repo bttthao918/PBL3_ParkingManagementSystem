@@ -9,88 +9,90 @@
     <div class="booking-header">
         <div>
             <h1>Đặt chỗ mới</h1>
-            <p>Đặt chỗ tại bãi gửi xe tư nhân</p>
+            <p>Đặt chỗ tại bãi gửi xe</p>
         </div>
 
-        <a asp-page="/Customer/Bookings/Index" class="btn-back">
+        <a asp-page="/Customer/Booking/Index" class="btn-back">
             ← Quay lại
         </a>
     </div>
 
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
     <form method="post" id="bookingForm">
         <div class="create-layout">
             <div class="booking-panel">
-                <h3>1. Chọn bộ thông tin</h3>
+                <h3>1. Thông tin xe</h3>
 
-                <label>Chọn bộ thông tin</label>
-                <select id="profileSelect" class="booking-input">
-                    <option value="">-- Chọn bộ thông tin --</option>
+                @if (Model.Profile != null)
+                {
+                    <div class="auto-fill-box">
+                        <p>Thông tin khách hàng</p>
+                        <p><strong>Họ tên:</strong> @Model.Profile.FullName</p>
+                        <p><strong>Email:</strong> @Model.Profile.Email</p>
+                        <p><strong>SĐT:</strong> @Model.Profile.PhoneNumber</p>
+                    </div>
+                }
 
-                    @foreach (var profile in Model.Profiles)
-                    {
-                        <option value="@profile.Id"
-                                data-name="@profile.CustomerName"
-                                data-phone="@profile.Phone"
-                                data-plate="@profile.PlateNumber"
-                                data-type="@profile.VehicleType">
-                            @profile.Label
-                        </option>
-                    }
+                <label>Biển số xe <span class="required">*</span></label>
+                <input asp-for="Input.VehiclePlate" class="booking-input" placeholder="VD: 43A-123.45" />
+                <span asp-validation-for="Input.VehiclePlate" class="text-danger"></span>
+
+                <label>Loại xe <span class="required">*</span></label>
+                <select asp-for="Input.VehicleType" class="booking-input">
+                    <option value="Xe máy">Xe máy</option>
+                    <option value="Ô tô">Ô tô</option>
+                    <option value="Xe đạp">Xe đạp</option>
                 </select>
-
-                <div class="auto-fill-box">
-                    <p>Thông tin được điền tự động</p>
-
-                    <label>Họ và tên</label>
-                    <input asp-for="Input.CustomerName" id="customerName" class="booking-input" />
-
-                    <label>Số điện thoại</label>
-                    <input asp-for="Input.Phone" id="phone" class="booking-input" />
-
-                    <label>Biển số xe</label>
-                    <input asp-for="Input.PlateNumber" id="plateNumber" class="booking-input" />
-
-                    <label>Loại xe</label>
-                    <input asp-for="Input.VehicleType" id="vehicleType" class="booking-input" />
-                </div>
+                <span asp-validation-for="Input.VehicleType" class="text-danger"></span>
             </div>
 
             <div class="booking-panel">
                 <h3>2. Chọn thời gian</h3>
 
-                <label>Ngày giờ vào</label>
-                <input asp-for="Input.StartTime" type="datetime-local" class="booking-input" id="startTime" />
-
-                <label>Ngày giờ ra dự kiến</label>
-                <input asp-for="Input.EndTime" type="datetime-local" class="booking-input" id="endTime" />
-
-                <div class="price-box">
-                    <span>Tạm tính</span>
-                    <strong id="estimatedPrice">0 đ</strong>
-                </div>
+                <label>Thời gian dự kiến đến <span class="required">*</span></label>
+                <input asp-for="Input.ExpectedTime" type="datetime-local" class="booking-input" />
+                <span asp-validation-for="Input.ExpectedTime" class="text-danger"></span>
             </div>
 
             <div class="booking-panel slot-panel">
-                <h3>3. Chọn vị trí đỗ</h3>
+                <h3>3. Chọn vị trí đỗ (tùy chọn)</h3>
 
                 <div class="slot-legend">
                     <span><i class="dot available"></i> Còn trống</span>
-                    <span><i class="dot holding"></i> Đang giữ</span>
                     <span><i class="dot occupied"></i> Đã có xe</span>
                     <span><i class="dot selected"></i> Đang chọn</span>
                 </div>
 
-                <input asp-for="Input.ParkingSlot" type="hidden" id="selectedSlot" />
+                <input asp-for="Input.SlotId" type="hidden" id="selectedSlot" />
 
                 <div class="slot-map">
-                    @foreach (var slot in Model.Slots)
+                    @if (Model.AvailableSlots.Any())
                     {
-                        <button type="button"
-                                class="slot @slot.Status.ToLower()"
-                                data-slot="@slot.Code"
-                                disabled="@(slot.Status == "Occupied" || slot.Status == "Holding")">
-                            @slot.Code
-                        </button>
+                        @foreach (var slot in Model.AvailableSlots)
+                        {
+                            var statusClass = slot.Status.ToLower() == "available" ? "available" : "occupied";
+                            var isDisabled = slot.Status.ToLower() != "available";
+                            <button type="button"
+                                    class="slot @statusClass"
+                                    data-slot="@slot.SlotId"
+                                    data-location="@slot.Location"
+                                    @(isDisabled ? "disabled" : "")>
+                                @slot.Location
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Không có vị trí trống. Hệ thống sẽ tự động phân bổ khi bạn đến.</p>
                     }
                 </div>
             </div>
@@ -99,12 +101,10 @@
                 <h3>4. Xác nhận đặt chỗ</h3>
 
                 <div class="summary-box">
-                    <p>Họ tên: <b id="sumName">---</b></p>
-                    <p>Số điện thoại: <b id="sumPhone">---</b></p>
                     <p>Biển số: <b id="sumPlate">---</b></p>
-                    <p>Loại xe: <b id="sumType">---</b></p>
-                    <p>Vị trí đỗ: <b id="sumSlot">---</b></p>
-                    <p>Thành tiền: <b id="sumPrice">0 đ</b></p>
+                    <p>Loại xe: <b id="sumType">Xe máy</b></p>
+                    <p>Thời gian đến: <b id="sumTime">---</b></p>
+                    <p>Vị trí đỗ: <b id="sumSlot">Tự động phân bổ</b></p>
                 </div>
 
                 <label class="agree-box">
@@ -122,5 +122,54 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="/js/bookings.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle slot selection
+            const slots = document.querySelectorAll('.slot.available');
+            const selectedSlotInput = document.getElementById('selectedSlot');
+            const sumSlot = document.getElementById('sumSlot');
+
+            slots.forEach(slot => {
+                slot.addEventListener('click', function() {
+                    // Remove selected class from all slots
+                    slots.forEach(s => s.classList.remove('selected'));
+                    
+                    // Add selected class to clicked slot
+                    this.classList.add('selected');
+                    
+                    // Update hidden input and summary
+                    const slotId = this.getAttribute('data-slot');
+                    const location = this.getAttribute('data-location');
+                    selectedSlotInput.value = slotId;
+                    sumSlot.textContent = location;
+                });
+            });
+
+            // Update summary on input change
+            const plateInput = document.querySelector('[name="Input.VehiclePlate"]');
+            const typeSelect = document.querySelector('[name="Input.VehicleType"]');
+            const timeInput = document.querySelector('[name="Input.ExpectedTime"]');
+
+            if (plateInput) {
+                plateInput.addEventListener('input', function() {
+                    document.getElementById('sumPlate').textContent = this.value || '---';
+                });
+            }
+
+            if (typeSelect) {
+                typeSelect.addEventListener('change', function() {
+                    document.getElementById('sumType').textContent = this.value;
+                });
+            }
+
+            if (timeInput) {
+                timeInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const date = new Date(this.value);
+                        document.getElementById('sumTime').textContent = date.toLocaleString('vi-VN');
+                    }
+                });
+            }
+        });
+    </script>
 }

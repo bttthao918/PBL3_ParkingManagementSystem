@@ -4,6 +4,8 @@
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Quản lý chỗ đỗ";
+    ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
+    ViewData["Role"] = "Quản trị hệ thống";
 }
 
 @section Styles {

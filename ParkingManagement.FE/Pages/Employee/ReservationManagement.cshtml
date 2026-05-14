@@ -1,0 +1,428 @@
+@page
+@model ParkingManagement.FE.Pages.Employee.ReservationManagementModel
+
+@section Styles {
+    <link rel="stylesheet" href="/css/employee/reservation_manage.css" asp-append-version="true" />
+}
+
+<div class="reservation-page">
+    @if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+    {
+        <div class="alert-banner @(Model.ActionSuccess ? "success" : "error")">
+            <i class="fa-solid @(Model.ActionSuccess ? "fa-circle-check" : "fa-circle-xmark")"></i>
+            <span>@Model.ActionMessage</span>
+        </div>
+    }
+
+    <div class="reservation-toolbar">
+        <div>
+            <h1>Quản lý đặt chỗ</h1>
+            <p>Theo dõi đơn đặt chỗ, điều phối check-in và xử lý hủy đơn</p>
+        </div>
+
+        <a asp-page="./ParkingOperation" class="secondary-btn">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Mở check-in
+        </a>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-calendar-days"></i></div>
+            <div>
+                <span>Tổng đơn</span>
+                <h3>@Model.TotalReservations</h3>
+                <small>Tất cả đặt chỗ</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon gold"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div>
+                <span>Đang chờ</span>
+                <h3>@Model.WaitingReservations</h3>
+                <small>Cần theo dõi</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div>
+                <span>Đã nhận</span>
+                <h3>@Model.ReceivedReservations</h3>
+                <small>Đã check-in</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon orange"><i class="fa-solid fa-clock"></i></div>
+            <div>
+                <span>Hết hạn</span>
+                <h3>@Model.ExpiredReservations</h3>
+                <small>Quá giờ hẹn</small>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon red"><i class="fa-solid fa-ban"></i></div>
+            <div>
+                <span>Đã hủy</span>
+                <h3>@Model.CancelledReservations</h3>
+                <small>Khách hủy</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="reservation-layout @(Model.SelectedReservation != null ? "has-detail" : "full-width")">
+        <section class="reservation-table-card">
+            <form method="get" class="reservation-filter-form">
+                <div class="filter-top">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input asp-for="Search" placeholder="Tìm mã đơn, biển số, khách hàng, vị trí..." />
+                    </div>
+
+                    <button type="submit" class="secondary-btn">
+                        <i class="fa-solid fa-filter"></i>
+                        Bộ lọc
+                    </button>
+                </div>
+
+                <div class="filter-bottom">
+                    <select asp-for="StatusFilter">
+                        <option value="">Trạng thái: Tất cả</option>
+                        <option value="Chờ">Chờ</option>
+                        <option value="Đã nhận">Đã nhận</option>
+                        <option value="Hủy">Hủy</option>
+                        <option value="Hết hạn">Hết hạn</option>
+                    </select>
+
+                    <select asp-for="VehicleFilter">
+                        <option value="">Loại xe: Tất cả</option>
+                        <option value="Xe máy">Xe máy</option>
+                        <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                        <option value="Ô tô lớn">Ô tô lớn</option>
+                    </select>
+
+                    <input asp-for="ExpectedDate" type="date" class="date-input" />
+
+                    <a asp-page="./ReservationManagement" class="clear-filter">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Xóa lọc
+                    </a>
+                </div>
+            </form>
+
+            <div class="table-wrapper">
+                <table class="reservation-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Biển số</th>
+                            <th>Loại xe</th>
+                            <th>Chỗ đặt</th>
+                            <th>Giờ hẹn</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.Reservations.Any())
+                        {
+                            @foreach (var item in Model.Reservations)
+                            {
+                                <tr class="@(Model.SelectedReservation?.Id == item.Id ? "selected" : "")">
+                                    <td>
+                                        <strong>@item.ReservationId</strong>
+                                        <span>@item.CreatedAtText</span>
+                                    </td>
+
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="avatar">@item.AvatarLetter</div>
+                                            <div>
+                                                <strong>@item.CustomerName</strong>
+                                                <span>@item.CustomerId</span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td><strong>@item.VehiclePlate</strong></td>
+
+                                    <td>
+                                        <span class="vehicle-type">
+                                            <i class="fa-solid @(item.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                            @item.VehicleType
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="slot-pill">
+                                            <i class="fa-solid fa-square-parking"></i>
+                                            @item.SlotText
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <strong>@item.ExpectedTimeText</strong>
+                                        <span>@item.ExpectedDateText - @item.TimeLabel</span>
+                                    </td>
+
+                                    <td>
+                                        <span class="status-badge @item.StatusClass">
+                                            <i class="fa-solid fa-circle"></i>
+                                            @item.Status
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="table-actions">
+                                            <a asp-page="./ReservationManagement"
+                                               asp-route-selectedId="@item.Id"
+                                               asp-route-search="@Model.Search"
+                                               asp-route-statusFilter="@Model.StatusFilter"
+                                               asp-route-vehicleFilter="@Model.VehicleFilter"
+                                               asp-route-expectedDate="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))"
+                                               asp-route-pageNumber="@Model.PageNumber"
+                                               asp-route-pageSize="@Model.PageSize"
+                                               class="icon-btn"
+                                               title="Xem chi tiết">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+
+                                            @if (item.CanCheckIn || item.CanCancel)
+                                            {
+                                                <div class="action-dropdown">
+                                                    <button type="button" class="icon-btn" title="Thao tác khác">
+                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                    </button>
+
+                                                    <div class="dropdown-menu">
+                                                        @if (item.CanCheckIn)
+                                                        {
+                                                            <form method="post" asp-page="./ParkingOperation" asp-page-handler="ValidateCheckIn">
+                                                                <input type="hidden" name="vehiclePlate" value="@item.VehiclePlate" />
+                                                                <input type="hidden" name="vehicleType" value="@item.VehicleType" />
+                                                                <button type="submit">
+                                                                    <i class="fa-solid fa-right-to-bracket"></i>
+                                                                    Check-in
+                                                                </button>
+                                                            </form>
+                                                        }
+
+                                                        @if (item.CanCancel)
+                                                        {
+                                                            <form method="post" asp-page-handler="Cancel"
+                                                                  onsubmit="return confirm('Hủy đơn đặt chỗ @item.ReservationId?');">
+                                                                <input type="hidden" name="reservationId" value="@item.ReservationId" />
+                                                                <input type="hidden" name="Search" value="@Model.Search" />
+                                                                <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+                                                                <input type="hidden" name="VehicleFilter" value="@Model.VehicleFilter" />
+                                                                <input type="hidden" name="ExpectedDate" value="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))" />
+                                                                <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+                                                                <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                                                                <input type="hidden" name="SelectedId" value="@item.Id" />
+                                                                <button type="submit" class="danger">
+                                                                    <i class="fa-solid fa-ban"></i>
+                                                                    Hủy đơn
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="empty-row">Không có đơn đặt chỗ phù hợp.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-row">
+                <span>Hiển thị @Model.FirstItemIndex - @Model.LastItemIndex trong @Model.FilteredReservations đơn</span>
+
+                <div class="pagination">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-page="./ReservationManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleFilter="@Model.VehicleFilter"
+                           asp-route-expectedDate="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@(Model.PageNumber - 1)"
+                           asp-route-pageSize="@Model.PageSize">‹</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">‹</span>
+                    }
+
+                    @foreach (var pageIndex in Model.VisiblePages)
+                    {
+                        <a asp-page="./ReservationManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleFilter="@Model.VehicleFilter"
+                           asp-route-expectedDate="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@pageIndex"
+                           asp-route-pageSize="@Model.PageSize"
+                           class="@(pageIndex == Model.PageNumber ? "active" : "")">@pageIndex</a>
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-page="./ReservationManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleFilter="@Model.VehicleFilter"
+                           asp-route-expectedDate="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@(Model.PageNumber + 1)"
+                           asp-route-pageSize="@Model.PageSize">›</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">›</span>
+                    }
+                </div>
+
+                <form method="get" class="page-size-form">
+                    <input type="hidden" name="Search" value="@Model.Search" />
+                    <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+                    <input type="hidden" name="VehicleFilter" value="@Model.VehicleFilter" />
+                    <input type="hidden" name="ExpectedDate" value="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))" />
+                    <input type="hidden" name="PageNumber" value="1" />
+                    <select asp-for="PageSize" onchange="this.form.submit()">
+                        <option value="10">10 / trang</option>
+                        <option value="20">20 / trang</option>
+                        <option value="50">50 / trang</option>
+                    </select>
+                </form>
+            </div>
+        </section>
+
+        @if (Model.SelectedReservation != null)
+        {
+            <aside class="reservation-detail-panel">
+                <div class="reservation-panel-head">
+                    <div>
+                        <span class="panel-label">CHI TIẾT ĐẶT CHỖ</span>
+                        <h2>@Model.SelectedReservation.ReservationId</h2>
+                    </div>
+
+                    <a asp-page="./ReservationManagement"
+                       asp-route-search="@Model.Search"
+                       asp-route-statusFilter="@Model.StatusFilter"
+                       asp-route-vehicleFilter="@Model.VehicleFilter"
+                       asp-route-expectedDate="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))"
+                       asp-route-pageNumber="@Model.PageNumber"
+                       asp-route-pageSize="@Model.PageSize"
+                       class="close-panel">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                </div>
+
+                <div class="detail-status-row">
+                    <span class="status-badge @Model.SelectedReservation.StatusClass">
+                        <i class="fa-solid fa-circle"></i>
+                        @Model.SelectedReservation.Status
+                    </span>
+                    <span>@Model.SelectedReservation.TimeLabel</span>
+                </div>
+
+                <div class="detail-actions">
+                    @if (Model.SelectedReservation.CanCheckIn)
+                    {
+                        <form method="post" asp-page="./ParkingOperation" asp-page-handler="ValidateCheckIn">
+                            <input type="hidden" name="vehiclePlate" value="@Model.SelectedReservation.VehiclePlate" />
+                            <input type="hidden" name="vehicleType" value="@Model.SelectedReservation.VehicleType" />
+                            <button type="submit" class="primary-btn">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                Check-in
+                            </button>
+                        </form>
+                    }
+
+                    @if (Model.SelectedReservation.CanCancel)
+                    {
+                        <form method="post" asp-page-handler="Cancel"
+                              onsubmit="return confirm('Hủy đơn đặt chỗ @Model.SelectedReservation.ReservationId?');">
+                            <input type="hidden" name="reservationId" value="@Model.SelectedReservation.ReservationId" />
+                            <input type="hidden" name="Search" value="@Model.Search" />
+                            <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+                            <input type="hidden" name="VehicleFilter" value="@Model.VehicleFilter" />
+                            <input type="hidden" name="ExpectedDate" value="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))" />
+                            <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+                            <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                            <input type="hidden" name="SelectedId" value="@Model.SelectedReservation.Id" />
+                            <button type="submit" class="danger-btn">
+                                <i class="fa-solid fa-ban"></i>
+                                Hủy đơn
+                            </button>
+                        </form>
+                    }
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Khách hàng</h4>
+                    </div>
+
+                    <div class="customer-detail-row">
+                        <div class="avatar large">@Model.SelectedReservation.AvatarLetter</div>
+                        <div>
+                            <strong>@Model.SelectedReservation.CustomerName</strong>
+                            <span>@Model.SelectedReservation.CustomerId</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Thông tin xe</h4>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Biển số</span>
+                        <strong>@Model.SelectedReservation.VehiclePlate</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Loại xe</span>
+                        <strong>@Model.SelectedReservation.VehicleType</strong>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-title">
+                        <h4>Lịch đặt chỗ</h4>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Chỗ đặt</span>
+                        <strong>@Model.SelectedReservation.SlotText</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Giờ hẹn</span>
+                        <strong>@Model.SelectedReservation.ExpectedTime.ToString("HH:mm - dd/MM/yyyy")</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Ngày tạo</span>
+                        <strong>@Model.SelectedReservation.CreatedAtText</strong>
+                    </div>
+                </div>
+            </aside>
+        }
+    </div>
+</div>

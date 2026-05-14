@@ -205,7 +205,7 @@
 
 .customer-table {
     width: 100%;
-    min-width: 980px;
+    min-width: 760px;
     border-collapse: separate;
     border-spacing: 0;
     border: 1px solid #e3ebf6;
@@ -438,8 +438,8 @@
 
 .pagination-row {
     margin-top: 18px;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 16px;
     color: #71809a;
@@ -449,24 +449,51 @@
 .pagination {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid #e3ebf6;
+    border-radius: 14px;
+    background: #f8fbff;
 }
 
-    .pagination button {
-        min-width: 36px;
-        height: 36px;
+.customer-table-card .pagination a,
+.customer-table-card .pagination span {
+        min-width: 34px;
+        height: 34px;
         border-radius: 10px;
-        border: 1px solid #dbe5f2;
+        border: 1px solid transparent;
         background: white;
-        color: #10233f;
-        cursor: pointer;
-    }
+        color: #40516d;
+        display: inline-grid;
+        place-items: center;
+        text-decoration: none;
+        font-weight: 700;
+        line-height: 1;
+        box-shadow: 0 1px 2px rgba(15, 35, 68, 0.05);
+}
 
-        .pagination button.active {
-            background: #1479ff;
-            color: white;
-            border-color: #1479ff;
-        }
+.customer-table-card .pagination a:hover {
+        border-color: #b9d4ff;
+        color: #1479ff;
+}
+
+.customer-table-card .pagination a.active {
+        background: #1479ff;
+        color: white;
+        border-color: #1479ff;
+        box-shadow: 0 8px 18px rgba(20, 121, 255, 0.24);
+}
+
+.customer-table-card .pagination span.disabled {
+        color: #a8b3c4;
+        background: #edf2f8;
+        cursor: default;
+        box-shadow: none;
+}
+
+.page-size-form {
+    margin: 0;
+}
 
 .panel-header {
     display: flex;
@@ -730,7 +757,7 @@
     }
 
     .pagination-row {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         align-items: flex-start;
     }
 }

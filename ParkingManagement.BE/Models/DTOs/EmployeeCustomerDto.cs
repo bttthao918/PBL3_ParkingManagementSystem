@@ -9,7 +9,7 @@ namespace ParkingManagement.BLL.DTOs
     /// </summary>
     public class EmployeeCustomerSearchFilterDto
     {
-        public string SearchKeyword { get; set; } = null!;  // Tên, email, SĐT, biển số
+        public string? SearchKeyword { get; set; }  // Tên, email, SĐT, biển số
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
     }

@@ -323,7 +323,10 @@ namespace ParkingManagement.DAL.Implementations
                             .ToListAsync();
 
         public Task<List<Reservation>> GetAllAsync() =>
-            _db.Reservations.ToListAsync();
+            _db.Reservations.Include(r => r.Customer)
+                            .Include(r => r.Vehicle)
+                            .Include(r => r.ParkingSlot)
+                            .ToListAsync();
 
         public Task<Reservation?> GetActiveByPlateAsync(string plate) =>
             _db.Reservations.FirstOrDefaultAsync(r => r.VehiclePlate == plate && r.Status == "Chờ");

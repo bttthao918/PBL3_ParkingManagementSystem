@@ -17,54 +17,67 @@
         </a>
     </div>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
     <div class="booking-filter">
         <button class="active">Tất cả</button>
-        <button>Sắp tới</button>
-        <button>Đang gửi</button>
-        <button>Đã hoàn thành</button>
+        <button>Chờ xác nhận</button>
+        <button>Đã xác nhận</button>
+        <button>Đã nhận</button>
         <button>Đã hủy</button>
     </div>
 
     <div class="booking-list">
-        @foreach (var item in Model.Bookings)
+        @if (Model.Reservations.Any())
         {
-            <div class="booking-card">
-                <div>
-                    <h3>@item.Code</h3>
-                    <span class="booking-status">@item.Status</span>
-                    <p>Đặt lúc: @item.StartTime.ToString("dd/MM/yyyy HH:mm")</p>
-                </div>
+            @foreach (var item in Model.Reservations)
+            {
+                <div class="booking-card">
+                    <div>
+                        <h3>@item.ReservationId</h3>
+                        <span class="booking-status @(item.Status == "Đã hủy" ? "cancelled" : "")">@item.Status</span>
+                        <p>Tạo lúc: @item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
 
-                <div>
-                    <strong>@item.PlateNumber</strong>
-                    <p>@item.VehicleType</p>
-                </div>
+                    <div>
+                        <strong>@item.VehiclePlate</strong>
+                        <p>@item.VehicleType</p>
+                    </div>
 
-                <div>
-                    <strong>@item.ParkingSlot</strong>
-                    <p>Vị trí đỗ</p>
-                </div>
+                    <div>
+                        <strong>@(item.SlotId ?? "Chưa xếp")</strong>
+                        <p>@(item.SlotLocation ?? "Vị trí đỗ")</p>
+                    </div>
 
-                <div>
-                    <p>@item.StartTime.ToString("dd/MM/yyyy HH:mm")</p>
-                    <p>→ @item.EndTime.ToString("dd/MM/yyyy HH:mm")</p>
-                </div>
+                    <div>
+                        <p>Dự kiến: @item.ExpectedTime.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
 
-                <div>
-                    <strong>@item.TotalPrice.ToString("N0") đ</strong>
-                    <p>Vé lượt</p>
-                </div>
+                    <div class="booking-actions">
+                        <a asp-page="./Details" asp-route-id="@item.ReservationId" class="btn-detail">Xem chi tiết</a>
 
-                <div class="booking-actions">
-                    <button type="button" class="btn-detail">Xem chi tiết</button>
-
-                    @if (item.Status != "Đã hủy" && item.Status != "Đã hoàn thành")
-                    {
-                        <form method="post" asp-page-handler="Cancel" asp-route-id="@item.Id">
-                            <button type="submit" class="btn-cancel">Hủy</button>
-                        </form>
-                    }
+                        @if (item.Status != "Đã hủy" && item.Status != "Đã nhận")
+                        {
+                            <form method="post" asp-page-handler="Cancel" asp-route-reservationId="@item.ReservationId" style="display:inline;">
+                                <button type="submit" class="btn-cancel">Hủy</button>
+                            </form>
+                        }
+                    </div>
                 </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <p>Chưa có đặt chỗ nào.</p>
+                <a asp-page="./Create" class="btn-booking-primary">Đặt chỗ ngay</a>
             </div>
         }
     </div>

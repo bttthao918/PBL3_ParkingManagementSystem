@@ -5,6 +5,7 @@ namespace ParkingManagement.FE.Models
         public string? SearchKeyword { get; set; }
         public string? Status { get; set; }
         public string? VehicleType { get; set; }
+        public string? AreaFilter { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public int PageNumber { get; set; } = 1;

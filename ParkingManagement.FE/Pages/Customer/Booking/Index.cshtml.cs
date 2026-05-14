@@ -1,31 +1,54 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using global::ParkingManagement.FE.Models.ViewModels.Customer;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ParkingManagement.FE.Helpers;
+using ParkingManagement.FE.Models;
+using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Customer.Booking
 {
-
     [Authorize(Roles = "Customer")]
     public class IndexModel : PageModel
     {
-        public List<BookingViewModel> Bookings { get; set; } = new();
+        private readonly IReservationService _reservationService;
 
-        public void OnGet()
+        public IndexModel(IReservationService reservationService)
         {
-            Bookings = CustomerBookingFakeData.Bookings
-                .OrderByDescending(x => x.StartTime)
-                .ToList();
+            _reservationService = reservationService;
         }
 
-        public IActionResult OnPostCancel(int id)
-        {
-            var booking = CustomerBookingFakeData.Bookings.FirstOrDefault(x => x.Id == id);
+        public List<ReservationDetailDto> Reservations { get; set; } = new();
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
 
-            if (booking != null)
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        public async Task OnGetAsync()
+        {
+            ViewData["Title"] = "Danh sách đặt chỗ";
+            ViewData["Role"] = "Khách hàng";
+            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Khách hàng";
+
+            var result = await _reservationService.GetAllAsync(PageNumber, 10);
+            if (result != null)
             {
-                booking.Status = "Đã hủy";
+                Reservations = result.Items.OrderByDescending(x => x.CreatedAt).ToList();
+                TotalItems = result.TotalItems;
+                TotalPages = result.TotalPages;
+            }
+        }
+
+        public async Task<IActionResult> OnPostCancelAsync(string reservationId)
+        {
+            var result = await _reservationService.CancelAsync(reservationId);
+            if (result?.Success == true)
+            {
+                TempData["SuccessMessage"] = "Đã hủy đặt chỗ thành công.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = result?.Message ?? "Không thể hủy đặt chỗ.";
             }
 
             return RedirectToPage();

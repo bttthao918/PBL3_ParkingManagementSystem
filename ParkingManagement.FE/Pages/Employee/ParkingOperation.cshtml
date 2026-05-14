@@ -1,0 +1,320 @@
+@page
+@model ParkingManagement.FE.Pages.Employee.ParkingOperationModel
+
+@section Styles {
+    <link rel="stylesheet" href="/css/employee/parking_operation.css" asp-append-version="true" />
+}
+
+<div class="operation-page">
+    @if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+    {
+        <div class="alert-banner @(Model.ActionSuccess ? "success" : "error")">
+            <i class="fa-solid @(Model.ActionSuccess ? "fa-circle-check" : "fa-circle-xmark")"></i>
+            <span>@Model.ActionMessage</span>
+        </div>
+    }
+
+    <div class="page-header">
+        <div>
+            <h1>Quản lý ra vào</h1>
+            <p>Check-in gửi xe và check-out lấy xe cho khách hàng</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-chip">
+                <i class="fa-solid fa-car"></i>
+                <span><strong>@Model.ActiveCount</strong> xe trong bãi</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+        <a asp-page="./ParkingOperation" asp-route-tab="checkin"
+           class="tab @(Model.Tab == "checkin" ? "active checkin" : "")">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Check-in</span>
+            <small>Gửi xe</small>
+        </a>
+        <a asp-page="./ParkingOperation" asp-route-tab="checkout"
+           class="tab @(Model.Tab == "checkout" ? "active checkout" : "")">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Check-out</span>
+            <small>Lấy xe</small>
+        </a>
+    </div>
+
+    <!-- ═══════ CHECK-IN TAB ═══════ -->
+    @if (Model.Tab == "checkin")
+    {
+        <div class="operation-card">
+            <div class="card-title">
+                <div class="title-icon green"><i class="fa-solid fa-right-to-bracket"></i></div>
+                <div>
+                    <h2>Gửi xe — Nhập biển số để kiểm tra</h2>
+                    <p>Hệ thống sẽ kiểm tra vé tháng, đặt chỗ và gợi ý chỗ trống</p>
+                </div>
+            </div>
+
+            <form method="post" asp-page-handler="ValidateCheckIn" class="input-form">
+                <div class="input-row">
+                    <div class="form-group flex-2">
+                        <label>Biển số xe <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-car-side"></i>
+                            <input type="text" name="vehiclePlate" placeholder="VD: 43A-123.45" required autofocus />
+                        </div>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Loại xe</label>
+                        <select name="vehicleType">
+                            <option value="Xe máy">🏍️ Xe máy</option>
+                            <option value="Ô tô nhỏ">🚗 Ô tô nhỏ</option>
+                            <option value="Ô tô lớn">🚐 Ô tô lớn</option>
+                        </select>
+                    </div>
+                    <div class="form-group btn-group">
+                        <button type="submit" class="primary-btn">
+                            <i class="fa-solid fa-magnifying-glass"></i> Kiểm tra
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            @if (Model.CheckInValidation != null)
+            {
+                var v = Model.CheckInValidation;
+                <div class="validation-result">
+                    <div class="info-chips">
+                        @if (v.HasMonthlyTicket)
+                        {
+                            <div class="chip success"><i class="fa-solid fa-calendar-check"></i> Vé tháng — Miễn phí gửi xe</div>
+                        }
+                        @if (v.HasReservation)
+                        {
+                            <div class="chip info"><i class="fa-solid fa-bookmark"></i> Đã đặt chỗ: @v.PreferredSlotId</div>
+                        }
+                        @if (!string.IsNullOrEmpty(v.CustomerName))
+                        {
+                            <div class="chip neutral"><i class="fa-solid fa-user"></i> @v.CustomerName</div>
+                        }
+                        else
+                        {
+                            <div class="chip neutral"><i class="fa-solid fa-user-plus"></i> Khách vãng lai</div>
+                        }
+                    </div>
+
+                    @if (!v.AvailableSlots.Any())
+                    {
+                        <div class="alert-banner error" style="margin-top:16px;">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <span>@(v.Message ?? "Không còn chỗ trống cho loại xe này.")</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <form method="post" asp-page-handler="ConfirmCheckIn">
+                            <input type="hidden" name="vehiclePlate" value="@ViewContext.HttpContext.Request.Form["vehiclePlate"]" />
+                            <input type="hidden" name="vehicleType" value="@ViewContext.HttpContext.Request.Form["vehicleType"]" />
+                            <input type="hidden" name="customerId" value="@v.CustomerId" />
+
+                            <div class="slot-section">
+                                <h4><i class="fa-solid fa-square-parking"></i> Chọn chỗ đỗ <span class="slot-count">@v.AvailableSlots.Count chỗ trống</span></h4>
+                                <div class="slot-grid">
+                                    @foreach (var slot in v.AvailableSlots.Take(20))
+                                    {
+                                        var isPref = slot.SlotId == v.PreferredSlotId;
+                                        <label class="slot-option">
+                                            <input type="radio" name="slotId" value="@slot.SlotId" @(isPref ? "checked" : "") required />
+                                            <div class="slot-box @(isPref ? "preferred" : "")">
+                                                <strong>@slot.SlotId</strong>
+                                                <span>@slot.Location</span>
+                                                @if (isPref) { <i class="fa-solid fa-star preferred-star"></i> }
+                                            </div>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="confirm-bar">
+                                <button type="submit" class="confirm-btn green"
+                                        onclick="return confirmSubmit(this.form, 'Check-in', 'Xác nhận gửi xe vào bãi?', 'success')">
+                                    <i class="fa-solid fa-check-circle"></i> Xác nhận Check-in
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <!-- ═══════ CHECK-OUT TAB ═══════ -->
+    @if (Model.Tab == "checkout")
+    {
+        <div class="operation-card">
+            <div class="card-title">
+                <div class="title-icon orange"><i class="fa-solid fa-right-from-bracket"></i></div>
+                <div>
+                    <h2>Lấy xe — Tra cứu và thanh toán</h2>
+                    <p>Nhập biển số / mã vé hoặc chọn từ danh sách bên dưới</p>
+                </div>
+            </div>
+
+            <form method="post" asp-page-handler="ValidateCheckOut" class="input-form">
+                <div class="input-row">
+                    <div class="form-group flex-2">
+                        <label>Biển số xe hoặc mã vé</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" name="vehiclePlateOrTicketId" placeholder="VD: 43A-123.45 hoặc TKT0001" required />
+                        </div>
+                    </div>
+                    <div class="form-group btn-group">
+                        <button type="submit" class="primary-btn orange">
+                            <i class="fa-solid fa-magnifying-glass"></i> Tra cứu
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Kết quả check-out -->
+            @if (Model.CheckOutValidation != null)
+            {
+                var co = Model.CheckOutValidation;
+                @if (!co.Success)
+                {
+                    <div class="alert-banner error" style="margin-top:16px;">
+                        <i class="fa-solid fa-circle-xmark"></i> <span>@co.Message</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="checkout-detail">
+                        <div class="checkout-grid">
+                            <div class="co-card">
+                                <div class="co-card-header"><i class="fa-solid fa-car"></i> Thông tin</div>
+                                <div class="co-row"><span>Mã vé</span><strong>@co.TicketId</strong></div>
+                                <div class="co-row"><span>Biển số</span><strong>@co.VehiclePlate</strong></div>
+                                <div class="co-row"><span>Loại xe</span><strong>@co.VehicleType</strong></div>
+                                @if (!string.IsNullOrEmpty(co.CustomerName))
+                                {
+                                    <div class="co-row"><span>Khách hàng</span><strong>@co.CustomerName</strong></div>
+                                }
+                            </div>
+                            <div class="co-card">
+                                <div class="co-card-header"><i class="fa-solid fa-clock"></i> Thời gian</div>
+                                <div class="co-row"><span>Giờ vào</span><strong>@co.CheckInTime?.ToString("HH:mm — dd/MM")</strong></div>
+                                <div class="co-row"><span>Giờ ra</span><strong>@co.CurrentTime?.ToString("HH:mm — dd/MM")</strong></div>
+                                <div class="co-row highlight"><span>Thời gian gửi</span><strong>@FormatDuration(co.DurationMinutes)</strong></div>
+                            </div>
+                            <div class="co-card fee">
+                                <div class="co-card-header"><i class="fa-solid fa-receipt"></i> Phí</div>
+                                @if (co.IsFreeTicket)
+                                {
+                                    <div class="fee-big free">
+                                        <span>MIỄN PHÍ</span>
+                                        <strong>0 đ</strong>
+                                        <small>Vé tháng còn hạn</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="fee-big">
+                                        <span>Tổng phí</span>
+                                        <strong>@co.CalculatedFee.ToString("N0") đ</strong>
+                                        <small>@co.TicketType</small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <form method="post" asp-page-handler="ConfirmCheckOut">
+                            <input type="hidden" name="ticketId" value="@co.TicketId" />
+                            <input type="hidden" name="fee" value="@co.CalculatedFee" />
+                            <div class="confirm-bar">
+                                <div class="form-group" style="min-width:200px;">
+                                    <label>Thanh toán</label>
+                                    <select name="paymentMethod">
+                                        <option value="Tiền mặt">💵 Tiền mặt</option>
+                                        <option value="Chuyển khoản">🏦 Chuyển khoản</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="confirm-btn orange"
+                                        onclick="return confirmSubmit(this.form, 'Check-out', 'Xác nhận check-out và thu phí @(co.CalculatedFee.ToString("N0"))đ?', 'warning')">>
+                                    <i class="fa-solid fa-check-circle"></i> Xác nhận Check-out
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                }
+            }
+
+            <!-- Danh sách xe đang trong bãi -->
+            @if (Model.ActiveTickets.Any())
+            {
+                <div class="active-list">
+                    <h4>
+                        <i class="fa-solid fa-car-side"></i>
+                        Xe đang trong bãi
+                        <span class="count-badge">@Model.ActiveCount</span>
+                    </h4>
+                    <div class="active-table-wrap">
+                        <table class="active-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã vé</th>
+                                    <th>Biển số</th>
+                                    <th>Loại xe</th>
+                                    <th>Chỗ đỗ</th>
+                                    <th>Giờ vào</th>
+                                    <th>Thời gian</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var t in Model.ActiveTickets)
+                                {
+                                    var dur = (int)(DateTime.Now - t.CheckInTime).TotalMinutes;
+                                    <tr>
+                                        <td><strong>@t.TicketId</strong></td>
+                                        <td><strong>@t.VehiclePlate</strong></td>
+                                        <td>
+                                            <span class="vehicle-badge">
+                                                <i class="fa-solid @(t.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                                @t.VehicleType
+                                            </span>
+                                        </td>
+                                        <td>@(t.SlotId ?? "—")</td>
+                                        <td>@t.CheckInTime.ToString("HH:mm")</td>
+                                        <td><span class="duration-text">@FormatDuration(dur)</span></td>
+                                        <td>
+                                            <form method="post" asp-page-handler="ValidateCheckOut" style="display:inline;">
+                                                <input type="hidden" name="vehiclePlateOrTicketId" value="@t.TicketId" />
+                                                <button type="submit" class="checkout-row-btn">
+                                                    <i class="fa-solid fa-right-from-bracket"></i> Check-out
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    string FormatDuration(int minutes)
+    {
+        if (minutes < 60) return $"{minutes} phút";
+        var h = minutes / 60;
+        var m = minutes % 60;
+        if (h < 24) return m > 0 ? $"{h}h {m}p" : $"{h} giờ";
+        var d = h / 24;
+        var rh = h % 24;
+        return rh > 0 ? $"{d}d {rh}h" : $"{d} ngày";
+    }
+}

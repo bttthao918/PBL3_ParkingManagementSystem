@@ -8,5 +8,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
         Task<ServiceResult<string>> RegisterAsync(RegisterDto dto);
         Task<ServiceResult<string>> VerifyOtpAsync(VerifyOtpDto dto);
         Task<ServiceResult> ChangePasswordAsync(string accountId, ChangePasswordDto dto);
+        Task<ServiceResult<CurrentUserProfileDto>> GetCurrentProfileAsync(string accountId);
+        Task<ServiceResult<CurrentUserProfileDto>> UpdateCurrentProfileAsync(string accountId, UpdateCurrentProfileDto dto);
     }
 }

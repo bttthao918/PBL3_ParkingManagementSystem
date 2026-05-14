@@ -7,6 +7,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
         Task<List<ReservationDto>> GetAllAsync();
         Task<List<ReservationDto>> GetByCustomerIdAsync(string customerId);
         Task<ServiceResult<ReservationDto>> CreateAsync(CreateReservationDto dto);
+        Task<ListReservationDto> GetAllPaginatedAsync(FilterReservationDto filter);
 
         /// <summary>
         /// UC005.1 - Lấy danh sách đặt chỗ của khách hàng với phân trang và filter
@@ -19,6 +20,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
         /// Chỉ có thể hủy nếu Status = "Chờ" và chưa quá giờ hẹn
         /// </summary>
         Task<ServiceResult<CancelReservationResultDto>> CancelReservationAsync(string customerId, string reservationId);
+        Task<ServiceResult<CancelReservationResultDto>> CancelByEmployeeAsync(string reservationId);
 
         [Obsolete("Use CancelReservationAsync instead")]
         Task<ServiceResult<string>> CancelAsync(string reservationId);

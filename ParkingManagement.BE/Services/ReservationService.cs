@@ -34,6 +34,71 @@ namespace ParkingManagement.BLL.Services.Implementations
             return list.Select(MapToDto).ToList();
         }
 
+        public async Task<ListReservationDto> GetAllPaginatedAsync(FilterReservationDto filter)
+        {
+            NormalizePaging(filter);
+
+            var reservations = await _repo.GetAllAsync();
+            await ExpireWaitingReservationsAsync(reservations);
+            reservations = await _repo.GetAllAsync();
+
+            var filtered = reservations.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(filter.Status))
+                filtered = filtered.Where(r => r.Status == filter.Status);
+
+            var keyword = !string.IsNullOrWhiteSpace(filter.SearchKeyword)
+                ? filter.SearchKeyword.Trim()
+                : filter.VehiclePlate?.Trim();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                filtered = filtered.Where(r =>
+                    r.ReservationId.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                    (r.VehiclePlate?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (r.Customer?.FullName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (r.Customer?.PhoneNumber?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (r.SlotId?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (r.ParkingSlot?.Location?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false));
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.VehicleType))
+                filtered = filtered.Where(r => string.Equals(r.Vehicle?.VehicleType, filter.VehicleType, StringComparison.OrdinalIgnoreCase));
+
+            if (filter.FromDate.HasValue)
+                filtered = filtered.Where(r => r.ExpectedTime.Date >= filter.FromDate.Value.Date);
+
+            if (filter.ToDate.HasValue)
+                filtered = filtered.Where(r => r.ExpectedTime.Date <= filter.ToDate.Value.Date);
+
+            var sorted = filtered
+                .OrderBy(r => r.Status == "Chờ" ? 0 : 1)
+                .ThenBy(r => r.ExpectedTime)
+                .ThenByDescending(r => r.CreatedAt)
+                .ToList();
+
+            var totalItems = sorted.Count;
+            var totalPages = totalItems == 0 ? 0 : (int)Math.Ceiling(totalItems / (double)filter.PageSize);
+
+            if (filter.PageNumber > totalPages && totalPages > 0)
+                filter.PageNumber = totalPages;
+
+            var items = sorted
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .Select(MapToDto)
+                .ToList();
+
+            return new ListReservationDto
+            {
+                Items = items,
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages
+            };
+        }
+
         public async Task<ServiceResult<ReservationDto>> CreateAsync(CreateReservationDto dto)
         {
             // Validate DTO
@@ -210,6 +275,63 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Message = "Hủy đặt chỗ thành công!"
                 },
                 "Hủy đặt chỗ thành công!");
+        }
+
+        public async Task<ServiceResult<CancelReservationResultDto>> CancelByEmployeeAsync(string reservationId)
+        {
+            var reservation = await _repo.GetByIdAsync(reservationId);
+            if (reservation == null)
+                return ServiceResult<CancelReservationResultDto>.Fail("Không tìm thấy đơn đặt chỗ.");
+
+            if (reservation.Status == "Chờ" && reservation.ExpectedTime < DateTime.Now)
+            {
+                reservation.Status = "Hết hạn";
+                await _repo.UpdateAsync(reservation);
+
+                if (!string.IsNullOrEmpty(reservation.SlotId))
+                    await _slotRepo.UpdateStatusAsync(reservation.SlotId, "Trống");
+
+                return ServiceResult<CancelReservationResultDto>.Fail(
+                    "Đơn đặt chỗ đã quá thời gian dự kiến, hệ thống đã chuyển sang hết hạn.");
+            }
+
+            if (reservation.Status != "Chờ")
+                return ServiceResult<CancelReservationResultDto>.Fail(
+                    $"Không thể hủy đơn đặt chỗ với trạng thái: {reservation.Status}");
+
+            reservation.Status = "Hủy";
+            await _repo.UpdateAsync(reservation);
+
+            if (!string.IsNullOrEmpty(reservation.SlotId))
+                await _slotRepo.UpdateStatusAsync(reservation.SlotId, "Trống");
+
+            return ServiceResult<CancelReservationResultDto>.Ok(
+                new CancelReservationResultDto
+                {
+                    Success = true,
+                    ReservationId = reservationId,
+                    NewStatus = "Hủy",
+                    Message = "Hủy đặt chỗ thành công!"
+                },
+                "Hủy đặt chỗ thành công!");
+        }
+
+        private async Task ExpireWaitingReservationsAsync(IEnumerable<Reservation> reservations)
+        {
+            foreach (var reservation in reservations.Where(r => r.Status == "Chờ" && r.ExpectedTime < DateTime.Now))
+            {
+                reservation.Status = "Hết hạn";
+                await _repo.UpdateAsync(reservation);
+
+                if (!string.IsNullOrEmpty(reservation.SlotId))
+                    await _slotRepo.UpdateStatusAsync(reservation.SlotId, "Trống");
+            }
+        }
+
+        private static void NormalizePaging(FilterReservationDto filter)
+        {
+            filter.PageNumber = Math.Max(1, filter.PageNumber);
+            filter.PageSize = filter.PageSize <= 0 ? 10 : Math.Min(filter.PageSize, 100);
         }
 
         private static ReservationDto MapToDto(Reservation r) => new()

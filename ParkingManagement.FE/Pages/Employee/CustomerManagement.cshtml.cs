@@ -1,165 +1,361 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ParkingManagement.FE.Models.ViewModels;
 using ParkingManagement.FE.Models;
 
 namespace ParkingManagement.FE.Pages.Employee
 {
-        [Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee")]
     public class CustomerManagementModel : PageModel
-        {
-            private readonly Services.ICustomerApiService _customerService;
+    {
+        private static readonly int[] AllowedPageSizes = { 5, 10, 20 };
 
-            public CustomerManagementModel(Services.ICustomerApiService customerService)
+        private readonly Services.ICustomerApiService _customerService;
+
+        public CustomerManagementModel(Services.ICustomerApiService customerService)
+        {
+            _customerService = customerService;
+        }
+
+        public int TotalCustomers { get; set; }
+        public int ActiveCustomers { get; set; }
+        public int VipCustomers { get; set; }
+        public int NewCustomers { get; set; }
+        public int TotalPages { get; set; }
+        public string? ErrorMessage { get; set; }
+
+        public int FirstItemIndex => TotalCustomers == 0 ? 0 : ((PageNumber - 1) * PageSize) + 1;
+        public int LastItemIndex => Math.Min(PageNumber * PageSize, TotalCustomers);
+        public bool HasPreviousPage => PageNumber > 1;
+        public bool HasNextPage => TotalPages > 0 && PageNumber < TotalPages;
+        public List<int> VisiblePages { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public string? Search { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? StatusFilter { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? VipFilter { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public DateTime? RegisterDate { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? SelectedId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        [BindProperty(SupportsGet = true)]
+        public int PageSize { get; set; } = 10;
+
+        public List<CustomerItemVM> Customers { get; set; } = new();
+
+        public CustomerDetailVM? SelectedCustomer { get; set; }
+
+        public async Task OnGetAsync()
+        {
+            ViewData["Title"] = "Quản lý khách hàng";
+            ViewData["Role"] = "Nhân viên";
+            ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Nhân viên";
+
+            NormalizePaging();
+
+            var result = await SearchCustomersAsync();
+            if (result != null && result.TotalPages > 0 && PageNumber > result.TotalPages)
             {
-                _customerService = customerService;
+                PageNumber = result.TotalPages;
+                result = await SearchCustomersAsync();
             }
 
-            public int TotalCustomers { get; set; }
-            public int ActiveCustomers { get; set; }
-            public int VipCustomers { get; set; }
-            public int NewCustomers { get; set; }
-
-            [BindProperty(SupportsGet = true)]
-            public string? Search { get; set; }
-
-            [BindProperty(SupportsGet = true)]
-            public string? StatusFilter { get; set; }
-
-            [BindProperty(SupportsGet = true)]
-            public string? VehicleFilter { get; set; }
-
-            [BindProperty(SupportsGet = true)]
-            public string? VipFilter { get; set; }
-
-            [BindProperty(SupportsGet = true)]
-            public DateTime? RegisterDate { get; set; }
-
-            [BindProperty(SupportsGet = true)]
-            public int? SelectedId { get; set; }
-
-            public List<CustomerItemVM> Customers { get; set; } = new List<CustomerItemVM>();
-
-            public CustomerDetailVM? SelectedCustomer { get; set; }
-
-            public async Task OnGetAsync()
+            if (result == null)
             {
-                var filter = new EmployeeCustomerSearchFilterDto
+                SetEmptyState("Không lấy được danh sách khách hàng. Kiểm tra backend hoặc phiên đăng nhập.");
+                return;
+            }
+
+            ApplyResult(result);
+            await LoadSelectedCustomerAsync();
+        }
+
+        private async Task<ListEmployeeCustomerSearchDto?> SearchCustomersAsync()
+        {
+            var filter = new EmployeeCustomerSearchFilterDto
+            {
+                SearchKeyword = Search?.Trim() ?? "",
+                StatusFilter = StatusFilter,
+                VipLevel = VipFilter,
+                RegisterDate = RegisterDate?.Date,
+                PageNumber = PageNumber,
+                PageSize = PageSize
+            };
+
+            return await _customerService.SearchForEmployeeAsync(filter);
+        }
+
+        private void NormalizePaging()
+        {
+            PageNumber = Math.Max(1, PageNumber);
+            if (!AllowedPageSizes.Contains(PageSize))
+            {
+                PageSize = 10;
+            }
+        }
+
+        private void ApplyResult(ListEmployeeCustomerSearchDto result)
+        {
+            TotalCustomers = result.TotalItems;
+            TotalPages = result.TotalPages;
+            PageNumber = Math.Max(1, result.PageNumber);
+            PageSize = result.PageSize > 0 ? result.PageSize : PageSize;
+            VisiblePages = BuildVisiblePages(PageNumber, TotalPages);
+
+            Customers = result.Items.Select((c, index) =>
+            {
+                var rowNumber = ((PageNumber - 1) * PageSize) + index + 1;
+                var vipLevel = ResolveVipLevel(c.VipLevel, c.TotalTickets, c.HasActiveMonthlyTicket);
+                return new CustomerItemVM
                 {
-                    SearchKeyword = Search ?? "",
-                    PageNumber = 1,
-                    PageSize = 100
+                    Id = rowNumber,
+                    FullName = c.FullName,
+                    CustomerCode = c.CustomerId,
+                    Phone = string.IsNullOrWhiteSpace(c.PhoneNumber) ? "-" : c.PhoneNumber,
+                    Email = string.IsNullOrWhiteSpace(c.Email) ? "-" : c.Email,
+                    VipLevel = vipLevel,
+                    StatusText = c.LastVisit.HasValue ? c.LastVisit.Value.ToString("dd/MM/yyyy") : "Chưa gửi",
+                    StatusClass = c.LastVisit.HasValue ? "parking" : "left",
+                    TotalTickets = c.TotalTickets
                 };
+            }).ToList();
 
-                var result = await _customerService.SearchForEmployeeAsync(filter);
+            ActiveCustomers = Customers.Count(c => c.StatusClass == "parking");
+            VipCustomers = Customers.Count(c => !IsNormalVip(c.VipLevel));
+            NewCustomers = Customers.Count(c => c.TotalTickets == 0);
 
-                if (result != null && result.Items != null)
-                {
-                    Customers = result.Items.Select((c, index) => new CustomerItemVM
-                    {
-                        Id = index + 1, // Temporary, until BE returns integer IDs or FE uses string ID
-                        FullName = c.FullName,
-                        CustomerCode = c.CustomerId,
-                        Phone = c.PhoneNumber,
-                        MainPlate = "-", // BE currently doesn't return this in list
-                        VehicleCount = c.TotalTickets > 0 ? 1 : 0, 
-                        VehicleTooltip = "",
-                        VehicleType = "-",
-                        VipLevel = c.HasActiveMonthlyTicket ? "Tháng" : "Thường",
-                        StatusText = c.LastVisit.HasValue ? c.LastVisit.Value.ToString("dd/MM/yyyy") : "Chưa gửi",
-                        StatusClass = c.HasActiveMonthlyTicket ? "parking" : "left"
-                    }).ToList();
-
-                    TotalCustomers = result.TotalItems;
-                    ActiveCustomers = result.Items.Count(x => x.HasActiveMonthlyTicket);
-                    VipCustomers = result.Items.Count(x => x.HasActiveMonthlyTicket);
-                    NewCustomers = 0;
-                }
-                
-                var selectedCustomerId = SelectedId ?? 1;
-                var selected = Customers.FirstOrDefault(x => x.Id == selectedCustomerId)
-                               ?? Customers.FirstOrDefault();
-
-                if (selected != null)
-                {
-                    SelectedCustomer = new CustomerDetailVM
-                    {
-                        Id = selected.Id,
-                        FullName = selected.FullName,
-                        CustomerCode = selected.CustomerCode,
-                        Phone = selected.Phone,
-                        Email = "-",
-                        Address = "-",
-                        DateOfBirth = "-",
-                        RegisterDate = "-",
-                        VipLevel = selected.VipLevel,
-                        TotalSpent = 0,
-                        TotalTickets = 0, // Should be fetched from detail endpoint if BE had one
-                        DiscountPercent = selected.VipLevel == "Thường" ? 0 : 10,
-                        VipProgress = 0,
-                        AmountToNextLevel = 0,
-                        Vehicles = new List<CustomerVehicleVM>(),
-                        Histories = new List<CustomerParkingHistoryVM>()
-                    };
-                }
+            if (!string.IsNullOrWhiteSpace(VipFilter))
+            {
+                Customers = Customers
+                    .Where(c => IsVipMatch(c.VipLevel, VipFilter))
+                    .ToList();
             }
         }
 
-        [Authorize(Roles = "Employee")]
-    public class CustomerItemVM
+        private async Task LoadSelectedCustomerAsync()
         {
-            public int Id { get; set; }
-            public string FullName { get; set; } = "";
-            public string CustomerCode { get; set; } = "";
-            public string Phone { get; set; } = "";
-            public string MainPlate { get; set; } = "";
-            public int VehicleCount { get; set; }
-            public string VehicleTooltip { get; set; } = "";
-            public string VehicleType { get; set; } = "";
-            public string VipLevel { get; set; } = "Thường";
-            public string StatusText { get; set; } = "";
-            public string StatusClass { get; set; } = "";
+            var selectedCustomerId = SelectedId ?? Customers.FirstOrDefault()?.Id;
+            var selected = Customers.FirstOrDefault(x => x.Id == selectedCustomerId)
+                           ?? Customers.FirstOrDefault();
+
+            if (selected == null)
+            {
+                return;
+            }
+
+            var detail = await _customerService.GetEmployeeCustomerDetailAsync(selected.CustomerCode);
+            SelectedCustomer = MapDetail(selected, detail);
         }
 
-        [Authorize(Roles = "Employee")]
-    public class CustomerDetailVM
+        private static CustomerDetailVM MapDetail(CustomerItemVM selected, EmployeeCustomerDetailDto? detail)
         {
-            public int Id { get; set; }
-            public string FullName { get; set; } = "";
-            public string CustomerCode { get; set; } = "";
-            public string Phone { get; set; } = "";
-            public string Email { get; set; } = "";
-            public string Address { get; set; } = "";
-            public string DateOfBirth { get; set; } = "";
-            public string RegisterDate { get; set; } = "";
-            public string VipLevel { get; set; } = "Thường";
-            public decimal TotalSpent { get; set; }
-            public int TotalTickets { get; set; }
-            public int DiscountPercent { get; set; }
-            public int VipProgress { get; set; }
-            public decimal AmountToNextLevel { get; set; }
+            var vipLevel = ResolveVipLevel(detail?.VipLevel ?? selected.VipLevel, detail?.TotalTickets ?? selected.TotalTickets, detail?.HasActiveMonthlyTicket ?? false);
+            var totalTickets = detail?.TotalTickets ?? selected.TotalTickets;
+            var totalSpent = detail?.TotalSpent ?? 0;
+            var discountPercent = detail?.DiscountPercent ?? GetDiscountPercent(vipLevel);
+            var vipProgress = detail?.VipProgress ?? CalculateVipProgress(totalSpent, vipLevel);
+            var amountToNextLevel = detail?.AmountToNextLevel ?? CalculateAmountToNextLevel(totalSpent, vipLevel);
 
-            public List<CustomerVehicleVM> Vehicles { get; set; } = new List<CustomerVehicleVM>();
-            public List<CustomerParkingHistoryVM> Histories { get; set; } = new List<CustomerParkingHistoryVM>();
+            var histories = detail?.RecentTickets.Select(t => new CustomerParkingHistoryVM
+            {
+                Date = t.CheckInTime.ToString("dd/MM/yyyy"),
+                CheckIn = t.CheckInTime.ToString("HH:mm"),
+                CheckOut = t.CheckOutTime?.ToString("HH:mm") ?? "Trong bãi",
+                Fee = t.Fee
+            }).ToList() ?? new List<CustomerParkingHistoryVM>();
+
+            return new CustomerDetailVM
+            {
+                Id = selected.Id,
+                FullName = detail?.FullName ?? selected.FullName,
+                CustomerCode = detail?.CustomerId ?? selected.CustomerCode,
+                Phone = detail?.PhoneNumber ?? selected.Phone,
+                Email = string.IsNullOrWhiteSpace(detail?.Email) ? selected.Email : detail.Email,
+                Gender = detail?.Gender switch { "Male" => "Nam", "Female" => "Nữ", _ => "Chưa cập nhật" },
+                RegisterDate = detail?.CreatedAt.ToString("dd/MM/yyyy") ?? "-",
+                VipLevel = vipLevel,
+                TotalSpent = totalSpent,
+                TotalTickets = totalTickets,
+                DiscountPercent = discountPercent,
+                VipProgress = vipProgress,
+                AmountToNextLevel = amountToNextLevel,
+                Histories = histories
+            };
         }
 
-        [Authorize(Roles = "Employee")]
-    public class CustomerVehicleVM
+        private static List<int> BuildVisiblePages(int currentPage, int totalPages)
         {
-            public string PlateNumber { get; set; } = "";
-            public string Type { get; set; } = "";
-            public bool IsActive { get; set; }
+            if (totalPages <= 0)
+            {
+                return new List<int>();
+            }
+
+            var start = Math.Max(1, currentPage - 2);
+            var end = Math.Min(totalPages, currentPage + 2);
+
+            if (currentPage <= 2)
+            {
+                end = Math.Min(totalPages, 5);
+            }
+            else if (currentPage >= totalPages - 1)
+            {
+                start = Math.Max(1, totalPages - 4);
+            }
+
+            return Enumerable.Range(start, end - start + 1).ToList();
         }
 
-        [Authorize(Roles = "Employee")]
-    public class CustomerParkingHistoryVM
+        private void SetEmptyState(string message)
         {
-            public string Date { get; set; } = "";
-            public string CheckIn { get; set; } = "";
-            public string CheckOut { get; set; } = "";
-            public decimal Fee { get; set; }
+            TotalCustomers = 0;
+            ActiveCustomers = 0;
+            VipCustomers = 0;
+            NewCustomers = 0;
+            TotalPages = 0;
+            Customers = new List<CustomerItemVM>();
+            VisiblePages = new List<int>();
+            ErrorMessage = message;
+        }
+
+        private static string ResolveVipLevel(string? apiVipLevel, int totalTickets, bool hasActiveMonthlyTicket)
+        {
+            if (!string.IsNullOrWhiteSpace(apiVipLevel))
+            {
+                return NormalizeVipLevel(apiVipLevel);
+            }
+
+            if (totalTickets >= 80)
+            {
+                return "Platinum";
+            }
+
+            if (totalTickets >= 40)
+            {
+                return "Gold";
+            }
+
+            if (totalTickets >= 15 || hasActiveMonthlyTicket)
+            {
+                return "Silver";
+            }
+
+            return "Thường";
+        }
+
+        private static string NormalizeVipLevel(string vipLevel)
+        {
+            return vipLevel.Trim().ToLowerInvariant() switch
+            {
+                "normal" or "thuong" or "thường" => "Thường",
+                "silver" => "Silver",
+                "gold" => "Gold",
+                "platinum" => "Platinum",
+                _ => vipLevel.Trim()
+            };
+        }
+
+        private static bool IsVipMatch(string vipLevel, string filter)
+        {
+            var normalizedFilter = NormalizeVipLevel(filter);
+            return string.Equals(vipLevel, normalizedFilter, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsNormalVip(string vipLevel)
+        {
+            return string.Equals(vipLevel, "Thường", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(vipLevel, "Normal", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static int GetDiscountPercent(string vipLevel)
+        {
+            return vipLevel switch
+            {
+                "Silver" => 3,
+                "Gold" => 5,
+                "Platinum" => 10,
+                _ => 0
+            };
+        }
+
+        private static int CalculateVipProgress(decimal totalSpent, string vipLevel)
+        {
+            var nextTarget = vipLevel switch
+            {
+                "Thường" => 1_000_000m,
+                "Silver" => 3_000_000m,
+                "Gold" => 6_000_000m,
+                _ => totalSpent
+            };
+
+            if (nextTarget <= 0)
+            {
+                return 100;
+            }
+
+            return Math.Clamp((int)Math.Round(totalSpent / nextTarget * 100), 0, 100);
+        }
+
+        private static decimal CalculateAmountToNextLevel(decimal totalSpent, string vipLevel)
+        {
+            var nextTarget = vipLevel switch
+            {
+                "Thường" => 1_000_000m,
+                "Silver" => 3_000_000m,
+                "Gold" => 6_000_000m,
+                _ => totalSpent
+            };
+
+            return Math.Max(0, nextTarget - totalSpent);
         }
     }
 
+    public class CustomerItemVM
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; } = "";
+        public string CustomerCode { get; set; } = "";
+        public string Phone { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string VipLevel { get; set; } = "Thường";
+        public string StatusText { get; set; } = "";
+        public string StatusClass { get; set; } = "";
+        public int TotalTickets { get; set; }
+    }
+
+    public class CustomerDetailVM
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; } = "";
+        public string CustomerCode { get; set; } = "";
+        public string Phone { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string? Gender { get; set; }
+        public string RegisterDate { get; set; } = "";
+        public string VipLevel { get; set; } = "Thường";
+        public decimal TotalSpent { get; set; }
+        public int TotalTickets { get; set; }
+        public int DiscountPercent { get; set; }
+        public int VipProgress { get; set; }
+        public decimal AmountToNextLevel { get; set; }
+
+        public List<CustomerParkingHistoryVM> Histories { get; set; } = new();
+    }
+
+    public class CustomerParkingHistoryVM
+    {
+        public string Date { get; set; } = "";
+        public string CheckIn { get; set; } = "";
+        public string CheckOut { get; set; } = "";
+        public decimal Fee { get; set; }
+    }
+}

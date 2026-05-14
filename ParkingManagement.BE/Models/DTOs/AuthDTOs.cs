@@ -64,6 +64,33 @@
         public string Message { get; set; } = string.Empty;
     }
 
+    // ── CURRENT PROFILE ────────────────────────────────────────
+    public class CurrentUserProfileDto
+    {
+        public string AccountId { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
+        public string? Gender { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string? RelatedId { get; set; }
+    }
+
+    public class UpdateCurrentProfileDto
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string Gender { get; set; } = string.Empty;
+    }
+
+    public class UpdateCurrentProfileResponseDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public CurrentUserProfileDto? Data { get; set; }
+    }
+
     // ── REFRESH TOKEN ────────────────────────────────────────
     public class RefreshTokenDto
     {

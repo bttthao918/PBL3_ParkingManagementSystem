@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
@@ -91,6 +92,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Get audit logs for a specific slot
         /// </summary>
         [HttpGet("{slotId}/audit-logs")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<dynamic>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAuditLogs(string slotId)
         {

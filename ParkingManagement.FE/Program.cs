@@ -10,48 +10,43 @@ builder.Services.AddRazorPages();
 var backendBaseUrl = builder.Configuration["BackendApi:BaseUrl"]
     ?? throw new InvalidOperationException("BackendApi:BaseUrl not configured");
 
-builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+void ConfigureHttpClient(HttpClient client)
 {
     client.BaseAddress = new Uri(backendBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
-});
+}
 
-
-builder.Services.AddHttpClient<ITicketService, TicketService>(client =>
+// Handler that trusts dev certs and doesn't lose auth headers on redirect
+HttpClientHandler CreateHandler() => new HttpClientHandler
 {
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
+    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+};
 
-builder.Services.AddHttpClient<IReportService, ReportService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-builder.Services.AddHttpClient<ICustomerApiService, CustomerApiService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-builder.Services.AddHttpClient<IParkingSlotService, ParkingSlotService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-builder.Services.AddHttpClient<IEmployeeService, EmployeeService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
+builder.Services.AddHttpClient<IAuthService, AuthService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<ITicketService, TicketService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IReportService, ReportService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<ICustomerApiService, CustomerApiService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IParkingSlotService, ParkingSlotService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IEmployeeService, EmployeeService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IMonthlyTicketService, MonthlyTicketService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IReservationService, ReservationService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IPaymentService, PaymentService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IEmployeeMonthlyTicketService, EmployeeMonthlyTicketService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IParkingOperationService, ParkingOperationService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IWorkLogService, WorkLogService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 // ── Cookie Authentication ──────────────────────────
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

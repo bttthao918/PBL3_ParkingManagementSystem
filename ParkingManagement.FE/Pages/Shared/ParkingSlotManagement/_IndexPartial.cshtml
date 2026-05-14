@@ -1,17 +1,12 @@
-﻿@model ParkingManagement.FE.Pages.Shared.ParkingSlotManagement.ParkingSlotManagementModel
+﻿@* Model can be either Employee, Admin, or Shared ParkingSlotManagementModel - all have same properties *@
 
 <div class="dashboard-content parking-page">
 
     <div class="parking-header">
         <div>
             <h2>Quản lý chỗ đỗ</h2>
-            <p>Theo dõi trạng thái, cập nhật và xem chi tiết từng vị trí đỗ</p>
+            <p>Theo dõi trạng thái và xem chi tiết từng vị trí đỗ</p>
         </div>
-
-        <button class="parking-btn-primary">
-            <i class="fa-solid fa-file-export"></i>
-            Xuất báo cáo
-        </button>
     </div>
 
     <div class="parking-kpi-grid">
@@ -92,11 +87,6 @@
                 <i class="fa-solid fa-rotate-right"></i>
                 Làm mới
             </button>
-
-            <button class="parking-btn-primary">
-                <i class="fa-solid fa-pen-to-square"></i>
-                Cập nhật trạng thái
-            </button>
         </div>
     </div>
 
@@ -172,40 +162,54 @@
                 </div>
             </div>
 
-            <div class="parking-info-section">
+            <div class="parking-info-section" id="occupantSection" style="display:none;">
                 <h4>Thông tin sử dụng</h4>
 
                 <div class="parking-info-row">
                     <span>Biển số xe</span>
-                    <strong>51H-123.45</strong>
-                </div>
-
-                <div class="parking-info-row">
-                    <span>Khách hàng</span>
-                    <strong>Nguyễn Văn A</strong>
+                    <strong id="detailPlate">-</strong>
                 </div>
 
                 <div class="parking-info-row">
                     <span>Thời gian vào</span>
-                    <strong>10/05/2026 08:20</strong>
+                    <strong id="detailOccupiedSince">-</strong>
                 </div>
             </div>
 
             <div class="parking-detail-actions">
-                <button class="parking-btn-primary">
+                <button class="parking-btn-primary" id="btnUpdateStatus" onclick="updateSlotStatus()">
                     <i class="fa-solid fa-pen"></i>
                     Cập nhật trạng thái
                 </button>
 
-                <button class="parking-btn-outline">
+                <button class="parking-btn-outline" id="btnHistory" onclick="showSlotHistory()">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                     Lịch sử sử dụng
                 </button>
+            </div>
 
-                <button class="parking-btn-danger">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    Báo sự cố
-                </button>
+            <!-- Update Status Form (hidden by default) -->
+            <div id="updateStatusForm" style="display:none; margin-top:12px;">
+                <select id="newStatusSelect" class="parking-status-select">
+                    <option value="Trống">Trống</option>
+                    <option value="Bảo trì">Bảo trì</option>
+                </select>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                    <button class="parking-btn-primary" onclick="confirmUpdateStatus()" style="flex:1;">
+                        <i class="fa-solid fa-check"></i> Xác nhận
+                    </button>
+                    <button class="parking-btn-outline" onclick="cancelUpdateStatus()" style="flex:1;">
+                        Hủy
+                    </button>
+                </div>
+            </div>
+
+            <!-- History (hidden by default) -->
+            <div id="slotHistorySection" style="display:none; margin-top:12px;">
+                <h4 style="font-size:13px; color:#475569; margin-bottom:8px;">Lịch sử gần đây</h4>
+                <div id="slotHistoryList" style="font-size:12px; color:#64748b;">
+                    Đang tải...
+                </div>
             </div>
         </aside>
 

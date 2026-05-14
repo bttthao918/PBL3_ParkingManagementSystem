@@ -2,7 +2,7 @@
 @model ParkingManagement.FE.Pages.Admin.EmployeeManagementModel
 @{
     ViewData["Title"] = "Quản lý nhân viên";
-    ViewData["UserName"] = "Admin";
+    ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
     ViewData["Role"] = "Quản trị hệ thống";
 }
 

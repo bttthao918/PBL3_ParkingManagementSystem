@@ -33,17 +33,21 @@ namespace ParkingManagement.FE.Services
             if (!string.IsNullOrEmpty(search.SearchKeyword)) queryParams.Add($"SearchKeyword={Uri.EscapeDataString(search.SearchKeyword)}");
             if (!string.IsNullOrEmpty(search.Status)) queryParams.Add($"Status={Uri.EscapeDataString(search.Status)}");
             if (!string.IsNullOrEmpty(search.VehicleType)) queryParams.Add($"VehicleType={Uri.EscapeDataString(search.VehicleType)}");
+            if (!string.IsNullOrEmpty(search.AreaFilter)) queryParams.Add($"AreaFilter={Uri.EscapeDataString(search.AreaFilter)}");
             if (search.FromDate.HasValue) queryParams.Add($"FromDate={Uri.EscapeDataString(search.FromDate.Value.ToString("yyyy-MM-dd"))}");
             if (search.ToDate.HasValue) queryParams.Add($"ToDate={Uri.EscapeDataString(search.ToDate.Value.ToString("yyyy-MM-dd"))}");
             queryParams.Add($"PageNumber={search.PageNumber}");
             queryParams.Add($"PageSize={search.PageSize}");
 
             var queryString = string.Join("&", queryParams);
+            // Sử dụng api/tickets (endpoint chung) - BE trả về ListTicketDto có cùng cấu trúc với ListEmployeeTicketDto
             var url = $"api/tickets?{queryString}";
 
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
+                // BE trả về ListTicketDto nhưng có cùng cấu trúc với ListEmployeeTicketDto
+                // Deserialize trực tiếp vì JSON property names giống nhau
                 return await response.Content.ReadFromJsonAsync<ListEmployeeTicketDto>();
             }
 
@@ -53,7 +57,8 @@ namespace ParkingManagement.FE.Services
             }
             
             var errorContent = await response.Content.ReadAsStringAsync();
-            throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent} - Token: {!string.IsNullOrEmpty(token)} - URL: {url}");
+            _logger.LogWarning("SearchTicketsAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+            return null;
         }
 
         public async Task<TicketSummaryDto?> GetTicketSummaryAsync()

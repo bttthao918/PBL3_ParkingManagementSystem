@@ -1,73 +1,103 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ParkingManagement.FE.Models.ViewModels.Customer;
-using ParkingManagement.FE.Helpers;
+using ParkingManagement.FE.Models;
+using ParkingManagement.FE.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace ParkingManagement.FE.Pages.Customer.Booking
 {
     [Authorize(Roles = "Customer")]
     public class CreateModel : PageModel
     {
-        [BindProperty]
-        public BookingCreateViewModel Input { get; set; } = new();
+        private readonly IReservationService _reservationService;
+        private readonly ICustomerApiService _customerApiService;
 
-        public List<VehicleProfileViewModel> Profiles { get; set; } = new();
-        public List<ParkingSlotViewModel> Slots { get; set; } = new();
-
-        public void OnGet()
+        public CreateModel(IReservationService reservationService, ICustomerApiService customerApiService)
         {
-            LoadData();
+            _reservationService = reservationService;
+            _customerApiService = customerApiService;
         }
 
-        public IActionResult OnPost()
+        [BindProperty]
+        public CreateReservationInput Input { get; set; } = new();
+
+        public List<AvailableSlotDto> AvailableSlots { get; set; } = new();
+        public CustomerProfileDto? Profile { get; set; }
+        public string? ErrorMessage { get; set; }
+        public string? SuccessMessage { get; set; }
+
+        public async Task OnGetAsync()
         {
-            LoadData();
+            ViewData["Title"] = "Đặt chỗ mới";
+            ViewData["Role"] = "Khách hàng";
+            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Khách hàng";
+
+            await LoadDataAsync();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            ViewData["Title"] = "Đặt chỗ mới";
+            ViewData["Role"] = "Khách hàng";
+            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Khách hàng";
+
+            await LoadDataAsync();
 
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var totalHours = Math.Ceiling((Input.EndTime - Input.StartTime).TotalHours);
-            if (totalHours <= 0)
+            if (Input.ExpectedTime <= DateTime.Now)
             {
-                totalHours = 1;
+                ErrorMessage = "Thời gian dự kiến phải trong tương lai.";
+                return Page();
             }
 
-            var totalPrice = (decimal)totalHours * 20000;
-
-            var booking = new BookingViewModel
+            var dto = new CreateReservationDto
             {
-                Id = CustomerBookingFakeData.Bookings.Count + 1,
-                Code = $"DC-2024-{CustomerBookingFakeData.Bookings.Count + 1:000000}",
-                CustomerName = Input.CustomerName,
-                Phone = Input.Phone,
-                PlateNumber = Input.PlateNumber,
+                VehiclePlate = Input.VehiclePlate.Trim().ToUpper(),
                 VehicleType = Input.VehicleType,
-                ParkingSlot = Input.ParkingSlot,
-                StartTime = Input.StartTime,
-                EndTime = Input.EndTime,
-                TotalPrice = totalPrice,
-                Status = "Sắp tới"
+                PreferredSlotId = Input.SlotId,
+                ExpectedTime = Input.ExpectedTime
             };
 
-            CustomerBookingFakeData.Bookings.Add(booking);
-
-            var slot = CustomerBookingFakeData.Slots.FirstOrDefault(x => x.Code == Input.ParkingSlot);
-            if (slot != null)
+            var result = await _reservationService.CreateAsync(dto);
+            if (result != null)
             {
-                slot.Status = "Holding";
+                TempData["SuccessMessage"] = $"Đặt chỗ thành công! Mã đặt chỗ: {result.ReservationId}";
+                return RedirectToPage("./Index");
             }
-
-            return RedirectToPage("/Customer/Bookings/Index");
+            else
+            {
+                ErrorMessage = "Không thể tạo đặt chỗ. Vui lòng thử lại.";
+                return Page();
+            }
         }
 
-        private void LoadData()
+        private async Task LoadDataAsync()
         {
-            Profiles = CustomerBookingFakeData.Profiles;
-            Slots = CustomerBookingFakeData.Slots;
+            Profile = await _customerApiService.GetProfileAsync();
+            AvailableSlots = await _reservationService.GetAvailableSlotsAsync(Input.VehicleType) ?? new();
         }
+    }
+
+    public class CreateReservationInput
+    {
+        [Required(ErrorMessage = "Vui lòng nhập biển số xe")]
+        [RegularExpression(@"^[0-9]{2}[A-Z]{1,2}-[0-9]{3,5}\.[0-9]{2}$|^[0-9]{2}[A-Z]{1,2}-[0-9]{5}$", 
+            ErrorMessage = "Biển số xe không đúng định dạng (VD: 43A-123.45)")]
+        public string VehiclePlate { get; set; } = "";
+
+        [Required(ErrorMessage = "Vui lòng chọn loại xe")]
+        public string VehicleType { get; set; } = "Xe máy";
+
+        public string? SlotId { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng chọn thời gian dự kiến")]
+        public DateTime ExpectedTime { get; set; } = DateTime.Now.AddHours(1);
     }
 }
 

@@ -2,13 +2,12 @@
 @model ParkingManagement.FE.Pages.Employee.TicketManagementModel
 
 @{
-    ViewData["Title"] = "Quản lý vé";
-    ViewData["Role"] = "Nhân viên";
-    ViewData["UserName"] = "Nguyễn Văn An";
+    // ViewData is set in code-behind (TicketManagement.cshtml.cs)
 }
 
 @section Styles {
-    <link rel="stylesheet" href="/css/employee/ticket_manage.css" />
+    <link rel="stylesheet" href="/css/employee/ticket_manage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 }
 
 <div class="ticket-page">
@@ -23,6 +22,98 @@
         <div>
             <h1>Quản lý vé</h1>
             <p>Xem vé, tìm kiếm, check-in, check-out và tính tiền gửi xe</p>
+        </div>
+        <button type="button" class="secondary-btn" onclick="document.getElementById('pricingPanel').classList.toggle('open')">
+            <i class="fa-solid fa-tags"></i> Xem bảng giá
+        </button>
+    </div>
+
+    <!-- Bảng giá gửi xe -->
+    <div class="pricing-collapse" id="pricingPanel">
+        <div class="pricing-section">
+            <div class="pricing-section-header">
+                <div>
+                    <h3>Bảng giá vé</h3>
+                    <p>Áp dụng cho các loại xe trong hệ thống bãi giữ xe.</p>
+                </div>
+                <button type="button" class="pricing-close-btn" onclick="document.getElementById('pricingPanel').classList.remove('open')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="pricing-cards-row">
+                <div class="pricing-vehicle-card">
+                    <div class="pricing-vehicle-header">
+                        <div class="pricing-vehicle-icon motorcycle"><i class="fa-solid fa-motorcycle"></i></div>
+                        <div>
+                            <span class="pricing-vehicle-name">Xe máy</span>
+                            <div class="pricing-vehicle-price">3,000 đ <small>/ giờ</small></div>
+                        </div>
+                    </div>
+                    <div class="pricing-vehicle-details">
+                        <div class="pricing-detail-row">
+                            <span>Theo giờ</span>
+                            <strong>3,000 đ</strong>
+                        </div>
+                        <div class="pricing-detail-row">
+                            <span>Tối đa / ngày</span>
+                            <strong>30,000 đ/ngày</strong>
+                        </div>
+                        <div class="pricing-detail-row">
+                            <span>Tối thiểu</span>
+                            <strong>15 phút</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-vehicle-card">
+                    <div class="pricing-vehicle-header">
+                        <div class="pricing-vehicle-icon car"><i class="fa-solid fa-car"></i></div>
+                        <div>
+                            <span class="pricing-vehicle-name">Ô tô nhỏ</span>
+                            <div class="pricing-vehicle-price">5,000 đ <small>/ giờ</small></div>
+                        </div>
+                    </div>
+                    <div class="pricing-vehicle-details">
+                        <div class="pricing-detail-row">
+                            <span>Theo giờ</span>
+                            <strong>5,000 đ</strong>
+                        </div>
+                        <div class="pricing-detail-row">
+                            <span>Tối đa / ngày</span>
+                            <strong>50,000 đ/ngày</strong>
+                        </div>
+                        <div class="pricing-detail-row">
+                            <span>Tối thiểu</span>
+                            <strong>15 phút</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-vehicle-card">
+                    <div class="pricing-vehicle-header">
+                        <div class="pricing-vehicle-icon truck"><i class="fa-solid fa-truck"></i></div>
+                        <div>
+                            <span class="pricing-vehicle-name">Ô tô lớn</span>
+                            <div class="pricing-vehicle-price">8,000 đ <small>/ giờ</small></div>
+                        </div>
+                    </div>
+                    <div class="pricing-vehicle-details">
+                        <div class="pricing-detail-row">
+                            <span>Theo giờ</span>
+                            <strong>8,000 đ</strong>
+                        </div>
+                        <div class="pricing-detail-row">
+                            <span>Tối đa / ngày</span>
+                            <strong>80,000 đ/ngày</strong>
+                        </div>
+                        <div class="pricing-detail-row">
+                            <span>Tối thiểu</span>
+                            <strong>15 phút</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -53,24 +144,6 @@
                 <small>↑ 15.3% so với hôm qua</small>
             </div>
         </div>
-
-        <div class="kpi-card">
-            <div class="kpi-icon orange"><i class="fa-solid fa-clock"></i></div>
-            <div>
-                <span>Quá hạn</span>
-                <h3>@Model.ExpiredTickets</h3>
-                <small>↑ 5.7% so với hôm qua</small>
-            </div>
-        </div>
-
-        <div class="kpi-card">
-            <div class="kpi-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
-            <div>
-                <span>Đã hủy</span>
-                <h3>@Model.CancelledTickets</h3>
-                <small class="down">↓ 3.2% so với hôm qua</small>
-            </div>
-        </div>
     </div>
 
     <div class="ticket-layout @(Model.SelectedTicket != null ? "has-detail" : "full-width")">
@@ -89,11 +162,6 @@
                         <i class="fa-solid fa-filter"></i>
                         Bộ lọc
                     </button>
-
-                    <a asp-page="./TicketManagement" class="primary-btn" style="text-decoration:none;">
-                        <i class="fa-solid fa-plus"></i>
-                        Tạo vé mới
-                    </a>
                 </div>
 
                 <div class="filter-bottom">
@@ -114,9 +182,12 @@
                         <option value="">Khu vực: Tất cả</option>
                         <option value="A">Khu A</option>
                         <option value="B">Khu B</option>
+                        <option value="C">Khu C</option>
                     </select>
 
-                    <input asp-for="CreatedDate" type="date" />
+                    <input name="CreatedDate" type="text" class="flatpickr-date" placeholder="dd/mm/yyyy"
+                           value="@(Model.CreatedDate?.ToString("dd/MM/yyyy"))"
+                           data-iso-value="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))" />
 
                     <a asp-page="./TicketManagement" class="clear-filter">
                         <i class="fa-solid fa-rotate-right"></i>
@@ -156,7 +227,7 @@
                                 <td>
                                     <div class="customer-info">
                                         <div class="avatar">
-                                            @(item.CustomerName.Substring(0, 1))
+                                            @item.AvatarLetter
                                         </div>
                                         <div>
                                             <strong>@item.CustomerName</strong>
@@ -198,7 +269,7 @@
                                     }
                                     else
                                     {
-                                        <span>---</span>
+                                        <span>Chưa tính</span>
                                     }
                                 </td>
 
@@ -206,6 +277,13 @@
                                     <div class="table-actions">
                                         <a asp-page="./TicketManagement"
                                                asp-route-selectedId="@item.Id"
+                                               asp-route-search="@Model.Search"
+                                               asp-route-statusFilter="@Model.StatusFilter"
+                                               asp-route-vehicleFilter="@Model.VehicleFilter"
+                                               asp-route-areaFilter="@Model.AreaFilter"
+                                               asp-route-createdDate="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))"
+                                               asp-route-pageNumber="@Model.PageNumber"
+                                               asp-route-pageSize="@Model.PageSize"
                                                class="icon-btn"
                                                title="Xem chi tiết">
                                             <i class="fa-solid fa-eye"></i>
@@ -217,40 +295,31 @@
                                             </button>
 
                                             <div class="dropdown-menu">
-                                                <a asp-page="./TicketManagement" asp-route-selectedId="@item.Id">
+                                                <a asp-page="./TicketManagement"
+                                                   asp-route-selectedId="@item.Id"
+                                                   asp-route-search="@Model.Search"
+                                                   asp-route-statusFilter="@Model.StatusFilter"
+                                                   asp-route-vehicleFilter="@Model.VehicleFilter"
+                                                   asp-route-areaFilter="@Model.AreaFilter"
+                                                   asp-route-createdDate="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))"
+                                                   asp-route-pageNumber="@Model.PageNumber"
+                                                   asp-route-pageSize="@Model.PageSize">
                                                     <i class="fa-solid fa-eye"></i>
                                                     Xem chi tiết
                                                 </a>
 
-                                                <form method="post" asp-page-handler="CheckOut">
-                                                    <input type="hidden" name="ticketId" value="@item.TicketCode" />
-                                                    <input type="hidden" name="fee" value="@(item.TotalPrice ?? 0)" />
-                                                    <input type="hidden" name="selectedId" value="@item.Id" />
-                                                    <button type="submit" style="all:unset; cursor:pointer; display:block; width:100%;">
-                                                        <i class="fa-solid fa-right-from-bracket"></i>
-                                                        Check-out
-                                                    </button>
-                                                </form>
-
-                                                <form method="post" asp-page-handler="CheckOut">
-                                                    <input type="hidden" name="ticketId" value="@item.TicketCode" />
-                                                    <input type="hidden" name="fee" value="@(item.TotalPrice ?? 0)" />
-                                                    <input type="hidden" name="selectedId" value="@item.Id" />
-                                                    <button type="submit" style="all:unset; cursor:pointer; display:block; width:100%;">
-                                                        <i class="fa-solid fa-money-bill"></i>
-                                                        Thanh toán
-                                                    </button>
-                                                </form>
-
-                                                <a asp-page="./TicketManagement" asp-route-selectedId="@item.Id">
-                                                    <i class="fa-solid fa-right-to-bracket"></i>
-                                                    Check-in
-                                                </a>
-
-                                                <a asp-page="./TicketManagement" asp-route-selectedId="@item.Id">
-                                                    <i class="fa-solid fa-ban"></i>
-                                                    Hủy vé
-                                                </a>
+                                                @if (item.CanCheckOut)
+                                                {
+                                                    <form method="post" asp-page-handler="CheckOut">
+                                                        <input type="hidden" name="ticketId" value="@item.TicketCode" />
+                                                        <input type="hidden" name="fee" value="@(item.TotalPrice ?? 0)" />
+                                                        <input type="hidden" name="selectedId" value="@item.Id" />
+                                                        <button type="submit" style="all:unset; cursor:pointer; display:block; width:100%;">
+                                                            <i class="fa-solid fa-right-from-bracket"></i>
+                                                            Check-out
+                                                        </button>
+                                                    </form>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -259,6 +328,71 @@
                         }
                     </tbody>
                 </table>
+            </div>
+
+            <div class="pagination-row">
+                <span>Hiển thị @Model.FirstItemIndex - @Model.LastItemIndex trong @Model.FilteredTickets vé</span>
+
+                <div class="pagination">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-page="./TicketManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleFilter="@Model.VehicleFilter"
+                           asp-route-areaFilter="@Model.AreaFilter"
+                           asp-route-createdDate="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@(Model.PageNumber - 1)"
+                           asp-route-pageSize="@Model.PageSize">‹</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">‹</span>
+                    }
+
+                    @foreach (var pageIndex in Model.VisiblePages)
+                    {
+                        <a asp-page="./TicketManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleFilter="@Model.VehicleFilter"
+                           asp-route-areaFilter="@Model.AreaFilter"
+                           asp-route-createdDate="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@pageIndex"
+                           asp-route-pageSize="@Model.PageSize"
+                           class="@(pageIndex == Model.PageNumber ? "active" : "")">@pageIndex</a>
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-page="./TicketManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleFilter="@Model.VehicleFilter"
+                           asp-route-areaFilter="@Model.AreaFilter"
+                           asp-route-createdDate="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))"
+                           asp-route-pageNumber="@(Model.PageNumber + 1)"
+                           asp-route-pageSize="@Model.PageSize">›</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">›</span>
+                    }
+                </div>
+
+                <form method="get" class="page-size-form">
+                    <input type="hidden" name="Search" value="@Model.Search" />
+                    <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+                    <input type="hidden" name="VehicleFilter" value="@Model.VehicleFilter" />
+                    <input type="hidden" name="AreaFilter" value="@Model.AreaFilter" />
+                    <input type="hidden" name="CreatedDate" value="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))" />
+                    <input type="hidden" name="PageNumber" value="1" />
+                    <select asp-for="PageSize" onchange="this.form.submit()">
+                        <option value="10">10 / trang</option>
+                        <option value="20">20 / trang</option>
+                        <option value="50">50 / trang</option>
+                    </select>
+                </form>
             </div>
 
         </section>
@@ -296,20 +430,6 @@
                     </p>
                 </div>
 
-                <div class="detail-actions">
-                    <button class="secondary-btn" type="button">
-                        Check-in
-                    </button>
-
-                    <button class="primary-btn" type="button">
-                        Check-out
-                    </button>
-
-                    <button class="danger-btn" type="button">
-                        Hủy vé
-                    </button>
-                </div>
-
                 <div class="detail-card">
                     <div class="detail-card-title">
                         <h4>Thông tin khách hàng</h4>
@@ -317,7 +437,7 @@
 
                     <div class="customer-detail-row">
                         <div class="avatar large">
-                            @(Model.SelectedTicket.CustomerName.Substring(0, 1))
+                            @Model.SelectedTicket.AvatarLetter
                         </div>
 
                         <div>
@@ -393,32 +513,35 @@
                         <a asp-page="/Admin/TicketManagement">Xem bảng giá</a>
                     </div>
 
-                    <div class="info-row">
-                        <span>Giá vé cơ bản</span>
-                        <strong>@Model.SelectedTicket.BasePrice.ToString("N0") đ/lượt</strong>
-                    </div>
+                    @if (Model.SelectedTicket.TotalPrice.HasValue)
+                    {
+                        <div class="info-row">
+                            <span>Thời gian gửi</span>
+                            <strong>@Model.SelectedTicket.DurationText</strong>
+                        </div>
 
-                    <div class="info-row">
-                        <span>Thời gian gửi</span>
-                        <strong>@Model.SelectedTicket.DurationText</strong>
-                    </div>
+                        <div class="info-row">
+                            <span>Phí dịch vụ</span>
+                            <strong>@Model.SelectedTicket.ServiceFee.ToString("N0") đ</strong>
+                        </div>
 
-                    <div class="info-row">
-                        <span>Phí dịch vụ</span>
-                        <strong>@Model.SelectedTicket.ServiceFee.ToString("N0") đ</strong>
-                    </div>
+                        <div class="total-row">
+                            <span>Tổng tiền</span>
+                            <strong>@Model.SelectedTicket.PaymentTotal.ToString("N0") đ</strong>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-row">
+                            <span>Trạng thái phí</span>
+                            <strong>Chưa tính</strong>
+                        </div>
 
-                    <div class="total-row">
-                        <span>Tổng tiền</span>
-                        <strong>@Model.SelectedTicket.PaymentTotal.ToString("N0") đ</strong>
-                    </div>
-
-                    <form method="post" asp-page-handler="CheckOut">
-                        <input type="hidden" name="ticketId" value="@Model.SelectedTicket.TicketCode" />
-                        <input type="hidden" name="fee" value="@Model.SelectedTicket.PaymentTotal" />
-                        <input type="hidden" name="selectedId" value="@Model.SelectedTicket.Id" />
-                        <button class="pay-btn" type="submit">Thanh toán</button>
-                    </form>
+                        <div class="info-row">
+                            <span>Thời gian gửi</span>
+                            <strong>@Model.SelectedTicket.DurationText</strong>
+                        </div>
+                    }
                 </div>
 
             </aside>
@@ -426,3 +549,50 @@
 
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var dateInput = document.querySelector('.flatpickr-date');
+            if (dateInput) {
+                flatpickr(dateInput, {
+                    locale: 'vn',
+                    dateFormat: 'd/m/Y',
+                    allowInput: true,
+                    onClose: function (selectedDates, dateStr, instance) {
+                        // Khi chọn ngày, convert sang yyyy-MM-dd để server parse đúng
+                        if (selectedDates.length > 0) {
+                            var d = selectedDates[0];
+                            var isoDate = d.getFullYear() + '-' +
+                                String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                                String(d.getDate()).padStart(2, '0');
+                            dateInput.setAttribute('data-iso-value', isoDate);
+                        } else {
+                            dateInput.setAttribute('data-iso-value', '');
+                        }
+                    }
+                });
+
+                // Trước khi submit form, đổi value sang ISO format để server parse đúng
+                var form = dateInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function () {
+                        var isoVal = dateInput.getAttribute('data-iso-value');
+                        if (!isoVal && dateInput.value) {
+                            // Parse dd/MM/yyyy thành yyyy-MM-dd
+                            var parts = dateInput.value.split('/');
+                            if (parts.length === 3) {
+                                isoVal = parts[2] + '-' + parts[1] + '-' + parts[0];
+                            }
+                        }
+                        if (isoVal) {
+                            dateInput.value = isoVal;
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+}

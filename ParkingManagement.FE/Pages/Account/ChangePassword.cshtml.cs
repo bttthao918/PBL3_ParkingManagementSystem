@@ -1,36 +1,65 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Account
 {
+    [Authorize]
     public class ChangePasswordModel : PageModel
     {
+        private readonly IAuthService _authService;
+
+        public ChangePasswordModel(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
         [BindProperty]
         public ChangePasswordInputModel Input { get; set; } = new();
-        public AccountViewModel Account { get; set; } = new();
+        
+        public string? ErrorMessage { get; set; }
 
         public void OnGet()
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Admin";
-            Account.RoleName = role;
+            ViewData["Title"] = "Đổi mật khẩu";
+            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "User";
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
+            ViewData["Role"] = role switch
+            {
+                "Employee" => "Nhân viên",
+                "Manager" => "Quản lý",
+                "Customer" => "Khách hàng",
+                _ => role
+            };
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Admin";
-            Account.RoleName = role;
-
             if (!ModelState.IsValid)
                 return Page();
 
-            // TODO: kiểm tra mật khẩu hiện tại trong database
-            // TODO: mã hóa mật khẩu mới
-            // TODO: lưu mật khẩu mới
+            var request = new ChangePasswordRequest
+            {
+                CurrentPassword = Input.CurrentPassword,
+                NewPassword = Input.NewPassword,
+                ConfirmPassword = Input.ConfirmPassword
+            };
 
-            TempData["Success"] = "Đổi mật khẩu thành công.";
-            return RedirectToPage();
+            var (success, message) = await _authService.ChangePasswordAsync(request);
+
+            if (success)
+            {
+                TempData["Success"] = message;
+                return RedirectToPage();
+            }
+            else
+            {
+                ErrorMessage = message;
+                return Page();
+            }
         }
     }
 

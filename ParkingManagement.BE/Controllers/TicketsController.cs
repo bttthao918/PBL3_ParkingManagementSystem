@@ -118,6 +118,29 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Validate check-in: kiểm tra biển số, vé tháng, đặt chỗ, gợi ý slot trống (Employee only)
+        /// </summary>
+        [HttpPost("checkin/validate")]
+        [Authorize(Roles = "Employee")]
+        [ProducesResponseType(typeof(CheckInValidationDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ValidateCheckIn([FromBody] CheckInInputDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var result = await _ticketService.ValidateAndPrepareCheckInAsync(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ValidateCheckIn error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
         /// Check-out vehicle and process payment (Employee only)
         /// </summary>
         [HttpPost("{ticketId}/checkout")]
@@ -139,6 +162,29 @@ namespace ParkingManagement.Web.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError($"CheckOut error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Validate check-out: tính phí, kiểm tra vé tháng (Employee only)
+        /// </summary>
+        [HttpPost("checkout/validate")]
+        [Authorize(Roles = "Employee")]
+        [ProducesResponseType(typeof(CheckOutValidationDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ValidateCheckOut([FromBody] CheckOutInputDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var result = await _ticketService.ValidateAndPrepareCheckOutAsync(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ValidateCheckOut error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }

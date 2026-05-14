@@ -15,15 +15,12 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         private static readonly Dictionary<(string vehicleType, string package), decimal> Pricing = new()
         {
-            [("Xe máy", "1 tháng")] = 150_000,
-            [("Xe máy", "3 tháng")] = 400_000,
-            [("Xe máy", "6 tháng")] = 750_000,
-            [("Ô tô nhỏ", "1 tháng")] = 350_000,
-            [("Ô tô nhỏ", "3 tháng")] = 650_000,
-            [("Ô tô nhỏ", "6 tháng")] = 900_000,
-            [("Ô tô lớn", "1 tháng")] = 500_000,
-            [("Ô tô lớn", "3 tháng")] = 900_000,
-            [("Ô tô lớn", "6 tháng")] = 1_600_000,
+            [("Xe máy", "1 tháng")] = 400_000,
+            [("Xe máy", "3 tháng")] = 1_100_000,
+            [("Ô tô nhỏ", "1 tháng")] = 1_200_000,
+            [("Ô tô nhỏ", "3 tháng")] = 3_200_000,
+            [("Ô tô lớn", "1 tháng")] = 2_000_000,
+            [("Ô tô lớn", "3 tháng")] = 5_500_000,
         };
 
         public MonthlyTicketService(

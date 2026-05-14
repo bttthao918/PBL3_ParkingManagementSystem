@@ -2,9 +2,7 @@
 @model ParkingManagement.FE.Pages.Employee.PersonalReportModel
 
 @{
-    ViewData["Title"] = "Báo cáo cá nhân";
-    ViewData["Role"] = "Nhân viên";
-    ViewData["UserName"] = "Nguyễn Văn An";
+    // ViewData is set in code-behind (PersonalReport.cshtml.cs)
 }
 
 @section Styles {
@@ -26,14 +24,9 @@
             <span>@Model.FromDate - @Model.ToDate</span>
         </div>
 
-        <a class="filter-btn">Hôm nay</a>
-        <a class="filter-btn">7 ngày</a>
-        <a class="filter-btn active">Tháng này</a>
-
-        <button class="download-btn">
-            <i class="fa-solid fa-download"></i>
-            Tải báo cáo
-        </button>
+        <a href="?period=today" class="filter-btn">Hôm nay</a>
+        <a href="?period=7days" class="filter-btn">7 ngày</a>
+        <a href="?period=month" class="filter-btn active">Tháng này</a>
     </div>
 
     <div class="report-layout">
@@ -41,7 +34,7 @@
         <section class="report-main">
 
             <div class="kpi-grid">
-                <div class="kpi-card">
+                <a asp-page="/Employee/TicketManagement" class="kpi-card clickable">
                     <div class="kpi-icon blue">
                         <i class="fa-solid fa-ticket"></i>
                     </div>
@@ -50,9 +43,9 @@
                         <h3>@Model.TotalTickets.ToString("N0")</h3>
                         <small>↑ 12.5% so với kỳ trước</small>
                     </div>
-                </div>
+                </a>
 
-                <div class="kpi-card">
+                <a asp-page="/Employee/RevenueStatistics" class="kpi-card clickable">
                     <div class="kpi-icon green">
                         <i class="fa-solid fa-money-bill-wave"></i>
                     </div>
@@ -61,9 +54,9 @@
                         <h3>@Model.TotalRevenue.ToString("N0") đ</h3>
                         <small>↑ 15.3% so với kỳ trước</small>
                     </div>
-                </div>
+                </a>
 
-                <div class="kpi-card">
+                <a asp-page="/Employee/PersonalReport" class="kpi-card clickable">
                     <div class="kpi-icon purple">
                         <i class="fa-solid fa-clock"></i>
                     </div>
@@ -72,9 +65,9 @@
                         <h3>@Model.TotalWorkingHours</h3>
                         <small>↑ 8.7% so với kỳ trước</small>
                     </div>
-                </div>
+                </a>
 
-                <div class="kpi-card">
+                <a asp-page="/Employee/PersonalReport" class="kpi-card clickable">
                     <div class="kpi-icon orange">
                         <i class="fa-solid fa-calendar-check"></i>
                     </div>
@@ -83,7 +76,7 @@
                         <h3>@Model.TotalShifts ca</h3>
                         <small>↑ 9.1% so với kỳ trước</small>
                     </div>
-                </div>
+                </a>
             </div>
 
             <div class="chart-grid">
@@ -120,8 +113,7 @@
                         <tr>
                             <th>Ngày làm</th>
                             <th>Ca làm</th>
-                            <th>Giờ bắt đầu</th>
-                            <th>Giờ kết thúc</th>
+                            <th>Thời gian</th>
                             <th>Tổng giờ</th>
                             <th>Số vé xử lý</th>
                             <th>Doanh thu</th>
@@ -138,8 +130,7 @@
                                     <span>@shift.DayName</span>
                                 </td>
                                 <td>@shift.ShiftName</td>
-                                <td>@shift.StartTime</td>
-                                <td>@shift.EndTime</td>
+                                <td><strong>@shift.StartTime</strong> - <strong>@shift.EndTime</strong></td>
                                 <td>@shift.TotalHours</td>
                                 <td>@shift.TicketCount vé</td>
                                 <td>@shift.Revenue.ToString("N0") đ</td>

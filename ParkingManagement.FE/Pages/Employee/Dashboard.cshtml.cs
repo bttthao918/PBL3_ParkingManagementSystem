@@ -10,15 +10,30 @@ namespace ParkingManagement.FE.Pages.Employee
     {
         private readonly Services.IReportService _reportService;
         private readonly Services.ITicketService _ticketService;
+        private readonly Services.IWorkLogService _workLogService;
 
-        public DashboardModel(Services.IReportService reportService, Services.ITicketService ticketService)
+        public DashboardModel(
+            Services.IReportService reportService,
+            Services.ITicketService ticketService,
+            Services.IWorkLogService workLogService)
         {
             _reportService = reportService;
             _ticketService = ticketService;
+            _workLogService = workLogService;
         }
 
         public Models.EmployeeDashboardDto Stats { get; set; } = CreateFallbackStats();
         public List<Models.EmployeeTicketListDto> RecentTickets { get; set; } = new();
+
+        // Work Log
+        public Services.WorkLogStatusResponse? WorkStatus { get; set; }
+        public Services.WorkLogMonthlySummaryResponse? MonthlySummary { get; set; }
+
+        [TempData]
+        public string? ShiftMessage { get; set; }
+
+        [TempData]
+        public bool ShiftSuccess { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -26,7 +41,7 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["Role"] = "Nhân viên";
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Employee";
 
-            var employeeId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var employeeId = User.FindFirst("related_id")?.Value;
             if (!string.IsNullOrEmpty(employeeId))
             {
                 var stats = await _reportService.GetEmployeeDashboardAsync(employeeId);
@@ -34,29 +49,49 @@ namespace ParkingManagement.FE.Pages.Employee
                 {
                     Stats = stats;
                 }
-                
-                var searchResult = await _ticketService.SearchTicketsAsync(new Models.EmployeeTicketSearchDto
-                {
-                    PageNumber = 1,
-                    PageSize = 5
-                });
-
-                if (searchResult != null && searchResult.Items != null)
-                {
-                    RecentTickets = searchResult.Items.Take(5).ToList();
-                }
             }
 
+            // Recent tickets
+            var searchResult = await _ticketService.SearchTicketsAsync(new Models.EmployeeTicketSearchDto
+            {
+                PageNumber = 1,
+                PageSize = 5
+            });
+
+            if (searchResult != null && searchResult.Items != null)
+            {
+                RecentTickets = searchResult.Items.Take(5).ToList();
+            }
+
+            // Work status
+            WorkStatus = await _workLogService.GetCurrentStatusAsync();
+            MonthlySummary = await _workLogService.GetMonthlySummaryAsync();
+        }
+
+        public async Task<IActionResult> OnPostStartShiftAsync()
+        {
+            var result = await _workLogService.StartShiftAsync();
+            ShiftSuccess = result?.Success ?? false;
+            ShiftMessage = result?.Message ?? "Không thể bắt đầu ca.";
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostEndShiftAsync()
+        {
+            var result = await _workLogService.EndShiftAsync();
+            ShiftSuccess = result?.Success ?? false;
+            ShiftMessage = result?.Message ?? "Không thể kết thúc ca.";
+            return RedirectToPage();
         }
 
         private static Models.EmployeeDashboardDto CreateFallbackStats()
         {
             return new Models.EmployeeDashboardDto
             {
-                TicketsProcessedThisMonth = 128,
-                RevenueThisMonth = 8450000,
-                WorkMinutesThisMonth = 96 * 60,
-                WorkDaysThisMonth = 12,
+                TicketsProcessedThisMonth = 0,
+                RevenueThisMonth = 0,
+                WorkMinutesThisMonth = 0,
+                WorkDaysThisMonth = 0,
                 AverageRevenuePerTicket = 0,
                 AverageTicketsPerDay = 0
             };

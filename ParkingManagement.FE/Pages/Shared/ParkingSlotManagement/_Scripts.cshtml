@@ -1,7 +1,8 @@
-@model ParkingManagement.FE.Pages.Shared.ParkingSlotManagement.ParkingSlotManagementModel
+@* Model can be either Employee or Shared ParkingSlotManagementModel - both have same properties *@
 
 <script>
     const slots = @Html.Raw(Model.SlotsJson);
+    const beApiUrl = 'http://localhost:5188';
 
     let currentZone = "A";
 
@@ -64,7 +65,10 @@
         renderSlots();
     }
 
+    let currentSlot = null;
+
     function showDetail(slot) {
+        currentSlot = slot;
         const statusClass = getStatusClass(slot.status);
         const zoneName = slot.slotId.startsWith("A") ? "Khu A" : slot.slotId.startsWith("B") ? "Khu B" : "Khu C";
 
@@ -79,6 +83,96 @@
         document.getElementById("detailVehicleType").textContent = slot.vehicleType;
         document.getElementById("detailLocation").textContent = slot.location;
         document.getElementById("detailUpdated").textContent = slot.lastUpdatedFull;
+
+        // Show/hide occupant info
+        var occupantSection = document.getElementById("occupantSection");
+        if (slot.currentOccupant && slot.status === "Đang sử dụng") {
+            occupantSection.style.display = "block";
+            document.getElementById("detailPlate").textContent = slot.currentOccupant;
+            document.getElementById("detailOccupiedSince").textContent = slot.lastUpdatedFull;
+        } else {
+            occupantSection.style.display = "none";
+        }
+
+        // Hide forms
+        document.getElementById("updateStatusForm").style.display = "none";
+        document.getElementById("slotHistorySection").style.display = "none";
+
+        // Show/hide update button based on status
+        var btnUpdate = document.getElementById("btnUpdateStatus");
+        if (slot.status === "Đang sử dụng" || slot.status === "Đã đặt") {
+            btnUpdate.style.display = "none";
+        } else {
+            btnUpdate.style.display = "inline-flex";
+        }
+    }
+
+    function updateSlotStatus() {
+        if (!currentSlot) return;
+        document.getElementById("newStatusSelect").value = currentSlot.status === "Bảo trì" ? "Trống" : "Bảo trì";
+        document.getElementById("updateStatusForm").style.display = "block";
+    }
+
+    function cancelUpdateStatus() {
+        document.getElementById("updateStatusForm").style.display = "none";
+    }
+
+    function confirmUpdateStatus() {
+        if (!currentSlot) return;
+        var newStatus = document.getElementById("newStatusSelect").value;
+        
+        fetch(`${beApiUrl}/api/parking-slots/${currentSlot.slotId}/status?employeeId=EMP001`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success !== false) {
+                // Update local data
+                var s = slots.find(x => x.slotId === currentSlot.slotId);
+                if (s) {
+                    s.status = newStatus;
+                    s.lastUpdatedFull = new Date().toLocaleString('vi-VN');
+                    s.lastUpdatedText = new Date().toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+                }
+                renderSlots();
+                showDetail(s || currentSlot);
+                cancelUpdateStatus();
+            } else {
+                alert(data.message || 'Cập nhật thất bại');
+            }
+        })
+        .catch(() => {
+            // Fallback: reload page
+            location.reload();
+        });
+    }
+
+    function showSlotHistory() {
+        if (!currentSlot) return;
+        var section = document.getElementById("slotHistorySection");
+        var list = document.getElementById("slotHistoryList");
+        section.style.display = "block";
+        list.innerHTML = "Đang tải...";
+
+        fetch(`${beApiUrl}/api/parking-slots/${currentSlot.slotId}/audit-logs`)
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                list.innerHTML = data.slice(0, 5).map(item =>
+                    `<div style="padding:6px 0; border-bottom:1px solid #f1f5f9;">
+                        <strong>${item.oldStatus || '?'}</strong> → <strong>${item.newStatus || '?'}</strong>
+                        <br><small style="color:#94a3b8;">${item.changedAt || ''}</small>
+                    </div>`
+                ).join('');
+            } else {
+                list.innerHTML = '<span style="color:#94a3b8;">Chưa có lịch sử</span>';
+            }
+        })
+        .catch(() => {
+            list.innerHTML = '<span style="color:#94a3b8;">Không thể tải lịch sử</span>';
+        });
     }
 
     function resetParkingFilter() {

@@ -187,24 +187,49 @@ namespace ParkingManagement.Web.Controllers.Api
         /// <returns>Current user info</returns>
         [HttpGet("me")]
         [Authorize]
-        [ProducesResponseType(typeof(CurrentUserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CurrentUserProfileDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUser()
         {
             var accountId = User.FindFirst("accountId")?.Value;
-            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-            var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
-
             if (string.IsNullOrEmpty(accountId))
                 return Unauthorized(new ErrorResponse { Message = "Invalid token" });
 
-            var response = new CurrentUserDto
+            var result = await _authService.GetCurrentProfileAsync(accountId);
+            if (!result.Success)
+                return BadRequest(new ErrorResponse { Message = result.Message });
+
+            return Ok(result.Data);
+        }
+
+        /// <summary>
+        /// Update current user profile. Email is managed by account identity and cannot be changed here.
+        /// </summary>
+        /// <param name="dto">Profile fields that the current user can edit</param>
+        /// <returns>Updated current user profile</returns>
+        [HttpPut("me")]
+        [Authorize]
+        [ProducesResponseType(typeof(UpdateCurrentProfileResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> UpdateCurrentUser([FromBody] UpdateCurrentProfileDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse { Message = "Invalid input" });
+
+            var accountId = User.FindFirst("accountId")?.Value;
+            if (string.IsNullOrEmpty(accountId))
+                return Unauthorized(new ErrorResponse { Message = "Invalid token" });
+
+            var result = await _authService.UpdateCurrentProfileAsync(accountId, dto);
+            if (!result.Success)
+                return BadRequest(new ErrorResponse { Message = result.Message });
+
+            var response = new UpdateCurrentProfileResponseDto
             {
-                AccountId = accountId,
-                Role = role ?? "",
-                Email = email ?? "",
-                FullName = fullName ?? ""
+                Success = true,
+                Message = result.Message,
+                Data = result.Data
             };
 
             return Ok(response);
@@ -218,11 +243,4 @@ namespace ParkingManagement.Web.Controllers.Api
         public IEnumerable<string>? Errors { get; set; }
     }
 
-    public class CurrentUserDto
-    {
-        public string AccountId { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-    }
 }
