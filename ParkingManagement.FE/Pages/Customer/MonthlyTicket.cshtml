@@ -1,0 +1,290 @@
+@page
+@model ParkingManagement.FE.Pages.Customer.MonthlyTicketModel
+
+@{
+    ViewData["Title"] = "Vé tháng";
+    ViewData["UserName"] = Model.UserName;
+    ViewData["Role"] = "Khách hàng";
+}
+
+<link rel="stylesheet" href="/css/customer/monthly_ticket.css" />
+
+@if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+{
+    <div class="card success-card">
+        @Model.SuccessMessage
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="card error-card">
+        @Model.ErrorMessage
+    </div>
+}
+
+<div class="card banner-card">
+    <h2>Quản lý vé tháng</h2>
+    <p>Đăng ký, gia hạn hoặc hủy vé tháng một cách dễ dàng và nhanh chóng.</p>
+</div>
+
+<div class="monthly-grid">
+    <div class="card monthly-plan-section">
+        <h3>1. Chọn gói vé phù hợp</h3>
+
+        <div class="plan-grid">
+            @foreach (var plan in Model.Plans)
+            {
+                <div class="plan-card @(plan.IsSelected ? "selected" : "")">
+                    <div class="plan-header">
+                        <div class="radio @(plan.IsSelected ? "checked" : "")"></div>
+
+                        <div class="plan-icon @plan.IconClass">
+                            <i class="@plan.Icon"></i>
+                        </div>
+
+                        <div>
+                            <h4>@plan.Name</h4>
+
+                            <h2>
+                                @plan.Price.ToString("N0") đ
+                                <span>/ tháng</span>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="plan-features">
+                        <p><i class="fa-solid fa-check"></i> Giữ xe không giới hạn trong 1 tháng</p>
+                        <p><i class="fa-solid fa-check"></i> Áp dụng theo biển số xe đăng ký</p>
+                        <p><i class="fa-solid fa-check"></i> Ra vào tự do</p>
+                    </div>
+
+                    <button type="button"
+                            class="outline-btn @(plan.IsSelected ? "selected" : "")"
+                            onclick="openRegisterModal('@plan.VehicleType', '@plan.PackageType')">
+                        Đăng ký ngay
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div class="note-box">
+            <i class="fa-solid fa-circle-info"></i>
+            Giá trên đã bao gồm VAT
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>2. Vé tháng hiện tại</h3>
+
+        @if (Model.CurrentTicket == null)
+        {
+            <div class="empty-ticket">
+                Bạn chưa có vé tháng đang hoạt động.
+            </div>
+        }
+        else
+        {
+            <div class="current-ticket">
+                <div class="ticket-status">
+                    <i class="fa-solid fa-circle-check"></i>
+                    @Model.GetStatusText(Model.CurrentTicket)
+                </div>
+
+                <div class="ticket-content">
+                    <div class="ticket-header">
+                        <div class="ticket-icon">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
+
+                        <div>
+                            <h4>@Model.CurrentTicket.PackageType</h4>
+                            <p>Mã vé: @Model.CurrentTicket.MonthlyTicketId</p>
+                        </div>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Biển số</span>
+                        <strong>@Model.CurrentTicket.VehiclePlate</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Ngày bắt đầu</span>
+                        <strong>@Model.CurrentTicket.StartDate.ToString("dd/MM/yyyy")</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Ngày hết hạn</span>
+                        <strong>@Model.CurrentTicket.EndDate.ToString("dd/MM/yyyy")</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Còn lại</span>
+                        <strong class="green-text">@Model.CurrentTicket.DaysRemaining ngày</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Giá trị</span>
+                        <strong>@Model.CurrentTicket.TotalFee.ToString("N0") đ</strong>
+                    </div>
+
+                    <form method="post" asp-page-handler="Renew">
+                        <input type="hidden" name="ticketId" value="@Model.CurrentTicket.MonthlyTicketId" />
+                        <input type="hidden" name="packageType" value="1 tháng" />
+                        <input type="hidden" name="paymentMethod" value="Chuyển khoản" />
+
+                        <button type="submit" class="primary-btn">
+                            <i class="fa-solid fa-rotate"></i>
+                            Gia hạn vé
+                        </button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Cancel">
+                        <input type="hidden" name="ticketId" value="@Model.CurrentTicket.MonthlyTicketId" />
+
+                        <button type="submit" class="danger-btn">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            Hủy vé
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <h3>3. Lịch sử vé tháng</h3>
+
+    <table class="ticket-table">
+        <thead>
+            <tr>
+                <th>Mã vé</th>
+                <th>Biển số</th>
+                <th>Gói vé</th>
+                <th>Thời gian</th>
+                <th>Hiệu lực</th>
+                <th>Giá trị</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.TicketHistories.Any())
+            {
+                @foreach (var ticket in Model.TicketHistories)
+                {
+                    var isActive = Model.IsActive(ticket);
+                    <tr>
+                        <td>@ticket.MonthlyTicketId</td>
+                        <td>@ticket.VehiclePlate</td>
+                        <td>@ticket.PackageType</td>
+                        <td>
+                            @ticket.StartDate.ToString("dd/MM/yyyy")
+                            -
+                            @ticket.EndDate.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td>
+                            @(isActive ? $"{ticket.DaysRemaining} ngày" : "-")
+                        </td>
+
+                        <td>@ticket.TotalFee.ToString("N0") đ</td>
+
+                        <td>
+                            <span class="status-badge @(isActive ? "active" : "expired")">
+                                @Model.GetStatusText(ticket)
+                            </span>
+                        </td>
+
+                        <td class="action-column">
+                            <form method="post" asp-page-handler="Renew">
+                                <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
+                                <input type="hidden" name="packageType" value="1 tháng" />
+                                <input type="hidden" name="paymentMethod" value="Chuyển khoản" />
+
+                                <button type="submit" class="icon-btn blue" title="Gia hạn 1 tháng">
+                                    <i class="fa-solid fa-rotate"></i>
+                                </button>
+                            </form>
+
+                            @if (isActive)
+                            {
+                                <form method="post" asp-page-handler="Cancel">
+                                    <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
+
+                                    <button type="submit" class="icon-btn red" title="Hủy vé">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8">Chưa có lịch sử vé tháng.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="note-box">
+        <i class="fa-solid fa-circle-info"></i>
+        Nếu có thắc mắc, vui lòng liên hệ hotline 1900 1234 hoặc email support@parking.vn để được hỗ trợ.
+    </div>
+</div>
+
+<div id="registerModal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Đăng ký vé tháng</h3>
+            <button type="button" class="modal-close" onclick="closeRegisterModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form method="post" asp-page-handler="Register" class="register-form">
+            <input asp-for="RegisterInput.VehicleType" type="hidden" id="registerVehicleType" />
+            <input asp-for="RegisterInput.PackageType" type="hidden" id="registerPackageType" />
+
+            <label>
+                <span>Biển số xe</span>
+                <input asp-for="RegisterInput.VehiclePlate" placeholder="43A-123.45" />
+                <span asp-validation-for="RegisterInput.VehiclePlate" class="field-validation"></span>
+            </label>
+
+            <label>
+                <span>Thanh toán</span>
+                <select asp-for="RegisterInput.PaymentMethod">
+                    <option value="Chuyển khoản">Chuyển khoản</option>
+                    <option value="Ví điện tử">Ví điện tử</option>
+                </select>
+                <span asp-validation-for="RegisterInput.PaymentMethod" class="field-validation"></span>
+            </label>
+
+            <button type="submit" class="primary-btn">
+                <i class="fa-solid fa-check"></i>
+                Xác nhận đăng ký
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function openRegisterModal(vehicleType, packageType) {
+            document.getElementById("registerVehicleType").value = vehicleType;
+            document.getElementById("registerPackageType").value = packageType;
+            document.getElementById("registerModal").classList.remove("hidden");
+        }
+
+        function closeRegisterModal() {
+            document.getElementById("registerModal").classList.add("hidden");
+        }
+    </script>
+}

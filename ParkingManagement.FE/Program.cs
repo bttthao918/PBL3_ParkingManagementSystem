@@ -10,6 +10,9 @@ builder.Services.AddRazorPages();
 var backendBaseUrl = builder.Configuration["BackendApi:BaseUrl"]
     ?? throw new InvalidOperationException("BackendApi:BaseUrl not configured");
 
+// Đăng ký Handler đính kèm JWT Token
+builder.Services.AddTransient<AuthDelegatingHandler>();
+
 void ConfigureHttpClient(HttpClient client)
 {
     client.BaseAddress = new Uri(backendBaseUrl);
@@ -24,40 +27,49 @@ HttpClientHandler CreateHandler() => new HttpClientHandler
 };
 
 builder.Services.AddHttpClient<IAuthService, AuthService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<ITicketService, TicketService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IPricingService, PricingService>(client => ConfigureHttpClient(client))
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IReportService, ReportService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<ICustomerApiService, CustomerApiService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IParkingSlotService, ParkingSlotService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IEmployeeService, EmployeeService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IMonthlyTicketService, MonthlyTicketService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IReservationService, ReservationService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IPaymentService, PaymentService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IEmployeeMonthlyTicketService, EmployeeMonthlyTicketService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IParkingOperationService, ParkingOperationService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IWorkLogService, WorkLogService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IShiftScheduleService, ShiftScheduleService>(client => ConfigureHttpClient(client))
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
-builder.Services.AddHttpClient<IAccountProfileService, AccountProfileService>(client =>
-{
-    client.BaseAddress = new Uri(backendBaseUrl);
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
+builder.Services.AddHttpClient<IAccountProfileService, AccountProfileService>(client => ConfigureHttpClient(client))
+    .AddHttpMessageHandler<AuthDelegatingHandler>()
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 // ── Cookie Authentication ──────────────────────────
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

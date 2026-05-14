@@ -155,6 +155,61 @@ namespace ParkingManagement.FE.Models
         public int ExpiredCount { get; set; }
     }
 
+    public class RegisterMonthlyTicketRequestDto
+    {
+        public string VehiclePlate { get; set; } = "";
+        public string? VehicleType { get; set; }
+        public string PackageType { get; set; } = "";
+        public string? PaymentMethod { get; set; }
+    }
+
+    public class RegisterMonthlyTicketResponseDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = "";
+        public decimal Fee { get; set; }
+        public CustomerMonthlyTicketDto? Data { get; set; }
+    }
+
+    public class RenewMonthlyTicketRequestDto
+    {
+        public string PackageType { get; set; } = "";
+        public string? PaymentMethod { get; set; }
+    }
+
+    public class RenewMonthlyTicketResponseDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = "";
+        public decimal AdditionalFee { get; set; }
+        public CustomerMonthlyTicketDto? Data { get; set; }
+    }
+
+    public class BasicApiResponseDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = "";
+    }
+
+    public class MonthlyTicketPricingDto
+    {
+        public List<PackagePriceDto> Packages { get; set; } = new();
+    }
+
+    public class PackagePriceDto
+    {
+        public string Package { get; set; } = "";
+        public decimal Price { get; set; }
+        public string? Discount { get; set; }
+    }
+
+    public class ApiActionResult<T>
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = "";
+        public T? Data { get; set; }
+    }
+
     public class CustomerPaymentDto
     {
         public string PaymentId { get; set; } = "";

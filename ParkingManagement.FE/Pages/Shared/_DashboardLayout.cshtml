@@ -10,8 +10,8 @@
     <meta charset="utf-8" />
     <title>@pageTitle - Parking Management</title>
 
-    <link rel="stylesheet" href="/css/shared/dashboard_layout.css" />
-    <link rel="stylesheet" href="/css/shared/confirm-modal.css" />
+    <link rel="stylesheet" href="~/css/shared/dashboard_layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared/confirm-modal.css" asp-append-version="true" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         /* User dropdown */
@@ -181,7 +181,7 @@
         });
     </script>
 
-    <script src="/js/confirm-modal.js"></script>
+    <script src="~/js/confirm-modal.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

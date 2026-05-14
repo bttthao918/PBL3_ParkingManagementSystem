@@ -115,6 +115,7 @@ namespace ParkingManagement.BLL.DTOs
     public class RenewMonthlyTicketDto
     {
         public string PackageType { get; set; } = string.Empty;
+        public string? PaymentMethod { get; set; }
     }
 
     public class RenewMonthlyTicketResponseDto

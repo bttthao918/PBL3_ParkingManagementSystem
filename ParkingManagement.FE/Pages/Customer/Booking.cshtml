@@ -1,0 +1,413 @@
+﻿@page
+@model ParkingManagement.FE.Pages.Customer.BookingModel
+@{
+    ViewData["Title"] = "Quản lý đơn đặt chỗ";
+    ViewData["UserName"] = Model.UserName;
+    ViewData["Role"] = "Khách hàng";
+}
+
+<link rel="stylesheet" href="~/css/customer/booking.css" asp-append-version="true" />
+
+<div class="booking-page">
+
+    <div class="page-header">
+        <div>
+            <h2>Quản lý đơn đặt chỗ</h2>
+            <p>Quản lý và theo dõi các đơn đặt chỗ tại bãi đỗ xe.</p>
+        </div>
+
+        <button type="button" id="openBookingWizardBtn" class="main-create-btn">
+            <i class="fa-solid fa-plus"></i>
+            Đặt chỗ mới
+        </button>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card blue">
+            <div class="summary-icon"><i class="fa-solid fa-list"></i></div>
+            <div>
+                <p>Tổng đơn đặt chỗ</p>
+                <h3>@Model.TotalBooking</h3>
+                <span>Tất cả đơn</span>
+            </div>
+        </div>
+
+        <div class="summary-card green">
+            <div class="summary-icon"><i class="fa-solid fa-clock"></i></div>
+            <div>
+                <p>Đang hoạt động</p>
+                <h3>@Model.ActiveBooking</h3>
+                <span>Đang chờ hoặc đã xác nhận</span>
+            </div>
+        </div>
+
+        <div class="summary-card orange">
+            <div class="summary-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div>
+                <p>Đã hoàn thành</p>
+                <h3>@Model.CompletedBooking</h3>
+                <span>Đơn đã sử dụng</span>
+            </div>
+        </div>
+
+        <div class="summary-card red">
+            <div class="summary-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div>
+                <p>Đã hủy</p>
+                <h3>@Model.CancelledBooking</h3>
+                <span>Đơn đã hủy</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookingContent" class="booking-content no-detail">
+
+        <div class="card booking-list-card">
+            <h3>Danh sách đơn đặt chỗ</h3>
+
+            <div class="filter-bar">
+                <input type="text" value="01/05/2026 - 31/05/2026" readonly />
+
+                <select>
+                    <option>Tất cả bãi xe</option>
+                    <option>Central Park</option>
+                    <option>Times City</option>
+                    <option>EcoPark</option>
+                </select>
+
+                <select>
+                    <option>Tất cả trạng thái</option>
+                    <option>Đang chờ</option>
+                    <option>Đã xác nhận</option>
+                    <option>Đã hoàn thành</option>
+                    <option>Đã hủy</option>
+                </select>
+
+                <select>
+                    <option>Tất cả loại xe</option>
+                    <option>Xe máy</option>
+                    <option>Ô tô nhỏ</option>
+                    <option>Ô tô lớn</option>
+                </select>
+
+                <div class="search-box">
+                    <input type="text" placeholder="Tìm kiếm mã đơn, biển số..." />
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="booking-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Bãi giữ xe</th>
+                            <th>Biển số xe</th>
+                            <th>Loại xe</th>
+                            <th>Thời gian đặt</th>
+                            <th>Thời gian giữ</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Bookings)
+                        {
+                            <tr class="booking-row"
+                                data-id="@item.Id"
+                                data-code="@item.Code"
+                                data-parking="@item.ParkingName"
+                                data-position="@item.Position"
+                                data-plate="@item.VehiclePlate"
+                                data-vehicle="@item.VehicleType"
+                                data-vehicle-class="@item.VehicleClass"
+                                data-icon="@item.Icon"
+                                data-booking-time="@item.BookingTime"
+                                data-time-range="@item.TimeRange"
+                                data-price="@item.TotalPrice.ToString("N0") đ"
+                                data-status="@item.Status"
+                                data-status-class="@item.StatusClass"
+                                data-customer="@item.CustomerName"
+                                data-phone="@item.Phone"
+                                data-can-cancel="@item.CanCancel.ToString().ToLower()">
+
+                                <td class="code">@item.Code</td>
+                                <td>@item.ParkingName</td>
+                                <td>@item.VehiclePlate</td>
+                                <td>
+                                    <span class="vehicle-pill @item.VehicleClass">
+                                        <i class="@item.Icon"></i>
+                                        @item.VehicleType
+                                    </span>
+                                </td>
+                                <td>@item.BookingTime</td>
+                                <td>@item.TimeRange</td>
+                                <td>
+                                    <span class="status-badge @item.StatusClass">@item.Status</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <aside id="bookingDetailPanel" class="card detail-panel hidden">
+            <div class="detail-top">
+                <div>
+                    <p>Chi tiết đơn đặt chỗ</p>
+                    <h3 id="detailCode"></h3>
+                </div>
+
+                <button type="button" id="closeDetailBtn" class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <span id="detailStatus" class="status-badge"></span>
+
+            <div class="detail-lines">
+                <div><span>Bãi giữ xe</span><strong id="detailParking"></strong></div>
+                <div><span>Vị trí</span><strong id="detailPosition" class="blue-text"></strong></div>
+                <div><span>Biển số xe</span><strong id="detailPlate"></strong></div>
+                <div><span>Loại xe</span><strong id="detailVehicle"></strong></div>
+                <div><span>Thời gian đặt</span><strong id="detailBookingTime"></strong></div>
+                <div><span>Thời gian giữ</span><strong id="detailTimeRange"></strong></div>
+                <div><span>Tổng phí dự kiến</span><strong id="detailPrice" class="price-text"></strong></div>
+                <div><span>Khách hàng</span><strong id="detailCustomer"></strong></div>
+                <div><span>SĐT</span><strong id="detailPhone"></strong></div>
+            </div>
+
+            <div class="detail-actions">
+                <button type="button" id="cancelBookingBtn" class="danger-outline-btn">
+                    <i class="fa-solid fa-trash"></i>
+                    Hủy đơn đặt chỗ
+                </button>
+
+                <button type="button" id="bottomCloseDetailBtn" class="secondary-btn">
+                    Đóng
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <div id="bookingWizardModal" class="booking-modal wizard-section hidden">
+        <div class="booking-modal-backdrop"></div>
+
+        <div class="booking-modal-content">
+            <div class="wizard-title">
+                <h3>Quy trình đặt chỗ mới</h3>
+                <button type="button" id="closeWizardBtn" class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="wizard-steps">
+                <div class="wizard-step active" data-step-indicator="1">
+                    <span>1</span>
+                    <p>Thông tin</p>
+                </div>
+
+                <div class="wizard-line"></div>
+
+                <div class="wizard-step" data-step-indicator="2">
+                    <span>2</span>
+                    <p>Chỗ đỗ</p>
+                </div>
+
+                <div class="wizard-line"></div>
+
+                <div class="wizard-step" data-step-indicator="3">
+                    <span>3</span>
+                    <p>Xác nhận</p>
+                </div>
+
+                <div class="wizard-line"></div>
+
+                <div class="wizard-step" data-step-indicator="4">
+                    <span>4</span>
+                    <p>Thanh toán</p>
+                </div>
+            </div>
+
+            <div class="wizard-grid">
+
+            <div class="wizard-panel active" data-step="1">
+                <div class="step-title">
+                    <span>1</span>
+                    <h4>Chọn thông tin</h4>
+                </div>
+
+                <label>Chọn thông tin đã lưu</label>
+                <select id="savedVehicleSelect">
+                    <option value="59C1-123.45|Xe máy|Nguyễn Văn A|0901 234 567">
+                        59C1-123.45 - Xe máy
+                    </option>
+                    <option value="51A-567.89|Ô tô nhỏ|Nguyễn Văn A|0901 234 567">
+                        51A-567.89 - Ô tô nhỏ
+                    </option>
+                </select>
+
+                <button type="button" id="showNewVehicleFormBtn" class="link-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Thêm thông tin mới
+                </button>
+
+                <div id="newVehicleForm" class="new-vehicle-form hidden">
+                    <div class="new-vehicle-grid">
+                        <label>
+                            <span>Biển số xe</span>
+                            <input type="text" id="newVehiclePlate" placeholder="59C1-123.45" />
+                        </label>
+
+                        <label>
+                            <span>Loại xe</span>
+                            <select id="newVehicleType">
+                                <option>Xe máy</option>
+                                <option>Ô tô nhỏ</option>
+                                <option>Ô tô lớn</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Khách hàng</span>
+                            <input type="text" id="newCustomerName" placeholder="Nguyễn Văn A" />
+                        </label>
+
+                        <label>
+                            <span>Số điện thoại</span>
+                            <input type="tel" id="newCustomerPhone" placeholder="0901 234 567" />
+                        </label>
+                    </div>
+
+                    <div class="new-vehicle-actions">
+                        <button type="button" id="saveNewVehicleBtn" class="primary-btn compact-btn">
+                            Lưu thông tin
+                        </button>
+
+                        <button type="button" id="cancelNewVehicleBtn" class="secondary-btn compact-btn">
+                            Hủy
+                        </button>
+                    </div>
+
+                    <p id="newVehicleError" class="form-error hidden"></p>
+                </div>
+
+                <label>Thông tin khách hàng</label>
+                <div class="customer-card">
+                    <strong id="previewCustomer">Nguyễn Văn A</strong>
+                    <span id="previewPhone">0901 234 567</span>
+                </div>
+
+                <button type="button" class="primary-btn next-step" data-next="2">
+                    Tiếp tục
+                </button>
+            </div>
+
+            <div class="wizard-panel" data-step="2">
+                <div class="step-title">
+                    <span>2</span>
+                    <h4>Chọn chỗ đỗ</h4>
+                </div>
+
+                <div class="legend">
+                    <span><i class="dot green"></i>Trống</span>
+                    <span><i class="dot orange"></i>Đang sử dụng</span>
+                    <span><i class="dot blue"></i>Đã đặt</span>
+                    <span><i class="dot gray"></i>Bảo trì</span>
+                    <span><i class="dot red"></i>Sự cố</span>
+                </div>
+
+                <div class="zone-summary">
+                    <strong id="zoneTitle">Khu A - Xe máy</strong>
+                    <span id="zoneCapacity">50 chỗ đỗ</span>
+                </div>
+
+                <div id="parkingMap" class="parking-map">
+                </div>
+
+                <p class="selected-slot">
+                    Chỗ đã chọn:
+                    <strong id="selectedSlotText">Chưa chọn</strong>
+                </p>
+
+                <div class="wizard-actions">
+                    <button type="button" class="secondary-btn prev-step" data-prev="1">
+                        Quay lại
+                    </button>
+
+                    <button type="button" id="randomSlotBtn" class="secondary-btn">
+                        Chọn ngẫu nhiên
+                    </button>
+
+                    <button type="button" class="primary-btn next-step" data-next="3">
+                        Tiếp tục
+                    </button>
+                </div>
+            </div>
+
+            <div class="wizard-panel" data-step="3">
+                <div class="step-title">
+                    <span>3</span>
+                    <h4>Xác nhận đơn</h4>
+                </div>
+
+                <div class="confirm-box">
+                    <div><span>Bãi giữ xe</span><strong>Central Park</strong></div>
+                    <div><span>Vị trí</span><strong id="confirmSlot">Chưa chọn</strong></div>
+                    <div><span>Biển số xe</span><strong id="confirmPlate">59C1-123.45</strong></div>
+                    <div><span>Loại xe</span><strong id="confirmVehicle">Xe máy</strong></div>
+                    <div><span>Thời gian</span><strong>16/05/2026 08:00 - 12:00</strong></div>
+                    <div><span>Tổng phí dự kiến</span><strong class="price-text">20,000 đ</strong></div>
+                </div>
+
+                <div class="wizard-actions">
+                    <button type="button" class="secondary-btn prev-step" data-prev="2">Quay lại</button>
+                    <button type="button" class="primary-btn next-step" data-next="4">Tiếp tục</button>
+                </div>
+            </div>
+
+            <div class="wizard-panel" data-step="4">
+                <div class="step-title">
+                    <span>4</span>
+                    <h4>Thanh toán</h4>
+                </div>
+
+                <div class="payment-total">
+                    <span>Tổng phí cần thanh toán</span>
+                    <strong>20,000 đ</strong>
+                </div>
+
+                <label class="radio-line">
+                    <input type="radio" name="payment" checked />
+                    Tiền mặt
+                </label>
+
+                <label class="radio-line">
+                    <input type="radio" name="payment" />
+                    Chuyển khoản
+                </label>
+
+                <label class="radio-line">
+                    <input type="radio" name="payment" />
+                    Ví điện tử MoMo
+                </label>
+
+                <label class="radio-line">
+                    <input type="radio" name="payment" />
+                    Thẻ ngân hàng
+                </label>
+
+                <div class="wizard-actions">
+                    <button type="button" class="secondary-btn prev-step" data-prev="3">Quay lại</button>
+                    <button type="button" id="confirmPaymentBtn" class="primary-btn">
+                        Xác nhận thanh toán
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/js/booking.js" asp-append-version="true"></script>

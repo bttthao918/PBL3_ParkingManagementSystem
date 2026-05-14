@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using ParkingManagement.FE.Models;
 
 namespace ParkingManagement.FE.Services
@@ -10,6 +11,10 @@ namespace ParkingManagement.FE.Services
         Task<ListCustomerReservationDto?> GetReservationsAsync(int pageNumber = 1, int pageSize = 5);
         Task<ListCustomerTicketDto?> GetTicketsAsync(int pageNumber = 1, int pageSize = 5, string? status = null);
         Task<ListCustomerMonthlyTicketDto?> GetMonthlyTicketsAsync();
+        Task<MonthlyTicketPricingDto?> GetMonthlyTicketPricingAsync();
+        Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> RegisterMonthlyTicketAsync(RegisterMonthlyTicketRequestDto request);
+        Task<ApiActionResult<RenewMonthlyTicketResponseDto>> RenewMonthlyTicketAsync(string monthlyTicketId, RenewMonthlyTicketRequestDto request);
+        Task<ApiActionResult<BasicApiResponseDto>> CancelMonthlyTicketAsync(string monthlyTicketId);
         Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50);
         Task<ListEmployeeCustomerSearchDto?> SearchForEmployeeAsync(EmployeeCustomerSearchFilterDto filter);
         Task<EmployeeCustomerDetailDto?> GetEmployeeCustomerDetailAsync(string customerId);
@@ -50,6 +55,22 @@ namespace ParkingManagement.FE.Services
 
         public Task<ListCustomerMonthlyTicketDto?> GetMonthlyTicketsAsync()
             => GetAsync<ListCustomerMonthlyTicketDto>("api/customers/monthly-tickets");
+
+        public Task<MonthlyTicketPricingDto?> GetMonthlyTicketPricingAsync()
+            => GetAsync<MonthlyTicketPricingDto>("api/monthly-tickets/pricing");
+
+        public Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> RegisterMonthlyTicketAsync(RegisterMonthlyTicketRequestDto request)
+            => SendAsync<RegisterMonthlyTicketResponseDto>(() => _httpClient.PostAsJsonAsync("api/monthly-tickets", request), "api/monthly-tickets");
+
+        public Task<ApiActionResult<RenewMonthlyTicketResponseDto>> RenewMonthlyTicketAsync(string monthlyTicketId, RenewMonthlyTicketRequestDto request)
+            => SendAsync<RenewMonthlyTicketResponseDto>(
+                () => _httpClient.PostAsJsonAsync($"api/monthly-tickets/{Uri.EscapeDataString(monthlyTicketId)}/renew", request),
+                $"api/monthly-tickets/{monthlyTicketId}/renew");
+
+        public Task<ApiActionResult<BasicApiResponseDto>> CancelMonthlyTicketAsync(string monthlyTicketId)
+            => SendAsync<BasicApiResponseDto>(
+                () => _httpClient.DeleteAsync($"api/monthly-tickets/{Uri.EscapeDataString(monthlyTicketId)}"),
+                $"api/monthly-tickets/{monthlyTicketId}");
 
         public Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50)
             => GetAsync<ListCustomerPaymentDto>($"api/customers/payment-history?pageNumber={pageNumber}&pageSize={pageSize}");
@@ -98,6 +119,67 @@ namespace ParkingManagement.FE.Services
                 _logger.LogError(ex, "Customer API call exception: {Url}", url);
                 return default;
             }
+        }
+
+        private async Task<ApiActionResult<T>> SendAsync<T>(Func<Task<HttpResponseMessage>> send, string url)
+        {
+            AttachBearerToken();
+
+            var response = await send();
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = string.IsNullOrWhiteSpace(body)
+                    ? default
+                    : JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return new ApiActionResult<T>
+                {
+                    Success = true,
+                    Message = ExtractMessage(body) ?? "Thao tác thành công.",
+                    Data = data
+                };
+            }
+
+            var message = ExtractMessage(body) ?? $"BE trả về lỗi {(int)response.StatusCode}.";
+            _logger.LogWarning("Customer API mutation failed: {StatusCode} {Url} {Body}", response.StatusCode, url, body);
+
+            return new ApiActionResult<T>
+            {
+                Success = false,
+                Message = message
+            };
+        }
+
+        private static string? ExtractMessage(string? body)
+        {
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                return null;
+            }
+
+            try
+            {
+                using var document = JsonDocument.Parse(body);
+                var root = document.RootElement;
+
+                if (root.TryGetProperty("message", out var message) && message.ValueKind == JsonValueKind.String)
+                {
+                    return message.GetString();
+                }
+
+                if (root.TryGetProperty("Message", out message) && message.ValueKind == JsonValueKind.String)
+                {
+                    return message.GetString();
+                }
+            }
+            catch (JsonException)
+            {
+                return body;
+            }
+
+            return null;
         }
 
         private void AttachBearerToken()

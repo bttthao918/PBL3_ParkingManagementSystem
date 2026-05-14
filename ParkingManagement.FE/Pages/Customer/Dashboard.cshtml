@@ -56,15 +56,14 @@
     </div>
 </div>
 
-<div class="card quick-actions">
+<div class="card quick-actions customer-quick-actions">
     <h3>Thao tác nhanh</h3>
 
     <div class="action-grid">
-        <a asp-page="/Customer/Booking/Create"><i class="fa-solid fa-plus"></i> Đặt chỗ mới</a>
-        <a asp-page="/Customer/Booking/Index"><i class="fa-solid fa-list"></i> Xem đơn đặt chỗ</a>
-        <a asp-page="/Customer/Booking/Index"><i class="fa-solid fa-ticket"></i> Vé của tôi</a>
-        <a asp-page="/Customer/Booking/Create"><i class="fa-solid fa-credit-card"></i> Đăng ký vé tháng</a>
-        <a asp-page="/Customer/Booking/Index"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử thanh toán</a>
+        <a asp-page="/Customer/Booking" asp-route-openCreate="1"><i class="fa-solid fa-plus"></i> Đặt chỗ mới</a>
+        <a asp-page="/Customer/Booking"><i class="fa-solid fa-list"></i> Xem đơn đặt chỗ</a>
+        <a asp-page="/Customer/Ticket"><i class="fa-solid fa-ticket"></i> Vé của tôi</a>
+        <a asp-page="/Customer/MonthlyTicket"><i class="fa-solid fa-credit-card"></i> Đăng ký vé tháng</a>
     </div>
 </div>
 
@@ -145,7 +144,7 @@
         @if (Model.Dashboard.CurrentMonthlyTicket == null)
         {
             <p style="margin-top:16px;">Bạn chưa có vé tháng đang hiển thị.</p>
-            <a asp-page="/Customer/Booking/Create" style="display:block;margin-top:20px;text-align:center;background:#0d6efd;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
+            <a asp-page="/Customer/MonthlyTicket" style="display:block;margin-top:20px;text-align:center;background:#0d6efd;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
                 Đăng ký vé tháng
             </a>
         }
@@ -160,7 +159,7 @@
                 <span class="badge-danger">@Model.MonthlyTicketBadge</span>
             </p>
 
-            <a asp-page="/Customer/Booking/Create" style="display:block;margin-top:20px;text-align:center;background:#ef4444;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
+            <a asp-page="/Customer/MonthlyTicket" style="display:block;margin-top:20px;text-align:center;background:#ef4444;color:white;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;">
                 Gia hạn ngay
             </a>
         }
