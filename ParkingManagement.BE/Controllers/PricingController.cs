@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
@@ -10,6 +12,7 @@ namespace ParkingManagement.Web.Controllers.Api
     /// </summary>
     [ApiController]
     [Route("api/pricing")]
+    [Authorize]
     [Produces("application/json")]
     public class PricingController : ControllerBase
     {
@@ -24,11 +27,12 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Get all pricing rules
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(PricingDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            // TODO: Implement GetAllAsync in service
-            return StatusCode(StatusCodes.Status501NotImplemented, "Not yet implemented");
+            var pricing = await _pricingService.GetCurrentPricingAsync();
+            return Ok(pricing);
         }
 
         /// <summary>
@@ -61,11 +65,11 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Get monthly ticket pricing
         /// </summary>
         [HttpGet("monthly")]
-        [ProducesResponseType(typeof(Dictionary<string, decimal>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dictionary<string, MonthlyPricingDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMonthlyPricing()
         {
-            // TODO: Implement GetMonthlyPricingAsync in service
-            return StatusCode(StatusCodes.Status501NotImplemented, "Not yet implemented");
+            var pricing = await _pricingService.GetCurrentPricingAsync();
+            return Ok(pricing.MonthlyTicketPrice);
         }
 
         /// <summary>
@@ -75,20 +79,38 @@ namespace ParkingManagement.Web.Controllers.Api
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByVehicleType(string vehicleType)
         {
-            // TODO: Implement GetByVehicleTypeAsync in service
-            return StatusCode(StatusCodes.Status501NotImplemented, "Not yet implemented");
+            var pricing = await _pricingService.GetCurrentPricingAsync();
+            return Ok(new
+            {
+                VehicleType = vehicleType,
+                HourlyRate = pricing.HourlyRate.TryGetValue(vehicleType, out var hourlyRate) ? hourlyRate : 0,
+                MaxDailyFee = pricing.MaxDailyFee.TryGetValue(vehicleType, out var maxDailyFee) ? maxDailyFee : 0,
+                MonthlyTicketPrice = pricing.MonthlyTicketPrice.TryGetValue(vehicleType, out var monthlyPrice) ? monthlyPrice : null
+            });
         }
 
         /// <summary>
         /// Create or update pricing rule
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(ServiceResult<object>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ServiceResult<object>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateOrUpdate([FromBody] object pricingRequest)
+        [Authorize(Roles = "Manager,Admin")]
+        [ProducesResponseType(typeof(ServiceResult<PricingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResult<PricingDto>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateOrUpdate([FromBody] UpdatePricingDto pricingRequest)
         {
-            // TODO: Implement CreateOrUpdateAsync in service
-            return StatusCode(StatusCodes.Status501NotImplemented, "Not yet implemented");
+            return await UpdateCurrentPricing(pricingRequest);
+        }
+
+        /// <summary>
+        /// Update current active pricing
+        /// </summary>
+        [HttpPut]
+        [Authorize(Roles = "Manager,Admin")]
+        [ProducesResponseType(typeof(ServiceResult<PricingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResult<PricingDto>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCurrent([FromBody] UpdatePricingDto pricingUpdate)
+        {
+            return await UpdateCurrentPricing(pricingUpdate);
         }
 
         /// <summary>
@@ -119,11 +141,26 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Get current active pricing
         /// </summary>
         [HttpGet("active")]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(PricingDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetActivePricing()
         {
-            // TODO: Implement GetActivePricingAsync in service
-            return StatusCode(StatusCodes.Status501NotImplemented, "Not yet implemented");
+            var pricing = await _pricingService.GetCurrentPricingAsync();
+            return Ok(pricing);
+        }
+
+        private async Task<IActionResult> UpdateCurrentPricing(UpdatePricingDto pricingUpdate)
+        {
+            if (pricingUpdate == null)
+                return BadRequest(ServiceResult<PricingDto>.Fail("Du lieu cap nhat gia ve khong hop le."));
+
+            var managerId = User.FindFirst("managerId")?.Value
+                ?? User.FindFirst("accountId")?.Value
+                ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? "System";
+
+            var result = await _pricingService.UpdatePricingAsync(pricingUpdate, managerId);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
     }
 }

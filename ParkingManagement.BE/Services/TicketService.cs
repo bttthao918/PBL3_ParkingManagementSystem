@@ -18,9 +18,8 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly IPaymentRepository _paymentRepo;
         private readonly ICheckInValidator _validator;
         private readonly IParkingSlotStrategy _slotStrategy;
+        private readonly IPricingService _pricingService;
 
-        private const decimal HOURLY_RATE = 5000;
-        private const decimal DAILY_RATE = 50000;
         private const int MIN_CHARGE_MINUTES = 15;
 
         public TicketService(
@@ -32,7 +31,8 @@ namespace ParkingManagement.BLL.Services.Implementations
             ICustomerRepository customerRepository,
             IPaymentRepository paymentRepo,
             ICheckInValidator validator,
-            IParkingSlotStrategy slotStrategy)
+            IParkingSlotStrategy slotStrategy,
+            IPricingService pricingService)
         {
             _ticketRepository = ticketRepository;
             _monthlyTicketRepository = monthlyTicketRepository;
@@ -43,6 +43,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             _paymentRepo = paymentRepo;
             _validator = validator;
             _slotStrategy = slotStrategy;
+            _pricingService = pricingService;
         }
 
         // ── 1. General Ticket Management ──
@@ -703,7 +704,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             decimal calculatedFee = 0;
             if (!isFreeTicket)
-                calculatedFee = CalculateFee(durationMinutes, ticket.VehicleType);
+                calculatedFee = await CalculateFeeAsync(durationMinutes, ticket.VehicleType);
 
             string? customerName = null;
             if (ticket.CustomerId != null)
@@ -794,40 +795,60 @@ namespace ParkingManagement.BLL.Services.Implementations
         }
 
         /// <summary>
-        /// Tính phí gửi xe:
-        /// - Giờ đầu: Xe máy 5k, Ô tô nhỏ 15k, Ô tô lớn 25k
-        /// - Từ giờ thứ 2: Xe máy 2k/h, Ô tô nhỏ 5k/h, Ô tô lớn 8k/h
-        /// - Qua đêm (22:00-06:00): Xe máy 10k, Ô tô nhỏ 40k, Ô tô lớn 60k
+        /// Tinh phi gui xe theo bang gia hien tai, co gioi han toi da theo ngay.
         /// </summary>
-        private decimal CalculateFee(int durationMinutes, string vehicleType)
+        private async Task<decimal> CalculateFeeAsync(int durationMinutes, string vehicleType)
         {
             if (durationMinutes < MIN_CHARGE_MINUTES)
                 durationMinutes = MIN_CHARGE_MINUTES;
 
-            var hours = Math.Ceiling(durationMinutes / 60.0);
+            var pricing = await _pricingService.GetCurrentPricingAsync();
+            var hourlyRate = GetPricingValue(pricing.HourlyRate, vehicleType, GetFallbackHourlyRate(vehicleType));
+            var maxDailyFee = GetPricingValue(pricing.MaxDailyFee, vehicleType, GetFallbackMaxDailyFee(vehicleType));
 
-            decimal firstHourFee, perHourFee;
-            switch (vehicleType)
+            var fullDays = durationMinutes / (24 * 60);
+            var remainingMinutes = durationMinutes % (24 * 60);
+            var totalFee = fullDays * maxDailyFee;
+
+            if (remainingMinutes > 0)
             {
-                case "Ô tô nhỏ":
-                    firstHourFee = 15_000;
-                    perHourFee = 5_000;
-                    break;
-                case "Ô tô lớn":
-                    firstHourFee = 25_000;
-                    perHourFee = 8_000;
-                    break;
-                default: // Xe máy
-                    firstHourFee = 5_000;
-                    perHourFee = 2_000;
-                    break;
+                var remainingHours = Math.Ceiling(remainingMinutes / 60.0);
+                totalFee += Math.Min((decimal)remainingHours * hourlyRate, maxDailyFee);
             }
 
-            if (hours <= 1)
-                return firstHourFee;
+            return totalFee;
+        }
 
-            var additionalHours = (int)hours - 1;
-            return firstHourFee + (additionalHours * perHourFee);
+        private static decimal GetPricingValue(Dictionary<string, decimal> pricing, string vehicleType, decimal fallback)
+        {
+            if (pricing.TryGetValue(vehicleType, out var value) && value > 0)
+                return value;
+
+            var matchedValue = pricing
+                .FirstOrDefault(item => string.Equals(item.Key, vehicleType, StringComparison.OrdinalIgnoreCase))
+                .Value;
+
+            return matchedValue > 0 ? matchedValue : fallback;
+        }
+
+        private static decimal GetFallbackHourlyRate(string vehicleType)
+        {
+            return vehicleType switch
+            {
+                "Ô tô nhỏ" => 5_000,
+                "Ô tô lớn" => 8_000,
+                _ => 3_000
+            };
+        }
+
+        private static decimal GetFallbackMaxDailyFee(string vehicleType)
+        {
+            return vehicleType switch
+            {
+                "Ô tô nhỏ" => 50_000,
+                "Ô tô lớn" => 80_000,
+                _ => 30_000
+            };
         }
 
         private string BuildCheckOutMessage(string ticketType, int durationMinutes, decimal fee, bool isFree)

@@ -50,6 +50,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                     };
                 }
 
+                var currentPricing = await GetCurrentPricingAsync();
+                updateDto.HourlyRate = MergeDecimalPricing(currentPricing.HourlyRate, updateDto.HourlyRate);
+                updateDto.MaxDailyFee = MergeDecimalPricing(currentPricing.MaxDailyFee, updateDto.MaxDailyFee);
+                updateDto.MonthlyTicketPrice = MergeMonthlyPricing(currentPricing.MonthlyTicketPrice, updateDto.MonthlyTicketPrice);
+
                 // Validate amounts > 0
                 if (updateDto.HourlyRate != null)
                 {
@@ -200,14 +205,76 @@ namespace ParkingManagement.BLL.Services.Implementations
             }
         }
 
+        private static Dictionary<string, decimal> MergeDecimalPricing(
+            Dictionary<string, decimal> currentPricing,
+            Dictionary<string, decimal>? updatedPricing)
+        {
+            var mergedPricing = new Dictionary<string, decimal>(currentPricing);
+
+            if (updatedPricing == null)
+                return mergedPricing;
+
+            foreach (var item in updatedPricing)
+            {
+                mergedPricing[item.Key] = item.Value;
+            }
+
+            return mergedPricing;
+        }
+
+        private static Dictionary<string, UpdateMonthlyPricingDto> MergeMonthlyPricing(
+            Dictionary<string, MonthlyPricingDto> currentPricing,
+            Dictionary<string, UpdateMonthlyPricingDto>? updatedPricing)
+        {
+            var mergedPricing = currentPricing.ToDictionary(
+                item => item.Key,
+                item => new UpdateMonthlyPricingDto
+                {
+                    OneMonth = item.Value.OneMonth,
+                    ThreeMonth = item.Value.ThreeMonth,
+                    SixMonth = item.Value.SixMonth
+                });
+
+            if (updatedPricing == null)
+                return mergedPricing;
+
+            foreach (var item in updatedPricing)
+            {
+                if (!mergedPricing.TryGetValue(item.Key, out var monthlyPricing))
+                {
+                    monthlyPricing = new UpdateMonthlyPricingDto();
+                    mergedPricing[item.Key] = monthlyPricing;
+                }
+
+                if (item.Value.OneMonth.HasValue)
+                    monthlyPricing.OneMonth = item.Value.OneMonth;
+
+                if (item.Value.ThreeMonth.HasValue)
+                    monthlyPricing.ThreeMonth = item.Value.ThreeMonth;
+
+                if (item.Value.SixMonth.HasValue)
+                    monthlyPricing.SixMonth = item.Value.SixMonth;
+            }
+
+            return mergedPricing;
+        }
+
         /// <summary>
         /// Map from PricingConfiguration list to PricingDto
         /// </summary>
         private PricingDto MapToDto(List<PricingConfiguration> configs)
         {
-            var hourlyRate = new Dictionary<string, decimal>();
-            var maxDailyFee = new Dictionary<string, decimal>();
-            var monthlyTicketPrice = new Dictionary<string, MonthlyPricingDto>();
+            var defaultPricing = GetDefaultPricing();
+            var hourlyRate = new Dictionary<string, decimal>(defaultPricing.HourlyRate);
+            var maxDailyFee = new Dictionary<string, decimal>(defaultPricing.MaxDailyFee);
+            var monthlyTicketPrice = defaultPricing.MonthlyTicketPrice.ToDictionary(
+                item => item.Key,
+                item => new MonthlyPricingDto
+                {
+                    OneMonth = item.Value.OneMonth,
+                    ThreeMonth = item.Value.ThreeMonth,
+                    SixMonth = item.Value.SixMonth
+                });
 
             var vehicleTypes = new[] { "Xe máy", "Ô tô nhỏ", "Ô tô lớn" };
 
@@ -230,11 +297,13 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 if (monthly1M != null || monthly3M != null || monthly6M != null)
                 {
+                    monthlyTicketPrice.TryGetValue(vType, out var currentMonthlyPrice);
+
                     monthlyTicketPrice[vType] = new MonthlyPricingDto
                     {
-                        OneMonth = monthly1M?.Amount ?? 0,
-                        ThreeMonth = monthly3M?.Amount ?? 0,
-                        SixMonth = monthly6M?.Amount ?? 0
+                        OneMonth = monthly1M?.Amount ?? currentMonthlyPrice?.OneMonth ?? 0,
+                        ThreeMonth = monthly3M?.Amount ?? currentMonthlyPrice?.ThreeMonth ?? 0,
+                        SixMonth = monthly6M?.Amount ?? currentMonthlyPrice?.SixMonth ?? 0
                     };
                 }
             }

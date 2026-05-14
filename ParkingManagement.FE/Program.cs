@@ -27,6 +27,8 @@ builder.Services.AddHttpClient<IAuthService, AuthService>(client => ConfigureHtt
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<ITicketService, TicketService>(client => ConfigureHttpClient(client))
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+builder.Services.AddHttpClient<IPricingService, PricingService>(client => ConfigureHttpClient(client))
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<IReportService, ReportService>(client => ConfigureHttpClient(client))
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 builder.Services.AddHttpClient<ICustomerApiService, CustomerApiService>(client => ConfigureHttpClient(client))
