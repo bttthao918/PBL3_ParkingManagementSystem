@@ -93,7 +93,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Update ticket information (Manager/Admin)
         /// </summary>
         [HttpPut("{ticketId}")]
-        [Authorize(Roles = "Manager,Admin")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(TicketDetailDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -126,7 +126,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Delete ticket (Manager/Admin)
         /// </summary>
         [HttpDelete("{ticketId}")]
-        [Authorize(Roles = "Manager,Admin")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(string ticketId)
@@ -143,6 +143,74 @@ namespace ParkingManagement.Web.Controllers.Api
             {
                 _logger.LogError($"Delete error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        /// <summary>
+        /// Create a new parking ticket from the manager/admin page.
+        /// </summary>
+        [HttpPost]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(CheckInResultDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] CreateTicketDto input)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                if (string.IsNullOrWhiteSpace(input.VehiclePlate) || string.IsNullOrWhiteSpace(input.VehicleType))
+                {
+                    return BadRequest(new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = "Vui lòng nhập biển số xe và loại xe."
+                    });
+                }
+
+                var validation = await _ticketService.ValidateAndPrepareCheckInAsync(new CheckInInputDto
+                {
+                    VehiclePlate = input.VehiclePlate,
+                    VehicleType = input.VehicleType,
+                    CustomerId = input.CustomerId
+                });
+
+                var slotId = string.IsNullOrWhiteSpace(input.SlotId)
+                    ? validation.PreferredSlotId ?? validation.AvailableSlots.FirstOrDefault()?.SlotId
+                    : input.SlotId.Trim();
+
+                if (string.IsNullOrWhiteSpace(slotId))
+                {
+                    return BadRequest(new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = validation.Message ?? "Không còn chỗ trống phù hợp để tạo vé."
+                    });
+                }
+
+                var result = await _ticketService.ConfirmCheckInAsync(new ConfirmCheckInDto
+                {
+                    VehiclePlate = input.VehiclePlate,
+                    VehicleType = input.VehicleType,
+                    SlotId = slotId,
+                    CustomerId = validation.CustomerId ?? input.CustomerId
+                });
+
+                if (!result.Success)
+                    return BadRequest(result);
+
+                _logger.LogInformation($"Ticket created from admin page: {result.TicketId}");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Create ticket error: {ex.Message}");
+                return StatusCode(500, new CheckInResultDto
+                {
+                    Success = false,
+                    Message = "Internal server error"
+                });
             }
         }
 

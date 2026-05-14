@@ -36,6 +36,10 @@
     {
         <div class="alert-success">@TempData["Success"]</div>
     }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-error">@TempData["Error"]</div>
+    }
 
     <div class="account-grid">
         <!-- LEFT: PROFILE VIEW -->

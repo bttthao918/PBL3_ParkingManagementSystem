@@ -139,9 +139,7 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var allEmployees = (await _repo.GetAllAsync())
-                    .Where(e => !e.IsDeleted)
-                    .ToList();
+                var allEmployees = await _repo.GetAllAsync(includeDeleted: true);
 
                 var filtered = allEmployees.AsEnumerable();
 
@@ -176,6 +174,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var employeeDtos = items.Select(e => new ManagerEmployeeListDto
                 {
                     EmployeeId = e.EmployeeId,
+                    EmployeeCode = e.EmployeeCode,
                     FullName = e.FullName,
                     Email = e.Account?.Email ?? "",
                     PhoneNumber = e.PhoneNumber ?? "",
@@ -218,7 +217,8 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var employee = await _repo.GetByIdAsync(employeeId);
+                var employee = (await _repo.GetAllAsync(includeDeleted: true))
+                    .FirstOrDefault(e => e.EmployeeId == employeeId);
                 if (employee == null)
                     throw new Exception("Nhân viên không tồn tại");
 
@@ -240,6 +240,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return new ManagerEmployeeDetailDto
                 {
                     EmployeeId = employee.EmployeeId,
+                    EmployeeCode = employee.EmployeeCode,
                     FullName = employee.FullName,
                     Email = employee.Account?.Email ?? "",
                     PhoneNumber = employee.PhoneNumber ?? "",
@@ -414,7 +415,8 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var employee = await _repo.GetByIdAsync(employeeId);
+                var employee = (await _repo.GetAllAsync(includeDeleted: true))
+                    .FirstOrDefault(e => e.EmployeeId == employeeId);
                 if (employee == null)
                     return new UpdateEmployeeResultDto { Success = false, Message = "Nhân viên không tồn tại" };
 
@@ -435,6 +437,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                         employee.IsDeleted = false;
                 }
 
+                if (!string.IsNullOrEmpty(request.Status) && employee.Account != null)
+                {
+                    employee.Account.IsActive = !employee.IsDeleted;
+                }
+
                 await _repo.UpdateAsync(employee);
 
                 return new UpdateEmployeeResultDto { Success = true, Message = "Cập nhật thông tin nhân viên thành công" };
@@ -449,7 +456,8 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var employee = await _repo.GetByIdAsync(request.EmployeeId);
+                var employee = (await _repo.GetAllAsync(includeDeleted: true))
+                    .FirstOrDefault(e => e.EmployeeId == request.EmployeeId);
                 if (employee == null)
                     return new DeleteEmployeeResultDto { Success = false, Message = "Nhân viên không tồn tại" };
 

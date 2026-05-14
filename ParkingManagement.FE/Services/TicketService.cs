@@ -1,6 +1,7 @@
 using ParkingManagement.FE.Models;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace ParkingManagement.FE.Services
 {
@@ -9,6 +10,7 @@ namespace ParkingManagement.FE.Services
         Task<ListEmployeeTicketDto?> SearchTicketsAsync(EmployeeTicketSearchDto search);
         Task<TicketSummaryDto?> GetTicketSummaryAsync();
         Task<TicketDetailDto?> GetTicketDetailAsync(string ticketId);
+        Task<CreateTicketResultDto?> CreateTicketAsync(CreateTicketRequestDto input);
         Task<bool> UpdateTicketAsync(string ticketId, UpdateTicketRequestDto input);
         Task<bool> DeleteTicketAsync(string ticketId);
         Task<bool> CheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt");
@@ -103,9 +105,47 @@ namespace ParkingManagement.FE.Services
             throw new Exception($"API Call Failed: {response.StatusCode} - {errorContent}");
         }
 
+        public async Task<CreateTicketResultDto?> CreateTicketAsync(CreateTicketRequestDto input)
+        {
+            ApplyAuthorizationHeader(requireToken: false);
+
+            var response = await _httpClient.PostAsJsonAsync("api/tickets", input);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            CreateTicketResultDto? result = null;
+
+            if (!string.IsNullOrWhiteSpace(responseBody))
+            {
+                try
+                {
+                    result = JsonSerializer.Deserialize<CreateTicketResultDto>(
+                        responseBody,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "CreateTicketAsync could not parse response body.");
+                }
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                return result ?? new CreateTicketResultDto { Success = true };
+            }
+
+            _logger.LogWarning("CreateTicketAsync failed: {StatusCode} {Body}", response.StatusCode, responseBody);
+
+            return result ?? new CreateTicketResultDto
+            {
+                Success = false,
+                Message = string.IsNullOrWhiteSpace(responseBody)
+                    ? "Không thể tạo vé mới."
+                    : $"Không thể tạo vé mới. Chi tiết: {responseBody}"
+            };
+        }
+
         public async Task<bool> UpdateTicketAsync(string ticketId, UpdateTicketRequestDto input)
         {
-            ApplyAuthorizationHeader();
+            ApplyAuthorizationHeader(requireToken: false);
 
             var response = await _httpClient.PutAsJsonAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}", input);
             if (response.IsSuccessStatusCode)
@@ -120,7 +160,7 @@ namespace ParkingManagement.FE.Services
 
         public async Task<bool> DeleteTicketAsync(string ticketId)
         {
-            ApplyAuthorizationHeader();
+            ApplyAuthorizationHeader(requireToken: false);
 
             var response = await _httpClient.DeleteAsync($"api/tickets/{Uri.EscapeDataString(ticketId)}");
             if (response.IsSuccessStatusCode)

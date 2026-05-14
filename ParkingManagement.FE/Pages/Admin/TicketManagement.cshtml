@@ -30,10 +30,10 @@
             <p>Quản lý danh sách vé lượt, tìm kiếm vé và theo dõi số liệu từ database</p>
         </div>
 
-        <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
+        <button class="ticket-btn-primary js-ticket-create" type="button">
             <i class="fa-solid fa-plus"></i>
             Thêm vé mới
-        </a>
+        </button>
     </div>
 
     <div class="ticket-kpi-grid">
@@ -148,10 +148,10 @@
                 In danh sách
             </button>
 
-            <a asp-page="/Employee/TicketManagement" class="ticket-btn-primary" style="text-decoration:none;">
+            <button class="ticket-btn-primary js-ticket-create" type="button">
                 <i class="fa-solid fa-plus"></i>
                 Thêm vé mới
-            </a>
+            </button>
         </div>
     </div>
 
@@ -327,6 +327,52 @@
         </div>
     </div>
 
+    <div id="ticketCreateModal" class="ticket-modal" hidden>
+        <div class="ticket-modal-backdrop" data-close-modal></div>
+        <div class="ticket-modal-dialog">
+            <div class="ticket-modal-header">
+                <h3>Thêm vé mới</h3>
+                <button type="button" class="ticket-modal-close" data-close-modal>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form method="post" asp-page-handler="CreateTicket" class="ticket-modal-form">
+                <input type="hidden" asp-for="Keyword" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="Type" />
+                <input type="hidden" name="FromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="ToDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" asp-for="PageNumber" />
+                <input type="hidden" asp-for="PageSize" />
+
+                <label>
+                    <span>Biển số xe</span>
+                    <input name="vehiclePlate" id="createPlate" required maxlength="20" autocomplete="off" />
+                </label>
+
+                <label>
+                    <span>Loại xe</span>
+                    <select name="vehicleType" id="createType" required>
+                        <option value="Xe máy">Xe máy</option>
+                        <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                        <option value="Ô tô lớn">Ô tô lớn</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Vị trí</span>
+                    <input name="slotId" id="createSlot" maxlength="20" placeholder="Tự chọn chỗ trống" />
+                </label>
+
+                <div class="ticket-modal-actions">
+                    <button type="button" class="ticket-btn-outline" data-close-modal>Hủy</button>
+                    <button type="submit" class="ticket-btn-primary">Tạo vé</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="ticketViewModal" class="ticket-modal" hidden>
         <div class="ticket-modal-backdrop" data-close-modal></div>
         <div class="ticket-modal-dialog">
@@ -456,6 +502,7 @@
 @section Scripts {
     <script>
         (() => {
+            const createModal = document.getElementById("ticketCreateModal");
             const viewModal = document.getElementById("ticketViewModal");
             const editModal = document.getElementById("ticketEditModal");
             const deleteModal = document.getElementById("ticketDeleteModal");
@@ -465,7 +512,7 @@
             };
 
             const closeModals = () => {
-                [viewModal, editModal, deleteModal].forEach((modal) => {
+                [createModal, viewModal, editModal, deleteModal].forEach((modal) => {
                     if (modal) modal.hidden = true;
                 });
             };
@@ -490,6 +537,15 @@
 
             document.addEventListener("keydown", (event) => {
                 if (event.key === "Escape") closeModals();
+            });
+
+            document.querySelectorAll(".js-ticket-create").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const form = createModal?.querySelector("form");
+                    if (form instanceof HTMLFormElement) form.reset();
+                    openModal(createModal);
+                    document.getElementById("createPlate")?.focus();
+                });
             });
 
             document.querySelectorAll(".js-ticket-view").forEach((button) => {

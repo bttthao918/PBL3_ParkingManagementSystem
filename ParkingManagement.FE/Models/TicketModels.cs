@@ -69,4 +69,21 @@ namespace ParkingManagement.FE.Models
         public decimal Fee { get; set; }
         public string? SlotId { get; set; }
     }
+
+    public class CreateTicketRequestDto
+    {
+        public string VehiclePlate { get; set; } = "";
+        public string VehicleType { get; set; } = "";
+        public string? SlotId { get; set; }
+        public string? CustomerId { get; set; }
+    }
+
+    public class CreateTicketResultDto
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public string? TicketId { get; set; }
+        public string? SlotId { get; set; }
+        public DateTime? CheckInTime { get; set; }
+    }
 }

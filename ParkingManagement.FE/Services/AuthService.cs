@@ -1,4 +1,6 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using ParkingManagement.FE.Models.Auth;
 
 namespace ParkingManagement.FE.Services
@@ -8,17 +10,23 @@ namespace ParkingManagement.FE.Services
         Task<(bool Success, LoginResponse? Data, string Message)> LoginAsync(LoginRequest request);
         Task<(bool Success, string Message)> RegisterAsync(RegisterRequest request);
         Task<(bool Success, string Message)> VerifyOtpAsync(VerifyOtpRequest request);
+        Task<(bool Success, string Message)> ChangePasswordAsync(ChangePasswordRequest request);
     }
 
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AuthService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(HttpClient httpClient, ILogger<AuthService> logger)
+        public AuthService(
+            HttpClient httpClient,
+            ILogger<AuthService> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>Gọi POST /api/auth/login</summary>
@@ -122,6 +130,67 @@ namespace ParkingManagement.FE.Services
                 _logger.LogError(ex, "VerifyOtp error");
                 return (false, "Lỗi hệ thống. Vui lòng thử lại.");
             }
+        }
+
+        public async Task<(bool Success, string Message)> ChangePasswordAsync(ChangePasswordRequest request)
+        {
+            try
+            {
+                AttachBearerToken();
+
+                var accountId = GetAccountId();
+                var url = string.IsNullOrWhiteSpace(accountId)
+                    ? "api/auth/change-password"
+                    : $"api/auth/change-password?accountId={Uri.EscapeDataString(accountId)}";
+
+                var response = await _httpClient.PostAsJsonAsync(url, new
+                {
+                    oldPassword = request.OldPassword,
+                    newPassword = request.NewPassword,
+                    confirmPassword = request.ConfirmPassword
+                });
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadFromJsonAsync<ChangePasswordResponse>();
+                    return (true, data?.Message ?? "Đổi mật khẩu thành công.");
+                }
+
+                var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+                var message = error?.Message ?? "Không thể đổi mật khẩu.";
+                _logger.LogWarning("Change password failed for {AccountId}: {Message}", accountId, message);
+                return (false, message);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Cannot connect to server.");
+                return (false, "Không thể kết nối đến server. Vui lòng thử lại sau.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Change password error");
+                return (false, "Lỗi hệ thống. Vui lòng thử lại.");
+            }
+        }
+
+        private string? GetAccountId()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            return httpContext?.User.FindFirst("accountId")?.Value
+                ?? httpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? httpContext?.Session.GetString("account_id");
+        }
+
+        private void AttachBearerToken()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var token = httpContext?.User.FindFirst("jwt_token")?.Value
+                ?? httpContext?.Session.GetString("jwt_token")
+                ?? httpContext?.Request.Cookies["jwt_token"];
+
+            _httpClient.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(token)
+                ? null
+                : new AuthenticationHeaderValue("Bearer", token);
         }
 
         private class ApiErrorResponse

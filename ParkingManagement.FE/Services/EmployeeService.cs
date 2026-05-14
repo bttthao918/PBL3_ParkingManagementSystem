@@ -8,7 +8,10 @@ namespace ParkingManagement.FE.Services
     {
         bool LastRequestUnauthorized { get; }
         Task<ListManagerEmployeeDto?> GetEmployeesAsync(ManagerEmployeeFilterDto filter);
+        Task<ManagerEmployeeDetailDto?> GetEmployeeDetailAsync(string employeeId);
         Task<CreateEmployeeInviteResultDto?> CreateEmployeeInviteAsync(CreateEmployeeInviteByManagerDto dto);
+        Task<UpdateEmployeeResultDto?> UpdateEmployeeAsync(string employeeId, UpdateEmployeeByManagerDto dto);
+        Task<DeleteEmployeeResultDto?> DeleteEmployeeAsync(DeleteEmployeeDto dto);
     }
 
     public class EmployeeService : IEmployeeService
@@ -120,6 +123,113 @@ namespace ParkingManagement.FE.Services
                     Success = false,
                     Message = "Lỗi kết nối đến máy chủ."
                 };
+            }
+        }
+
+        public async Task<ManagerEmployeeDetailDto?> GetEmployeeDetailAsync(string employeeId)
+        {
+            try
+            {
+                LastRequestUnauthorized = false;
+                AttachBearerToken();
+
+                var response = await _httpClient.GetAsync($"api/employees/manager/{Uri.EscapeDataString(employeeId)}/detail");
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<ManagerEmployeeDetailDto>();
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("GetEmployeeDetailAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling GetEmployeeDetailAsync");
+                return null;
+            }
+        }
+
+        public async Task<UpdateEmployeeResultDto?> UpdateEmployeeAsync(string employeeId, UpdateEmployeeByManagerDto dto)
+        {
+            try
+            {
+                LastRequestUnauthorized = false;
+                AttachBearerToken();
+
+                var response = await _httpClient.PutAsJsonAsync($"api/employees/manager/{Uri.EscapeDataString(employeeId)}", dto);
+                UpdateEmployeeResultDto? result = null;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<UpdateEmployeeResultDto>();
+                }
+                catch
+                {
+                    // Fallback when API returns non-JSON body.
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return result ?? new UpdateEmployeeResultDto { Success = true, Message = "Đã cập nhật nhân viên." };
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("UpdateEmployeeAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+                return result ?? new UpdateEmployeeResultDto { Success = false, Message = "Không thể cập nhật nhân viên." };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling UpdateEmployeeAsync");
+                return new UpdateEmployeeResultDto { Success = false, Message = "Lỗi kết nối đến máy chủ." };
+            }
+        }
+
+        public async Task<DeleteEmployeeResultDto?> DeleteEmployeeAsync(DeleteEmployeeDto dto)
+        {
+            try
+            {
+                LastRequestUnauthorized = false;
+                AttachBearerToken();
+
+                var response = await _httpClient.PostAsJsonAsync("api/employees/manager/delete", dto);
+                DeleteEmployeeResultDto? result = null;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<DeleteEmployeeResultDto>();
+                }
+                catch
+                {
+                    // Fallback when API returns non-JSON body.
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return result ?? new DeleteEmployeeResultDto { Success = true, EmployeeId = dto.EmployeeId, Message = "Đã vô hiệu hóa nhân viên." };
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("DeleteEmployeeAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+                return result ?? new DeleteEmployeeResultDto { Success = false, EmployeeId = dto.EmployeeId, Message = "Không thể vô hiệu hóa nhân viên." };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling DeleteEmployeeAsync");
+                return new DeleteEmployeeResultDto { Success = false, EmployeeId = dto.EmployeeId, Message = "Lỗi kết nối đến máy chủ." };
             }
         }
 

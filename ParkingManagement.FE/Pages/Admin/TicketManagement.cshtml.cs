@@ -144,6 +144,47 @@ namespace ParkingManagement.FE.Pages.Admin
             return Page();
         }
 
+        public async Task<IActionResult> OnPostCreateTicketAsync(
+            string vehiclePlate,
+            string vehicleType,
+            string? slotId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(vehiclePlate) || string.IsNullOrWhiteSpace(vehicleType))
+                {
+                    ActionSuccess = false;
+                    ActionMessage = "Vui lòng nhập biển số xe và loại xe.";
+                    return RedirectToPage(BuildRouteValues());
+                }
+
+                var input = new CreateTicketRequestDto
+                {
+                    VehiclePlate = vehiclePlate.Trim(),
+                    VehicleType = vehicleType,
+                    SlotId = string.IsNullOrWhiteSpace(slotId) ? null : slotId.Trim()
+                };
+
+                var result = await _ticketService.CreateTicketAsync(input);
+                ActionSuccess = result?.Success == true;
+                ActionMessage = ActionSuccess
+                    ? $"Đã tạo vé {result?.TicketId ?? "mới"}{(string.IsNullOrWhiteSpace(result?.SlotId) ? "" : $" tại vị trí {result.SlotId}")}."
+                    : result?.Message ?? "Không thể tạo vé mới.";
+
+                if (ActionSuccess)
+                {
+                    PageNumber = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                ActionSuccess = false;
+                ActionMessage = BuildLoadErrorMessage(ex);
+            }
+
+            return RedirectToPage(BuildRouteValues());
+        }
+
         public async Task<IActionResult> OnPostUpdateTicketAsync(
             string ticketId,
             string vehiclePlate,

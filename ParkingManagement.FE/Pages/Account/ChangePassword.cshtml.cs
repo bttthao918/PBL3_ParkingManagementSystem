@@ -1,36 +1,62 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Models.Auth;
+using ParkingManagement.FE.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace ParkingManagement.FE.Pages.Account
 {
+    [Authorize]
     public class ChangePasswordModel : PageModel
     {
+        private readonly IAuthService _authService;
+
+        public ChangePasswordModel(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
         [BindProperty]
         public ChangePasswordInputModel Input { get; set; } = new();
+
         public AccountViewModel Account { get; set; } = new();
 
         public void OnGet()
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Admin";
-            Account.RoleName = role;
+            LoadAccountRole();
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Admin";
-            Account.RoleName = role;
+            LoadAccountRole();
 
             if (!ModelState.IsValid)
+            {
                 return Page();
+            }
 
-            // TODO: kiểm tra mật khẩu hiện tại trong database
-            // TODO: mã hóa mật khẩu mới
-            // TODO: lưu mật khẩu mới
+            var (success, message) = await _authService.ChangePasswordAsync(new ChangePasswordRequest
+            {
+                OldPassword = Input.CurrentPassword,
+                NewPassword = Input.NewPassword,
+                ConfirmPassword = Input.ConfirmPassword
+            });
 
-            TempData["Success"] = "Đổi mật khẩu thành công.";
+            if (!success)
+            {
+                TempData["Error"] = message;
+                return RedirectToPage();
+            }
+
+            TempData["Success"] = message;
             return RedirectToPage();
+        }
+
+        private void LoadAccountRole()
+        {
+            Account.RoleName = User.FindFirst(ClaimTypes.Role)?.Value ?? "Admin";
         }
     }
 
@@ -41,6 +67,8 @@ namespace ParkingManagement.FE.Pages.Account
 
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu mới")]
         [MinLength(8, ErrorMessage = "Mật khẩu mới phải có ít nhất 8 ký tự")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$",
+            ErrorMessage = "Mật khẩu mới phải có chữ hoa, chữ thường, số và ký tự đặc biệt")]
         public string NewPassword { get; set; } = "";
 
         [Required(ErrorMessage = "Vui lòng xác nhận mật khẩu mới")]
