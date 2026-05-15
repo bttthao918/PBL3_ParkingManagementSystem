@@ -329,31 +329,14 @@
 
                 <div class="zone-summary">
                     <strong id="zoneTitle">Chỗ đỗ khả dụng</strong>
-                    <span id="zoneCapacity">@Model.AvailableSlots.Count chỗ trống</span>
+                    <span id="zoneCapacity">Đang tải...</span>
                 </div>
 
                 <div id="parkingMap" class="parking-map">
-                    @if (Model.AvailableSlots.Any())
-                    {
-                        @foreach (var slot in Model.AvailableSlots)
-                        {
-                            <button type="button"
-                                    class="slot empty"
-                                    data-selectable="true"
-                                    data-slot-code="@slot.SlotId"
-                                    data-slot-position="@slot.Location"
-                                    data-slot-vehicle-type="@slot.VehicleType">
-                                @slot.SlotId
-                            </button>
-                        }
-                    }
-                    else
-                    {
-                        <p class="no-slots-msg">
-                            <i class="fa-solid fa-circle-info"></i>
-                            Hiện không có chỗ đỗ trống. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.
-                        </p>
-                    }
+                    <p class="no-slots-msg" id="slotsLoading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Đang tải chỗ đỗ...
+                    </p>
                 </div>
 
                 <p class="selected-slot">

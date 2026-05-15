@@ -397,6 +397,15 @@ namespace ParkingManagement.DAL.Implementations
             _db.Payments.Add(payment);
             await _db.SaveChangesAsync();
         }
+
+        public Task<Payment?> GetByVnpTxnRefAsync(string vnpTxnRef) =>
+            _db.Payments.FirstOrDefaultAsync(p => p.VnpTxnRef == vnpTxnRef);
+
+        public async Task UpdateAsync(Payment payment)
+        {
+            _db.Payments.Update(payment);
+            await _db.SaveChangesAsync();
+        }
     }
 
     // ── ManagerRepository ────────────────────────────────────

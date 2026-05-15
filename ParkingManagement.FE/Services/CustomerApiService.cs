@@ -17,6 +17,7 @@ namespace ParkingManagement.FE.Services
         Task<ApiActionResult<BasicApiResponseDto>> CancelMonthlyTicketAsync(string monthlyTicketId);
         Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50);
         Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
+        Task<CreateVnPayPaymentResponseDto?> CreateVnPayPaymentAsync(CreateVnPayPaymentRequestDto request);
         Task<ListEmployeeCustomerSearchDto?> SearchForEmployeeAsync(EmployeeCustomerSearchFilterDto filter);
         Task<EmployeeCustomerDetailDto?> GetEmployeeCustomerDetailAsync(string customerId);
     }
@@ -105,6 +106,21 @@ namespace ParkingManagement.FE.Services
             if (!string.IsNullOrWhiteSpace(vehicleType))
                 url += $"?vehicleType={Uri.EscapeDataString(vehicleType)}";
             return GetAsync<List<AvailableSlotDto>>(url);
+        }
+
+        public async Task<CreateVnPayPaymentResponseDto?> CreateVnPayPaymentAsync(CreateVnPayPaymentRequestDto request)
+        {
+            AttachBearerToken();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/vnpay/create-payment", request);
+                return await response.Content.ReadFromJsonAsync<CreateVnPayPaymentResponseDto>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "CreateVnPayPaymentAsync failed");
+                return null;
+            }
         }
 
         private async Task<T?> GetAsync<T>(string url)

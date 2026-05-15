@@ -123,11 +123,11 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.classList.remove("modal-open");
     }
 
-    // Set default expected time to now + 30 min
+    // Set default expected time to now + 15 min
     const expectedTimeInput = document.getElementById("expectedTimeInput");
     if (expectedTimeInput) {
         const now = new Date();
-        now.setMinutes(now.getMinutes() + 30);
+        now.setMinutes(now.getMinutes() + 15);
         const localISO = now.toISOString().slice(0, 16);
         expectedTimeInput.value = localISO;
         expectedTimeInput.min = new Date().toISOString().slice(0, 16);
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Step 1 → Step 2 validation
     const step1NextBtn = document.getElementById("step1NextBtn");
     if (step1NextBtn) {
-        step1NextBtn.addEventListener("click", function () {
+        step1NextBtn.addEventListener("click", async function () {
             const error = document.getElementById("step1Error");
             error.classList.add("hidden");
 
@@ -165,7 +165,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            // Move to step 2 and load slots for the selected vehicle type
             setStep("2");
+            await loadSlotsForVehicleType(vehicleInfo.type);
         });
     }
 
@@ -177,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
             error.classList.add("hidden");
 
             // If there are available slots displayed, user must pick one
-            const availableSlots = Array.from(slotButtons).filter(s => s.dataset.selectable === "true");
+            const availableSlots = Array.from(currentSlotButtons).filter(s => s.dataset.selectable === "true");
             if (availableSlots.length > 0 && !selectedSlotCode) {
                 showStepError("step2Error", "Vui lòng chọn một chỗ đỗ hoặc nhấn 'Chọn ngẫu nhiên'.");
                 return;
@@ -267,20 +269,80 @@ document.addEventListener("DOMContentLoaded", function () {
     // ── Slot selection ──
     let selectedSlotCode = "";
     let selectedSlotPosition = "";
-    const slotButtons = document.querySelectorAll("#parkingMap .slot");
+    let currentSlotButtons = [];
     const selectedSlotText = document.getElementById("selectedSlotText");
     const randomSlotBtn = document.getElementById("randomSlotBtn");
+    const parkingMap = document.getElementById("parkingMap");
 
-    slotButtons.forEach(slot => {
-        slot.addEventListener("click", function () {
-            if (slot.dataset.selectable !== "true") return;
-            selectSlot(slot);
-        });
-    });
+    async function loadSlotsForVehicleType(vehicleType) {
+        selectedSlotCode = "";
+        selectedSlotPosition = "";
+        if (selectedSlotText) selectedSlotText.textContent = "Chưa chọn";
+
+        // Show loading
+        if (parkingMap) {
+            parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải chỗ đỗ cho ' + vehicleType + '...</p>';
+        }
+
+        const zoneCapacity = document.getElementById("zoneCapacity");
+        const zoneTitle = document.getElementById("zoneTitle");
+        if (zoneTitle) zoneTitle.textContent = "Chỗ đỗ cho " + vehicleType;
+        if (zoneCapacity) zoneCapacity.textContent = "Đang tải...";
+
+        try {
+            const url = "?handler=Slots&vehicleType=" + encodeURIComponent(vehicleType);
+            const response = await fetch(url, {
+                headers: { "RequestVerificationToken": getAntiForgeryToken() }
+            });
+
+            if (!response.ok) {
+                throw new Error("API returned " + response.status);
+            }
+
+            const slots = await response.json();
+
+            if (zoneCapacity) zoneCapacity.textContent = slots.length + " chỗ trống";
+
+            if (slots.length === 0) {
+                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Hiện không có chỗ đỗ trống cho ' + vehicleType + '. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.</p>';
+                currentSlotButtons = [];
+                return;
+            }
+
+            // Render slot buttons
+            parkingMap.innerHTML = "";
+            slots.forEach(function (slot) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "slot empty";
+                btn.dataset.selectable = "true";
+                btn.dataset.slotCode = slot.slotId;
+                btn.dataset.slotPosition = slot.location;
+                btn.dataset.slotVehicleType = slot.vehicleType;
+                btn.textContent = slot.slotId;
+
+                btn.addEventListener("click", function () {
+                    selectSlot(btn);
+                });
+
+                parkingMap.appendChild(btn);
+            });
+
+            currentSlotButtons = parkingMap.querySelectorAll(".slot");
+
+        } catch (err) {
+            console.error("Failed to load slots:", err);
+            if (parkingMap) {
+                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-exclamation"></i> Không tải được chỗ đỗ. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.</p>';
+            }
+            if (zoneCapacity) zoneCapacity.textContent = "Lỗi kết nối";
+            currentSlotButtons = [];
+        }
+    }
 
     if (randomSlotBtn) {
         randomSlotBtn.addEventListener("click", function () {
-            const available = Array.from(slotButtons).filter(s => s.dataset.selectable === "true");
+            const available = Array.from(currentSlotButtons).filter(s => s.dataset.selectable === "true");
             if (available.length === 0) {
                 showStepError("step2Error", "Hiện không có chỗ đỗ trống nào.");
                 return;
@@ -291,7 +353,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function selectSlot(slot) {
-        slotButtons.forEach(x => x.classList.remove("selected"));
+        // Remove selected from all
+        if (currentSlotButtons.length > 0) {
+            currentSlotButtons.forEach(x => x.classList.remove("selected"));
+        }
         slot.classList.add("selected");
 
         selectedSlotCode = slot.dataset.slotCode;
@@ -303,6 +368,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Clear error
         const error = document.getElementById("step2Error");
         if (error) error.classList.add("hidden");
+    }
+
+    function getAntiForgeryToken() {
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        return tokenInput ? tokenInput.value : "";
     }
 
     // ── Confirmation ──
@@ -333,13 +403,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function resetWizardState() {
         selectedSlotCode = "";
         selectedSlotPosition = "";
+        currentSlotButtons = [];
         if (selectedSlotText) selectedSlotText.textContent = "Chưa chọn";
-        slotButtons.forEach(x => x.classList.remove("selected"));
+        if (parkingMap) {
+            parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Chọn thông tin xe ở bước 1 để xem chỗ đỗ phù hợp.</p>';
+        }
 
-        // Reset time to +30 min
+        // Reset time to +15 min
         if (expectedTimeInput) {
             const now = new Date();
-            now.setMinutes(now.getMinutes() + 30);
+            now.setMinutes(now.getMinutes() + 15);
             expectedTimeInput.value = now.toISOString().slice(0, 16);
         }
     }

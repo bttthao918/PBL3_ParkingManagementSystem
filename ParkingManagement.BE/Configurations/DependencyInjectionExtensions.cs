@@ -62,6 +62,7 @@ namespace ParkingManagement.Web.Extensions
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IPricingService, PricingService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddSingleton<IVnPayService, VnPayService>();
 
             return services;
         }

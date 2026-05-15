@@ -45,6 +45,44 @@ public class MonthlyTicketModel : PageModel
             return Page();
         }
 
+        // If online payment method, create VNPay payment and redirect
+        if (RegisterInput.PaymentMethod == "Chuyển khoản" || RegisterInput.PaymentMethod == "Ví điện tử")
+        {
+            // First register the monthly ticket
+            var registerResult = await _customerApiService.RegisterMonthlyTicketAsync(new RegisterMonthlyTicketRequestDto
+            {
+                VehiclePlate = RegisterInput.VehiclePlate,
+                VehicleType = RegisterInput.VehicleType,
+                PackageType = RegisterInput.PackageType,
+                PaymentMethod = RegisterInput.PaymentMethod
+            });
+
+            if (!registerResult.Success)
+            {
+                TempData["Error"] = registerResult.Message;
+                return RedirectToPage();
+            }
+
+            // Create VNPay payment
+            var vnpayResult = await _customerApiService.CreateVnPayPaymentAsync(new Models.CreateVnPayPaymentRequestDto
+            {
+                MonthlyTicketId = registerResult.Data?.Data?.MonthlyTicketId,
+                Amount = registerResult.Data?.Fee ?? 0,
+                PaymentMethod = RegisterInput.PaymentMethod,
+                Description = $"Thanh toan ve thang {RegisterInput.VehiclePlate} - {RegisterInput.PackageType}"
+            });
+
+            if (vnpayResult?.Success == true && !string.IsNullOrEmpty(vnpayResult.PaymentUrl))
+            {
+                return Redirect(vnpayResult.PaymentUrl);
+            }
+
+            // Fallback: VNPay not available, show success with pending payment
+            TempData["Success"] = registerResult.Message + " (Thanh toán VNPay không khả dụng, vui lòng thanh toán sau)";
+            return RedirectToPage();
+        }
+
+        // Cash payment - register normally
         var result = await _customerApiService.RegisterMonthlyTicketAsync(new RegisterMonthlyTicketRequestDto
         {
             VehiclePlate = RegisterInput.VehiclePlate,

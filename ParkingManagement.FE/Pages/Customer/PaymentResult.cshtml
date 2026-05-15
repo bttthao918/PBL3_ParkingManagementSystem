@@ -1,0 +1,90 @@
+@page
+@model ParkingManagement.FE.Pages.Customer.PaymentResultModel
+@{
+    ViewData["Title"] = "Kết quả thanh toán";
+    ViewData["UserName"] = Model.UserName;
+    ViewData["Role"] = "Khách hàng";
+}
+
+<link rel="stylesheet" href="~/css/customer/booking.css" asp-append-version="true" />
+
+<div class="booking-page">
+    <div class="card" style="max-width: 600px; margin: 40px auto; text-align: center; padding: 48px 32px;">
+
+        @if (Model.IsSuccess)
+        {
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #d1fae5; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 36px; color: #10b981;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h2 style="color: #065f46; margin: 0 0 8px;">Thanh toán thành công!</h2>
+            <p style="color: #64748b; margin: 0 0 32px;">Giao dịch của bạn đã được xử lý thành công.</p>
+
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px; text-align: left; display: grid; gap: 12px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #64748b;">Mã giao dịch</span>
+                    <strong>@Model.TxnRef</strong>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.TransactionNo))
+                {
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Mã VNPay</span>
+                        <strong>@Model.TransactionNo</strong>
+                    </div>
+                }
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #64748b;">Số tiền</span>
+                    <strong style="color: #0d6efd; font-size: 18px;">@Model.Amount.ToString("N0") đ</strong>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.PayDate))
+                {
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Thời gian</span>
+                        <strong>@Model.PayDate</strong>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.OrderInfo))
+                {
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Nội dung</span>
+                        <strong>@Model.OrderInfo</strong>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 36px; color: #ef4444;">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+
+            <h2 style="color: #991b1b; margin: 0 0 8px;">Thanh toán thất bại</h2>
+            <p style="color: #64748b; margin: 0 0 32px;">@Model.Message</p>
+
+            @if (!string.IsNullOrEmpty(Model.TxnRef))
+            {
+                <div style="background: #f8fafc; border-radius: 12px; padding: 20px; text-align: left; display: grid; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Mã giao dịch</span>
+                        <strong>@Model.TxnRef</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Số tiền</span>
+                        <strong>@Model.Amount.ToString("N0") đ</strong>
+                    </div>
+                </div>
+            }
+        }
+
+        <div style="margin-top: 32px; display: flex; gap: 12px; justify-content: center;">
+            <a href="/Customer/MonthlyTicket" class="secondary-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 12px 24px;">
+                <i class="fa-solid fa-ticket"></i>
+                Vé tháng
+            </a>
+            <a href="/Customer/Dashboard" class="primary-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 12px 24px;">
+                <i class="fa-solid fa-house"></i>
+                Trang chủ
+            </a>
+        </div>
+    </div>
+</div>

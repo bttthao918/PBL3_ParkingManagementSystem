@@ -44,6 +44,12 @@ namespace ParkingManagement.FE.Pages.Customer
             await LoadDataAsync();
         }
 
+        public async Task<IActionResult> OnGetSlotsAsync(string? vehicleType)
+        {
+            var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType);
+            return new JsonResult(slots ?? new List<AvailableSlotDto>());
+        }
+
         public async Task<IActionResult> OnPostCreateAsync(
             string vehiclePlate,
             string vehicleType,

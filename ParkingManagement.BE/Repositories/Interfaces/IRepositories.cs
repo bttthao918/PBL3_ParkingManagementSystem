@@ -109,10 +109,12 @@ namespace ParkingManagement.DAL.Interfaces
     {
         Task<Payment?> GetByTicketIdAsync(string ticketId);
         Task<Payment?> GetByMonthlyTicketIdAsync(string monthlyTicketId);
+        Task<Payment?> GetByVnpTxnRefAsync(string vnpTxnRef);
         Task<List<Payment>> GetAllAsync();
         Task<List<Payment>> GetByDateRangeAsync(DateTime from, DateTime to);
         Task<string> GenerateIdAsync();
         Task AddAsync(Payment payment);
+        Task UpdateAsync(Payment payment);
     }
 
     public interface IManagerRepository

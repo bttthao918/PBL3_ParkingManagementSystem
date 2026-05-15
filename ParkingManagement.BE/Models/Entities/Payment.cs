@@ -31,6 +31,12 @@ namespace ParkingManagement.DAL.Models
         [MaxLength(20)]
         public string Status { get; set; } = "Thành công"; // Thành công / Thất bại
 
+        /// <summary>
+        /// VNPay transaction reference (dùng để map callback từ VNPay)
+        /// </summary>
+        [MaxLength(50)]
+        public string? VnpTxnRef { get; set; }
+
         // Navigation
         [ForeignKey("TicketId")]
         public Ticket? Ticket { get; set; }
