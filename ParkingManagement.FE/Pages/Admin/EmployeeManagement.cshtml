@@ -44,10 +44,32 @@
             <p>Quản lý thông tin, ca làm việc và hiệu suất nhân viên</p>
         </div>
 
-        <button class="emp-btn-primary" type="button" onclick="openCreateModal()">
-            <i class="fa-solid fa-plus"></i>
-            Thêm nhân viên
-        </button>
+        <div class="emp-header-actions">
+            @if (Model.IsDeletedFolder)
+            {
+                <a asp-page="/Admin/EmployeeManagement" class="emp-btn-outline" style="text-decoration:none;">
+                    <i class="fa-solid fa-users"></i>
+                    Danh sách đang làm
+                </a>
+            }
+            else
+            {
+                <a asp-page="/Admin/EmployeeManagement"
+                   asp-route-status="Đã xóa"
+                   asp-route-pageNumber="1"
+                   asp-route-pageSize="@Model.PageSize"
+                   class="emp-btn-outline"
+                   style="text-decoration:none;">
+                    <i class="fa-solid fa-folder-open"></i>
+                    Thư mục đã xóa
+                </a>
+            }
+
+            <button class="emp-btn-primary" type="button" onclick="openCreateModal()">
+                <i class="fa-solid fa-plus"></i>
+                Thêm nhân viên
+            </button>
+        </div>
     </div>
 
     <div class="emp-kpi-grid">
@@ -57,7 +79,7 @@
             </div>
             <div>
                 <p>Tổng nhân viên</p>
-                <h2>@Model.TotalEmployees.ToString("N0")</h2>
+                <h2>@Model.TotalAllEmployees.ToString("N0")</h2>
                 <span>Tất cả nhân viên</span>
             </div>
         </div>
@@ -75,12 +97,23 @@
 
         <div class="card emp-kpi-card">
             <div class="emp-kpi-icon orange">
-                <i class="fa-solid fa-user-clock"></i>
+                <i class="fa-solid fa-user-lock"></i>
             </div>
             <div>
                 <p>Vô hiệu hóa</p>
                 <h2>@Model.TotalInactive.ToString("N0")</h2>
                 <span>@Model.InactiveRate.ToString("0.0")%</span>
+            </div>
+        </div>
+
+        <div class="card emp-kpi-card">
+            <div class="emp-kpi-icon red">
+                <i class="fa-solid fa-user-slash"></i>
+            </div>
+            <div>
+                <p>Đã xóa</p>
+                <h2>@Model.TotalDeleted.ToString("N0")</h2>
+                <span>@Model.DeletedRate.ToString("0.0")%</span>
             </div>
         </div>
 
@@ -120,9 +153,10 @@
             <div class="emp-field">
                 <label>Trạng thái</label>
                 <select asp-for="Status">
-                    <option value="">Tất cả</option>
+                    <option value="">Tất cả chưa xóa</option>
                     <option value="Hoạt động">Hoạt động</option>
                     <option value="Vô hiệu hóa">Vô hiệu hóa</option>
+                    <option value="Đã xóa">Đã xóa</option>
                 </select>
             </div>
 
@@ -166,6 +200,7 @@
                 <div class="emp-bulk-actions">
                     <button type="button" disabled>Kích hoạt</button>
                     <button type="button" disabled>Vô hiệu hóa</button>
+                    <button type="button" disabled>Xóa</button>
                     <button type="button" disabled>Phân ca</button>
                     <button type="button" onclick="window.print()">Xuất dữ liệu</button>
                 </div>
@@ -173,99 +208,133 @@
 
             <div class="card emp-table-card">
                 <div class="emp-table-title">
-                    <h3>Danh sách nhân viên (@Model.TotalEmployees.ToString("N0"))</h3>
+                    <h3>@(Model.IsDeletedFolder ? "Thư mục nhân viên đã xóa" : "Danh sách nhân viên") (@Model.TotalEmployees.ToString("N0"))</h3>
                 </div>
 
-                <table class="emp-table">
-                    <thead>
-                        <tr>
-                            <th><input id="empSelectAllTable" type="checkbox" /></th>
-                            <th>Mã NV</th>
-                            <th>Họ tên</th>
-                            <th>Vị trí</th>
-                            <th>Ca làm</th>
-                            <th>SĐT</th>
-                            <th>Tổng vé</th>
-                            <th>Vé xử lý</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model.Employees.Count == 0)
-                        {
+                <div class="emp-table-scroll">
+                    <table class="emp-table">
+                        <thead>
                             <tr>
-                                <td colspan="10" class="emp-empty-state">Không có nhân viên phù hợp với bộ lọc hiện tại.</td>
+                                <th><input id="empSelectAllTable" type="checkbox" /></th>
+                                <th>Mã NV</th>
+                                <th>Họ tên</th>
+                                <th>Vị trí</th>
+                                <th>Ca làm</th>
+                                <th>SĐT</th>
+                                <th>Tổng vé</th>
+                                <th>Vé xử lý</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
                             </tr>
-                        }
-                        else
-                        {
-                            @foreach (var emp in Model.Employees)
-                            {
-                                var targetStatus = emp.StatusClass == "active" ? "Vô hiệu hóa" : "Hoạt động";
-                                var statusActionText = emp.StatusClass == "active" ? "vô hiệu hóa" : "kích hoạt";
+                        </thead>
 
-                                <tr class="@(emp.Id == Model.SelectedEmployeeId ? "selected" : "")">
-                                    <td><input class="emp-row-check" type="checkbox" /></td>
-                                    <td class="emp-code">@emp.Code</td>
-                                    <td>
-                                        <div class="emp-name-cell">
-                                            <span class="emp-avatar">@emp.Initials</span>
-                                            <span>@emp.Name</span>
-                                        </div>
-                                    </td>
-                                    <td>@emp.Position</td>
-                                    <td>@emp.Department</td>
-                                    <td>@emp.Phone</td>
-                                    <td>@emp.TotalTickets</td>
-                                    <td>@emp.ProcessedTickets</td>
-                                    <td>
-                                        <span class="emp-status @emp.StatusClass">
-                                            @emp.Status
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="emp-actions">
-                                            <a class="emp-action-btn"
-                                               title="Xem"
-                                               asp-page="/Admin/EmployeeManagement"
-                                               asp-route-keyword="@Model.Keyword"
-                                               asp-route-status="@Model.Status"
-                                               asp-route-shift="@Model.Shift"
-                                               asp-route-pageNumber="@Model.PageNumber"
-                                               asp-route-pageSize="@Model.PageSize"
-                                               asp-route-selectedEmployeeId="@emp.Id">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </a>
-                                            <button class="js-emp-edit"
-                                                    type="button"
-                                                    title="Sửa"
-                                                    data-employee-id="@emp.Id"
-                                                    data-employee-code="@emp.Code"
-                                                    data-employee-name="@emp.Name"
-                                                    data-employee-phone="@emp.Phone"
-                                                    data-employee-shift="@emp.Department"
-                                                    data-employee-status="@emp.Status">
-                                                <i class="fa-solid fa-pen"></i>
-                                            </button>
-                                            <button class="js-emp-status"
-                                                    type="button"
-                                                    title="@statusActionText"
-                                                    data-employee-id="@emp.Id"
-                                                    data-employee-code="@emp.Code"
-                                                    data-employee-name="@emp.Name"
-                                                    data-target-status="@targetStatus"
-                                                    data-action-text="@statusActionText">
-                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                            </button>
-                                        </div>
+                        <tbody>
+                            @if (Model.Employees.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="10" class="emp-empty-state">
+                                        @(Model.IsDeletedFolder ? "Chưa có nhân viên nào trong thư mục đã xóa." : "Không có nhân viên phù hợp với bộ lọc hiện tại.")
                                     </td>
                                 </tr>
                             }
-                        }
-                    </tbody>
-                </table>
+                            else
+                            {
+                                @foreach (var emp in Model.Employees)
+                                {
+                                    var isDeleted = emp.StatusClass == "deleted";
+                                    var isDisabled = emp.StatusClass == "disabled";
+                                    var statusTargetStatus = isDisabled ? "Hoạt động" : "Vô hiệu hóa";
+                                    var statusActionText = isDisabled ? "kích hoạt" : "vô hiệu hóa";
+
+                                    <tr class="@(emp.Id == Model.SelectedEmployeeId ? "selected" : "")">
+                                        <td><input class="emp-row-check" type="checkbox" /></td>
+                                        <td class="emp-code">@emp.Code</td>
+                                        <td>
+                                            <div class="emp-name-cell">
+                                                <span class="emp-avatar">@emp.Initials</span>
+                                                <span>@emp.Name</span>
+                                            </div>
+                                        </td>
+                                        <td>@emp.Position</td>
+                                        <td>@emp.Department</td>
+                                        <td>@emp.Phone</td>
+                                        <td>@emp.TotalTickets</td>
+                                        <td>@emp.ProcessedTickets</td>
+                                        <td>
+                                            <span class="emp-status @emp.StatusClass">
+                                                @emp.Status
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="emp-actions">
+                                                <a class="emp-action-btn"
+                                                   title="Xem"
+                                                   asp-page="/Admin/EmployeeManagement"
+                                                   asp-route-keyword="@Model.Keyword"
+                                                   asp-route-status="@Model.Status"
+                                                   asp-route-shift="@Model.Shift"
+                                                   asp-route-pageNumber="@Model.PageNumber"
+                                                   asp-route-pageSize="@Model.PageSize"
+                                                   asp-route-selectedEmployeeId="@emp.Id">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                                @if (isDeleted)
+                                                {
+                                                    <form method="post" asp-page-handler="RestoreEmployee" class="emp-inline-form">
+                                                        <input type="hidden" name="employeeId" value="@emp.Id" />
+                                                        <input type="hidden" name="Keyword" value="@Model.Keyword" />
+                                                        <input type="hidden" name="Status" value="@Model.Status" />
+                                                        <input type="hidden" name="Shift" value="@Model.Shift" />
+                                                        <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+                                                        <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                                                        <input type="hidden" name="SelectedEmployeeId" value="@emp.Id" />
+                                                        <button class="emp-action-restore" type="submit" title="Khôi phục">
+                                                            <i class="fa-solid fa-rotate-left"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <button class="js-emp-edit"
+                                                            type="button"
+                                                            title="Sửa"
+                                                            data-employee-id="@emp.Id"
+                                                            data-employee-code="@emp.Code"
+                                                            data-employee-name="@emp.Name"
+                                                            data-employee-phone="@emp.Phone"
+                                                            data-employee-shift="@emp.Department"
+                                                            data-employee-status="@emp.Status">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </button>
+                                                    <button class="js-emp-status"
+                                                            type="button"
+                                                            title="@statusActionText"
+                                                            data-employee-id="@emp.Id"
+                                                            data-employee-code="@emp.Code"
+                                                            data-employee-name="@emp.Name"
+                                                            data-target-status="@statusTargetStatus"
+                                                            data-action-text="@statusActionText">
+                                                        <i class="fa-solid @(isDisabled ? "fa-user-check" : "fa-user-lock")"></i>
+                                                    </button>
+                                                    <button class="js-emp-status emp-action-delete"
+                                                            type="button"
+                                                            title="Xóa"
+                                                            data-employee-id="@emp.Id"
+                                                            data-employee-code="@emp.Code"
+                                                            data-employee-name="@emp.Name"
+                                                            data-target-status="Đã xóa"
+                                                            data-action-text="xóa">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="emp-pagination">
                     <span>Hiển thị @Model.ShowingFrom đến @Model.ShowingTo trong tổng số @Model.TotalEmployees.ToString("N0") nhân viên</span>
@@ -330,8 +399,10 @@
             {
                 var detail = Model.SelectedEmployee;
                 var detailStatusClass = EmployeeManagementModel.GetStatusClass(detail.Status);
-                var detailTargetStatus = detailStatusClass == "active" ? "Vô hiệu hóa" : "Hoạt động";
-                var detailActionText = detailStatusClass == "active" ? "vô hiệu hóa" : "kích hoạt";
+                var detailIsDeleted = detailStatusClass == "deleted";
+                var detailIsDisabled = detailStatusClass == "disabled";
+                var detailTargetStatus = detailIsDisabled ? "Hoạt động" : "Vô hiệu hóa";
+                var detailActionText = detailIsDisabled ? "kích hoạt" : "vô hiệu hóa";
                 var detailInitial = string.IsNullOrWhiteSpace(detail.FullName) ? "NV" : detail.FullName.Trim()[0].ToString().ToUpperInvariant();
 
                 <div class="emp-profile">
@@ -386,27 +457,36 @@
                             <i class="fa-solid fa-calendar-days"></i> Phân ca tuần này
                         </h4>
 
-                        <!-- Form thêm ca nhanh -->
-                        <form method="post" asp-page-handler="CreateShift" class="emp-shift-form">
-                            <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
-                            <input type="hidden" asp-for="Keyword" />
-                            <input type="hidden" asp-for="Status" />
-                            <input type="hidden" asp-for="Shift" />
-                            <input type="hidden" asp-for="PageNumber" />
-                            <input type="hidden" asp-for="PageSize" />
-                            <input type="hidden" asp-for="SelectedEmployeeId" />
-                            <div style="display:flex; gap:8px; margin-bottom:12px;">
-                                <input type="date" name="workDate" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;" />
-                                <select name="shiftType" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;">
-                                    <option value="Sáng">Sáng (6-14h)</option>
-                                    <option value="Chiều">Chiều (14-22h)</option>
-                                    <option value="Tối">Tối (22-6h)</option>
-                                </select>
+                        @if (detailIsDeleted)
+                        {
+                            <div class="emp-deleted-notice">
+                                Nhân viên này đang nằm trong thư mục đã xóa. Khôi phục trước khi phân ca.
                             </div>
-                            <button type="submit" class="emp-btn-primary" style="width:100%; height:36px; font-size:13px;">
-                                <i class="fa-solid fa-plus"></i> Thêm ca
-                            </button>
-                        </form>
+                        }
+                        else
+                        {
+                            <!-- Form thêm ca nhanh -->
+                            <form method="post" asp-page-handler="CreateShift" class="emp-shift-form">
+                                <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
+                                <input type="hidden" asp-for="Keyword" />
+                                <input type="hidden" asp-for="Status" />
+                                <input type="hidden" asp-for="Shift" />
+                                <input type="hidden" asp-for="PageNumber" />
+                                <input type="hidden" asp-for="PageSize" />
+                                <input type="hidden" asp-for="SelectedEmployeeId" />
+                                <div style="display:flex; gap:8px; margin-bottom:12px;">
+                                    <input type="date" name="workDate" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;" />
+                                    <select name="shiftType" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;">
+                                        <option value="Sáng">Sáng (6-14h)</option>
+                                        <option value="Chiều">Chiều (14-22h)</option>
+                                        <option value="Tối">Tối (22-6h)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="emp-btn-primary" style="width:100%; height:36px; font-size:13px;">
+                                    <i class="fa-solid fa-plus"></i> Thêm ca
+                                </button>
+                            </form>
+                        }
 
                         <!-- Thông tin ca mặc định -->
                         <div class="emp-shift-list" style="margin-top:14px;">
@@ -427,25 +507,53 @@
                 </div>
 
                 <div class="emp-detail-actions">
-                    <button class="emp-btn-primary js-emp-edit"
-                            type="button"
-                            data-employee-id="@detail.EmployeeId"
-                            data-employee-code="@detail.EmployeeCode"
-                            data-employee-name="@detail.FullName"
-                            data-employee-phone="@detail.PhoneNumber"
-                            data-employee-shift="@detail.Shift"
-                            data-employee-status="@detail.Status">
-                        Cập nhật thông tin
-                    </button>
-                    <button class="emp-btn-danger js-emp-status"
-                            type="button"
-                            data-employee-id="@detail.EmployeeId"
-                            data-employee-code="@detail.EmployeeCode"
-                            data-employee-name="@detail.FullName"
-                            data-target-status="@detailTargetStatus"
-                            data-action-text="@detailActionText">
-                        @(detailStatusClass == "active" ? "Vô hiệu hóa tài khoản" : "Kích hoạt tài khoản")
-                    </button>
+                    @if (detailIsDeleted)
+                    {
+                        <form method="post" asp-page-handler="RestoreEmployee">
+                            <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
+                            <input type="hidden" name="Keyword" value="@Model.Keyword" />
+                            <input type="hidden" name="Status" value="@Model.Status" />
+                            <input type="hidden" name="Shift" value="@Model.Shift" />
+                            <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+                            <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                            <input type="hidden" name="SelectedEmployeeId" value="@detail.EmployeeId" />
+                            <button class="emp-btn-primary" type="submit">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                Khôi phục nhân viên
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button class="emp-btn-primary js-emp-edit"
+                                type="button"
+                                data-employee-id="@detail.EmployeeId"
+                                data-employee-code="@detail.EmployeeCode"
+                                data-employee-name="@detail.FullName"
+                                data-employee-phone="@detail.PhoneNumber"
+                                data-employee-shift="@detail.Shift"
+                                data-employee-status="@detail.Status">
+                            Cập nhật thông tin
+                        </button>
+                        <button class="@(detailIsDisabled ? "emp-btn-primary" : "emp-btn-danger") js-emp-status"
+                                type="button"
+                                data-employee-id="@detail.EmployeeId"
+                                data-employee-code="@detail.EmployeeCode"
+                                data-employee-name="@detail.FullName"
+                                data-target-status="@detailTargetStatus"
+                                data-action-text="@detailActionText">
+                            @(detailIsDisabled ? "Kích hoạt tài khoản" : "Vô hiệu hóa tài khoản")
+                        </button>
+                        <button class="emp-btn-danger js-emp-status"
+                                type="button"
+                                data-employee-id="@detail.EmployeeId"
+                                data-employee-code="@detail.EmployeeCode"
+                                data-employee-name="@detail.FullName"
+                                data-target-status="Đã xóa"
+                                data-action-text="xóa">
+                            Xóa nhân viên
+                        </button>
+                    }
                 </div>
             }
         </aside>
@@ -520,6 +628,7 @@
                 <select name="employeeStatus" id="editStatus" required>
                     <option value="Hoạt động">Hoạt động</option>
                     <option value="Vô hiệu hóa">Vô hiệu hóa</option>
+                    <option value="Đã xóa">Đã xóa</option>
                 </select>
             </label>
 
@@ -550,7 +659,7 @@
             <input type="hidden" asp-for="PageSize" />
             <input type="hidden" asp-for="SelectedEmployeeId" />
 
-            <textarea name="reason" id="statusReason" rows="3" placeholder="Lý do (không bắt buộc)"></textarea>
+            <textarea name="reason" id="statusReason" rows="3" placeholder="Lý do xóa (không bắt buộc)"></textarea>
 
             <div class="emp-modal-actions">
                 <button type="button" class="emp-btn-outline" onclick="closeEmployeeModal('employeeStatusModal')">Hủy</button>
@@ -608,11 +717,18 @@
             button.addEventListener("click", () => {
                 const data = button.dataset;
                 const actionText = data.actionText || "cập nhật";
+                const targetStatus = data.targetStatus || "";
+                const isDelete = targetStatus.toLowerCase().includes("xóa");
+                const isDisable = targetStatus.toLowerCase().includes("vô");
+                const isActivate = targetStatus.toLowerCase().includes("hoạt");
                 document.getElementById("statusEmployeeId").value = data.employeeId || "";
-                document.getElementById("statusTargetStatus").value = data.targetStatus || "";
-                document.getElementById("statusModalTitle").textContent = data.targetStatus || "Cập nhật trạng thái";
+                document.getElementById("statusTargetStatus").value = targetStatus;
+                document.getElementById("statusModalTitle").textContent = isDelete ? "Xóa nhân viên" : (targetStatus || "Cập nhật trạng thái");
                 document.getElementById("statusModalMessage").innerHTML = `Bạn chắc chắn muốn ${actionText} nhân viên <strong>${data.employeeCode || ""} - ${data.employeeName || ""}</strong>?`;
-                document.getElementById("statusSubmitButton").textContent = data.targetStatus || "Xác nhận";
+                document.getElementById("statusReason").placeholder = isDelete ? "Lý do xóa (không bắt buộc)" : "Lý do (không bắt buộc)";
+                const submitButton = document.getElementById("statusSubmitButton");
+                submitButton.textContent = isDelete ? "Xóa nhân viên" : (targetStatus || "Xác nhận");
+                submitButton.className = isDelete || isDisable ? "emp-btn-danger" : "emp-btn-primary";
                 document.getElementById("employeeStatusModal").classList.add("show");
             });
         });

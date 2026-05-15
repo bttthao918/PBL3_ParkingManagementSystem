@@ -7,7 +7,7 @@ using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Admin
 {
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager,Admin")]
     public class CustomerStatisticsModel : PageModel
     {
         private readonly IReportService _reportService;

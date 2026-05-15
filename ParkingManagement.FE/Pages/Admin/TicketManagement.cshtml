@@ -35,11 +35,6 @@
                 <i class="fa-solid fa-tags"></i>
                 Xem bảng giá
             </button>
-
-            <button class="ticket-btn-primary js-ticket-create" type="button">
-                <i class="fa-solid fa-plus"></i>
-                Thêm vé mới
-            </button>
         </div>
     </div>
 
@@ -47,7 +42,7 @@
         <div class="ticket-pricing-heading">
             <div>
                 <h3>Bảng giá vé</h3>
-                <p>Áp dụng cho vé lượt khi nhân viên check-out xe.</p>
+                <p>Áp dụng cho vé lượt khi check-out xe và giá đăng ký vé tháng.</p>
             </div>
 
             <button class="ticket-pricing-close js-pricing-toggle" type="button" title="Đóng bảng giá">
@@ -55,7 +50,7 @@
             </button>
         </div>
 
-        <form method="post" asp-page-handler="UpdatePricing" class="ticket-pricing-form">
+        <form method="post" asp-page-handler="UpdatePricing" class="ticket-pricing-form" id="pricingUpdateForm">
             <input type="hidden" asp-for="Keyword" />
             <input type="hidden" asp-for="Status" />
             <input type="hidden" asp-for="Type" />
@@ -88,6 +83,23 @@
                         <span>Tối thiểu</span>
                         <strong>15 phút</strong>
                     </div>
+
+                    <div class="ticket-price-section-title">Vé tháng</div>
+
+                    <label>
+                        <span>1 tháng</span>
+                        <input asp-for="PricingInput.MotorcycleMonthlyOneMonth" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>3 tháng</span>
+                        <input asp-for="PricingInput.MotorcycleMonthlyThreeMonth" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>6 tháng</span>
+                        <input asp-for="PricingInput.MotorcycleMonthlySixMonth" type="number" min="1000" step="1000" />
+                    </label>
                 </div>
 
                 <div class="ticket-price-editor">
@@ -113,6 +125,23 @@
                         <span>Tối thiểu</span>
                         <strong>15 phút</strong>
                     </div>
+
+                    <div class="ticket-price-section-title">Vé tháng</div>
+
+                    <label>
+                        <span>1 tháng</span>
+                        <input asp-for="PricingInput.SmallCarMonthlyOneMonth" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>3 tháng</span>
+                        <input asp-for="PricingInput.SmallCarMonthlyThreeMonth" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>6 tháng</span>
+                        <input asp-for="PricingInput.SmallCarMonthlySixMonth" type="number" min="1000" step="1000" />
+                    </label>
                 </div>
 
                 <div class="ticket-price-editor">
@@ -138,6 +167,23 @@
                         <span>Tối thiểu</span>
                         <strong>15 phút</strong>
                     </div>
+
+                    <div class="ticket-price-section-title">Vé tháng</div>
+
+                    <label>
+                        <span>1 tháng</span>
+                        <input asp-for="PricingInput.LargeCarMonthlyOneMonth" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>3 tháng</span>
+                        <input asp-for="PricingInput.LargeCarMonthlyThreeMonth" type="number" min="1000" step="1000" />
+                    </label>
+
+                    <label>
+                        <span>6 tháng</span>
+                        <input asp-for="PricingInput.LargeCarMonthlySixMonth" type="number" min="1000" step="1000" />
+                    </label>
                 </div>
             </div>
 
@@ -261,11 +307,6 @@
             <button class="ticket-btn-outline" type="button" onclick="window.print()">
                 <i class="fa-solid fa-print"></i>
                 In danh sách
-            </button>
-
-            <button class="ticket-btn-primary js-ticket-create" type="button">
-                <i class="fa-solid fa-plus"></i>
-                Thêm vé mới
             </button>
         </div>
     </div>
@@ -442,52 +483,6 @@
         </div>
     </div>
 
-    <div id="ticketCreateModal" class="ticket-modal" hidden>
-        <div class="ticket-modal-backdrop" data-close-modal></div>
-        <div class="ticket-modal-dialog">
-            <div class="ticket-modal-header">
-                <h3>Thêm vé mới</h3>
-                <button type="button" class="ticket-modal-close" data-close-modal>
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form method="post" asp-page-handler="CreateTicket" class="ticket-modal-form">
-                <input type="hidden" asp-for="Keyword" />
-                <input type="hidden" asp-for="Status" />
-                <input type="hidden" asp-for="Type" />
-                <input type="hidden" name="FromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
-                <input type="hidden" name="ToDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
-                <input type="hidden" asp-for="PageNumber" />
-                <input type="hidden" asp-for="PageSize" />
-
-                <label>
-                    <span>Biển số xe</span>
-                    <input name="vehiclePlate" id="createPlate" required maxlength="20" autocomplete="off" />
-                </label>
-
-                <label>
-                    <span>Loại xe</span>
-                    <select name="vehicleType" id="createType" required>
-                        <option value="Xe máy">Xe máy</option>
-                        <option value="Ô tô nhỏ">Ô tô nhỏ</option>
-                        <option value="Ô tô lớn">Ô tô lớn</option>
-                    </select>
-                </label>
-
-                <label>
-                    <span>Vị trí</span>
-                    <input name="slotId" id="createSlot" maxlength="20" placeholder="Tự chọn chỗ trống" />
-                </label>
-
-                <div class="ticket-modal-actions">
-                    <button type="button" class="ticket-btn-outline" data-close-modal>Hủy</button>
-                    <button type="submit" class="ticket-btn-primary">Tạo vé</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <div id="ticketViewModal" class="ticket-modal" hidden>
         <div class="ticket-modal-backdrop" data-close-modal></div>
         <div class="ticket-modal-dialog">
@@ -612,25 +607,52 @@
         </div>
     </div>
 
+    <div id="pricingConfirmModal" class="pricing-confirm-modal" hidden>
+        <div class="pricing-confirm-backdrop" data-close-pricing-confirm></div>
+        <div class="pricing-confirm-dialog">
+            <div class="pricing-confirm-icon">
+                <span>?</span>
+            </div>
+
+            <h3>Cập nhật bảng giá</h3>
+            <p>Bạn có chắc muốn lưu thay đổi bảng giá vé không?</p>
+
+            <div class="pricing-confirm-actions">
+                <button type="button" class="pricing-confirm-cancel" data-close-pricing-confirm>Hủy</button>
+                <button type="button" class="pricing-confirm-approve" id="pricingConfirmApprove">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {
     <script>
         (() => {
-            const createModal = document.getElementById("ticketCreateModal");
             const viewModal = document.getElementById("ticketViewModal");
             const editModal = document.getElementById("ticketEditModal");
             const deleteModal = document.getElementById("ticketDeleteModal");
             const pricingPanel = document.getElementById("adminPricingPanel");
+            const pricingForm = document.getElementById("pricingUpdateForm");
+            const pricingConfirmModal = document.getElementById("pricingConfirmModal");
+            const pricingConfirmApprove = document.getElementById("pricingConfirmApprove");
 
             const openModal = (modal) => {
                 if (modal) modal.hidden = false;
             };
 
             const closeModals = () => {
-                [createModal, viewModal, editModal, deleteModal].forEach((modal) => {
+                [viewModal, editModal, deleteModal].forEach((modal) => {
                     if (modal) modal.hidden = true;
                 });
+            };
+
+            const openPricingConfirm = () => {
+                if (pricingConfirmModal) pricingConfirmModal.hidden = false;
+            };
+
+            const closePricingConfirm = () => {
+                if (pricingConfirmModal) pricingConfirmModal.hidden = true;
             };
 
             const text = (id, value) => {
@@ -651,6 +673,10 @@
                 element.addEventListener("click", closeModals);
             });
 
+            document.querySelectorAll("[data-close-pricing-confirm]").forEach((element) => {
+                element.addEventListener("click", closePricingConfirm);
+            });
+
             document.querySelectorAll(".js-pricing-toggle").forEach((button) => {
                 button.addEventListener("click", () => {
                     if (pricingPanel) pricingPanel.hidden = !pricingPanel.hidden;
@@ -658,16 +684,28 @@
             });
 
             document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") closeModals();
+                if (event.key === "Escape") {
+                    closeModals();
+                    closePricingConfirm();
+                }
             });
 
-            document.querySelectorAll(".js-ticket-create").forEach((button) => {
-                button.addEventListener("click", () => {
-                    const form = createModal?.querySelector("form");
-                    if (form instanceof HTMLFormElement) form.reset();
-                    openModal(createModal);
-                    document.getElementById("createPlate")?.focus();
-                });
+            pricingForm?.addEventListener("submit", (event) => {
+                if (pricingForm.dataset.confirmed === "true") {
+                    delete pricingForm.dataset.confirmed;
+                    return;
+                }
+
+                event.preventDefault();
+                openPricingConfirm();
+            });
+
+            pricingConfirmApprove?.addEventListener("click", () => {
+                closePricingConfirm();
+                if (pricingForm instanceof HTMLFormElement) {
+                    pricingForm.dataset.confirmed = "true";
+                    pricingForm.requestSubmit();
+                }
             });
 
             document.querySelectorAll(".js-ticket-view").forEach((button) => {

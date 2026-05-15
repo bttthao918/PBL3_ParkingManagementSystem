@@ -117,6 +117,36 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
+        db.Database.ExecuteSqlRaw("""
+            IF OBJECT_ID(N'[dbo].[Accounts]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[Customers]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[Employees]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[ParkingSlots]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[PricingConfigurations]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[Tickets]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
+            BEGIN
+                IF OBJECT_ID(N'[dbo].[__EFMigrationsHistory]', N'U') IS NULL
+                BEGIN
+                    CREATE TABLE [dbo].[__EFMigrationsHistory] (
+                        [MigrationId] nvarchar(150) NOT NULL,
+                        [ProductVersion] nvarchar(32) NOT NULL,
+                        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+                    );
+                END;
+
+                IF NOT EXISTS (
+                    SELECT 1
+                    FROM [dbo].[__EFMigrationsHistory]
+                    WHERE [MigrationId] = N'20260514054735_InitialCreate'
+                )
+                BEGIN
+                    INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+                    VALUES (N'20260514054735_InitialCreate', N'10.0.6');
+                END;
+            END;
+            """);
+
         db.Database.Migrate();
     }
     catch (Exception ex)
@@ -150,6 +180,36 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"WorkLogs schema repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
+            IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NULL
+            BEGIN
+                CREATE TABLE [dbo].[ShiftSchedules] (
+                    [ScheduleId] nvarchar(20) NOT NULL,
+                    [EmployeeId] nvarchar(20) NOT NULL,
+                    [WorkDate] datetime2 NOT NULL,
+                    [ShiftType] nvarchar(20) NOT NULL,
+                    [StartTime] time NOT NULL,
+                    [EndTime] time NOT NULL,
+                    [Status] nvarchar(20) NOT NULL,
+                    [Note] nvarchar(200) NULL,
+                    [CreatedBy] nvarchar(20) NOT NULL,
+                    [CreatedAt] datetime2 NOT NULL,
+                    CONSTRAINT [PK_ShiftSchedules] PRIMARY KEY ([ScheduleId]),
+                    CONSTRAINT [FK_ShiftSchedules_Employees_EmployeeId]
+                        FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId]) ON DELETE CASCADE
+                );
+
+                CREATE INDEX [IX_ShiftSchedules_EmployeeId] ON [dbo].[ShiftSchedules] ([EmployeeId]);
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"ShiftSchedules schema repair was skipped. {ex.Message}");
     }
 }
 

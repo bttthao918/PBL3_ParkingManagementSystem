@@ -1,51 +1,74 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Models;
+using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Customer
 {
     public class TicketModel : PageModel
     {
+        private readonly IPricingService _pricingService;
+
+        public TicketModel(IPricingService pricingService)
+        {
+            _pricingService = pricingService;
+        }
+
         public string UserName { get; set; } = "Customer";
 
         public List<TicketPriceVm> PriceCards { get; set; } = new();
 
         public List<TicketVm> Tickets { get; set; } = new();
 
-        public void OnGet()
+        public DateTime PricingUpdatedAt { get; set; } = DateTime.Today;
+
+        public async Task OnGetAsync()
         {
-            LoadPriceCards();
+            var pricing = await LoadPricingAsync();
+            PricingUpdatedAt = pricing.LastUpdatedAt == default ? DateTime.Today : pricing.LastUpdatedAt;
+            LoadPriceCards(pricing);
             LoadTickets();
         }
 
-        private void LoadPriceCards()
+        private async Task<PricingDto> LoadPricingAsync()
+        {
+            try
+            {
+                return await _pricingService.GetCurrentPricingAsync()
+                    ?? PricingDisplayDefaults.CreateDefaultPricing();
+            }
+            catch
+            {
+                return PricingDisplayDefaults.CreateDefaultPricing();
+            }
+        }
+
+        private void LoadPriceCards(PricingDto pricing)
         {
             PriceCards = new List<TicketPriceVm>
         {
             new()
             {
-                VehicleType = "Xe máy",
+                VehicleType = PricingDisplayDefaults.Motorcycle,
                 Icon = "fa-solid fa-motorcycle",
                 ColorClass = "green",
-                FirstHourPrice = 5000,
-                NextHourPrice = 2000,
-                OvernightPrice = 10000
+                HourlyRate = PricingDisplayDefaults.GetHourlyRate(pricing, PricingDisplayDefaults.Motorcycle),
+                MaxDailyFee = PricingDisplayDefaults.GetMaxDailyFee(pricing, PricingDisplayDefaults.Motorcycle)
             },
             new()
             {
-                VehicleType = "Ô tô nhỏ",
+                VehicleType = PricingDisplayDefaults.SmallCar,
                 Icon = "fa-solid fa-car-side",
                 ColorClass = "blue",
-                FirstHourPrice = 15000,
-                NextHourPrice = 5000,
-                OvernightPrice = 40000
+                HourlyRate = PricingDisplayDefaults.GetHourlyRate(pricing, PricingDisplayDefaults.SmallCar),
+                MaxDailyFee = PricingDisplayDefaults.GetMaxDailyFee(pricing, PricingDisplayDefaults.SmallCar)
             },
             new()
             {
-                VehicleType = "Ô tô lớn",
+                VehicleType = PricingDisplayDefaults.LargeCar,
                 Icon = "fa-solid fa-van-shuttle",
                 ColorClass = "purple",
-                FirstHourPrice = 25000,
-                NextHourPrice = 8000,
-                OvernightPrice = 60000
+                HourlyRate = PricingDisplayDefaults.GetHourlyRate(pricing, PricingDisplayDefaults.LargeCar),
+                MaxDailyFee = PricingDisplayDefaults.GetMaxDailyFee(pricing, PricingDisplayDefaults.LargeCar)
             }
         };
         }
@@ -142,11 +165,11 @@ namespace ParkingManagement.FE.Pages.Customer
 
         public string ColorClass { get; set; } = string.Empty;
 
-        public decimal FirstHourPrice { get; set; }
+        public decimal HourlyRate { get; set; }
 
-        public decimal NextHourPrice { get; set; }
+        public decimal MaxDailyFee { get; set; }
 
-        public decimal OvernightPrice { get; set; }
+        public string MinimumDurationText { get; set; } = "15 phút";
     }
 
     public class TicketVm

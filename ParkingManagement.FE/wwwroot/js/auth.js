@@ -1,4 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+
+    if (loginEmail && loginPassword) {
+        let previousEmail = loginEmail.value;
+
+        loginEmail.addEventListener("input", function () {
+            if (loginEmail.value !== previousEmail) {
+                loginPassword.value = "";
+                previousEmail = loginEmail.value;
+            }
+        });
+    }
+
     document.querySelectorAll(".eye-icon").forEach(icon => {
         icon.addEventListener("click", function () {
             const targetId = icon.dataset.target;

@@ -5,7 +5,7 @@ using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Admin
 {
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager,Admin")]
     public class ParkingSlotManagementModel : ParkingManagement.FE.Pages.Shared.ParkingSlotManagement.ParkingSlotManagementModel
     {
         public ParkingSlotManagementModel(IParkingSlotService parkingSlotService)

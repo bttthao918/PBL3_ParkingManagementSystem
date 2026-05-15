@@ -110,7 +110,10 @@ namespace ParkingManagement.DAL.Implementations
                .ToListAsync();
 
         public Task<List<Employee>> GetDeletedAsync() =>
-            _db.Employees.Where(e => e.IsDeleted).ToListAsync();
+            _db.Employees
+               .Include(e => e.Account)
+               .Where(e => e.IsDeleted)
+               .ToListAsync();
 
         public async Task AddAsync(Employee employee)
         {
@@ -539,9 +542,20 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task<string> GenerateIdAsync()
         {
-            var lastId = await _db.Otps.OrderByDescending(o => o.OtpId).FirstOrDefaultAsync();
-            var num = lastId == null ? 1 : int.Parse(lastId.OtpId.Replace("OTP", "")) + 1;
-            return $"OTP{num:D6}";
+            var otpIds = await _db.Otps.Select(o => o.OtpId).ToListAsync();
+            var nextNumber = otpIds.Select(ParseOtpNumber).DefaultIfEmpty(0).Max() + 1;
+            return $"OTP{nextNumber:D6}";
+        }
+
+        private static int ParseOtpNumber(string? otpId)
+        {
+            if (string.IsNullOrWhiteSpace(otpId))
+            {
+                return 0;
+            }
+
+            var digits = new string(otpId.Where(char.IsDigit).ToArray());
+            return int.TryParse(digits, out var number) ? number : 0;
         }
 
         public async Task AddAsync(Otp otp)

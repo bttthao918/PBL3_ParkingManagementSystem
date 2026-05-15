@@ -122,9 +122,18 @@ namespace ParkingManagement.FE.Models
     {
         public decimal MotorcycleHourlyRate { get; set; }
         public decimal MotorcycleMaxDailyFee { get; set; }
+        public decimal MotorcycleMonthlyOneMonth { get; set; }
+        public decimal MotorcycleMonthlyThreeMonth { get; set; }
+        public decimal MotorcycleMonthlySixMonth { get; set; }
         public decimal SmallCarHourlyRate { get; set; }
         public decimal SmallCarMaxDailyFee { get; set; }
+        public decimal SmallCarMonthlyOneMonth { get; set; }
+        public decimal SmallCarMonthlyThreeMonth { get; set; }
+        public decimal SmallCarMonthlySixMonth { get; set; }
         public decimal LargeCarHourlyRate { get; set; }
         public decimal LargeCarMaxDailyFee { get; set; }
+        public decimal LargeCarMonthlyOneMonth { get; set; }
+        public decimal LargeCarMonthlyThreeMonth { get; set; }
+        public decimal LargeCarMonthlySixMonth { get; set; }
     }
 }

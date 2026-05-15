@@ -31,6 +31,7 @@ namespace ParkingManagement.FE.Models
         public int TotalPages { get; set; }
         public int TotalActive { get; set; }
         public int TotalInactive { get; set; }
+        public int TotalDeleted { get; set; }
     }
 
     public class CreateEmployeeInviteByManagerDto

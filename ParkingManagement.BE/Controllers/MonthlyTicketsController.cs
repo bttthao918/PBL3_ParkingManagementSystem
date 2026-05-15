@@ -12,14 +12,16 @@ namespace ParkingManagement.Web.Controllers.Api
     public class MonthlyTicketsController : ControllerBase
     {
         private readonly IMonthlyTicketService _monthlyTicketService;
+        private readonly IPricingService _pricingService;
         private readonly ILogger<MonthlyTicketsController> _logger;
 
         public MonthlyTicketsController(
             IMonthlyTicketService monthlyTicketService,
-            IPaymentService paymentService,
+            IPricingService pricingService,
             ILogger<MonthlyTicketsController> logger)
         {
             _monthlyTicketService = monthlyTicketService;
+            _pricingService = pricingService;
             _logger = logger;
         }
 
@@ -141,7 +143,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 {
                     Success = true,
                     Message = result.Message ?? "Monthly ticket renewed successfully.",
-                    AdditionalFee = _monthlyTicketService.CalculateFee(result.Data!.VehicleType, dto.PackageType),
+                    AdditionalFee = await _monthlyTicketService.CalculateFeeAsync(result.Data!.VehicleType, dto.PackageType),
                     Data = ToDetailDto(result.Data)
                 };
 
@@ -189,15 +191,18 @@ namespace ParkingManagement.Web.Controllers.Api
         [HttpGet("pricing")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(MonthlyTicketPricingDto), StatusCodes.Status200OK)]
-        public IActionResult GetPricing()
+        public async Task<IActionResult> GetPricing([FromQuery] string vehicleType = "Xe máy")
         {
+            var pricing = await _pricingService.GetCurrentPricingAsync();
+            var monthlyPrice = GetMonthlyPricingForVehicle(pricing, vehicleType);
+
             return Ok(new MonthlyTicketPricingDto
             {
                 Packages = new List<PackagePriceDto>
                 {
-                    new() { Package = "1 tháng", Price = 150000 },
-                    new() { Package = "3 tháng", Price = 400000, Discount = "11%" },
-                    new() { Package = "6 tháng", Price = 750000, Discount = "17%" }
+                    new() { Package = "1 tháng", Price = monthlyPrice.OneMonth },
+                    new() { Package = "3 tháng", Price = monthlyPrice.ThreeMonth, Discount = "11%" },
+                    new() { Package = "6 tháng", Price = monthlyPrice.SixMonth, Discount = "17%" }
                 }
             });
         }
@@ -207,6 +212,19 @@ namespace ParkingManagement.Web.Controllers.Api
 
         private static bool IsActive(MonthlyTicketDto ticket)
             => ticket.Status == "Hoạt động" || ticket.Status == "Active";
+
+        private static MonthlyPricingDto GetMonthlyPricingForVehicle(PricingDto pricing, string vehicleType)
+        {
+            if (pricing.MonthlyTicketPrice.TryGetValue(vehicleType, out var monthlyPrice))
+            {
+                return monthlyPrice;
+            }
+
+            var matchingPrice = pricing.MonthlyTicketPrice
+                .FirstOrDefault(item => string.Equals(item.Key, vehicleType, StringComparison.OrdinalIgnoreCase));
+
+            return matchingPrice.Value ?? new MonthlyPricingDto();
+        }
 
         private static MonthlyTicketDetailDto ToDetailDto(MonthlyTicketDto ticket) => new()
         {

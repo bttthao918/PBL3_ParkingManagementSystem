@@ -225,7 +225,15 @@ namespace ParkingManagement.BLL.Services.Implementations
                 }
 
                 var otpCode = await CreateRegistrationOtpAsync(email);
-                await _emailService.SendOtpEmailAsync(email, dto.FullName.Trim(), otpCode);
+                try
+                {
+                    await _emailService.SendOtpEmailAsync(email, dto.FullName.Trim(), otpCode);
+                }
+                catch (Exception mailEx)
+                {
+                    _logger.LogError(mailEx, "Failed to send registration OTP email to {Email}.", email);
+                    return ServiceResult<string>.Fail("Không gửi được mã OTP đến email. Vui lòng kiểm tra cấu hình Gmail hoặc thử lại sau.");
+                }
 
                 _logger.LogInformation($"Registration OTP sent for customer: {email}");
                 return new ServiceResult<string>
@@ -237,7 +245,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"RegisterAsync error: {ex.Message}");
+                _logger.LogError(ex, "RegisterAsync error.");
                 return new ServiceResult<string>
                 {
                     Success = false,
@@ -285,6 +293,97 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 _logger.LogError($"VerifyOtpAsync error: {ex.Message}");
                 return ServiceResult<string>.Fail("Lỗi hệ thống. Vui lòng thử lại.");
+            }
+        }
+
+        public async Task<ServiceResult> RequestPasswordResetAsync(ForgotPasswordRequestDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.Email))
+                    return ServiceResult.Fail("Vui lòng nhập email.");
+
+                if (!IsValidEmail(dto.Email))
+                    return ServiceResult.Fail("Địa chỉ email không hợp lệ.");
+
+                var email = dto.Email.Trim().ToLower();
+                var account = await _accountRepo.GetByEmailAsync(email);
+                if (account == null || !account.IsActive)
+                    return ServiceResult.Fail("Không tìm thấy tài khoản đang hoạt động với email này.");
+
+                var profile = await BuildCurrentProfileAsync(account);
+                var otpCode = await CreateRegistrationOtpAsync(email);
+                try
+                {
+                    await _emailService.SendPasswordResetOtpEmailAsync(email, profile?.FullName ?? account.Email, otpCode);
+                }
+                catch (Exception mailEx)
+                {
+                    _logger.LogError(mailEx, "Failed to send password reset OTP email to {Email}.", email);
+                    return ServiceResult.Fail("Không gửi được mã OTP đến email. Vui lòng kiểm tra cấu hình Gmail hoặc thử lại sau.");
+                }
+
+                _logger.LogInformation($"Password reset OTP sent for account: {email}");
+                return new ServiceResult
+                {
+                    Success = true,
+                    Message = "Mã OTP đặt lại mật khẩu đã được gửi đến email của bạn.",
+                    AccountId = account.AccountId,
+                    Role = account.Role,
+                    FullName = profile?.FullName,
+                    RelatedId = profile?.RelatedId,
+                    Email = account.Email
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RequestPasswordResetAsync error.");
+                return ServiceResult.Fail("Không thể gửi OTP đặt lại mật khẩu. Vui lòng thử lại.");
+            }
+        }
+
+        public async Task<ServiceResult> ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.Email) ||
+                    string.IsNullOrWhiteSpace(dto.Otp) ||
+                    string.IsNullOrWhiteSpace(dto.NewPassword) ||
+                    string.IsNullOrWhiteSpace(dto.ConfirmPassword))
+                {
+                    return ServiceResult.Fail("Vui lòng nhập đầy đủ thông tin.");
+                }
+
+                if (dto.NewPassword != dto.ConfirmPassword)
+                    return ServiceResult.Fail("Mật khẩu xác nhận không trùng khớp.");
+
+                if (!IsStrongPassword(dto.NewPassword))
+                    return ServiceResult.Fail("Mật khẩu mới phải có ít nhất 8 ký tự, bao gồm: chữ hoa, chữ thường, chữ số và ký tự đặc biệt.");
+
+                var email = dto.Email.Trim().ToLower();
+                var code = dto.Otp.Trim();
+                var account = await _accountRepo.GetByEmailAsync(email);
+                if (account == null || !account.IsActive)
+                    return ServiceResult.Fail("Không tìm thấy tài khoản đang hoạt động.");
+
+                var otp = await _otpRepo.GetLatestByEmailAsync(email);
+                if (otp == null || otp.Code != code)
+                    return ServiceResult.Fail("OTP không hợp lệ hoặc đã hết hạn.");
+
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword, workFactor: 12);
+                await _accountRepo.UpdateAsync(account);
+
+                otp.IsVerified = true;
+                otp.VerifiedAt = DateTime.UtcNow;
+                await _otpRepo.UpdateAsync(otp);
+
+                _logger.LogInformation($"Password reset completed for account: {email}");
+                return ServiceResult.CreateSuccess(account.AccountId, account.Role, "", "", account.Email, "Đặt lại mật khẩu thành công. Vui lòng đăng nhập bằng mật khẩu mới.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ResetPasswordAsync error: {ex.Message}");
+                return ServiceResult.Fail("Không thể đặt lại mật khẩu. Vui lòng thử lại.");
             }
         }
 

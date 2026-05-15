@@ -14,6 +14,7 @@ namespace ParkingManagement.FE.Pages.Admin
         private readonly IShiftScheduleService _shiftService;
         private const string ActiveStatus = "Hoạt động";
         private const string DisabledStatus = "Vô hiệu hóa";
+        private const string DeletedStatus = "Đã xóa";
 
         public EmployeeManagementModel(IEmployeeService employeeService, IShiftScheduleService shiftService)
         {
@@ -26,6 +27,8 @@ namespace ParkingManagement.FE.Pages.Admin
         public int TotalEmployees { get; set; }
         public int TotalActive { get; set; }
         public int TotalInactive { get; set; }
+        public int TotalDeleted { get; set; }
+        public int TotalAllEmployees { get; set; }
         public int TotalPages { get; set; }
         public int ShowingFrom { get; set; }
         public int ShowingTo { get; set; }
@@ -66,8 +69,10 @@ namespace ParkingManagement.FE.Pages.Admin
         public int EndPage => TotalPages == 0 ? 0 : Math.Min(TotalPages, PageNumber + 2);
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => TotalPages > 0 && PageNumber < TotalPages;
-        public decimal ActiveRate => TotalEmployees == 0 ? 0 : TotalActive * 100m / TotalEmployees;
-        public decimal InactiveRate => TotalEmployees == 0 ? 0 : TotalInactive * 100m / TotalEmployees;
+        public bool IsDeletedFolder => IsDeletedStatus(Status);
+        public decimal ActiveRate => TotalAllEmployees == 0 ? 0 : TotalActive * 100m / TotalAllEmployees;
+        public decimal InactiveRate => TotalAllEmployees == 0 ? 0 : TotalInactive * 100m / TotalAllEmployees;
+        public decimal DeletedRate => TotalAllEmployees == 0 ? 0 : TotalDeleted * 100m / TotalAllEmployees;
 
         public async Task OnGetAsync()
         {
@@ -134,6 +139,19 @@ namespace ParkingManagement.FE.Pages.Admin
             ActionSuccess = result?.Success == true;
             ActionMessage = result?.Message ?? (ActionSuccess ? "Đã cập nhật nhân viên." : "Không thể cập nhật nhân viên.");
 
+            if (ActionSuccess)
+            {
+                if (IsDeletedStatus(employeeStatus))
+                    Status = DeletedStatus;
+                else if (IsDisabledStatus(employeeStatus))
+                    Status = DisabledStatus;
+                else
+                    Status = null;
+
+                PageNumber = 1;
+                SelectedEmployeeId = employeeId;
+            }
+
             return RedirectToPage(BuildRouteValues(employeeId));
         }
 
@@ -146,7 +164,7 @@ namespace ParkingManagement.FE.Pages.Admin
                 return RedirectToPage(BuildRouteValues());
             }
 
-            if (targetStatus == DisabledStatus)
+            if (targetStatus == DeletedStatus)
             {
                 var deleteResult = await _employeeService.DeleteEmployeeAsync(new DeleteEmployeeDto
                 {
@@ -155,7 +173,29 @@ namespace ParkingManagement.FE.Pages.Admin
                 });
 
                 ActionSuccess = deleteResult?.Success == true;
-                ActionMessage = deleteResult?.Message ?? (ActionSuccess ? "Đã vô hiệu hóa nhân viên." : "Không thể vô hiệu hóa nhân viên.");
+                ActionMessage = deleteResult?.Message ?? (ActionSuccess ? "Đã xóa nhân viên." : "Không thể xóa nhân viên.");
+                if (ActionSuccess)
+                {
+                    Status = DeletedStatus;
+                    PageNumber = 1;
+                    SelectedEmployeeId = employeeId;
+                }
+            }
+            else if (targetStatus == DisabledStatus)
+            {
+                var updateResult = await _employeeService.UpdateEmployeeAsync(employeeId, new UpdateEmployeeByManagerDto
+                {
+                    Status = DisabledStatus
+                });
+
+                ActionSuccess = updateResult?.Success == true;
+                ActionMessage = updateResult?.Message ?? (ActionSuccess ? "Đã vô hiệu hóa nhân viên." : "Không thể vô hiệu hóa nhân viên.");
+                if (ActionSuccess)
+                {
+                    Status = DisabledStatus;
+                    PageNumber = 1;
+                    SelectedEmployeeId = employeeId;
+                }
             }
             else
             {
@@ -166,6 +206,35 @@ namespace ParkingManagement.FE.Pages.Admin
 
                 ActionSuccess = updateResult?.Success == true;
                 ActionMessage = updateResult?.Message ?? (ActionSuccess ? "Đã kích hoạt nhân viên." : "Không thể kích hoạt nhân viên.");
+                if (ActionSuccess)
+                {
+                    Status = null;
+                    PageNumber = 1;
+                    SelectedEmployeeId = employeeId;
+                }
+            }
+
+            return RedirectToPage(BuildRouteValues(employeeId));
+        }
+
+        public async Task<IActionResult> OnPostRestoreEmployeeAsync(string employeeId)
+        {
+            if (string.IsNullOrWhiteSpace(employeeId))
+            {
+                ActionSuccess = false;
+                ActionMessage = "Không tìm thấy nhân viên cần khôi phục.";
+                return RedirectToPage(BuildRouteValues());
+            }
+
+            var result = await _employeeService.RestoreEmployeeAsync(employeeId);
+            ActionSuccess = result?.Success == true;
+            ActionMessage = result?.Message ?? (ActionSuccess ? "Đã khôi phục nhân viên." : "Không thể khôi phục nhân viên.");
+
+            if (ActionSuccess)
+            {
+                Status = null;
+                PageNumber = 1;
+                SelectedEmployeeId = employeeId;
             }
 
             return RedirectToPage(BuildRouteValues(employeeId));
@@ -212,6 +281,8 @@ namespace ParkingManagement.FE.Pages.Admin
             TotalEmployees = result.TotalItems;
             TotalActive = result.TotalActive;
             TotalInactive = result.TotalInactive;
+            TotalDeleted = result.TotalDeleted;
+            TotalAllEmployees = TotalActive + TotalInactive + TotalDeleted;
             TotalPages = result.TotalPages;
             PageNumber = result.PageNumber > 0 ? result.PageNumber : PageNumber;
             PageSize = result.PageSize > 0 ? result.PageSize : PageSize;
@@ -263,8 +334,10 @@ namespace ParkingManagement.FE.Pages.Admin
             if (string.IsNullOrWhiteSpace(status))
                 return "inactive";
 
-            if (status.Contains("Vô", StringComparison.OrdinalIgnoreCase) ||
-                status.Contains("VÃ´", StringComparison.OrdinalIgnoreCase))
+            if (IsDeletedStatus(status))
+                return "deleted";
+
+            if (IsDisabledStatus(status))
                 return "disabled";
 
             if (status.Contains("Hoạt", StringComparison.OrdinalIgnoreCase) ||
@@ -272,6 +345,28 @@ namespace ParkingManagement.FE.Pages.Admin
                 return "active";
 
             return "inactive";
+        }
+
+        public static bool IsDeletedStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return false;
+
+            return status.Contains("Đã", StringComparison.OrdinalIgnoreCase) ||
+                   status.Contains("xóa", StringComparison.OrdinalIgnoreCase) ||
+                   status.Contains("xoa", StringComparison.OrdinalIgnoreCase) ||
+                   status.Contains("deleted", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsDisabledStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return false;
+
+            return status.Contains("Vô", StringComparison.OrdinalIgnoreCase) ||
+                   status.Contains("VÃ´", StringComparison.OrdinalIgnoreCase) ||
+                   status.Contains("vo", StringComparison.OrdinalIgnoreCase) ||
+                   status.Contains("disabled", StringComparison.OrdinalIgnoreCase);
         }
     }
 

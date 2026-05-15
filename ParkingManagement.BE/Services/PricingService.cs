@@ -205,6 +205,31 @@ namespace ParkingManagement.BLL.Services.Implementations
             }
         }
 
+        public async Task<decimal> GetMonthlyTicketPriceAsync(string vehicleType, int months)
+        {
+            var pricing = await GetCurrentPricingAsync();
+            if (!pricing.MonthlyTicketPrice.TryGetValue(vehicleType, out var monthlyPrice))
+            {
+                var matchingPrice = pricing.MonthlyTicketPrice
+                    .FirstOrDefault(item => string.Equals(item.Key, vehicleType, StringComparison.OrdinalIgnoreCase));
+
+                monthlyPrice = matchingPrice.Value;
+            }
+
+            if (monthlyPrice == null)
+            {
+                return 0m;
+            }
+
+            return months switch
+            {
+                1 => monthlyPrice.OneMonth,
+                3 => monthlyPrice.ThreeMonth,
+                6 => monthlyPrice.SixMonth,
+                _ => 0m
+            };
+        }
+
         private static Dictionary<string, decimal> MergeDecimalPricing(
             Dictionary<string, decimal> currentPricing,
             Dictionary<string, decimal>? updatedPricing)

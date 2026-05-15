@@ -22,13 +22,39 @@ public class AuthenticateModel : PageModel
     [BindProperty]
     public RegisterInputModel RegisterInput { get; set; } = new();
 
+    [BindProperty]
+    public ForgotPasswordInputModel ForgotPasswordInput { get; set; } = new();
+
+    [BindProperty]
+    public ResetPasswordInputModel ResetPasswordInput { get; set; } = new();
+
     [TempData] public string? ErrorMessage { get; set; }
     [TempData] public string? SuccessMessage { get; set; }
     [TempData] public string? ActiveTab { get; set; }
+    [TempData] public string? ForgotStep { get; set; }
+    [TempData] public string? ForgotEmail { get; set; }
+    [TempData] public string? LoginEmail { get; set; }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            return Redirect(GetDashboardPath(role ?? string.Empty));
+        }
+
         ActiveTab ??= "login";
+        ForgotStep ??= "email";
+        LoginInput.Email = LoginEmail ?? string.Empty;
+        LoginInput.Password = string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(ForgotEmail))
+        {
+            ForgotPasswordInput.Email = ForgotEmail;
+            ResetPasswordInput.Email = ForgotEmail;
+        }
+
+        return Page();
     }
 
     /// <summary>Xử lý đăng nhập</summary>
@@ -44,9 +70,11 @@ public class AuthenticateModel : PageModel
 
         if (!ModelState.IsValid)
         {
+            await ClearAuthenticationStateAsync();
             var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
             ErrorMessage = firstError ?? "Vui lòng kiểm tra lại thông tin.";
             ActiveTab = "login";
+            LoginEmail = LoginInput.Email;
             return RedirectToPage();
         }
 
@@ -60,8 +88,10 @@ public class AuthenticateModel : PageModel
 
         if (!success || data == null)
         {
+            await ClearAuthenticationStateAsync();
             ErrorMessage = message;
             ActiveTab = "login";
+            LoginEmail = LoginInput.Email;
             return RedirectToPage();
         }
 
@@ -151,8 +181,87 @@ public class AuthenticateModel : PageModel
         return RedirectToPage("/Auth/VerifyOtp", new { email = RegisterInput.Email.Trim() });
     }
 
+    public async Task<IActionResult> OnPostForgotPasswordAsync()
+    {
+        BindForgotPasswordInputFromForm();
+        ModelState.Clear();
+        TryValidateModel(ForgotPasswordInput, nameof(ForgotPasswordInput));
+
+        if (!ModelState.IsValid)
+        {
+            var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
+            ErrorMessage = firstError ?? "Vui lòng kiểm tra lại email.";
+            ActiveTab = "forgot";
+            ForgotStep = "email";
+            ForgotEmail = ForgotPasswordInput.Email;
+            return RedirectToPage();
+        }
+
+        var email = ForgotPasswordInput.Email.Trim();
+        var (success, message) = await _authService.RequestPasswordResetAsync(new ForgotPasswordRequest
+        {
+            Email = email
+        });
+
+        if (!success)
+        {
+            ErrorMessage = message;
+            ActiveTab = "forgot";
+            ForgotStep = "email";
+            ForgotEmail = email;
+            return RedirectToPage();
+        }
+
+        SuccessMessage = message;
+        ActiveTab = "forgot";
+        ForgotStep = "reset";
+        ForgotEmail = email;
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostResetPasswordAsync()
+    {
+        BindResetPasswordInputFromForm();
+        ModelState.Clear();
+        TryValidateModel(ResetPasswordInput, nameof(ResetPasswordInput));
+
+        if (!ModelState.IsValid)
+        {
+            var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
+            ErrorMessage = firstError ?? "Vui lòng kiểm tra lại thông tin.";
+            ActiveTab = "forgot";
+            ForgotStep = "reset";
+            ForgotEmail = ResetPasswordInput.Email;
+            return RedirectToPage();
+        }
+
+        var (success, message) = await _authService.ResetPasswordAsync(new ResetPasswordRequest
+        {
+            Email = ResetPasswordInput.Email.Trim(),
+            Otp = ResetPasswordInput.Otp.Trim(),
+            NewPassword = ResetPasswordInput.NewPassword,
+            ConfirmPassword = ResetPasswordInput.ConfirmPassword
+        });
+
+        if (!success)
+        {
+            ErrorMessage = message;
+            ActiveTab = "forgot";
+            ForgotStep = "reset";
+            ForgotEmail = ResetPasswordInput.Email;
+            return RedirectToPage();
+        }
+
+        SuccessMessage = message;
+        ActiveTab = "login";
+        ForgotStep = "email";
+        ForgotEmail = null;
+        return RedirectToPage();
+    }
+
     private static string GetDashboardPath(string role) => role switch
     {
+        "Admin" => "/Admin/Dashboard",
         "Manager" => "/Admin/Dashboard",
         "Employee" => "/Employee/Dashboard",
         "Customer" => "/Customer/Dashboard",
@@ -174,6 +283,26 @@ public class AuthenticateModel : PageModel
         RegisterInput.PhoneNumber = Request.Form["RegisterInput.PhoneNumber"].ToString().Trim();
         RegisterInput.Password = Request.Form["RegisterInput.Password"].ToString();
         RegisterInput.ConfirmPassword = Request.Form["RegisterInput.ConfirmPassword"].ToString();
+    }
+
+    private void BindForgotPasswordInputFromForm()
+    {
+        ForgotPasswordInput.Email = Request.Form["ForgotPasswordInput.Email"].ToString().Trim();
+    }
+
+    private void BindResetPasswordInputFromForm()
+    {
+        ResetPasswordInput.Email = Request.Form["ResetPasswordInput.Email"].ToString().Trim();
+        ResetPasswordInput.Otp = Request.Form["ResetPasswordInput.Otp"].ToString().Trim();
+        ResetPasswordInput.NewPassword = Request.Form["ResetPasswordInput.NewPassword"].ToString();
+        ResetPasswordInput.ConfirmPassword = Request.Form["ResetPasswordInput.ConfirmPassword"].ToString();
+    }
+
+    private async Task ClearAuthenticationStateAsync()
+    {
+        HttpContext.Session.Clear();
+        Response.Cookies.Delete("jwt_token");
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 
     // ── Input Models ──────────────────────────────────────────────
@@ -209,6 +338,33 @@ public class AuthenticateModel : PageModel
 
         [Required(ErrorMessage = "Vui lòng nhập lại mật khẩu")]
         [Compare(nameof(Password), ErrorMessage = "Mật khẩu nhập lại không khớp")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+    public class ForgotPasswordInputModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập email")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class ResetPasswordInputModel
+    {
+        [Required(ErrorMessage = "Email không được để trống")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập mã OTP")]
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "Mã OTP gồm 6 chữ số")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Mã OTP chỉ gồm 6 chữ số")]
+        public string Otp { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu mới")]
+        [StringLength(50, MinimumLength = 8, ErrorMessage = "Mật khẩu tối thiểu 8 ký tự")]
+        public string NewPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập lại mật khẩu")]
+        [Compare(nameof(NewPassword), ErrorMessage = "Mật khẩu nhập lại không khớp")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

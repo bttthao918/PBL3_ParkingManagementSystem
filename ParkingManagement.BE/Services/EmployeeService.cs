@@ -17,6 +17,9 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly ITicketRepository _ticketRepo;
         private readonly IEmailService _emailService;
         private readonly ILogger<EmployeeService> _logger;
+        private const string ActiveStatus = "Hoạt động";
+        private const string DisabledStatus = "Vô hiệu hóa";
+        private const string DeletedStatus = "Đã xóa";
 
         public EmployeeService(
             IEmployeeRepository repo,
@@ -103,7 +106,13 @@ namespace ParkingManagement.BLL.Services.Implementations
                     "Vui lòng xóa lịch làm việc trước khi xóa nhân viên.");
             }
 
-            await _repo.SoftDeleteAsync(id);
+            e.IsDeleted = true;
+            if (e.Account != null)
+            {
+                e.Account.IsActive = false;
+            }
+
+            await _repo.UpdateAsync(e);
             return ServiceResult<string>.Ok(id, "Xóa nhân viên thành công.");
         }
 
@@ -115,7 +124,21 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         public async Task<ServiceResult<string>> RestoreAsync(string id)
         {
-            await _repo.RestoreAsync(id);
+            var employee = (await _repo.GetAllAsync(includeDeleted: true))
+                .FirstOrDefault(e => e.EmployeeId == id);
+
+            if (employee == null)
+            {
+                return ServiceResult<string>.Fail("Không tìm thấy nhân viên.");
+            }
+
+            employee.IsDeleted = false;
+            if (employee.Account != null)
+            {
+                employee.Account.IsActive = true;
+            }
+
+            await _repo.UpdateAsync(employee);
             return ServiceResult<string>.Ok(id, "Khôi phục thành công.");
         }
 
@@ -140,14 +163,6 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 var filtered = allEmployees.AsEnumerable();
 
-                if (!string.IsNullOrEmpty(filter.Status))
-                {
-                    if (filter.Status == "Hoạt động")
-                        filtered = filtered.Where(e => !e.IsDeleted);
-                    else if (filter.Status == "Vô hiệu hóa")
-                        filtered = filtered.Where(e => e.IsDeleted);
-                }
-
                 if (!string.IsNullOrEmpty(filter.Shift))
                     filtered = filtered.Where(e => e.Shift == filter.Shift);
 
@@ -157,6 +172,27 @@ namespace ParkingManagement.BLL.Services.Implementations
                     filtered = filtered.Where(e =>
                         e.FullName.ToLower().Contains(keyword) ||
                         e.Account?.Email.ToLower().Contains(keyword) == true);
+                }
+
+                var totalActive = filtered.Count(e => !e.IsDeleted && e.Account?.IsActive == true);
+                var totalInactive = filtered.Count(e => !e.IsDeleted && e.Account?.IsActive != true);
+                var totalDeleted = filtered.Count(e => e.IsDeleted);
+
+                if (IsDeletedStatus(filter.Status))
+                {
+                    filtered = filtered.Where(e => e.IsDeleted);
+                }
+                else if (IsDisabledStatus(filter.Status))
+                {
+                    filtered = filtered.Where(e => !e.IsDeleted && e.Account?.IsActive != true);
+                }
+                else if (IsActiveStatus(filter.Status))
+                {
+                    filtered = filtered.Where(e => !e.IsDeleted && e.Account?.IsActive == true);
+                }
+                else
+                {
+                    filtered = filtered.Where(e => !e.IsDeleted);
                 }
 
                 var sorted = filtered.OrderByDescending(e => e.EmployeeCode).ToList();
@@ -176,13 +212,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Email = e.Account?.Email ?? "",
                     PhoneNumber = e.PhoneNumber ?? "",
                     Shift = e.Shift,
-                    Status = e.IsDeleted ? "Vô hiệu hóa" : "Hoạt động",
+                    Status = GetManagerStatus(e),
                     CreatedAt = e.Account?.CreatedAt ?? DateTime.Now,
                     LastLoginAt = null
                 }).ToList();
-
-                var totalActive = sorted.Count(e => !e.IsDeleted);
-                var totalInactive = sorted.Count(e => e.IsDeleted);
 
                 return new ListManagerEmployeeDto
                 {
@@ -192,7 +225,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalItems = totalItems,
                     TotalPages = totalPages,
                     TotalActive = totalActive,
-                    TotalInactive = totalInactive
+                    TotalInactive = totalInactive,
+                    TotalDeleted = totalDeleted
                 };
             }
             catch (Exception)
@@ -205,7 +239,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalItems = 0,
                     TotalPages = 0,
                     TotalActive = 0,
-                    TotalInactive = 0
+                    TotalInactive = 0,
+                    TotalDeleted = 0
                 };
             }
         }
@@ -242,7 +277,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Email = employee.Account?.Email ?? "",
                     PhoneNumber = employee.PhoneNumber ?? "",
                     Shift = employee.Shift,
-                    Status = employee.IsDeleted ? "Vô hiệu hóa" : "Hoạt động",
+                    Status = GetManagerStatus(employee),
                     CreatedAt = employee.Account?.CreatedAt ?? DateTime.Now,
                     LastLoginAt = null,
                     TotalTicketsProcessed = totalTickets,
@@ -438,15 +473,21 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 if (!string.IsNullOrEmpty(request.Status))
                 {
-                    if (request.Status == "Vô hiệu hóa")
+                    if (IsDeletedStatus(request.Status))
+                    {
                         employee.IsDeleted = true;
-                    else if (request.Status == "Hoạt động")
+                        if (employee.Account != null) employee.Account.IsActive = false;
+                    }
+                    else if (IsDisabledStatus(request.Status))
+                    {
                         employee.IsDeleted = false;
-                }
-
-                if (!string.IsNullOrEmpty(request.Status) && employee.Account != null)
-                {
-                    employee.Account.IsActive = !employee.IsDeleted;
+                        if (employee.Account != null) employee.Account.IsActive = false;
+                    }
+                    else if (IsActiveStatus(request.Status))
+                    {
+                        employee.IsDeleted = false;
+                        if (employee.Account != null) employee.Account.IsActive = true;
+                    }
                 }
 
                 await _repo.UpdateAsync(employee);
@@ -476,15 +517,56 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return new DeleteEmployeeResultDto
                 {
                     Success = true,
-                    Message = "Vô hiệu hóa nhân viên thành công",
+                    Message = "Đã xóa nhân viên thành công",
                     EmployeeId = request.EmployeeId,
-                    NewStatus = "Vô hiệu hóa"
+                    NewStatus = DeletedStatus
                 };
             }
             catch (Exception ex)
             {
-                return new DeleteEmployeeResultDto { Success = false, Message = $"Lỗi vô hiệu hóa nhân viên: {ex.Message}", EmployeeId = request.EmployeeId };
+                return new DeleteEmployeeResultDto { Success = false, Message = $"Lỗi xóa nhân viên: {ex.Message}", EmployeeId = request.EmployeeId };
             }
+        }
+
+        private static bool IsDeletedStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return false;
+
+            var value = status.Trim().ToLowerInvariant();
+            return value.Contains("xóa") ||
+                   value.Contains("xoa") ||
+                   value.Contains("deleted");
+        }
+
+        private static bool IsDisabledStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return false;
+
+            var value = status.Trim().ToLowerInvariant();
+            return value.Contains("vô") ||
+                   value.Contains("vo") ||
+                   value.Contains("disabled");
+        }
+
+        private static bool IsActiveStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return false;
+
+            var value = status.Trim().ToLowerInvariant();
+            return value.Contains("hoạt") ||
+                   value.Contains("hoat") ||
+                   value.Contains("active");
+        }
+
+        private static string GetManagerStatus(Employee employee)
+        {
+            if (employee.IsDeleted)
+                return DeletedStatus;
+
+            return employee.Account?.IsActive == true ? ActiveStatus : DisabledStatus;
         }
 
         // ── 3. Employee Invite Processing ──

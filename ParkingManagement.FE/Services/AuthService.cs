@@ -9,6 +9,8 @@ namespace ParkingManagement.FE.Services
         Task<(bool Success, LoginResponse? Data, string Message)> LoginAsync(LoginRequest request);
         Task<(bool Success, string Message)> RegisterAsync(RegisterRequest request);
         Task<(bool Success, string Message)> VerifyOtpAsync(VerifyOtpRequest request);
+        Task<(bool Success, string Message)> RequestPasswordResetAsync(ForgotPasswordRequest request);
+        Task<(bool Success, string Message)> ResetPasswordAsync(ResetPasswordRequest request);
         Task<(bool Success, string Message)> ChangePasswordAsync(ChangePasswordRequest request);
         Task<CurrentUserDto?> GetCurrentUserAsync();
         Task<(bool Success, CurrentUserDto? Data, string Message)> UpdateCurrentUserAsync(UpdateCurrentUserRequest request);
@@ -137,6 +139,71 @@ namespace ParkingManagement.FE.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "VerifyOtp error");
+                return (false, "Lỗi hệ thống. Vui lòng thử lại.");
+            }
+        }
+
+        public async Task<(bool Success, string Message)> RequestPasswordResetAsync(ForgotPasswordRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/auth/forgot-password", new
+                {
+                    email = request.Email
+                });
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return (true, "Mã OTP đã được gửi đến email của bạn.");
+                }
+
+                var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+                var message = error?.Message ?? "Không thể gửi OTP đặt lại mật khẩu.";
+                _logger.LogWarning("Forgot password request failed for {Email}: {Message}", request.Email, message);
+                return (false, message);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Cannot connect to server.");
+                return (false, "Không thể kết nối đến server. Vui lòng thử lại sau.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RequestPasswordReset error");
+                return (false, "Lỗi hệ thống. Vui lòng thử lại.");
+            }
+        }
+
+        public async Task<(bool Success, string Message)> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/auth/reset-password", new
+                {
+                    email = request.Email,
+                    otp = request.Otp,
+                    newPassword = request.NewPassword,
+                    confirmPassword = request.ConfirmPassword
+                });
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return (true, "Đặt lại mật khẩu thành công. Vui lòng đăng nhập.");
+                }
+
+                var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+                var message = error?.Message ?? "Không thể đặt lại mật khẩu.";
+                _logger.LogWarning("Reset password failed for {Email}: {Message}", request.Email, message);
+                return (false, message);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Cannot connect to server.");
+                return (false, "Không thể kết nối đến server. Vui lòng thử lại sau.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ResetPassword error");
                 return (false, "Lỗi hệ thống. Vui lòng thử lại.");
             }
         }

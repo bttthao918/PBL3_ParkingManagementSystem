@@ -38,7 +38,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Lấy lịch ca theo tuần (Manager)
         /// </summary>
         [HttpGet("week")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> GetWeekSchedule([FromQuery] DateTime? startDate)
         {
             var start = startDate?.Date ?? GetMondayOfWeek(DateTime.Today);
@@ -81,7 +81,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Tạo lịch ca (Manager)
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> CreateSchedule([FromBody] CreateShiftDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.EmployeeId) || string.IsNullOrWhiteSpace(dto.ShiftType))
@@ -129,7 +129,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Xóa lịch ca (Manager)
         /// </summary>
         [HttpDelete("{scheduleId}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> DeleteSchedule(string scheduleId)
         {
             var schedule = await _db.ShiftSchedules.FindAsync(scheduleId);
@@ -149,7 +149,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Tạo lịch ca hàng loạt cho cả tuần (Manager)
         /// </summary>
         [HttpPost("bulk")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> BulkCreate([FromBody] BulkCreateShiftDto dto)
         {
             if (dto.Assignments == null || !dto.Assignments.Any())

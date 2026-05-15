@@ -38,26 +38,46 @@
             </div>
 
             <div class="pricing-cards-row">
+                @{
+                    var motorcycleSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.Motorcycle, 3);
+                    var motorcycleSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.Motorcycle, 6);
+                    var smallCarSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.SmallCar, 3);
+                    var smallCarSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.SmallCar, 6);
+                    var largeCarSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.LargeCar, 3);
+                    var largeCarSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.LargeCar, 6);
+                }
                 <div class="pricing-vehicle-card">
                     <div class="pricing-vehicle-header">
                         <div class="pricing-vehicle-icon motorcycle"><i class="fa-solid fa-motorcycle"></i></div>
                         <div>
                             <span class="pricing-vehicle-name">Xe máy</span>
-                            <div class="pricing-vehicle-price">150,000 đ <small>/ tháng</small></div>
+                            <div class="pricing-vehicle-price">@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ <small>/ tháng</small></div>
                         </div>
                     </div>
                     <div class="pricing-vehicle-details">
                         <div class="pricing-detail-row">
                             <span>1 tháng</span>
-                            <strong>150,000 đ</strong>
+                            <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ</strong>
                         </div>
                         <div class="pricing-detail-row">
                             <span>3 tháng</span>
-                            <strong>400,000 đ <em style="color:#16a34a;font-size:11px;">-50K</em></strong>
+                            <strong>
+                                @Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 3).ToString("N0") đ
+                                @if (motorcycleSaving3 > 0)
+                                {
+                                    <em style="color:#16a34a;font-size:11px;">-@motorcycleSaving3.ToString("N0") đ</em>
+                                }
+                            </strong>
                         </div>
                         <div class="pricing-detail-row">
                             <span>6 tháng</span>
-                            <strong>750,000 đ <em style="color:#16a34a;font-size:11px;">-150K</em></strong>
+                            <strong>
+                                @Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 6).ToString("N0") đ
+                                @if (motorcycleSaving6 > 0)
+                                {
+                                    <em style="color:#16a34a;font-size:11px;">-@motorcycleSaving6.ToString("N0") đ</em>
+                                }
+                            </strong>
                         </div>
                     </div>
                 </div>
@@ -67,21 +87,33 @@
                         <div class="pricing-vehicle-icon car"><i class="fa-solid fa-car"></i></div>
                         <div>
                             <span class="pricing-vehicle-name">Ô tô nhỏ</span>
-                            <div class="pricing-vehicle-price">300,000 đ <small>/ tháng</small></div>
+                            <div class="pricing-vehicle-price">@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ <small>/ tháng</small></div>
                         </div>
                     </div>
                     <div class="pricing-vehicle-details">
                         <div class="pricing-detail-row">
                             <span>1 tháng</span>
-                            <strong>300,000 đ</strong>
+                            <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ</strong>
                         </div>
                         <div class="pricing-detail-row">
                             <span>3 tháng</span>
-                            <strong>800,000 đ <em style="color:#16a34a;font-size:11px;">-100K</em></strong>
+                            <strong>
+                                @Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 3).ToString("N0") đ
+                                @if (smallCarSaving3 > 0)
+                                {
+                                    <em style="color:#16a34a;font-size:11px;">-@smallCarSaving3.ToString("N0") đ</em>
+                                }
+                            </strong>
                         </div>
                         <div class="pricing-detail-row">
                             <span>6 tháng</span>
-                            <strong>1,500,000 đ <em style="color:#16a34a;font-size:11px;">-300K</em></strong>
+                            <strong>
+                                @Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 6).ToString("N0") đ
+                                @if (smallCarSaving6 > 0)
+                                {
+                                    <em style="color:#16a34a;font-size:11px;">-@smallCarSaving6.ToString("N0") đ</em>
+                                }
+                            </strong>
                         </div>
                     </div>
                 </div>
@@ -91,21 +123,33 @@
                         <div class="pricing-vehicle-icon truck"><i class="fa-solid fa-truck"></i></div>
                         <div>
                             <span class="pricing-vehicle-name">Ô tô lớn</span>
-                            <div class="pricing-vehicle-price">500,000 đ <small>/ tháng</small></div>
+                            <div class="pricing-vehicle-price">@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ <small>/ tháng</small></div>
                         </div>
                     </div>
                     <div class="pricing-vehicle-details">
                         <div class="pricing-detail-row">
                             <span>1 tháng</span>
-                            <strong>500,000 đ</strong>
+                            <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ</strong>
                         </div>
                         <div class="pricing-detail-row">
                             <span>3 tháng</span>
-                            <strong>1,300,000 đ <em style="color:#16a34a;font-size:11px;">-200K</em></strong>
+                            <strong>
+                                @Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 3).ToString("N0") đ
+                                @if (largeCarSaving3 > 0)
+                                {
+                                    <em style="color:#16a34a;font-size:11px;">-@largeCarSaving3.ToString("N0") đ</em>
+                                }
+                            </strong>
                         </div>
                         <div class="pricing-detail-row">
                             <span>6 tháng</span>
-                            <strong>2,500,000 đ <em style="color:#16a34a;font-size:11px;">-500K</em></strong>
+                            <strong>
+                                @Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 6).ToString("N0") đ
+                                @if (largeCarSaving6 > 0)
+                                {
+                                    <em style="color:#16a34a;font-size:11px;">-@largeCarSaving6.ToString("N0") đ</em>
+                                }
+                            </strong>
                         </div>
                     </div>
                 </div>
@@ -485,7 +529,7 @@
                 </div>
                 <div class="price-display" id="renewPriceDisplay">
                     <span>Phí gia hạn:</span>
-                    <strong id="renewPriceValue">150,000 đ</strong>
+                    <strong id="renewPriceValue">@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ</strong>
                 </div>
             </div>
             <div class="modal-footer">
@@ -501,7 +545,9 @@
 @section Scripts {
     <script>
         // Bảng giá
-        var pricing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Pricing));
+        var pricing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.Pricing,
+            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
 
         function getPrice(vehicleType, months) {
             var item = pricing.find(p => p.vehicleType === vehicleType && p.months === months);

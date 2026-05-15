@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
 
@@ -18,22 +20,16 @@ namespace ParkingManagement.Web.Controllers.Api
     public class EmployeeMonthlyTicketsController : ControllerBase
     {
         private readonly AppDbContext _db;
+        private readonly IPricingService _pricingService;
         private readonly ILogger<EmployeeMonthlyTicketsController> _logger;
 
-        // Bảng giá vé tháng
-        private static readonly Dictionary<(string vehicleType, int months), decimal> Pricing = new()
-        {
-            [("Xe máy", 1)] = 400_000,
-            [("Xe máy", 3)] = 1_100_000,
-            [("Ô tô nhỏ", 1)] = 1_200_000,
-            [("Ô tô nhỏ", 3)] = 3_200_000,
-            [("Ô tô lớn", 1)] = 2_000_000,
-            [("Ô tô lớn", 3)] = 5_500_000,
-        };
-
-        public EmployeeMonthlyTicketsController(AppDbContext db, ILogger<EmployeeMonthlyTicketsController> logger)
+        public EmployeeMonthlyTicketsController(
+            AppDbContext db,
+            IPricingService pricingService,
+            ILogger<EmployeeMonthlyTicketsController> logger)
         {
             _db = db;
+            _pricingService = pricingService;
             _logger = logger;
         }
 
@@ -199,8 +195,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (string.IsNullOrWhiteSpace(model.VehicleType))
                     return BadRequest(new { success = false, message = "Loại xe không được để trống" });
 
-                if (model.DurationMonths != 1 && model.DurationMonths != 3)
-                    return BadRequest(new { success = false, message = "Gói vé phải là 1 hoặc 3 tháng" });
+                if (!IsSupportedDuration(model.DurationMonths))
+                    return BadRequest(new { success = false, message = "Gói vé phải là 1, 3 hoặc 6 tháng" });
 
                 // Kiểm tra xe đã có vé tháng đang hoạt động chưa
                 var existing = await _db.MonthlyTickets
@@ -237,7 +233,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 }
 
                 // Tính phí
-                decimal fee = CalculateFee(model.VehicleType, model.DurationMonths);
+                decimal fee = await CalculateFeeAsync(model.VehicleType, model.DurationMonths);
                 if (fee == 0)
                     return BadRequest(new { success = false, message = "Không tìm thấy bảng giá cho loại xe và gói này" });
 
@@ -311,15 +307,15 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
-                if (model.MonthsToAdd != 1 && model.MonthsToAdd != 3)
-                    return BadRequest(new { success = false, message = "Gói gia hạn phải là 1 hoặc 3 tháng" });
+                if (!IsSupportedDuration(model.MonthsToAdd))
+                    return BadRequest(new { success = false, message = "Gói gia hạn phải là 1, 3 hoặc 6 tháng" });
 
                 var ticket = await _db.MonthlyTickets.FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
                 if (ticket == null)
                     return NotFound(new { success = false, message = "Không tìm thấy vé tháng" });
 
                 // Tính phí gia hạn
-                decimal renewFee = CalculateFee(ticket.VehicleType, model.MonthsToAdd);
+                decimal renewFee = await CalculateFeeAsync(ticket.VehicleType, model.MonthsToAdd);
                 if (renewFee == 0)
                     return BadRequest(new { success = false, message = "Không tìm thấy bảng giá cho gói gia hạn này" });
 
@@ -441,25 +437,58 @@ namespace ParkingManagement.Web.Controllers.Api
         /// </summary>
         [HttpGet("pricing")]
         [AllowAnonymous]
-        public IActionResult GetPricing()
+        public async Task<IActionResult> GetPricing()
         {
-            var pricing = Pricing.Select(p => new
-            {
-                vehicleType = p.Key.vehicleType,
-                months = p.Key.months,
-                packageType = p.Key.months + " tháng",
-                price = p.Value
-            }).ToList();
+            var currentPricing = await _pricingService.GetCurrentPricingAsync();
+            var vehicleTypes = new[] { "Xe máy", "Ô tô nhỏ", "Ô tô lớn" };
+            var months = new[] { 1, 3, 6 };
+
+            var pricing = vehicleTypes
+                .SelectMany(vehicleType => months.Select(month => new
+                {
+                    vehicleType,
+                    months = month,
+                    packageType = month + " tháng",
+                    price = GetMonthlyPrice(currentPricing, vehicleType, month)
+                }))
+                .ToList();
 
             return Ok(pricing);
         }
 
         // ── Helpers ──
 
-        private static decimal CalculateFee(string vehicleType, int months)
+        private Task<decimal> CalculateFeeAsync(string vehicleType, int months)
         {
-            Pricing.TryGetValue((vehicleType, months), out var fee);
-            return fee;
+            return _pricingService.GetMonthlyTicketPriceAsync(vehicleType, months);
+        }
+
+        private static bool IsSupportedDuration(int months)
+        {
+            return months is 1 or 3 or 6;
+        }
+
+        private static decimal GetMonthlyPrice(PricingDto pricing, string vehicleType, int months)
+        {
+            if (!pricing.MonthlyTicketPrice.TryGetValue(vehicleType, out var monthlyPrice))
+            {
+                monthlyPrice = pricing.MonthlyTicketPrice
+                    .FirstOrDefault(item => string.Equals(item.Key, vehicleType, StringComparison.OrdinalIgnoreCase))
+                    .Value;
+            }
+
+            if (monthlyPrice == null)
+            {
+                return 0m;
+            }
+
+            return months switch
+            {
+                1 => monthlyPrice.OneMonth,
+                3 => monthlyPrice.ThreeMonth,
+                6 => monthlyPrice.SixMonth,
+                _ => 0m
+            };
         }
 
         private static string GenerateId(string prefix)

@@ -11,6 +11,9 @@ namespace ParkingManagement.FE.Pages.Employee
     public class MonthlyTicketManagementModel : PageModel
     {
         private readonly IEmployeeMonthlyTicketService _service;
+        private const string MotorcycleType = "Xe máy";
+        private const string SmallCarType = "Ô tô nhỏ";
+        private const string LargeCarType = "Ô tô lớn";
 
         public MonthlyTicketManagementModel(IEmployeeMonthlyTicketService service)
         {
@@ -87,10 +90,61 @@ namespace ParkingManagement.FE.Pages.Employee
 
             // Load pricing
             var pricing = await _service.GetPricingAsync();
-            if (pricing != null)
+            if (pricing != null && pricing.Any())
             {
                 Pricing = pricing;
             }
+            else
+            {
+                Pricing = CreateDefaultPricing();
+            }
+        }
+
+        public decimal GetMonthlyPrice(string vehicleType, int months)
+        {
+            var price = Pricing
+                .FirstOrDefault(item =>
+                    item.Months == months &&
+                    string.Equals(item.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
+                ?.Price ?? 0m;
+
+            if (price > 0)
+                return price;
+
+            return CreateDefaultPricing()
+                .FirstOrDefault(item =>
+                    item.Months == months &&
+                    string.Equals(item.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
+                ?.Price ?? 0m;
+        }
+
+        public decimal GetMonthlySaving(string vehicleType, int months)
+        {
+            if (months <= 1)
+                return 0m;
+
+            var oneMonthPrice = GetMonthlyPrice(vehicleType, 1);
+            var packagePrice = GetMonthlyPrice(vehicleType, months);
+            var saving = (oneMonthPrice * months) - packagePrice;
+
+            return saving > 0 ? saving : 0m;
+        }
+
+        private static List<EmployeeMonthlyTicketPricingItem> CreateDefaultPricing()
+        {
+            var defaultPricing = PricingDisplayDefaults.CreateDefaultPricing();
+            var vehicleTypes = new[] { MotorcycleType, SmallCarType, LargeCarType };
+            var months = new[] { 1, 3, 6 };
+
+            return vehicleTypes
+                .SelectMany(vehicleType => months.Select(month => new EmployeeMonthlyTicketPricingItem
+                {
+                    VehicleType = vehicleType,
+                    Months = month,
+                    PackageType = $"{month} tháng",
+                    Price = PricingDisplayDefaults.GetMonthlyTicketPrice(defaultPricing, vehicleType, month)
+                }))
+                .ToList();
         }
 
         public async Task<IActionResult> OnPostCreateAsync(

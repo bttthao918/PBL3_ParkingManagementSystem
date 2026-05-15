@@ -47,6 +47,7 @@ namespace ParkingManagement.BLL.DTOs
         public int TotalPages { get; set; }
         public int TotalActive { get; set; }
         public int TotalInactive { get; set; }
+        public int TotalDeleted { get; set; }
     }
 
     /// <summary>
@@ -135,7 +136,7 @@ namespace ParkingManagement.BLL.DTOs
         public bool Success { get; set; }
         public string? Message { get; set; }
         public string EmployeeId { get; set; } = null!;
-        public string NewStatus { get; set; } = "Vô hiệu hóa";
+        public string NewStatus { get; set; } = "Đã xóa";
     }
 
     // ── Employee Invite Confirm DTOs ───────────────────────

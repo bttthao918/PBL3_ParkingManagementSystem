@@ -16,10 +16,12 @@ namespace ParkingManagement.FE.Pages.Employee
         private static readonly int[] AllowedPageSizes = { 10, 20, 50 };
 
         private readonly ITicketService _ticketService;
+        private readonly IPricingService _pricingService;
 
-        public TicketManagementModel(ITicketService ticketService)
+        public TicketManagementModel(ITicketService ticketService, IPricingService pricingService)
         {
             _ticketService = ticketService;
+            _pricingService = pricingService;
         }
 
         public int TotalTickets { get; set; }
@@ -62,6 +64,8 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public TicketDetailVM? SelectedTicket { get; set; }
 
+        public PricingDto Pricing { get; set; } = PricingDisplayDefaults.CreateDefaultPricing();
+
         [TempData]
         public string? ActionMessage { get; set; }
 
@@ -73,6 +77,8 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["Title"] = "Quản lý vé";
             ViewData["Role"] = "Nhân viên";
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
+
+            await LoadPricingAsync();
 
             // Fallback: nếu model binding không parse được CreatedDate (do format dd/MM/yyyy),
             // thử parse thủ công từ query string
@@ -104,6 +110,16 @@ namespace ParkingManagement.FE.Pages.Employee
 
             ApplyResult(result);
             LoadSelectedTicket();
+        }
+
+        public decimal GetHourlyRate(string vehicleType)
+        {
+            return PricingDisplayDefaults.GetHourlyRate(Pricing, vehicleType);
+        }
+
+        public decimal GetMaxDailyFee(string vehicleType)
+        {
+            return PricingDisplayDefaults.GetMaxDailyFee(Pricing, vehicleType);
         }
 
         public async Task<IActionResult> OnPostCheckOutAsync(string ticketId, decimal fee, int? selectedId)
@@ -140,6 +156,19 @@ namespace ParkingManagement.FE.Pages.Employee
             };
 
             return _ticketService.SearchTicketsAsync(searchDto);
+        }
+
+        private async Task LoadPricingAsync()
+        {
+            try
+            {
+                Pricing = await _pricingService.GetCurrentPricingAsync()
+                    ?? PricingDisplayDefaults.CreateDefaultPricing();
+            }
+            catch
+            {
+                Pricing = PricingDisplayDefaults.CreateDefaultPricing();
+            }
         }
 
         private void NormalizePaging()

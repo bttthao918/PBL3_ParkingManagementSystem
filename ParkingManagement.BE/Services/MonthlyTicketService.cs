@@ -12,27 +12,20 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly ICustomerRepository _customerRepo;
         private readonly IVehicleRepository _vehicleRepo;
         private readonly IPaymentRepository _paymentRepo;
-
-        private static readonly Dictionary<(string vehicleType, string package), decimal> Pricing = new()
-        {
-            [("Xe máy", "1 tháng")] = 400_000,
-            [("Xe máy", "3 tháng")] = 1_100_000,
-            [("Ô tô nhỏ", "1 tháng")] = 1_200_000,
-            [("Ô tô nhỏ", "3 tháng")] = 3_200_000,
-            [("Ô tô lớn", "1 tháng")] = 2_000_000,
-            [("Ô tô lớn", "3 tháng")] = 5_500_000,
-        };
+        private readonly IPricingService _pricingService;
 
         public MonthlyTicketService(
             IMonthlyTicketRepository repo,
             ICustomerRepository customerRepo,
             IVehicleRepository vehicleRepo,
-            IPaymentRepository paymentRepo)
+            IPaymentRepository paymentRepo,
+            IPricingService pricingService)
         {
             _repo = repo;
             _customerRepo = customerRepo;
             _vehicleRepo = vehicleRepo;
             _paymentRepo = paymentRepo;
+            _pricingService = pricingService;
         }
 
         public async Task<List<MonthlyTicketDto>> GetAllAsync()
@@ -69,7 +62,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy khách hàng.");
 
-            var fee = CalculateFee(dto.VehicleType!, dto.PackageType);
+            var fee = await CalculateFeeAsync(dto.VehicleType!, dto.PackageType);
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
@@ -119,7 +112,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (string.IsNullOrWhiteSpace(dto.PackageType))
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không được để trống.");
 
-            var fee = CalculateFee(ticket.VehicleType, dto.PackageType);
+            var fee = await CalculateFeeAsync(ticket.VehicleType, dto.PackageType);
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
@@ -159,10 +152,12 @@ namespace ParkingManagement.BLL.Services.Implementations
             return list.Select(MapToDto).ToList();
         }
 
-        public decimal CalculateFee(string vehicleType, string packageType)
+        public async Task<decimal> CalculateFeeAsync(string vehicleType, string packageType)
         {
-            Pricing.TryGetValue((vehicleType, packageType), out var fee);
-            return fee;
+            var months = GetPackageMonths(packageType);
+            return months == 0
+                ? 0m
+                : await _pricingService.GetMonthlyTicketPriceAsync(vehicleType, months);
         }
 
         private async Task AddPaymentAsync(string monthlyTicketId, decimal fee, string? paymentMethod)

@@ -9,6 +9,14 @@
     margin-bottom: 22px;
 }
 
+.emp-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
     .employee-header h2 {
         font-size: 28px;
         color: #102033;
@@ -51,7 +59,7 @@
 
 .emp-kpi-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 18px;
     margin-bottom: 22px;
 }
@@ -97,6 +105,10 @@
 
     .emp-kpi-icon.orange {
         background: linear-gradient(135deg, #ff9f1c, #ff7a00);
+    }
+
+    .emp-kpi-icon.red {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
     }
 
     .emp-kpi-icon.purple {
@@ -204,7 +216,8 @@
 
 .emp-table-card {
     padding: 0;
-    overflow-x: auto;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .emp-table-title {
@@ -212,9 +225,16 @@
     border-bottom: 1px solid #e3ecf8;
 }
 
+.emp-table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 .emp-table {
     width: 100%;
-    min-width: 1120px;
+    min-width: 1220px;
     border-collapse: collapse;
     margin-top: 0;
     table-layout: fixed;
@@ -280,7 +300,7 @@
 
     .emp-table th:nth-child(10),
     .emp-table td:nth-child(10) {
-        width: 126px;
+        width: 188px;
     }
 
     .emp-table tbody tr:hover {
@@ -350,16 +370,16 @@
     white-space: nowrap;
 }
 
-    .emp-table-card::-webkit-scrollbar {
+    .emp-table-scroll::-webkit-scrollbar {
         height: 8px;
     }
 
-    .emp-table-card::-webkit-scrollbar-thumb {
+    .emp-table-scroll::-webkit-scrollbar-thumb {
         background: #cbdaf0;
         border-radius: 999px;
     }
 
-    .emp-table-card::-webkit-scrollbar-track {
+    .emp-table-scroll::-webkit-scrollbar-track {
         background: #f1f5fb;
         border-radius: 999px;
     }
@@ -398,6 +418,11 @@
         color: #dc2626;
     }
 
+    .emp-status.deleted {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
 .emp-actions {
     display: flex;
     gap: 8px;
@@ -433,22 +458,43 @@
             color: #475569;
     }
 
+.emp-inline-form {
+    margin: 0;
+}
+
+.emp-actions .emp-action-restore {
+    color: #15803d;
+}
+
+.emp-actions .emp-action-delete {
+    color: #dc2626;
+}
+
 .emp-pagination {
     padding: 16px 18px;
     display: flex;
+    align-items: center;
+    gap: 14px;
     justify-content: space-between;
     color: #52627a;
     font-size: 14px;
 }
 
+    .emp-pagination > span {
+        min-width: 0;
+        color: #52627a;
+        font-weight: 600;
+    }
+
     .emp-pagination div {
         display: flex;
+        flex: 0 0 auto;
         gap: 8px;
     }
 
-    .emp-pagination button,
-    .emp-pagination a,
-    .emp-pagination span {
+    .emp-pagination div button,
+    .emp-pagination div a,
+    .emp-pagination div span {
         width: 38px;
         height: 38px;
         border: 1px solid #d7e2f2;
@@ -468,7 +514,7 @@
             color: white;
         }
 
-        .emp-pagination span.disabled {
+        .emp-pagination div span.disabled {
             cursor: default;
             color: #94a3b8;
             background: #f8fafc;
@@ -666,10 +712,24 @@
     gap: 10px;
 }
 
+    .emp-detail-actions form {
+        margin: 0;
+    }
+
     .emp-detail-actions button {
         width: 100%;
         justify-content: center;
     }
+
+.emp-deleted-notice {
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.45;
+}
 
 .emp-modal {
     position: fixed;
@@ -747,11 +807,62 @@
     margin-bottom: 16px;
 }
 
-.emp-checkbox {
+.emp-modal-form .emp-checkbox {
     display: flex;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
     color: #334155;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .emp-modal-form .emp-checkbox input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
+        margin: 0;
+        padding: 0;
+        border: 1.5px solid #b8c9df;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        display: inline-grid;
+        place-items: center;
+        transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+
+        .emp-modal-form .emp-checkbox input[type="checkbox"]::after {
+            content: "";
+            width: 6px;
+            height: 11px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+            transform-origin: center;
+            transition: transform .15s ease;
+        }
+
+        .emp-modal-form .emp-checkbox input[type="checkbox"]:checked {
+            background: #0d8bff;
+            border-color: #0d8bff;
+            box-shadow: 0 0 0 4px rgba(13, 139, 255, .12);
+        }
+
+        .emp-modal-form .emp-checkbox input[type="checkbox"]:checked::after {
+            transform: rotate(45deg) scale(1);
+        }
+
+        .emp-modal-form .emp-checkbox input[type="checkbox"]:focus-visible {
+            outline: 3px solid rgba(13, 139, 255, .24);
+            outline-offset: 2px;
+        }
+
+    .emp-modal-form .emp-checkbox input[type="hidden"] {
+        display: none;
 }
 
 .emp-modal-actions {
@@ -771,6 +882,11 @@
 }
 
 @media (max-width: 1200px) {
+    .employee-header {
+        align-items: flex-start;
+        gap: 14px;
+    }
+
     .emp-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -784,6 +900,6 @@
     }
 
     .emp-table {
-        min-width: 1100px;
+        min-width: 1220px;
     }
 }

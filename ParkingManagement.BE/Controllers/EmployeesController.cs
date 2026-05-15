@@ -63,7 +63,7 @@ namespace ParkingManagement.Web.Controllers.Api
         /// Create new employee
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Admin")]
         [ProducesResponseType(typeof(ServiceResult<string>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ServiceResult<string>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateEmployeeDto dto)
@@ -157,6 +157,27 @@ namespace ParkingManagement.Web.Controllers.Api
             if (!result.Success)
                 return BadRequest(result);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Restore deleted employee - Manager operation
+        /// </summary>
+        [HttpPost("manager/{employeeId}/restore")]
+        [ProducesResponseType(typeof(UpdateEmployeeResultDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UpdateEmployeeResultDto), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RestoreEmployeeByManager(string employeeId)
+        {
+            var result = await _employeeService.RestoreAsync(employeeId);
+            var response = new UpdateEmployeeResultDto
+            {
+                Success = result.Success,
+                Message = result.Message
+            };
+
+            if (!result.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
 
         /// <summary>

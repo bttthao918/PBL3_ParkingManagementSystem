@@ -27,7 +27,7 @@
 
             <span class="updated-date">
                 <i class="fa-solid fa-calendar-days"></i>
-                Cập nhật: 01/05/2024
+                Cập nhật: @Model.PricingUpdatedAt.ToString("dd/MM/yyyy")
             </span>
         </div>
 
@@ -42,24 +42,24 @@
 
                         <div>
                             <h4>@price.VehicleType</h4>
-                            <h2>@price.FirstHourPrice.ToString("N0") đ <span>/ lượt</span></h2>
+                            <h2>@price.HourlyRate.ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
 
                     <div class="price-lines">
                         <div>
-                            <span>Theo giờ đầu</span>
-                            <strong>@price.FirstHourPrice.ToString("N0") đ</strong>
+                            <span>Theo giờ</span>
+                            <strong>@price.HourlyRate.ToString("N0") đ</strong>
                         </div>
 
                         <div>
-                            <span>Từ giờ thứ 2</span>
-                            <strong>@price.NextHourPrice.ToString("N0") đ/giờ</strong>
+                            <span>Tối đa / ngày</span>
+                            <strong>@price.MaxDailyFee.ToString("N0") đ/ngày</strong>
                         </div>
 
                         <div>
-                            <span>Qua đêm (22:00 - 06:00)</span>
-                            <strong>@price.OvernightPrice.ToString("N0") đ/đêm</strong>
+                            <span>Tối thiểu</span>
+                            <strong>@price.MinimumDurationText</strong>
                         </div>
                     </div>
                 </div>
