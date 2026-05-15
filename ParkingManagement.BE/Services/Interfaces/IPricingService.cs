@@ -16,5 +16,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
         /// UC017.2 - Cập nhật giá vé
         /// </summary>
         Task<ServiceResult<PricingDto>> UpdatePricingAsync(UpdatePricingDto updateDto, string managerId);
+
+        Task<decimal> GetMonthlyTicketPriceAsync(string vehicleType, int months);
     }
 }

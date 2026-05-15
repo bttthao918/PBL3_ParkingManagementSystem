@@ -68,7 +68,7 @@ namespace ParkingManagement.Web.Controllers.Admin
         // POST: /admin/employee/create
         [HttpPost]
         [Route("create")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> Create([FromBody] EmployeeCreateModel model)
         {
             try

@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models;
@@ -24,11 +26,14 @@ namespace ParkingManagement.FE.Pages.Customer
         }
 
         public string UserName { get; set; } = "Customer";
+
         public string? ErrorMessage { get; set; }
 
         public List<TicketPriceVm> PriceCards { get; set; } = new();
+
         public List<TicketVm> Tickets { get; set; } = new();
-        public string? PricingUpdatedDate { get; set; }
+
+        public DateTime PricingUpdatedAt { get; set; } = DateTime.Today;
 
         public async Task OnGetAsync()
         {
@@ -37,163 +42,113 @@ namespace ParkingManagement.FE.Pages.Customer
 
         private async Task LoadDataAsync()
         {
+            ViewData["Title"] = "Quản lý vé xe";
+            ViewData["Role"] = "Khách hàng";
+
             var fallbackName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";
             UserName = fallbackName;
 
             try
             {
-                // Load profile, tickets, and pricing in parallel
                 var profileTask = _customerApiService.GetProfileAsync();
                 var ticketsTask = _customerApiService.GetTicketsAsync(1, 50);
-                var pricingTask = _pricingService.GetCurrentPricingAsync();
+                var pricingTask = LoadPricingAsync();
 
                 await Task.WhenAll(profileTask, ticketsTask, pricingTask);
 
                 var profile = await profileTask;
-                var tickets = await ticketsTask;
+                var tickets = await ticketsTask ?? new ListCustomerTicketDto();
                 var pricing = await pricingTask;
 
-                // Set user name
-                if (profile != null && !string.IsNullOrWhiteSpace(profile.FullName))
-                {
-                    UserName = profile.FullName;
-                }
+                UserName = string.IsNullOrWhiteSpace(profile?.FullName)
+                    ? fallbackName
+                    : profile.FullName;
 
-                // Map pricing to PriceCards
-                if (pricing != null)
-                {
-                    PriceCards = BuildPriceCards(pricing);
-                    PricingUpdatedDate = pricing.LastUpdatedAt != default
-                        ? pricing.LastUpdatedAt.ToString("dd/MM/yyyy")
-                        : null;
-                }
-                else
-                {
-                    // Fallback pricing if BE unavailable
-                    LoadFallbackPriceCards();
-                }
-
-                // Map tickets
-                if (tickets?.Items != null)
-                {
-                    Tickets = tickets.Items.Select((t, index) => MapToTicketVm(t, index + 1)).ToList();
-                }
+                PricingUpdatedAt = pricing.LastUpdatedAt == default
+                    ? DateTime.Today
+                    : pricing.LastUpdatedAt;
+                PriceCards = BuildPriceCards(pricing);
+                Tickets = tickets.Items
+                    .OrderByDescending(x => x.CheckInTime)
+                    .Select((ticket, index) => MapToTicketVm(ticket, index + 1))
+                    .ToList();
 
                 ViewData["UserName"] = UserName;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Could not load ticket data from BE");
-                ErrorMessage = "Không tải được dữ liệu từ hệ thống. Vui lòng kiểm tra kết nối.";
-                LoadFallbackPriceCards();
+                _logger.LogError(ex, "Could not load customer ticket data");
+                ErrorMessage = "Không tải được dữ liệu vé từ hệ thống. Vui lòng kiểm tra BE và phiên đăng nhập.";
+                PriceCards = BuildPriceCards(PricingDisplayDefaults.CreateDefaultPricing());
                 ViewData["UserName"] = fallbackName;
             }
         }
 
-        private List<TicketPriceVm> BuildPriceCards(PricingDto pricing)
+        private async Task<PricingDto> LoadPricingAsync()
         {
-            var cards = new List<TicketPriceVm>();
-
-            // Xe máy
-            var motorcycleHourly = pricing.HourlyRate.GetValueOrDefault("Xe máy", 5000);
-            var motorcycleMax = pricing.MaxDailyFee.GetValueOrDefault("Xe máy", 10000);
-            cards.Add(new TicketPriceVm
+            try
             {
-                VehicleType = "Xe máy",
+                return await _pricingService.GetCurrentPricingAsync()
+                    ?? PricingDisplayDefaults.CreateDefaultPricing();
+            }
+            catch
+            {
+                return PricingDisplayDefaults.CreateDefaultPricing();
+            }
+        }
+
+        private static List<TicketPriceVm> BuildPriceCards(PricingDto pricing) =>
+        [
+            new()
+            {
+                VehicleType = PricingDisplayDefaults.Motorcycle,
                 Icon = "fa-solid fa-motorcycle",
                 ColorClass = "green",
-                FirstHourPrice = motorcycleHourly,
-                NextHourPrice = motorcycleHourly,
-                OvernightPrice = motorcycleMax
-            });
-
-            // Ô tô nhỏ
-            var smallCarHourly = pricing.HourlyRate.GetValueOrDefault("Ô tô nhỏ", 15000);
-            var smallCarMax = pricing.MaxDailyFee.GetValueOrDefault("Ô tô nhỏ", 40000);
-            cards.Add(new TicketPriceVm
+                HourlyRate = PricingDisplayDefaults.GetHourlyRate(pricing, PricingDisplayDefaults.Motorcycle),
+                MaxDailyFee = PricingDisplayDefaults.GetMaxDailyFee(pricing, PricingDisplayDefaults.Motorcycle)
+            },
+            new()
             {
-                VehicleType = "Ô tô nhỏ",
+                VehicleType = PricingDisplayDefaults.SmallCar,
                 Icon = "fa-solid fa-car-side",
                 ColorClass = "blue",
-                FirstHourPrice = smallCarHourly,
-                NextHourPrice = smallCarHourly,
-                OvernightPrice = smallCarMax
-            });
-
-            // Ô tô lớn
-            var largeCarHourly = pricing.HourlyRate.GetValueOrDefault("Ô tô lớn", 25000);
-            var largeCarMax = pricing.MaxDailyFee.GetValueOrDefault("Ô tô lớn", 60000);
-            cards.Add(new TicketPriceVm
+                HourlyRate = PricingDisplayDefaults.GetHourlyRate(pricing, PricingDisplayDefaults.SmallCar),
+                MaxDailyFee = PricingDisplayDefaults.GetMaxDailyFee(pricing, PricingDisplayDefaults.SmallCar)
+            },
+            new()
             {
-                VehicleType = "Ô tô lớn",
+                VehicleType = PricingDisplayDefaults.LargeCar,
                 Icon = "fa-solid fa-van-shuttle",
                 ColorClass = "purple",
-                FirstHourPrice = largeCarHourly,
-                NextHourPrice = largeCarHourly,
-                OvernightPrice = largeCarMax
-            });
+                HourlyRate = PricingDisplayDefaults.GetHourlyRate(pricing, PricingDisplayDefaults.LargeCar),
+                MaxDailyFee = PricingDisplayDefaults.GetMaxDailyFee(pricing, PricingDisplayDefaults.LargeCar)
+            }
+        ];
 
-            return cards;
-        }
-
-        private void LoadFallbackPriceCards()
+        private static TicketVm MapToTicketVm(CustomerTicketDto ticket, int index)
         {
-            PriceCards = new List<TicketPriceVm>
-            {
-                new()
-                {
-                    VehicleType = "Xe máy",
-                    Icon = "fa-solid fa-motorcycle",
-                    ColorClass = "green",
-                    FirstHourPrice = 5000,
-                    NextHourPrice = 2000,
-                    OvernightPrice = 10000
-                },
-                new()
-                {
-                    VehicleType = "Ô tô nhỏ",
-                    Icon = "fa-solid fa-car-side",
-                    ColorClass = "blue",
-                    FirstHourPrice = 15000,
-                    NextHourPrice = 5000,
-                    OvernightPrice = 40000
-                },
-                new()
-                {
-                    VehicleType = "Ô tô lớn",
-                    Icon = "fa-solid fa-van-shuttle",
-                    ColorClass = "purple",
-                    FirstHourPrice = 25000,
-                    NextHourPrice = 8000,
-                    OvernightPrice = 60000
-                }
-            };
-        }
-
-        private TicketVm MapToTicketVm(CustomerTicketDto t, int index)
-        {
-            var icon = GetVehicleIcon(t.VehicleType);
-            var iconClass = GetVehicleIconClass(t.VehicleType);
-            var duration = CalculateDuration(t.CheckInTime, t.CheckOutTime);
-            var fee = t.Fee ?? 0;
-            var statusText = MapStatus(t.Status);
+            var icon = GetVehicleIcon(ticket.VehicleType);
+            var iconClass = GetVehicleIconClass(ticket.VehicleType);
+            var fee = ticket.Fee ?? 0m;
 
             return new TicketVm
             {
                 Id = index,
-                Code = t.TicketId.Length > 12 ? t.TicketId[..12].ToUpper() : t.TicketId.ToUpper(),
-                VehiclePlate = t.VehiclePlate,
-                VehicleType = t.VehicleType,
+                Code = string.IsNullOrWhiteSpace(ticket.TicketId)
+                    ? $"VE-{index:D4}"
+                    : (ticket.TicketId.Length > 12 ? ticket.TicketId[..12] : ticket.TicketId).ToUpperInvariant(),
+                VehiclePlate = ticket.VehiclePlate,
+                VehicleType = ticket.VehicleType,
                 Icon = icon,
                 IconClass = iconClass,
-                CheckInTime = t.CheckInTime,
-                CheckOutTime = t.CheckOutTime,
-                Duration = duration,
+                CheckInTime = ticket.CheckInTime,
+                CheckOutTime = ticket.CheckOutTime,
+                Duration = CalculateDuration(ticket.CheckInTime, ticket.CheckOutTime),
                 ParkingFee = fee,
-                Discount = 0,
+                Discount = 0m,
                 TotalAmount = fee,
-                Status = statusText,
-                PaymentMethod = fee > 0 ? "Đã thanh toán" : "-",
+                Status = MapStatus(ticket.Status),
+                PaymentMethod = fee > 0m ? "Đã thanh toán" : "-",
                 CreatedBy = "-",
                 Note = "-"
             };
@@ -201,81 +156,173 @@ namespace ParkingManagement.FE.Pages.Customer
 
         private static string GetVehicleIcon(string vehicleType)
         {
-            var normalized = vehicleType.ToLower().Trim();
-            if (normalized.Contains("máy") || normalized.Contains("motorcycle"))
+            var normalized = NormalizeText(vehicleType);
+            if (normalized.Contains("may") || normalized.Contains("motorcycle"))
+            {
                 return "fa-solid fa-motorcycle";
-            if (normalized.Contains("lớn") || normalized.Contains("large") || normalized.Contains("van"))
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
                 return "fa-solid fa-van-shuttle";
-            if (normalized.Contains("ô tô") || normalized.Contains("car"))
+            }
+
+            if (normalized.Contains("o to") || normalized.Contains("car"))
+            {
                 return "fa-solid fa-car-side";
+            }
+
             return "fa-solid fa-motorcycle";
         }
 
         private static string GetVehicleIconClass(string vehicleType)
         {
-            var normalized = vehicleType.ToLower().Trim();
-            if (normalized.Contains("máy") || normalized.Contains("motorcycle"))
+            var normalized = NormalizeText(vehicleType);
+            if (normalized.Contains("may") || normalized.Contains("motorcycle"))
+            {
                 return "green";
-            if (normalized.Contains("lớn") || normalized.Contains("large") || normalized.Contains("van"))
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
                 return "purple";
-            if (normalized.Contains("ô tô") || normalized.Contains("car"))
+            }
+
+            if (normalized.Contains("o to") || normalized.Contains("car"))
+            {
                 return "blue";
+            }
+
             return "green";
         }
 
         private static string CalculateDuration(DateTime checkIn, DateTime? checkOut)
         {
             if (checkOut == null)
+            {
                 return "Đang gửi";
+            }
 
             var span = checkOut.Value - checkIn;
+            if (span.TotalMinutes < 1)
+            {
+                return "Dưới 1 phút";
+            }
+
             if (span.TotalMinutes < 60)
-                return $"{(int)span.TotalMinutes} phút";
+            {
+                return $"{(int)Math.Ceiling(span.TotalMinutes)} phút";
+            }
+
             if (span.Minutes == 0)
+            {
                 return $"{(int)span.TotalHours} giờ";
+            }
+
             return $"{(int)span.TotalHours} giờ {span.Minutes} phút";
         }
 
         private static string MapStatus(string status)
         {
-            var normalized = status.ToLower().Trim();
-            if (normalized.Contains("paid") || normalized.Contains("thanh toán") || normalized.Contains("completed"))
+            var normalized = NormalizeText(status);
+            if (normalized.Contains("paid") ||
+                normalized.Contains("thanh toan") ||
+                normalized.Contains("completed") ||
+                normalized.Contains("checked out") ||
+                normalized.Contains("checkout") ||
+                normalized.Contains("da ra"))
+            {
                 return "Đã thanh toán";
-            if (normalized.Contains("active") || normalized.Contains("đang") || normalized.Contains("checked in"))
+            }
+
+            if (normalized.Contains("active") ||
+                normalized.Contains("checked in") ||
+                normalized.Contains("dang") ||
+                normalized.Contains("trong bai"))
+            {
                 return "Đang gửi";
-            if (normalized.Contains("unpaid") || normalized.Contains("chưa"))
+            }
+
+            if (normalized.Contains("unpaid") || normalized.Contains("chua"))
+            {
                 return "Chưa thanh toán";
-            return status;
+            }
+
+            return string.IsNullOrWhiteSpace(status) ? "-" : status;
+        }
+
+        private static string NormalizeText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder(normalized.Length);
+
+            foreach (var character in normalized)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+                {
+                    builder.Append(character);
+                }
+            }
+
+            return builder
+                .ToString()
+                .Normalize(NormalizationForm.FormC)
+                .Replace('đ', 'd');
         }
     }
 
     public class TicketPriceVm
     {
         public string VehicleType { get; set; } = string.Empty;
+
         public string Icon { get; set; } = string.Empty;
+
         public string ColorClass { get; set; } = string.Empty;
-        public decimal FirstHourPrice { get; set; }
-        public decimal NextHourPrice { get; set; }
-        public decimal OvernightPrice { get; set; }
+
+        public decimal HourlyRate { get; set; }
+
+        public decimal MaxDailyFee { get; set; }
+
+        public string MinimumDurationText { get; set; } = "15 phút";
     }
 
     public class TicketVm
     {
         public int Id { get; set; }
+
         public string Code { get; set; } = string.Empty;
+
         public string VehiclePlate { get; set; } = string.Empty;
+
         public string VehicleType { get; set; } = string.Empty;
+
         public string Icon { get; set; } = string.Empty;
+
         public string IconClass { get; set; } = string.Empty;
+
         public DateTime CheckInTime { get; set; }
+
         public DateTime? CheckOutTime { get; set; }
+
         public string Duration { get; set; } = string.Empty;
+
         public decimal ParkingFee { get; set; }
+
         public decimal Discount { get; set; }
+
         public decimal TotalAmount { get; set; }
+
         public string Status { get; set; } = string.Empty;
+
         public string PaymentMethod { get; set; } = string.Empty;
+
         public string CreatedBy { get; set; } = string.Empty;
+
         public string Note { get; set; } = string.Empty;
     }
 }

@@ -11,6 +11,6 @@ namespace ParkingManagement.BLL.Services.Interfaces
         Task<ServiceResult<MonthlyTicketDto>> RenewAsync(string monthlyTicketId, RenewMonthlyTicketDto dto);
         Task<ServiceResult<string>> CancelAsync(string monthlyTicketId);
         Task<List<MonthlyTicketDto>> GetExpiringSoonAsync(int days = 7);
-        decimal CalculateFee(string vehicleType, string packageType);
+        Task<decimal> CalculateFeeAsync(string vehicleType, string packageType);
     }
 }

@@ -177,6 +177,16 @@
     border-top: 1px solid #edf2f8;
 }
 
+.ticket-price-section-title {
+    padding: 12px 18px;
+    border-top: 1px solid #edf2f8;
+    color: #173b68;
+    background: #f8fbff;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
 .ticket-price-editor label span,
 .ticket-price-minimum span {
     color: #52627a;
@@ -587,6 +597,96 @@
 .ticket-delete-message {
     color: #334155;
     margin: 0 0 18px;
+}
+
+.pricing-confirm-modal[hidden] {
+    display: none;
+}
+
+.pricing-confirm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+
+.pricing-confirm-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.42);
+    backdrop-filter: blur(2px);
+}
+
+.pricing-confirm-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(356px, 100%);
+    background: white;
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.28);
+    text-align: center;
+}
+
+.pricing-confirm-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #dbeafe;
+}
+
+.pricing-confirm-icon span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: white;
+    background: #2563eb;
+    font-weight: 800;
+}
+
+.pricing-confirm-dialog h3 {
+    margin: 0 0 10px;
+    color: #102033;
+    font-size: 18px;
+}
+
+.pricing-confirm-dialog p {
+    margin: 0 0 24px;
+    color: #66758d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.pricing-confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.pricing-confirm-actions button {
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid #d7e2f2;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.pricing-confirm-cancel {
+    color: #334155;
+    background: #f1f5f9;
+}
+
+.pricing-confirm-approve {
+    color: white;
+    background: #2563eb;
+    border-color: #2563eb !important;
 }
 
 @media (max-width: 1300px) {

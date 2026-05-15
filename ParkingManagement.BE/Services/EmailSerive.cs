@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Net;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
@@ -61,6 +62,40 @@ namespace ParkingManagement.BLL.Services.Implementations
             <div style='background-color: #f1f3f7; padding: 15px; text-align: center; font-size: 12px; color: #858796;'>
                 Đây là email tự động, vui lòng không phản hồi.<br/>
                 &copy; 2026 ParkSmart Team.
+            </div>
+        </div>";
+
+            await SendEmailAsync(email, subject, body);
+        }
+
+        public async Task SendPasswordResetOtpEmailAsync(string email, string fullName, string otp)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(otp))
+            {
+                return;
+            }
+
+            var safeName = string.IsNullOrWhiteSpace(fullName) ? "bạn" : WebUtility.HtmlEncode(fullName.Trim());
+            var subject = "Mã OTP đặt lại mật khẩu - ParkSmart";
+            var body = $@"
+        <div style='font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif; max-width: 560px; margin: auto; border: 1px solid #dbe7f7; border-radius: 16px; overflow: hidden; background: #ffffff;'>
+            <div style='background: linear-gradient(135deg, #0db7ff, #005bff); padding: 24px; text-align: center;'>
+                <div style='width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 18px; background: rgba(255,255,255,.18); color: #fff; display: inline-grid; place-items: center; font-size: 28px; font-weight: 800;'>P</div>
+                <h2 style='color: white; margin: 0; font-size: 24px;'>Đặt lại mật khẩu</h2>
+                <p style='color: rgba(255,255,255,.86); margin: 8px 0 0;'>ParkSmart Management</p>
+            </div>
+            <div style='padding: 28px; line-height: 1.6; color: #1f2937;'>
+                <p>Xin chào <strong>{safeName}</strong>,</p>
+                <p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản trong hệ thống quản lý bãi xe.</p>
+                <div style='background: #f1f7ff; border: 1px solid #cfe4ff; padding: 18px; text-align: center; border-radius: 14px; margin: 22px 0;'>
+                    <p style='margin: 0 0 8px; font-size: 14px; color: #64748b;'>Mã OTP của bạn</p>
+                    <div style='font-size: 34px; color: #0869ff; font-weight: 900; letter-spacing: 8px;'>{otp}</div>
+                </div>
+                <p style='font-size: 13px; color: #dc2626; margin: 0;'>Mã có hiệu lực trong <strong>5 phút</strong>. Không chia sẻ mã này cho bất kỳ ai.</p>
+                <p style='font-size: 13px; color: #64748b;'>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+            </div>
+            <div style='background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #64748b;'>
+                Email tự động từ ParkSmart, vui lòng không phản hồi.
             </div>
         </div>";
 

@@ -5,6 +5,7 @@
     var activeTab = Model.ActiveTab ?? "login";
     var errorMessage = Model.ErrorMessage;
     var successMessage = Model.SuccessMessage;
+    var forgotStep = Model.ForgotStep ?? "email";
 }
 
 <!DOCTYPE html>
@@ -131,11 +132,17 @@
                             </div>
                         }
 
-                        <form method="post" asp-page-handler="Login">
+                        <form id="loginForm" method="post" asp-page-handler="Login" autocomplete="on">
                             <div class="field">
                                 <div class="input-group">
                                     <i class="fa-regular fa-envelope"></i>
-                                    <input asp-for="LoginInput.Email" placeholder="Email" type="email" />
+                                    <input asp-for="LoginInput.Email"
+                                           id="loginEmail"
+                                           placeholder="Email"
+                                           type="email"
+                                           autocomplete="username"
+                                           autocapitalize="none"
+                                           spellcheck="false" />
                                 </div>
                                 <span asp-validation-for="LoginInput.Email" class="field-error"></span>
                             </div>
@@ -143,7 +150,11 @@
                             <div class="field">
                                 <div class="input-group">
                                     <i class="fa-solid fa-lock"></i>
-                                    <input asp-for="LoginInput.Password" type="password" placeholder="Mật khẩu" />
+                                    <input asp-for="LoginInput.Password"
+                                           id="loginPassword"
+                                           type="password"
+                                           placeholder="Mật khẩu"
+                                           autocomplete="current-password" />
                                     <i class="fa-regular fa-eye eye-icon" data-target="loginPassword"></i>
                                 </div>
                                 <span asp-validation-for="LoginInput.Password" class="field-error"></span>
@@ -155,7 +166,7 @@
                                     <span>Ghi nhớ đăng nhập</span>
                                 </label>
 
-                                <a asp-page="/Account/ChangePassword">Quên mật khẩu?</a>
+                                <button type="button" class="link-btn" data-tab="forgot">Quên mật khẩu?</button>
                             </div>
 
                             <button type="submit" class="main-btn">
@@ -222,7 +233,7 @@
                             <div class="field">
                                 <div class="input-group">
                                     <i class="fa-solid fa-lock"></i>
-                                    <input asp-for="RegisterInput.Password" type="password" placeholder="Mật khẩu" />
+                                    <input asp-for="RegisterInput.Password" id="registerPassword" type="password" placeholder="Mật khẩu" />
                                     <i class="fa-regular fa-eye eye-icon" data-target="registerPassword"></i>
                                 </div>
                                 <span asp-validation-for="RegisterInput.Password" class="field-error"></span>
@@ -231,7 +242,7 @@
                             <div class="field">
                                 <div class="input-group">
                                     <i class="fa-solid fa-lock"></i>
-                                    <input asp-for="RegisterInput.ConfirmPassword" type="password" placeholder="Nhập lại mật khẩu" />
+                                    <input asp-for="RegisterInput.ConfirmPassword" id="confirmPassword" type="password" placeholder="Nhập lại mật khẩu" />
                                     <i class="fa-regular fa-eye eye-icon" data-target="confirmPassword"></i>
                                 </div>
                                 <span asp-validation-for="RegisterInput.ConfirmPassword" class="field-error"></span>
@@ -256,6 +267,119 @@
                         </button>
                     </div>
 
+                    <!-- FORGOT PASSWORD PANEL -->
+                    <div class="auth-panel" id="forgotPanel">
+                        <div class="top-icon reset-icon">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+
+                        <h2>Quên mật khẩu</h2>
+                        <p class="subtitle">Nhập email để nhận mã OTP và tạo mật khẩu mới</p>
+
+                        @if (!string.IsNullOrEmpty(errorMessage) && activeTab == "forgot")
+                        {
+                            <div class="alert alert-error">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                @errorMessage
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(successMessage) && activeTab == "forgot")
+                        {
+                            <div class="alert alert-success">
+                                <i class="fa-solid fa-circle-check"></i>
+                                @successMessage
+                            </div>
+                        }
+
+                        <div class="forgot-steps">
+                            <span class="@(forgotStep == "email" ? "active" : "done")">1. Email</span>
+                            <span class="@(forgotStep == "reset" ? "active" : "")">2. OTP</span>
+                        </div>
+
+                        @if (forgotStep == "reset")
+                        {
+                            <form method="post" asp-page-handler="ResetPassword">
+                                <div class="field">
+                                    <div class="input-group soft-readonly">
+                                        <i class="fa-regular fa-envelope"></i>
+                                        <input asp-for="ResetPasswordInput.Email" type="email" readonly />
+                                    </div>
+                                    <span asp-validation-for="ResetPasswordInput.Email" class="field-error"></span>
+                                </div>
+
+                                <div class="otp-grid">
+                                    <div class="field">
+                                        <div class="input-group otp-input">
+                                            <i class="fa-solid fa-shield-halved"></i>
+                                            <input asp-for="ResetPasswordInput.Otp" inputmode="numeric" maxlength="6" placeholder="Mã OTP" />
+                                        </div>
+                                        <span asp-validation-for="ResetPasswordInput.Otp" class="field-error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <div class="input-group">
+                                        <i class="fa-solid fa-lock"></i>
+                                        <input asp-for="ResetPasswordInput.NewPassword" id="resetPassword" type="password" placeholder="Mật khẩu mới" />
+                                        <i class="fa-regular fa-eye eye-icon" data-target="resetPassword"></i>
+                                    </div>
+                                    <span asp-validation-for="ResetPasswordInput.NewPassword" class="field-error"></span>
+                                </div>
+
+                                <div class="field">
+                                    <div class="input-group">
+                                        <i class="fa-solid fa-lock"></i>
+                                        <input asp-for="ResetPasswordInput.ConfirmPassword" id="resetConfirmPassword" type="password" placeholder="Nhập lại mật khẩu mới" />
+                                        <i class="fa-regular fa-eye eye-icon" data-target="resetConfirmPassword"></i>
+                                    </div>
+                                    <span asp-validation-for="ResetPasswordInput.ConfirmPassword" class="field-error"></span>
+                                </div>
+
+                                <button type="submit" class="main-btn">
+                                    <i class="fa-solid fa-check"></i>
+                                    Đặt lại mật khẩu
+                                </button>
+                            </form>
+
+                            <form method="post" asp-page-handler="ForgotPassword" class="secondary-action-form">
+                                <input asp-for="ForgotPasswordInput.Email" type="hidden" value="@Model.ResetPasswordInput.Email" />
+                                <button type="submit" class="ghost-btn">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                    Gửi lại mã OTP
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page-handler="ForgotPassword">
+                                <div class="field">
+                                    <div class="input-group">
+                                        <i class="fa-regular fa-envelope"></i>
+                                        <input asp-for="ForgotPasswordInput.Email" placeholder="Email tài khoản" type="email" />
+                                    </div>
+                                    <span asp-validation-for="ForgotPasswordInput.Email" class="field-error"></span>
+                                </div>
+
+                                <button type="submit" class="main-btn">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    Gửi mã OTP
+                                </button>
+                            </form>
+                        }
+
+                        <div class="divider">
+                            <span></span>
+                            <p>hoặc</p>
+                            <span></span>
+                        </div>
+
+                        <button type="button" class="switch-card" data-tab="login">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <strong>Quay lại đăng nhập</strong>
+                            <small>Dùng mật khẩu hiện tại</small>
+                        </button>
+                    </div>
+
                     <div class="mini-support">
                         <h4><i class="fa-solid fa-headset"></i> LIÊN HỆ HỖ TRỢ</h4>
 
@@ -277,14 +401,18 @@
         const switchButtons = document.querySelectorAll("[data-tab]");
         const loginPanel = document.getElementById("loginPanel");
         const registerPanel = document.getElementById("registerPanel");
+        const forgotPanel = document.getElementById("forgotPanel");
 
         function showTab(tab) {
             loginPanel.classList.remove("active");
             registerPanel.classList.remove("active");
+            forgotPanel.classList.remove("active");
             if (tab === "login") {
                 loginPanel.classList.add("active");
-            } else {
+            } else if (tab === "register") {
                 registerPanel.classList.add("active");
+            } else {
+                forgotPanel.classList.add("active");
             }
         }
 

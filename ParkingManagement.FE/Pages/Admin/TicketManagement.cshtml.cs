@@ -161,10 +161,19 @@ namespace ParkingManagement.FE.Pages.Admin
             {
                 if (PricingInput.MotorcycleHourlyRate <= 0 ||
                     PricingInput.MotorcycleMaxDailyFee <= 0 ||
+                    PricingInput.MotorcycleMonthlyOneMonth <= 0 ||
+                    PricingInput.MotorcycleMonthlyThreeMonth <= 0 ||
+                    PricingInput.MotorcycleMonthlySixMonth <= 0 ||
                     PricingInput.SmallCarHourlyRate <= 0 ||
                     PricingInput.SmallCarMaxDailyFee <= 0 ||
+                    PricingInput.SmallCarMonthlyOneMonth <= 0 ||
+                    PricingInput.SmallCarMonthlyThreeMonth <= 0 ||
+                    PricingInput.SmallCarMonthlySixMonth <= 0 ||
                     PricingInput.LargeCarHourlyRate <= 0 ||
-                    PricingInput.LargeCarMaxDailyFee <= 0)
+                    PricingInput.LargeCarMaxDailyFee <= 0 ||
+                    PricingInput.LargeCarMonthlyOneMonth <= 0 ||
+                    PricingInput.LargeCarMonthlyThreeMonth <= 0 ||
+                    PricingInput.LargeCarMonthlySixMonth <= 0)
                 {
                     ActionSuccess = false;
                     ActionMessage = "Giá vé phải lớn hơn 0.";
@@ -184,6 +193,27 @@ namespace ParkingManagement.FE.Pages.Admin
                         [MotorcycleType] = PricingInput.MotorcycleMaxDailyFee,
                         [SmallCarType] = PricingInput.SmallCarMaxDailyFee,
                         [LargeCarType] = PricingInput.LargeCarMaxDailyFee
+                    },
+                    MonthlyTicketPrice = new Dictionary<string, UpdateMonthlyPricingDto>
+                    {
+                        [MotorcycleType] = new()
+                        {
+                            OneMonth = PricingInput.MotorcycleMonthlyOneMonth,
+                            ThreeMonth = PricingInput.MotorcycleMonthlyThreeMonth,
+                            SixMonth = PricingInput.MotorcycleMonthlySixMonth
+                        },
+                        [SmallCarType] = new()
+                        {
+                            OneMonth = PricingInput.SmallCarMonthlyOneMonth,
+                            ThreeMonth = PricingInput.SmallCarMonthlyThreeMonth,
+                            SixMonth = PricingInput.SmallCarMonthlySixMonth
+                        },
+                        [LargeCarType] = new()
+                        {
+                            OneMonth = PricingInput.LargeCarMonthlyOneMonth,
+                            ThreeMonth = PricingInput.LargeCarMonthlyThreeMonth,
+                            SixMonth = PricingInput.LargeCarMonthlySixMonth
+                        }
                     }
                 };
 
@@ -314,10 +344,19 @@ namespace ParkingManagement.FE.Pages.Admin
             {
                 MotorcycleHourlyRate = GetPricingValue(Pricing.HourlyRate, MotorcycleType, 3000m),
                 MotorcycleMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, MotorcycleType, 30000m),
+                MotorcycleMonthlyOneMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, MotorcycleType, 1, 150000m),
+                MotorcycleMonthlyThreeMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, MotorcycleType, 3, 400000m),
+                MotorcycleMonthlySixMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, MotorcycleType, 6, 750000m),
                 SmallCarHourlyRate = GetPricingValue(Pricing.HourlyRate, SmallCarType, 5000m),
                 SmallCarMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, SmallCarType, 50000m),
+                SmallCarMonthlyOneMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, SmallCarType, 1, 300000m),
+                SmallCarMonthlyThreeMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, SmallCarType, 3, 800000m),
+                SmallCarMonthlySixMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, SmallCarType, 6, 1500000m),
                 LargeCarHourlyRate = GetPricingValue(Pricing.HourlyRate, LargeCarType, 8000m),
-                LargeCarMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, LargeCarType, 80000m)
+                LargeCarMaxDailyFee = GetPricingValue(Pricing.MaxDailyFee, LargeCarType, 80000m),
+                LargeCarMonthlyOneMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, LargeCarType, 1, 500000m),
+                LargeCarMonthlyThreeMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, LargeCarType, 3, 1300000m),
+                LargeCarMonthlySixMonth = GetMonthlyPricingValue(Pricing.MonthlyTicketPrice, LargeCarType, 6, 2500000m)
             };
         }
 
@@ -331,6 +370,33 @@ namespace ParkingManagement.FE.Pages.Admin
                 .Value;
 
             return matchedValue > 0 ? matchedValue : fallback;
+        }
+
+        private static decimal GetMonthlyPricingValue(
+            Dictionary<string, MonthlyPricingDto> pricing,
+            string vehicleType,
+            int months,
+            decimal fallback)
+        {
+            if (!pricing.TryGetValue(vehicleType, out var monthlyPrice))
+            {
+                monthlyPrice = pricing
+                    .FirstOrDefault(item => string.Equals(item.Key, vehicleType, StringComparison.OrdinalIgnoreCase))
+                    .Value;
+            }
+
+            if (monthlyPrice == null)
+                return fallback;
+
+            var value = months switch
+            {
+                1 => monthlyPrice.OneMonth,
+                3 => monthlyPrice.ThreeMonth,
+                6 => monthlyPrice.SixMonth,
+                _ => 0m
+            };
+
+            return value > 0 ? value : fallback;
         }
 
         private static PricingDto CreateDefaultPricing()
@@ -348,6 +414,12 @@ namespace ParkingManagement.FE.Pages.Admin
                     [MotorcycleType] = 30000m,
                     [SmallCarType] = 50000m,
                     [LargeCarType] = 80000m
+                },
+                MonthlyTicketPrice = new Dictionary<string, MonthlyPricingDto>
+                {
+                    [MotorcycleType] = new() { OneMonth = 150000m, ThreeMonth = 400000m, SixMonth = 750000m },
+                    [SmallCarType] = new() { OneMonth = 300000m, ThreeMonth = 800000m, SixMonth = 1500000m },
+                    [LargeCarType] = new() { OneMonth = 500000m, ThreeMonth = 1300000m, SixMonth = 2500000m }
                 },
                 LastUpdatedAt = DateTime.UtcNow
             };

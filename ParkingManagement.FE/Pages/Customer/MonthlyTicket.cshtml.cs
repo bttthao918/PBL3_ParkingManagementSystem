@@ -12,11 +12,16 @@ namespace ParkingManagement.FE.Pages.Customer;
 public class MonthlyTicketModel : PageModel
 {
     private readonly ICustomerApiService _customerApiService;
+    private readonly IPricingService _pricingService;
     private readonly ILogger<MonthlyTicketModel> _logger;
 
-    public MonthlyTicketModel(ICustomerApiService customerApiService, ILogger<MonthlyTicketModel> logger)
+    public MonthlyTicketModel(
+        ICustomerApiService customerApiService,
+        IPricingService pricingService,
+        ILogger<MonthlyTicketModel> logger)
     {
         _customerApiService = customerApiService;
+        _pricingService = pricingService;
         _logger = logger;
     }
 
@@ -160,15 +165,17 @@ public class MonthlyTicketModel : PageModel
         {
             var profileTask = _customerApiService.GetProfileAsync();
             var ticketsTask = _customerApiService.GetMonthlyTicketsAsync();
+            var pricingTask = LoadPricingAsync();
 
-            await Task.WhenAll(profileTask, ticketsTask);
+            await Task.WhenAll(profileTask, ticketsTask, pricingTask);
 
             var profile = await profileTask;
             var tickets = await ticketsTask ?? new ListCustomerMonthlyTicketDto();
+            var pricing = await pricingTask;
             UserName = string.IsNullOrWhiteSpace(profile?.FullName) ? fallbackName : profile.FullName;
             ViewData["UserName"] = UserName;
 
-            Plans = BuildPlans();
+            Plans = BuildPlans(pricing);
             TicketHistories = tickets.Items
                 .OrderByDescending(IsActive)
                 .ThenByDescending(x => x.EndDate)
@@ -180,37 +187,50 @@ public class MonthlyTicketModel : PageModel
             _logger.LogError(ex, "Could not load monthly ticket page data");
             ErrorMessage ??= "Chưa tải được dữ liệu vé tháng từ BE. Kiểm tra BE đang chạy và tài khoản còn phiên đăng nhập.";
             ViewData["UserName"] = fallbackName;
-            Plans = BuildPlans();
+            Plans = BuildPlans(PricingDisplayDefaults.CreateDefaultPricing());
         }
     }
 
-    private static List<MonthlyPlanVm> BuildPlans() =>
+    private async Task<PricingDto> LoadPricingAsync()
+    {
+        try
+        {
+            return await _pricingService.GetCurrentPricingAsync()
+                ?? PricingDisplayDefaults.CreateDefaultPricing();
+        }
+        catch
+        {
+            return PricingDisplayDefaults.CreateDefaultPricing();
+        }
+    }
+
+    private static List<MonthlyPlanVm> BuildPlans(PricingDto pricing) =>
     [
         new MonthlyPlanVm
         {
-            VehicleType = "Xe máy",
+            VehicleType = PricingDisplayDefaults.Motorcycle,
             PackageType = "1 tháng",
             Name = "Vé xe máy",
-            Price = 150000,
+            Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, PricingDisplayDefaults.Motorcycle, 1),
             Icon = "fa-solid fa-motorcycle",
             IconClass = "blue",
             IsSelected = true
         },
         new MonthlyPlanVm
         {
-            VehicleType = "Ô tô nhỏ",
+            VehicleType = PricingDisplayDefaults.SmallCar,
             PackageType = "1 tháng",
             Name = "Vé ô tô nhỏ",
-            Price = 350000,
+            Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, PricingDisplayDefaults.SmallCar, 1),
             Icon = "fa-solid fa-car",
             IconClass = "green"
         },
         new MonthlyPlanVm
         {
-            VehicleType = "Ô tô lớn",
+            VehicleType = PricingDisplayDefaults.LargeCar,
             PackageType = "1 tháng",
             Name = "Vé ô tô lớn",
-            Price = 600000,
+            Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, PricingDisplayDefaults.LargeCar, 1),
             Icon = "fa-solid fa-van-shuttle",
             IconClass = "purple"
         }

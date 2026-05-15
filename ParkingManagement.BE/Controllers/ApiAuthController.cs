@@ -147,6 +147,52 @@ namespace ParkingManagement.Web.Controllers.Api
             return Ok(response);
         }
 
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(ChangePasswordResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse { Message = "Invalid input" });
+
+            var result = await _authService.RequestPasswordResetAsync(dto);
+            if (!result.Success)
+            {
+                _logger.LogWarning($"Forgot password OTP request failed for {dto.Email}: {result.Message}");
+                return BadRequest(new ErrorResponse { Message = result.Message });
+            }
+
+            return Ok(new ChangePasswordResponseDto
+            {
+                Success = true,
+                Message = result.Message
+            });
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(ChangePasswordResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ErrorResponse { Message = "Invalid input" });
+
+            var result = await _authService.ResetPasswordAsync(dto);
+            if (!result.Success)
+            {
+                _logger.LogWarning($"Reset password failed for {dto.Email}: {result.Message}");
+                return BadRequest(new ErrorResponse { Message = result.Message });
+            }
+
+            return Ok(new ChangePasswordResponseDto
+            {
+                Success = true,
+                Message = result.Message
+            });
+        }
+
         /// <summary>
         /// Change password (requires authentication)
         /// </summary>

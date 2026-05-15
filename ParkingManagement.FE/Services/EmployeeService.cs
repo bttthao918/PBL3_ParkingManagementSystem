@@ -12,6 +12,7 @@ namespace ParkingManagement.FE.Services
         Task<CreateEmployeeInviteResultDto?> CreateEmployeeInviteAsync(CreateEmployeeInviteByManagerDto dto);
         Task<UpdateEmployeeResultDto?> UpdateEmployeeAsync(string employeeId, UpdateEmployeeByManagerDto dto);
         Task<DeleteEmployeeResultDto?> DeleteEmployeeAsync(DeleteEmployeeDto dto);
+        Task<UpdateEmployeeResultDto?> RestoreEmployeeAsync(string employeeId);
     }
 
     public class EmployeeService : IEmployeeService
@@ -214,7 +215,7 @@ namespace ParkingManagement.FE.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return result ?? new DeleteEmployeeResultDto { Success = true, EmployeeId = dto.EmployeeId, Message = "Đã vô hiệu hóa nhân viên." };
+                    return result ?? new DeleteEmployeeResultDto { Success = true, EmployeeId = dto.EmployeeId, Message = "Đã xóa nhân viên." };
                 }
 
                 if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -224,12 +225,51 @@ namespace ParkingManagement.FE.Services
 
                 var errorContent = await response.Content.ReadAsStringAsync();
                 _logger.LogWarning("DeleteEmployeeAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
-                return result ?? new DeleteEmployeeResultDto { Success = false, EmployeeId = dto.EmployeeId, Message = "Không thể vô hiệu hóa nhân viên." };
+                return result ?? new DeleteEmployeeResultDto { Success = false, EmployeeId = dto.EmployeeId, Message = "Không thể xóa nhân viên." };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calling DeleteEmployeeAsync");
                 return new DeleteEmployeeResultDto { Success = false, EmployeeId = dto.EmployeeId, Message = "Lỗi kết nối đến máy chủ." };
+            }
+        }
+
+        public async Task<UpdateEmployeeResultDto?> RestoreEmployeeAsync(string employeeId)
+        {
+            try
+            {
+                LastRequestUnauthorized = false;
+                AttachBearerToken();
+
+                var response = await _httpClient.PostAsync($"api/employees/manager/{Uri.EscapeDataString(employeeId)}/restore", null);
+                UpdateEmployeeResultDto? result = null;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<UpdateEmployeeResultDto>();
+                }
+                catch
+                {
+                    // Fallback when API returns non-JSON body.
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return result ?? new UpdateEmployeeResultDto { Success = true, Message = "Đã khôi phục nhân viên." };
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("RestoreEmployeeAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+                return result ?? new UpdateEmployeeResultDto { Success = false, Message = "Không thể khôi phục nhân viên." };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling RestoreEmployeeAsync");
+                return new UpdateEmployeeResultDto { Success = false, Message = "Lỗi kết nối đến máy chủ." };
             }
         }
 

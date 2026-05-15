@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
 
@@ -10,10 +11,12 @@ namespace ParkingManagement.Web.Controllers
     public class TicketManageController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly IPricingService _pricingService;
 
-        public TicketManageController(AppDbContext db)
+        public TicketManageController(AppDbContext db, IPricingService pricingService)
         {
             _db = db;
+            _pricingService = pricingService;
         }
 
         // ==================== TRANG CHÍNH ====================
@@ -332,6 +335,11 @@ namespace ParkingManagement.Web.Controllers
 
                 var startDate = DateTime.Now.Date;
                 var endDate = startDate.AddMonths(model.DurationMonths);
+                var totalFee = await _pricingService.GetMonthlyTicketPriceAsync(vehicle.VehicleType, model.DurationMonths);
+                if (totalFee <= 0)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy bảng giá cho loại xe và gói vé này." });
+                }
 
                 var ticket = new MonthlyTicket
                 {
@@ -342,7 +350,7 @@ namespace ParkingManagement.Web.Controllers
                     StartDate = startDate,
                     EndDate = endDate,
                     PackageType = model.DurationMonths + " tháng",
-                    TotalFee = model.DurationMonths * 300000, 
+                    TotalFee = totalFee,
                     Status = "Hoạt động",
                     CreatedAt = DateTime.Now
                 };
@@ -404,7 +412,12 @@ namespace ParkingManagement.Web.Controllers
                 ticket.EndDate = newEndDate;
                 ticket.Status = "Hoạt động";
                 
-                decimal renewAmount = model.MonthsToAdd * 300000;
+                decimal renewAmount = await _pricingService.GetMonthlyTicketPriceAsync(ticket.VehicleType, model.MonthsToAdd);
+                if (renewAmount <= 0)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy bảng giá cho gói gia hạn này." });
+                }
+
                 ticket.TotalFee += renewAmount;
 
                 await _db.SaveChangesAsync();
