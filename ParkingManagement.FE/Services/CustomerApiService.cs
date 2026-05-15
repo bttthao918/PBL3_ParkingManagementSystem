@@ -16,6 +16,7 @@ namespace ParkingManagement.FE.Services
         Task<ApiActionResult<RenewMonthlyTicketResponseDto>> RenewMonthlyTicketAsync(string monthlyTicketId, RenewMonthlyTicketRequestDto request);
         Task<ApiActionResult<BasicApiResponseDto>> CancelMonthlyTicketAsync(string monthlyTicketId);
         Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50);
+        Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
         Task<ListEmployeeCustomerSearchDto?> SearchForEmployeeAsync(EmployeeCustomerSearchFilterDto filter);
         Task<EmployeeCustomerDetailDto?> GetEmployeeCustomerDetailAsync(string customerId);
     }
@@ -97,6 +98,14 @@ namespace ParkingManagement.FE.Services
 
         public Task<EmployeeCustomerDetailDto?> GetEmployeeCustomerDetailAsync(string customerId)
             => GetAsync<EmployeeCustomerDetailDto>($"api/customers/employee/{Uri.EscapeDataString(customerId)}/detail");
+
+        public Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null)
+        {
+            var url = "api/reservations/available-slots";
+            if (!string.IsNullOrWhiteSpace(vehicleType))
+                url += $"?vehicleType={Uri.EscapeDataString(vehicleType)}";
+            return GetAsync<List<AvailableSlotDto>>(url);
+        }
 
         private async Task<T?> GetAsync<T>(string url)
         {

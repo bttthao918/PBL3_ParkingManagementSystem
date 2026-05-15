@@ -1,8 +1,10 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+    // ═══════════════════════════════════════════════════════
+    // DETAIL PANEL (xem chi tiết đơn đặt chỗ)
+    // ═══════════════════════════════════════════════════════
     const bookingContent = document.getElementById("bookingContent");
     const detailPanel = document.getElementById("bookingDetailPanel");
     const bookingRows = document.querySelectorAll(".booking-row");
-
     const closeDetailBtn = document.getElementById("closeDetailBtn");
     const bottomCloseDetailBtn = document.getElementById("bottomCloseDetailBtn");
     const cancelBookingBtn = document.getElementById("cancelBookingBtn");
@@ -12,7 +14,6 @@
     bookingRows.forEach(row => {
         row.addEventListener("click", function (event) {
             if (event.target.closest("button")) return;
-
             const currentId = row.dataset.id;
 
             if (selectedBookingId === currentId) {
@@ -21,26 +22,41 @@
             }
 
             selectedBookingId = currentId;
-
             bookingRows.forEach(x => x.classList.remove("active"));
             row.classList.add("active");
-
             renderDetail(row);
             showDetail();
         });
     });
 
-    closeDetailBtn.addEventListener("click", hideDetail);
-    bottomCloseDetailBtn.addEventListener("click", hideDetail);
+    if (closeDetailBtn) closeDetailBtn.addEventListener("click", hideDetail);
+    if (bottomCloseDetailBtn) bottomCloseDetailBtn.addEventListener("click", hideDetail);
 
-    cancelBookingBtn.addEventListener("click", function () {
-        if (confirm("Bạn có chắc muốn hủy đơn đặt chỗ này không?")) {
-            alert("Đã hủy đơn đặt chỗ.");
-            hideDetail();
-        }
-    });
+    // Cancel booking with confirm dialog
+    if (cancelBookingBtn) {
+        cancelBookingBtn.addEventListener("click", function () {
+            const reservationId = cancelBookingBtn.dataset.reservationId;
+            if (!reservationId) return;
+
+            showConfirmDialog({
+                title: "Hủy đơn đặt chỗ",
+                message: "Bạn có chắc chắn muốn hủy đơn đặt chỗ này? Thao tác không thể hoàn tác.",
+                icon: "warning",
+                confirmText: "Hủy đơn",
+                onConfirm: function () {
+                    const form = document.getElementById("cancelBookingForm");
+                    const input = document.getElementById("cancelReservationId");
+                    if (form && input) {
+                        input.value = reservationId;
+                        form.submit();
+                    }
+                }
+            });
+        });
+    }
 
     function showDetail() {
+        if (!detailPanel || !bookingContent) return;
         detailPanel.classList.remove("hidden");
         bookingContent.classList.remove("no-detail");
         bookingContent.classList.add("has-detail");
@@ -49,9 +65,11 @@
     function hideDetail() {
         selectedBookingId = null;
         bookingRows.forEach(x => x.classList.remove("active"));
-        detailPanel.classList.add("hidden");
-        bookingContent.classList.remove("has-detail");
-        bookingContent.classList.add("no-detail");
+        if (detailPanel) detailPanel.classList.add("hidden");
+        if (bookingContent) {
+            bookingContent.classList.remove("has-detail");
+            bookingContent.classList.add("no-detail");
+        }
     }
 
     function renderDetail(row) {
@@ -67,59 +85,109 @@
         setText("detailPhone", row.dataset.phone);
 
         const status = document.getElementById("detailStatus");
-        status.textContent = row.dataset.status;
-        status.className = `status-badge ${row.dataset.statusClass}`;
+        if (status) {
+            status.textContent = row.dataset.status;
+            status.className = "status-badge " + row.dataset.statusClass;
+        }
 
         const canCancel = row.dataset.canCancel === "true";
-        cancelBookingBtn.style.display = canCancel ? "block" : "none";
+        if (cancelBookingBtn) {
+            cancelBookingBtn.style.display = canCancel ? "inline-flex" : "none";
+            cancelBookingBtn.dataset.reservationId = row.dataset.reservationId || "";
+        }
     }
 
-    function setText(id, value) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value || "-";
-    }
-
+    // ═══════════════════════════════════════════════════════
+    // WIZARD (đặt chỗ mới - 3 bước)
+    // ═══════════════════════════════════════════════════════
     const wizard = document.getElementById("bookingWizardModal");
-    const wizardBackdrop = document.querySelector(".booking-modal-backdrop");
+    const wizardBackdrop = wizard ? wizard.querySelector(".booking-modal-backdrop") : null;
     const openWizardBtn = document.getElementById("openBookingWizardBtn");
     const closeWizardBtn = document.getElementById("closeWizardBtn");
 
-    if (!wizard || !openWizardBtn || !closeWizardBtn) return;
+    if (!wizard || !openWizardBtn) return;
 
-    openWizardBtn.addEventListener("click", function () {
-        openWizard();
-    });
+    openWizardBtn.addEventListener("click", openWizard);
+    if (closeWizardBtn) closeWizardBtn.addEventListener("click", closeWizard);
+    if (wizardBackdrop) wizardBackdrop.addEventListener("click", closeWizard);
 
-    closeWizardBtn.addEventListener("click", closeWizard);
-
-    wizardBackdrop.addEventListener("click", closeWizard);
+    function openWizard() {
+        wizard.classList.remove("hidden");
+        document.body.classList.add("modal-open");
+        setStep("1");
+        resetWizardState();
+    }
 
     function closeWizard() {
         wizard.classList.add("hidden");
         document.body.classList.remove("modal-open");
     }
 
-    function openWizard() {
-        wizard.classList.remove("hidden");
-        document.body.classList.add("modal-open");
-        setStep("1");
+    // Set default expected time to now + 30 min
+    const expectedTimeInput = document.getElementById("expectedTimeInput");
+    if (expectedTimeInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() + 30);
+        const localISO = now.toISOString().slice(0, 16);
+        expectedTimeInput.value = localISO;
+        expectedTimeInput.min = new Date().toISOString().slice(0, 16);
     }
 
-    if (new URLSearchParams(window.location.search).get("openCreate") === "1") {
-        openWizard();
-    }
-
-    document.querySelectorAll(".next-step").forEach(btn => {
-        btn.addEventListener("click", function () {
-            setStep(btn.dataset.next);
-        });
-    });
-
+    // Step navigation
     document.querySelectorAll(".prev-step").forEach(btn => {
-        btn.addEventListener("click", function () {
-            setStep(btn.dataset.prev);
-        });
+        btn.addEventListener("click", () => setStep(btn.dataset.prev));
     });
+
+    // Step 1 → Step 2 validation
+    const step1NextBtn = document.getElementById("step1NextBtn");
+    if (step1NextBtn) {
+        step1NextBtn.addEventListener("click", function () {
+            const error = document.getElementById("step1Error");
+            error.classList.add("hidden");
+
+            // Validate vehicle info
+            const vehicleInfo = getSelectedVehicle();
+            if (!vehicleInfo.plate) {
+                showStepError("step1Error", "Vui lòng chọn hoặc nhập thông tin xe.");
+                return;
+            }
+
+            // Validate expected time
+            const timeVal = expectedTimeInput ? expectedTimeInput.value : "";
+            if (!timeVal) {
+                showStepError("step1Error", "Vui lòng chọn thời gian dự kiến đến.");
+                return;
+            }
+
+            const expectedDate = new Date(timeVal);
+            if (expectedDate <= new Date()) {
+                showStepError("step1Error", "Thời gian dự kiến phải ở tương lai.");
+                return;
+            }
+
+            setStep("2");
+        });
+    }
+
+    // Step 2 → Step 3 validation
+    const step2NextBtn = document.getElementById("step2NextBtn");
+    if (step2NextBtn) {
+        step2NextBtn.addEventListener("click", function () {
+            const error = document.getElementById("step2Error");
+            error.classList.add("hidden");
+
+            // If there are available slots displayed, user must pick one
+            const availableSlots = Array.from(slotButtons).filter(s => s.dataset.selectable === "true");
+            if (availableSlots.length > 0 && !selectedSlotCode) {
+                showStepError("step2Error", "Vui lòng chọn một chỗ đỗ hoặc nhấn 'Chọn ngẫu nhiên'.");
+                return;
+            }
+
+            // If no slots available at all, allow proceeding (system will assign)
+            populateConfirmation();
+            setStep("3");
+        });
+    }
 
     function setStep(step) {
         const stepNumber = Number(step);
@@ -129,103 +197,78 @@
         });
 
         document.querySelectorAll(".wizard-step").forEach(item => {
-            const indicatorNumber = Number(item.dataset.stepIndicator);
-
+            const n = Number(item.dataset.stepIndicator);
             item.classList.remove("active", "completed");
-
-            if (indicatorNumber < stepNumber) {
-                item.classList.add("completed");
-            }
-
-            if (indicatorNumber === stepNumber) {
-                item.classList.add("active");
-            }
+            if (n < stepNumber) item.classList.add("completed");
+            if (n === stepNumber) item.classList.add("active");
         });
     }
 
+    // ── Vehicle selection ──
     const savedVehicleSelect = document.getElementById("savedVehicleSelect");
     const showNewVehicleFormBtn = document.getElementById("showNewVehicleFormBtn");
     const newVehicleForm = document.getElementById("newVehicleForm");
     const saveNewVehicleBtn = document.getElementById("saveNewVehicleBtn");
     const cancelNewVehicleBtn = document.getElementById("cancelNewVehicleBtn");
-    const newVehicleError = document.getElementById("newVehicleError");
     const newVehiclePlate = document.getElementById("newVehiclePlate");
     const newVehicleType = document.getElementById("newVehicleType");
-    const newCustomerName = document.getElementById("newCustomerName");
-    const newCustomerPhone = document.getElementById("newCustomerPhone");
 
-    savedVehicleSelect.addEventListener("change", function () {
-        applySelectedVehicle();
-    });
-
-    showNewVehicleFormBtn.addEventListener("click", function () {
-        newVehicleForm.classList.remove("hidden");
-        newVehiclePlate.focus();
-    });
-
-    cancelNewVehicleBtn.addEventListener("click", function () {
-        clearNewVehicleForm();
-        newVehicleForm.classList.add("hidden");
-    });
-
-    saveNewVehicleBtn.addEventListener("click", function () {
-        const plate = newVehiclePlate.value.trim();
-        const vehicle = newVehicleType.value;
-        const customer = newCustomerName.value.trim();
-        const phone = newCustomerPhone.value.trim();
-
-        if (!plate || !customer || !phone) {
-            showNewVehicleError("Vui lòng nhập đầy đủ biển số, khách hàng và số điện thoại.");
-            return;
-        }
-
-        if (!/^\d{2}[A-Za-z0-9]{1,3}-\d{3}\.\d{2}$/.test(plate)) {
-            showNewVehicleError("Biển số cần đúng định dạng, ví dụ 59C1-123.45.");
-            return;
-        }
-
-        const value = `${plate}|${vehicle}|${customer}|${phone}`;
-        const existingOption = Array.from(savedVehicleSelect.options)
-            .find(option => option.value.toLowerCase() === value.toLowerCase());
-
-        if (existingOption) {
-            savedVehicleSelect.value = existingOption.value;
-        } else {
-            const option = new Option(`${plate} - ${vehicle}`, value, true, true);
-            savedVehicleSelect.add(option);
-        }
-
-        applySelectedVehicle();
-        clearNewVehicleForm();
-        newVehicleForm.classList.add("hidden");
-    });
-
-    function applySelectedVehicle() {
-        const [plate, vehicle, customer, phone] = savedVehicleSelect.value.split("|");
-
-        setText("previewCustomer", customer);
-        setText("previewPhone", phone);
-        setText("confirmPlate", plate);
-        setText("confirmVehicle", vehicle);
+    if (showNewVehicleFormBtn) {
+        showNewVehicleFormBtn.addEventListener("click", () => {
+            newVehicleForm.classList.remove("hidden");
+            if (newVehiclePlate) newVehiclePlate.focus();
+        });
     }
 
-    function showNewVehicleError(message) {
-        newVehicleError.textContent = message;
-        newVehicleError.classList.remove("hidden");
+    if (cancelNewVehicleBtn) {
+        cancelNewVehicleBtn.addEventListener("click", () => {
+            newVehicleForm.classList.add("hidden");
+            clearNewVehicleForm();
+        });
+    }
+
+    if (saveNewVehicleBtn) {
+        saveNewVehicleBtn.addEventListener("click", function () {
+            const plate = newVehiclePlate.value.trim();
+            const vehicle = newVehicleType.value;
+            const errorEl = document.getElementById("newVehicleError");
+
+            if (!plate) {
+                errorEl.textContent = "Vui lòng nhập biển số xe.";
+                errorEl.classList.remove("hidden");
+                return;
+            }
+
+            // Add to select
+            const value = plate + "|" + vehicle;
+            const option = new Option(plate + " - " + vehicle, value, true, true);
+            savedVehicleSelect.add(option);
+            savedVehicleSelect.value = value;
+
+            newVehicleForm.classList.add("hidden");
+            clearNewVehicleForm();
+        });
+    }
+
+    function getSelectedVehicle() {
+        const val = savedVehicleSelect ? savedVehicleSelect.value : "";
+        if (!val) return { plate: "", type: "" };
+        const parts = val.split("|");
+        return { plate: parts[0] || "", type: parts[1] || "Xe máy" };
     }
 
     function clearNewVehicleForm() {
-        newVehiclePlate.value = "";
-        newVehicleType.value = "Xe máy";
-        newCustomerName.value = "";
-        newCustomerPhone.value = "";
-        newVehicleError.textContent = "";
-        newVehicleError.classList.add("hidden");
+        if (newVehiclePlate) newVehiclePlate.value = "";
+        if (newVehicleType) newVehicleType.value = "Xe máy";
+        const errorEl = document.getElementById("newVehicleError");
+        if (errorEl) errorEl.classList.add("hidden");
     }
 
-    const slotButtons = document.querySelectorAll(".slot");
+    // ── Slot selection ──
+    let selectedSlotCode = "";
+    let selectedSlotPosition = "";
+    const slotButtons = document.querySelectorAll("#parkingMap .slot");
     const selectedSlotText = document.getElementById("selectedSlotText");
-    const confirmSlot = document.getElementById("confirmSlot");
     const randomSlotBtn = document.getElementById("randomSlotBtn");
 
     slotButtons.forEach(slot => {
@@ -235,34 +278,155 @@
         });
     });
 
-    randomSlotBtn.addEventListener("click", function () {
-        const availableSlots = Array.from(slotButtons)
-            .filter(slot => slot.dataset.selectable === "true");
-
-        if (availableSlots.length === 0) {
-            alert("Hiện không còn chỗ trống.");
-            return;
-        }
-
-        const randomIndex = Math.floor(Math.random() * availableSlots.length);
-        selectSlot(availableSlots[randomIndex]);
-    });
+    if (randomSlotBtn) {
+        randomSlotBtn.addEventListener("click", function () {
+            const available = Array.from(slotButtons).filter(s => s.dataset.selectable === "true");
+            if (available.length === 0) {
+                showStepError("step2Error", "Hiện không có chỗ đỗ trống nào.");
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * available.length);
+            selectSlot(available[randomIndex]);
+        });
+    }
 
     function selectSlot(slot) {
         slotButtons.forEach(x => x.classList.remove("selected"));
         slot.classList.add("selected");
 
-        const text = `${slot.dataset.slotCode} - ${slot.dataset.slotPosition}`;
+        selectedSlotCode = slot.dataset.slotCode;
+        selectedSlotPosition = slot.dataset.slotPosition || slot.dataset.slotCode;
 
-        selectedSlotText.textContent = text;
-        confirmSlot.textContent = text;
+        const text = selectedSlotCode + (selectedSlotPosition ? " - " + selectedSlotPosition : "");
+        if (selectedSlotText) selectedSlotText.textContent = text;
+
+        // Clear error
+        const error = document.getElementById("step2Error");
+        if (error) error.classList.add("hidden");
     }
 
-    const confirmPaymentBtn = document.getElementById("confirmPaymentBtn");
+    // ── Confirmation ──
+    function populateConfirmation() {
+        const vehicle = getSelectedVehicle();
+        const timeVal = expectedTimeInput ? expectedTimeInput.value : "";
+        const timeDisplay = timeVal ? formatDateTime(new Date(timeVal)) : "-";
 
-    confirmPaymentBtn.addEventListener("click", function () {
-        alert("Đặt chỗ và thanh toán thành công.");
-        closeWizard();
-        setStep("1");
-    });
+        setText("confirmPlate", vehicle.plate);
+        setText("confirmVehicle", vehicle.type);
+        setText("confirmSlot", selectedSlotCode
+            ? selectedSlotCode + (selectedSlotPosition ? " - " + selectedSlotPosition : "")
+            : "Hệ thống tự phân bổ");
+        setText("confirmTime", timeDisplay);
+
+        // Fill hidden form fields
+        const formPlate = document.getElementById("formVehiclePlate");
+        const formType = document.getElementById("formVehicleType");
+        const formSlot = document.getElementById("formSlotId");
+        const formTime = document.getElementById("formExpectedTime");
+
+        if (formPlate) formPlate.value = vehicle.plate;
+        if (formType) formType.value = vehicle.type;
+        if (formSlot) formSlot.value = selectedSlotCode || "";
+        if (formTime) formTime.value = timeVal ? new Date(timeVal).toISOString() : "";
+    }
+
+    function resetWizardState() {
+        selectedSlotCode = "";
+        selectedSlotPosition = "";
+        if (selectedSlotText) selectedSlotText.textContent = "Chưa chọn";
+        slotButtons.forEach(x => x.classList.remove("selected"));
+
+        // Reset time to +30 min
+        if (expectedTimeInput) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 30);
+            expectedTimeInput.value = now.toISOString().slice(0, 16);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // CONFIRM DIALOG (modal xác nhận đẹp)
+    // ═══════════════════════════════════════════════════════
+    function showConfirmDialog(options) {
+        const overlay = document.getElementById("confirmDialog");
+        const title = document.getElementById("confirmDialogTitle");
+        const message = document.getElementById("confirmDialogMessage");
+        const icon = document.getElementById("confirmDialogIcon");
+        const okBtn = document.getElementById("confirmDialogOk");
+        const cancelBtn = document.getElementById("confirmDialogCancel");
+
+        if (!overlay) return;
+
+        title.textContent = options.title || "Xác nhận";
+        message.textContent = options.message || "";
+        okBtn.textContent = options.confirmText || "Xác nhận";
+
+        // Icon style
+        icon.className = "confirm-dialog-icon";
+        if (options.icon === "warning") {
+            icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            icon.classList.add("warning");
+            okBtn.className = "danger-btn";
+        } else if (options.icon === "success") {
+            icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            icon.classList.add("success");
+            okBtn.className = "primary-btn";
+        } else {
+            icon.innerHTML = '<i class="fa-solid fa-circle-question"></i>';
+            icon.classList.add("info");
+            okBtn.className = "primary-btn";
+        }
+
+        overlay.classList.remove("hidden");
+
+        // Cleanup old listeners
+        const newOk = okBtn.cloneNode(true);
+        okBtn.parentNode.replaceChild(newOk, okBtn);
+        const newCancel = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+        newOk.addEventListener("click", function () {
+            overlay.classList.add("hidden");
+            if (options.onConfirm) options.onConfirm();
+        });
+
+        newCancel.addEventListener("click", function () {
+            overlay.classList.add("hidden");
+            if (options.onCancel) options.onCancel();
+        });
+
+        overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) overlay.classList.add("hidden");
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════════════════════
+    function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || "-";
+    }
+
+    function showStepError(id, message) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = message;
+            el.classList.remove("hidden");
+        }
+    }
+
+    function formatDateTime(date) {
+        const d = date.getDate().toString().padStart(2, "0");
+        const m = (date.getMonth() + 1).toString().padStart(2, "0");
+        const y = date.getFullYear();
+        const h = date.getHours().toString().padStart(2, "0");
+        const min = date.getMinutes().toString().padStart(2, "0");
+        return d + "/" + m + "/" + y + " " + h + ":" + min;
+    }
+
+    // Auto-open wizard if URL has ?openCreate=1
+    if (new URLSearchParams(window.location.search).get("openCreate") === "1") {
+        openWizard();
+    }
 });

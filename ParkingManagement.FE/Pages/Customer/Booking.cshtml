@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ParkingManagement.FE.Pages.Customer.BookingModel
 @{
     ViewData["Title"] = "Quản lý đơn đặt chỗ";
@@ -9,6 +9,19 @@
 <link rel="stylesheet" href="~/css/customer/booking.css" asp-append-version="true" />
 
 <div class="booking-page">
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">
+            <i class="fa-solid fa-circle-check"></i> @Model.SuccessMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            <i class="fa-solid fa-circle-exclamation"></i> @Model.ErrorMessage
+        </div>
+    }
 
     <div class="page-header">
         <div>
@@ -115,6 +128,7 @@
                         {
                             <tr class="booking-row"
                                 data-id="@item.Id"
+                                data-reservation-id="@item.ReservationId"
                                 data-code="@item.Code"
                                 data-parking="@item.ParkingName"
                                 data-position="@item.Position"
@@ -179,10 +193,15 @@
             </div>
 
             <div class="detail-actions">
-                <button type="button" id="cancelBookingBtn" class="danger-outline-btn">
+                <button type="button" id="cancelBookingBtn" class="danger-outline-btn"
+                        data-reservation-id="">
                     <i class="fa-solid fa-trash"></i>
                     Hủy đơn đặt chỗ
                 </button>
+
+                <form method="post" asp-page-handler="Cancel" id="cancelBookingForm" class="hidden">
+                    <input type="hidden" name="reservationId" id="cancelReservationId" value="" />
+                </form>
 
                 <button type="button" id="bottomCloseDetailBtn" class="secondary-btn">
                     Đóng
@@ -196,7 +215,7 @@
 
         <div class="booking-modal-content">
             <div class="wizard-title">
-                <h3>Quy trình đặt chỗ mới</h3>
+                <h3>Đặt chỗ mới</h3>
                 <button type="button" id="closeWizardBtn" class="close-btn">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -221,13 +240,6 @@
                     <span>3</span>
                     <p>Xác nhận</p>
                 </div>
-
-                <div class="wizard-line"></div>
-
-                <div class="wizard-step" data-step-indicator="4">
-                    <span>4</span>
-                    <p>Thanh toán</p>
-                </div>
             </div>
 
             <div class="wizard-grid">
@@ -235,29 +247,34 @@
             <div class="wizard-panel active" data-step="1">
                 <div class="step-title">
                     <span>1</span>
-                    <h4>Chọn thông tin</h4>
+                    <h4>Thông tin xe & thời gian</h4>
                 </div>
 
-                <label>Chọn thông tin đã lưu</label>
+                <label>Chọn xe đã lưu</label>
                 <select id="savedVehicleSelect">
-                    <option value="59C1-123.45|Xe máy|Nguyễn Văn A|0901 234 567">
-                        59C1-123.45 - Xe máy
-                    </option>
-                    <option value="51A-567.89|Ô tô nhỏ|Nguyễn Văn A|0901 234 567">
-                        51A-567.89 - Ô tô nhỏ
-                    </option>
+                    @if (Model.SavedVehicles.Any())
+                    {
+                        @foreach (var v in Model.SavedVehicles)
+                        {
+                            <option value="@v.Value">@v.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="">-- Nhập thông tin xe mới --</option>
+                    }
                 </select>
 
                 <button type="button" id="showNewVehicleFormBtn" class="link-btn">
                     <i class="fa-solid fa-plus"></i>
-                    Thêm thông tin mới
+                    Nhập xe mới
                 </button>
 
                 <div id="newVehicleForm" class="new-vehicle-form hidden">
                     <div class="new-vehicle-grid">
                         <label>
                             <span>Biển số xe</span>
-                            <input type="text" id="newVehiclePlate" placeholder="59C1-123.45" />
+                            <input type="text" id="newVehiclePlate" placeholder="VD: 43C1-123.45" />
                         </label>
 
                         <label>
@@ -268,23 +285,12 @@
                                 <option>Ô tô lớn</option>
                             </select>
                         </label>
-
-                        <label>
-                            <span>Khách hàng</span>
-                            <input type="text" id="newCustomerName" placeholder="Nguyễn Văn A" />
-                        </label>
-
-                        <label>
-                            <span>Số điện thoại</span>
-                            <input type="tel" id="newCustomerPhone" placeholder="0901 234 567" />
-                        </label>
                     </div>
 
                     <div class="new-vehicle-actions">
                         <button type="button" id="saveNewVehicleBtn" class="primary-btn compact-btn">
-                            Lưu thông tin
+                            Lưu
                         </button>
-
                         <button type="button" id="cancelNewVehicleBtn" class="secondary-btn compact-btn">
                             Hủy
                         </button>
@@ -293,13 +299,17 @@
                     <p id="newVehicleError" class="form-error hidden"></p>
                 </div>
 
-                <label>Thông tin khách hàng</label>
+                <label>Thời gian dự kiến đến</label>
+                <input type="datetime-local" id="expectedTimeInput" class="form-input" />
+
+                <label>Khách hàng</label>
                 <div class="customer-card">
-                    <strong id="previewCustomer">Nguyễn Văn A</strong>
-                    <span id="previewPhone">0901 234 567</span>
+                    <strong id="previewCustomer">@Model.UserName</strong>
                 </div>
 
-                <button type="button" class="primary-btn next-step" data-next="2">
+                <p id="step1Error" class="form-error hidden"></p>
+
+                <button type="button" class="primary-btn next-step" data-next="2" id="step1NextBtn">
                     Tiếp tục
                 </button>
             </div>
@@ -312,18 +322,38 @@
 
                 <div class="legend">
                     <span><i class="dot green"></i>Trống</span>
-                    <span><i class="dot orange"></i>Đang sử dụng</span>
+                    <span><i class="dot orange"></i>Đang dùng</span>
                     <span><i class="dot blue"></i>Đã đặt</span>
                     <span><i class="dot gray"></i>Bảo trì</span>
-                    <span><i class="dot red"></i>Sự cố</span>
                 </div>
 
                 <div class="zone-summary">
-                    <strong id="zoneTitle">Khu A - Xe máy</strong>
-                    <span id="zoneCapacity">50 chỗ đỗ</span>
+                    <strong id="zoneTitle">Chỗ đỗ khả dụng</strong>
+                    <span id="zoneCapacity">@Model.AvailableSlots.Count chỗ trống</span>
                 </div>
 
                 <div id="parkingMap" class="parking-map">
+                    @if (Model.AvailableSlots.Any())
+                    {
+                        @foreach (var slot in Model.AvailableSlots)
+                        {
+                            <button type="button"
+                                    class="slot empty"
+                                    data-selectable="true"
+                                    data-slot-code="@slot.SlotId"
+                                    data-slot-position="@slot.Location"
+                                    data-slot-vehicle-type="@slot.VehicleType">
+                                @slot.SlotId
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-slots-msg">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Hiện không có chỗ đỗ trống. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.
+                        </p>
+                    }
                 </div>
 
                 <p class="selected-slot">
@@ -331,16 +361,19 @@
                     <strong id="selectedSlotText">Chưa chọn</strong>
                 </p>
 
+                <p id="step2Error" class="form-error hidden"></p>
+
                 <div class="wizard-actions">
                     <button type="button" class="secondary-btn prev-step" data-prev="1">
                         Quay lại
                     </button>
 
                     <button type="button" id="randomSlotBtn" class="secondary-btn">
+                        <i class="fa-solid fa-shuffle"></i>
                         Chọn ngẫu nhiên
                     </button>
 
-                    <button type="button" class="primary-btn next-step" data-next="3">
+                    <button type="button" class="primary-btn" id="step2NextBtn">
                         Tiếp tục
                     </button>
                 </div>
@@ -349,65 +382,50 @@
             <div class="wizard-panel" data-step="3">
                 <div class="step-title">
                     <span>3</span>
-                    <h4>Xác nhận đơn</h4>
+                    <h4>Xác nhận đặt chỗ</h4>
                 </div>
 
-                <div class="confirm-box">
-                    <div><span>Bãi giữ xe</span><strong>Central Park</strong></div>
-                    <div><span>Vị trí</span><strong id="confirmSlot">Chưa chọn</strong></div>
-                    <div><span>Biển số xe</span><strong id="confirmPlate">59C1-123.45</strong></div>
-                    <div><span>Loại xe</span><strong id="confirmVehicle">Xe máy</strong></div>
-                    <div><span>Thời gian</span><strong>16/05/2026 08:00 - 12:00</strong></div>
-                    <div><span>Tổng phí dự kiến</span><strong class="price-text">20,000 đ</strong></div>
-                </div>
+                <form method="post" asp-page-handler="Create" id="createBookingForm">
+                    <input type="hidden" name="vehiclePlate" id="formVehiclePlate" value="" />
+                    <input type="hidden" name="vehicleType" id="formVehicleType" value="" />
+                    <input type="hidden" name="slotId" id="formSlotId" value="" />
+                    <input type="hidden" name="expectedTime" id="formExpectedTime" value="" />
 
-                <div class="wizard-actions">
-                    <button type="button" class="secondary-btn prev-step" data-prev="2">Quay lại</button>
-                    <button type="button" class="primary-btn next-step" data-next="4">Tiếp tục</button>
-                </div>
-            </div>
+                    <div class="confirm-box">
+                        <div><span>Khách hàng</span><strong id="confirmCustomer">@Model.UserName</strong></div>
+                        <div><span>Biển số xe</span><strong id="confirmPlate">-</strong></div>
+                        <div><span>Loại xe</span><strong id="confirmVehicle">-</strong></div>
+                        <div><span>Chỗ đỗ</span><strong id="confirmSlot">-</strong></div>
+                        <div><span>Thời gian dự kiến</span><strong id="confirmTime">-</strong></div>
+                    </div>
 
-            <div class="wizard-panel" data-step="4">
-                <div class="step-title">
-                    <span>4</span>
-                    <h4>Thanh toán</h4>
-                </div>
-
-                <div class="payment-total">
-                    <span>Tổng phí cần thanh toán</span>
-                    <strong>20,000 đ</strong>
-                </div>
-
-                <label class="radio-line">
-                    <input type="radio" name="payment" checked />
-                    Tiền mặt
-                </label>
-
-                <label class="radio-line">
-                    <input type="radio" name="payment" />
-                    Chuyển khoản
-                </label>
-
-                <label class="radio-line">
-                    <input type="radio" name="payment" />
-                    Ví điện tử MoMo
-                </label>
-
-                <label class="radio-line">
-                    <input type="radio" name="payment" />
-                    Thẻ ngân hàng
-                </label>
-
-                <div class="wizard-actions">
-                    <button type="button" class="secondary-btn prev-step" data-prev="3">Quay lại</button>
-                    <button type="button" id="confirmPaymentBtn" class="primary-btn">
-                        Xác nhận thanh toán
-                    </button>
-                </div>
+                    <div class="wizard-actions">
+                        <button type="button" class="secondary-btn prev-step" data-prev="2">Quay lại</button>
+                        <button type="submit" id="confirmBookingBtn" class="primary-btn">
+                            <i class="fa-solid fa-check"></i>
+                            Xác nhận đặt chỗ
+                        </button>
+                    </div>
+                </form>
             </div>
 
         </div>
     </div>
 </div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirmDialog" class="confirm-dialog-overlay hidden">
+        <div class="confirm-dialog">
+            <div class="confirm-dialog-icon" id="confirmDialogIcon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="confirmDialogTitle">Xác nhận</h3>
+            <p id="confirmDialogMessage">Bạn có chắc chắn muốn thực hiện thao tác này?</p>
+            <div class="confirm-dialog-actions">
+                <button type="button" id="confirmDialogCancel" class="secondary-btn">Hủy bỏ</button>
+                <button type="button" id="confirmDialogOk" class="danger-btn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
 
 <script src="~/js/booking.js" asp-append-version="true"></script>

@@ -1,119 +1,265 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Models;
+using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Customer
 {
-
+    [Authorize(Roles = "Customer")]
     public class BookingModel : PageModel
     {
-        public string UserName { get; set; } = "Nguyễn Văn Nam";
+        private readonly ICustomerApiService _customerApiService;
+        private readonly IReservationService _reservationService;
+        private readonly ILogger<BookingModel> _logger;
 
-        public int TotalBooking { get; set; } = 128;
-        public int ActiveBooking { get; set; } = 32;
-        public int CompletedBooking { get; set; } = 85;
-        public int CancelledBooking { get; set; } = 11;
+        public BookingModel(
+            ICustomerApiService customerApiService,
+            IReservationService reservationService,
+            ILogger<BookingModel> logger)
+        {
+            _customerApiService = customerApiService;
+            _reservationService = reservationService;
+            _logger = logger;
+        }
+
+        public string UserName { get; set; } = "Customer";
+        public string? ErrorMessage { get; set; }
+        public string? SuccessMessage { get; set; }
+
+        public int TotalBooking { get; set; }
+        public int ActiveBooking { get; set; }
+        public int CompletedBooking { get; set; }
+        public int CancelledBooking { get; set; }
 
         public List<BookingVm> Bookings { get; set; } = new();
-        public List<ParkingSlotVm> ParkingSlots { get; set; } = new();
+        public List<AvailableSlotDto> AvailableSlots { get; set; } = new();
+        public List<SavedVehicleOption> SavedVehicles { get; set; } = new();
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            Bookings =
-            [
-                new()
-            {
-                Id = 1,
-                Code = "BK250516-0001",
-                ParkingName = "Central Park",
-                Position = "Tầng B2 - Khu B - Ô số 12",
-                VehiclePlate = "59C1-123.45",
-                VehicleType = "Xe máy",
-                VehicleClass = "green",
-                Icon = "fa-solid fa-motorcycle",
-                BookingTime = "16/05/2026 07:30",
-                TimeRange = "16/05/2026 08:00 - 16/05/2026 12:00",
-                TotalPrice = 20000,
-                Status = "Đã xác nhận",
-                StatusClass = "confirmed",
-                CustomerName = "Nguyễn Văn A",
-                Phone = "0901 234 567",
-                CanCancel = true
-            },
-            new()
-            {
-                Id = 2,
-                Code = "BK250516-0002",
-                ParkingName = "Times City",
-                Position = "Tầng B1 - Khu A - Ô số 04",
-                VehiclePlate = "51A-567.89",
-                VehicleType = "Ô tô nhỏ",
-                VehicleClass = "blue",
-                Icon = "fa-solid fa-car-side",
-                BookingTime = "16/05/2026 06:45",
-                TimeRange = "16/05/2026 09:00 - 16/05/2026 11:00",
-                TotalPrice = 30000,
-                Status = "Đang chờ",
-                StatusClass = "pending",
-                CustomerName = "Nguyễn Văn A",
-                Phone = "0901 234 567",
-                CanCancel = true
-            },
-            new()
-            {
-                Id = 3,
-                Code = "BK250515-0009",
-                ParkingName = "Central Park",
-                Position = "Tầng B2 - Khu B - Ô số 09",
-                VehiclePlate = "30F-246.80",
-                VehicleType = "Ô tô lớn",
-                VehicleClass = "purple",
-                Icon = "fa-solid fa-van-shuttle",
-                BookingTime = "15/05/2026 20:10",
-                TimeRange = "15/05/2026 18:00 - 15/05/2026 22:00",
-                TotalPrice = 65000,
-                Status = "Đã hoàn thành",
-                StatusClass = "completed",
-                CustomerName = "Nguyễn Văn A",
-                Phone = "0901 234 567",
-                CanCancel = false
-            },
-            new()
-            {
-                Id = 4,
-                Code = "BK250515-0008",
-                ParkingName = "EcoPark",
-                Position = "Tầng G - Khu C - Ô số 02",
-                VehiclePlate = "29H-987.65",
-                VehicleType = "Xe máy",
-                VehicleClass = "green",
-                Icon = "fa-solid fa-motorcycle",
-                BookingTime = "15/05/2026 14:22",
-                TimeRange = "15/05/2026 15:00 - 15/05/2026 17:00",
-                TotalPrice = 10000,
-                Status = "Đã hủy",
-                StatusClass = "cancelled",
-                CustomerName = "Nguyễn Văn A",
-                Phone = "0901 234 567",
-                CanCancel = false
-            }
-            ];
+            SuccessMessage = TempData["Success"] as string;
+            ErrorMessage = TempData["Error"] as string;
+            await LoadDataAsync();
+        }
 
-            ParkingSlots =
-            [
-                new() { Code = "A01", Position = "Khu A - Ô 01", StatusName = "Đang dùng", StatusClass = "using", IsSelectable = false },
-            new() { Code = "A02", Position = "Khu A - Ô 02", StatusName = "Trống", StatusClass = "empty", IsSelectable = true },
-            new() { Code = "A03", Position = "Khu A - Ô 03", StatusName = "Trống", StatusClass = "empty", IsSelectable = true },
-            new() { Code = "A04", Position = "Khu A - Ô 04", StatusName = "Đã đặt", StatusClass = "reserved", IsSelectable = false },
-            new() { Code = "A05", Position = "Khu A - Ô 05", StatusName = "Đang dùng", StatusClass = "using", IsSelectable = false },
-            new() { Code = "A06", Position = "Khu A - Ô 06", StatusName = "Bảo trì", StatusClass = "maintenance", IsSelectable = false },
-            new() { Code = "A07", Position = "Khu A - Ô 07", StatusName = "Trống", StatusClass = "empty", IsSelectable = true },
-            new() { Code = "A08", Position = "Khu A - Ô 08", StatusName = "Sự cố", StatusClass = "error", IsSelectable = false }
-            ];
+        public async Task<IActionResult> OnPostCreateAsync(
+            string vehiclePlate,
+            string vehicleType,
+            string? slotId,
+            string expectedTime)
+        {
+            if (string.IsNullOrWhiteSpace(vehiclePlate) || string.IsNullOrWhiteSpace(vehicleType))
+            {
+                TempData["Error"] = "Vui lòng nhập đầy đủ thông tin xe.";
+                return RedirectToPage();
+            }
+
+            if (!DateTime.TryParse(expectedTime, out var parsedTime))
+            {
+                parsedTime = DateTime.Now.AddMinutes(30);
+            }
+
+            var dto = new CreateReservationDto
+            {
+                VehiclePlate = vehiclePlate,
+                VehicleType = vehicleType,
+                PreferredSlotId = slotId,
+                ExpectedTime = parsedTime
+            };
+
+            var result = await _reservationService.CreateAsync(dto);
+            if (result != null)
+            {
+                TempData["Success"] = "Đặt chỗ thành công!";
+            }
+            else
+            {
+                TempData["Error"] = "Không thể đặt chỗ. Vui lòng thử lại.";
+            }
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostCancelAsync(string reservationId)
+        {
+            if (string.IsNullOrWhiteSpace(reservationId))
+            {
+                TempData["Error"] = "Không xác định được đơn cần hủy.";
+                return RedirectToPage();
+            }
+
+            var result = await _reservationService.CancelAsync(reservationId);
+            if (result?.Success == true)
+            {
+                TempData["Success"] = result.Message ?? "Đã hủy đơn đặt chỗ thành công.";
+            }
+            else
+            {
+                TempData["Error"] = result?.Message ?? "Không thể hủy đơn đặt chỗ.";
+            }
+
+            return RedirectToPage();
+        }
+
+        private async Task LoadDataAsync()
+        {
+            var fallbackName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";
+            UserName = fallbackName;
+
+            try
+            {
+                // Load profile, reservations, and available slots in parallel
+                var profileTask = _customerApiService.GetProfileAsync();
+                var reservationsTask = _customerApiService.GetReservationsAsync(1, 100);
+                var slotsTask = _customerApiService.GetAvailableSlotsAsync();
+
+                await Task.WhenAll(profileTask, reservationsTask, slotsTask);
+
+                var profile = await profileTask;
+                var reservations = await reservationsTask;
+                var slots = await slotsTask;
+
+                // Set user name from profile
+                if (profile != null && !string.IsNullOrWhiteSpace(profile.FullName))
+                {
+                    UserName = profile.FullName;
+                }
+
+                // Map reservations to BookingVm
+                if (reservations?.Items != null)
+                {
+                    Bookings = reservations.Items.Select((r, index) => MapToBookingVm(r, index + 1)).ToList();
+
+                    TotalBooking = reservations.TotalItems > 0 ? reservations.TotalItems : reservations.Items.Count;
+                    ActiveBooking = reservations.Items.Count(r => IsActive(r.Status));
+                    CompletedBooking = reservations.Items.Count(r => IsCompleted(r.Status));
+                    CancelledBooking = reservations.Items.Count(r => IsCancelled(r.Status));
+                }
+
+                // Available slots for booking wizard
+                AvailableSlots = slots ?? new List<AvailableSlotDto>();
+                _logger.LogInformation("Available slots loaded: {Count} slots", AvailableSlots.Count);
+
+                // Build saved vehicles from recent reservations
+                var vehiclePlates = reservations?.Items
+                    .Select(r => new { r.VehiclePlate, r.VehicleType })
+                    .Where(x => !string.IsNullOrWhiteSpace(x.VehiclePlate))
+                    .DistinctBy(x => x.VehiclePlate)
+                    .ToList();
+
+                if (vehiclePlates?.Any() == true)
+                {
+                    SavedVehicles = vehiclePlates.Select(v => new SavedVehicleOption
+                    {
+                        Value = $"{v.VehiclePlate}|{v.VehicleType}",
+                        Text = $"{v.VehiclePlate} - {v.VehicleType}"
+                    }).ToList();
+                }
+
+                ViewData["UserName"] = UserName;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not load booking data from BE");
+                ErrorMessage = "Không tải được dữ liệu từ hệ thống. Vui lòng kiểm tra kết nối.";
+                ViewData["UserName"] = fallbackName;
+            }
+        }
+
+        private BookingVm MapToBookingVm(CustomerReservationDto r, int index)
+        {
+            var statusClass = GetStatusClass(r.Status);
+            var vehicleClass = GetVehicleClass(r.VehicleType);
+            var icon = GetVehicleIcon(r.VehicleType);
+            var canCancel = IsActive(r.Status);
+
+            return new BookingVm
+            {
+                Id = index,
+                ReservationId = r.ReservationId,
+                Code = r.ReservationId.Length > 8 ? r.ReservationId[..8].ToUpper() : r.ReservationId.ToUpper(),
+                ParkingName = r.SlotLocation ?? "Bãi xe",
+                Position = r.SlotId ?? "Chưa xác định",
+                VehiclePlate = r.VehiclePlate,
+                VehicleType = r.VehicleType,
+                VehicleClass = vehicleClass,
+                Icon = icon,
+                BookingTime = r.CreatedAt.ToString("dd/MM/yyyy HH:mm"),
+                TimeRange = r.ExpectedTime.ToString("dd/MM/yyyy HH:mm"),
+                TotalPrice = 0, // BE doesn't return price for reservations
+                Status = r.Status,
+                StatusClass = statusClass,
+                CustomerName = r.CustomerName ?? UserName,
+                Phone = "",
+                CanCancel = canCancel
+            };
+        }
+
+        private static string GetStatusClass(string status)
+        {
+            var normalized = status.ToLower().Trim();
+            if (normalized.Contains("chờ") || normalized.Contains("pending") || normalized.Contains("waiting"))
+                return "pending";
+            if (normalized.Contains("xác nhận") || normalized.Contains("confirmed") || normalized.Contains("active"))
+                return "confirmed";
+            if (normalized.Contains("hoàn thành") || normalized.Contains("completed") || normalized.Contains("done"))
+                return "completed";
+            if (normalized.Contains("hủy") || normalized.Contains("cancel"))
+                return "cancelled";
+            return "pending";
+        }
+
+        private static string GetVehicleClass(string vehicleType)
+        {
+            var normalized = vehicleType.ToLower().Trim();
+            if (normalized.Contains("máy") || normalized.Contains("motorcycle"))
+                return "green";
+            if (normalized.Contains("nhỏ") || normalized.Contains("small") || normalized.Contains("ô tô") && !normalized.Contains("lớn"))
+                return "blue";
+            if (normalized.Contains("lớn") || normalized.Contains("large") || normalized.Contains("van"))
+                return "purple";
+            return "green";
+        }
+
+        private static string GetVehicleIcon(string vehicleType)
+        {
+            var normalized = vehicleType.ToLower().Trim();
+            if (normalized.Contains("máy") || normalized.Contains("motorcycle"))
+                return "fa-solid fa-motorcycle";
+            if (normalized.Contains("lớn") || normalized.Contains("large") || normalized.Contains("van"))
+                return "fa-solid fa-van-shuttle";
+            if (normalized.Contains("ô tô") || normalized.Contains("car"))
+                return "fa-solid fa-car-side";
+            return "fa-solid fa-motorcycle";
+        }
+
+        private static bool IsActive(string status)
+        {
+            var normalized = status.ToLower().Trim();
+            return normalized.Contains("chờ") || normalized.Contains("pending")
+                || normalized.Contains("xác nhận") || normalized.Contains("confirmed")
+                || normalized.Contains("active") || normalized.Contains("waiting");
+        }
+
+        private static bool IsCompleted(string status)
+        {
+            var normalized = status.ToLower().Trim();
+            return normalized.Contains("hoàn thành") || normalized.Contains("completed") || normalized.Contains("done");
+        }
+
+        private static bool IsCancelled(string status)
+        {
+            var normalized = status.ToLower().Trim();
+            return normalized.Contains("hủy") || normalized.Contains("cancel");
         }
     }
 
     public class BookingVm
     {
         public int Id { get; set; }
+        public string ReservationId { get; set; } = "";
         public string Code { get; set; } = "";
         public string ParkingName { get; set; } = "";
         public string Position { get; set; } = "";
@@ -138,5 +284,11 @@ namespace ParkingManagement.FE.Pages.Customer
         public string StatusName { get; set; } = "";
         public string StatusClass { get; set; } = "";
         public bool IsSelectable { get; set; }
+    }
+
+    public class SavedVehicleOption
+    {
+        public string Value { get; set; } = "";
+        public string Text { get; set; } = "";
     }
 }

@@ -42,20 +42,20 @@ namespace ParkingManagement.FE.Pages.Account
                 return Page();
             }
 
-            var result = await _authService.ChangePasswordAsync(new ParkingManagement.FE.Services.ChangePasswordRequest
+            var (success, message) = await _authService.ChangePasswordAsync(new ParkingManagement.FE.Services.ChangePasswordRequest
             {
                 CurrentPassword = Input.CurrentPassword,
                 NewPassword = Input.NewPassword,
                 ConfirmPassword = Input.ConfirmPassword
             });
 
-            if (result.Item1)
+            if(success)
             {
-                SuccessMessage = result.Item2;
+                 SuccessMessage = message;
             }
             else
             {
-                ErrorMessage = result.Item2;
+                 ErrorMessage = message;
             }
 
             // TODO: kiểm tra mật khẩu hiện tại trong database

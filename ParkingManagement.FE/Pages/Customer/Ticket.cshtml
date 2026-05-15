@@ -11,6 +11,13 @@
 
 <div class="ticket-page">
 
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            <i class="fa-solid fa-circle-exclamation"></i> @Model.ErrorMessage
+        </div>
+    }
+
     <div class="card ticket-hero">
         <div>
             <h2>Quản lý vé xe</h2>
@@ -119,40 +126,51 @@
                     </thead>
 
                     <tbody>
-                        @foreach (var ticket in Model.Tickets)
+                        @if (Model.Tickets.Any())
                         {
-                            <tr class="ticket-row"
-                                data-ticket-id="@ticket.Id"
-                                data-code="@ticket.Code"
-                                data-plate="@ticket.VehiclePlate"
-                                data-type="@ticket.VehicleType"
-                                data-icon="@ticket.Icon"
-                                data-icon-class="@ticket.IconClass"
-                                data-filter-date="@ticket.CheckInTime.ToString("yyyy-MM-dd")"
-                                data-checkin="@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")"
-                                data-checkout="@ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm")"
-                                data-duration="@ticket.Duration"
-                                data-parking-fee="@ticket.ParkingFee.ToString("N0") đ"
-                                data-discount="@ticket.Discount.ToString("N0") đ"
-                                data-total="@ticket.TotalAmount.ToString("N0") đ"
-                                data-status="@ticket.Status"
-                                data-payment-method="@ticket.PaymentMethod"
-                                data-created-by="@ticket.CreatedBy"
-                                data-note="@ticket.Note">
+                            @foreach (var ticket in Model.Tickets)
+                            {
+                                <tr class="ticket-row"
+                                    data-ticket-id="@ticket.Id"
+                                    data-code="@ticket.Code"
+                                    data-plate="@ticket.VehiclePlate"
+                                    data-type="@ticket.VehicleType"
+                                    data-icon="@ticket.Icon"
+                                    data-icon-class="@ticket.IconClass"
+                                    data-filter-date="@ticket.CheckInTime.ToString("yyyy-MM-dd")"
+                                    data-checkin="@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")"
+                                    data-checkout="@ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm")"
+                                    data-duration="@ticket.Duration"
+                                    data-parking-fee="@ticket.ParkingFee.ToString("N0") đ"
+                                    data-discount="@ticket.Discount.ToString("N0") đ"
+                                    data-total="@ticket.TotalAmount.ToString("N0") đ"
+                                    data-status="@ticket.Status"
+                                    data-payment-method="@ticket.PaymentMethod"
+                                    data-created-by="@ticket.CreatedBy"
+                                    data-note="@ticket.Note">
 
-                                <td>@ticket.Code</td>
-                                <td>@ticket.VehiclePlate</td>
-                                <td>
-                                    <span class="vehicle-pill @ticket.IconClass">
-                                        <i class="@ticket.Icon"></i>
-                                        @ticket.VehicleType
-                                    </span>
-                                </td>
-                                <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>@(ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
-                                <td>@ticket.TotalAmount.ToString("N0") đ</td>
-                                <td>
-                                    <span class="status-badge paid">@ticket.Status</span>
+                                    <td>@ticket.Code</td>
+                                    <td>@ticket.VehiclePlate</td>
+                                    <td>
+                                        <span class="vehicle-pill @ticket.IconClass">
+                                            <i class="@ticket.Icon"></i>
+                                            @ticket.VehicleType
+                                        </span>
+                                    </td>
+                                    <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@(ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                                    <td>@ticket.TotalAmount.ToString("N0") đ</td>
+                                    <td>
+                                        <span class="status-badge @(ticket.Status.Contains("Đang") ? "active" : "paid")">@ticket.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding: 2rem; color: #888;">
+                                    Chưa có vé nào. Dữ liệu sẽ hiển thị khi bạn sử dụng dịch vụ gửi xe.
                                 </td>
                             </tr>
                         }
