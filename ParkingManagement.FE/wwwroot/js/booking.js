@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const bookingContent = document.getElementById("bookingContent");
     const detailPanel = document.getElementById("bookingDetailPanel");
     const bookingRows = document.querySelectorAll(".booking-row");
@@ -201,6 +201,7 @@
     });
 
     function applySelectedVehicle() {
+        if (!savedVehicleSelect.value) return;
         const [plate, vehicle, customer, phone] = savedVehicleSelect.value.split("|");
 
         setText("previewCustomer", customer);
@@ -256,13 +257,43 @@
 
         selectedSlotText.textContent = text;
         confirmSlot.textContent = text;
+        
+        // Also update hidden form field
+        const formSlotId = document.getElementById("formSlotId");
+        if (formSlotId) formSlotId.value = slot.dataset.slotCode;
     }
 
     const confirmPaymentBtn = document.getElementById("confirmPaymentBtn");
 
+    // Add listener to next step to update time
+    document.querySelectorAll(".next-step").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const nextStep = btn.dataset.next;
+            if (nextStep === "3") {
+                const now = new Date();
+                const expected = new Date(now.getTime() + 60 * 60 * 1000); // +1 hour
+                const timeStr = `${expected.getDate().toString().padStart(2, '0')}/${(expected.getMonth()+1).toString().padStart(2, '0')}/${expected.getFullYear()} ${expected.getHours().toString().padStart(2, '0')}:${expected.getMinutes().toString().padStart(2, '0')}`;
+                
+                const confirmTimeEl = document.getElementById("confirmTime");
+                if (confirmTimeEl) confirmTimeEl.textContent = `Dự kiến: ${timeStr}`;
+                
+                const formExpectedTime = document.getElementById("formExpectedTime");
+                if (formExpectedTime) formExpectedTime.value = expected.toISOString();
+            }
+        });
+    });
+
     confirmPaymentBtn.addEventListener("click", function () {
-        alert("Đặt chỗ và thanh toán thành công.");
-        closeWizard();
-        setStep("1");
+        // Populating hidden form fields before submit
+        const formVehiclePlate = document.getElementById("formVehiclePlate");
+        const formVehicleType = document.getElementById("formVehicleType");
+        
+        const plateEl = document.getElementById("confirmPlate");
+        const vehicleEl = document.getElementById("confirmVehicle");
+        
+        if (formVehiclePlate && plateEl) formVehiclePlate.value = plateEl.textContent;
+        if (formVehicleType && vehicleEl) formVehicleType.value = vehicleEl.textContent;
+        
+        // Let the form submit normally
     });
 });

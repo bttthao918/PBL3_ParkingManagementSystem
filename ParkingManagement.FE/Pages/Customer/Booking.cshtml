@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ParkingManagement.FE.Pages.Customer.BookingModel
 @{
     ViewData["Title"] = "Quản lý đơn đặt chỗ";
@@ -9,6 +9,19 @@
 <link rel="stylesheet" href="~/css/customer/booking.css" asp-append-version="true" />
 
 <div class="booking-page">
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">
+            <i class="fa-solid fa-circle-check"></i> @Model.SuccessMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            <i class="fa-solid fa-circle-exclamation"></i> @Model.ErrorMessage
+        </div>
+    }
 
     <div class="page-header">
         <div>
@@ -115,6 +128,7 @@
                         {
                             <tr class="booking-row"
                                 data-id="@item.Id"
+                                data-reservation-id="@item.ReservationId"
                                 data-code="@item.Code"
                                 data-parking="@item.ParkingName"
                                 data-position="@item.Position"
@@ -179,10 +193,13 @@
             </div>
 
             <div class="detail-actions">
-                <button type="button" id="cancelBookingBtn" class="danger-outline-btn">
-                    <i class="fa-solid fa-trash"></i>
-                    Hủy đơn đặt chỗ
-                </button>
+                <form method="post" asp-page-handler="Cancel" id="cancelBookingForm">
+                    <input type="hidden" name="reservationId" id="cancelReservationId" value="" />
+                    <button type="submit" id="cancelBookingBtn" class="danger-outline-btn">
+                        <i class="fa-solid fa-trash"></i>
+                        Hủy đơn đặt chỗ
+                    </button>
+                </form>
 
                 <button type="button" id="bottomCloseDetailBtn" class="secondary-btn">
                     Đóng
@@ -240,12 +257,17 @@
 
                 <label>Chọn thông tin đã lưu</label>
                 <select id="savedVehicleSelect">
-                    <option value="59C1-123.45|Xe máy|Nguyễn Văn A|0901 234 567">
-                        59C1-123.45 - Xe máy
-                    </option>
-                    <option value="51A-567.89|Ô tô nhỏ|Nguyễn Văn A|0901 234 567">
-                        51A-567.89 - Ô tô nhỏ
-                    </option>
+                    @if (Model.SavedVehicles.Any())
+                    {
+                        @foreach (var v in Model.SavedVehicles)
+                        {
+                            <option value="@v.Value">@v.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="">Chưa có thông tin xe nào được lưu</option>
+                    }
                 </select>
 
                 <button type="button" id="showNewVehicleFormBtn" class="link-btn">
@@ -324,6 +346,25 @@
                 </div>
 
                 <div id="parkingMap" class="parking-map">
+                    @if (Model.ParkingSlots.Any())
+                    {
+                        @foreach (var slot in Model.ParkingSlots)
+                        {
+                            <button type="button" 
+                                    class="slot @slot.StatusClass" 
+                                    data-selectable="@slot.IsSelectable.ToString().ToLower()"
+                                    data-slot-code="@slot.Code"
+                                    data-slot-position="@slot.Position">
+                                @slot.Code
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p style="grid-column: 1 / -1; text-align: center; color: #888;">
+                            Hiện không có chỗ đỗ nào khả dụng.
+                        </p>
+                    }
                 </div>
 
                 <p class="selected-slot">
@@ -357,7 +398,7 @@
                     <div><span>Vị trí</span><strong id="confirmSlot">Chưa chọn</strong></div>
                     <div><span>Biển số xe</span><strong id="confirmPlate">59C1-123.45</strong></div>
                     <div><span>Loại xe</span><strong id="confirmVehicle">Xe máy</strong></div>
-                    <div><span>Thời gian</span><strong>16/05/2026 08:00 - 12:00</strong></div>
+                    <div><span>Thời gian</span><strong id="confirmTime">16/05/2026 08:00 - 12:00</strong></div>
                     <div><span>Tổng phí dự kiến</span><strong class="price-text">20,000 đ</strong></div>
                 </div>
 
@@ -373,37 +414,44 @@
                     <h4>Thanh toán</h4>
                 </div>
 
-                <div class="payment-total">
-                    <span>Tổng phí cần thanh toán</span>
-                    <strong>20,000 đ</strong>
-                </div>
+                <form method="post" asp-page-handler="Create" id="createBookingForm">
+                    <input type="hidden" name="vehiclePlate" id="formVehiclePlate" value="" />
+                    <input type="hidden" name="vehicleType" id="formVehicleType" value="" />
+                    <input type="hidden" name="slotId" id="formSlotId" value="" />
+                    <input type="hidden" name="expectedTime" id="formExpectedTime" value="" />
 
-                <label class="radio-line">
-                    <input type="radio" name="payment" checked />
-                    Tiền mặt
-                </label>
+                    <div class="payment-total">
+                        <span>Tổng phí cần thanh toán</span>
+                        <strong>20,000 đ</strong>
+                    </div>
 
-                <label class="radio-line">
-                    <input type="radio" name="payment" />
-                    Chuyển khoản
-                </label>
+                    <label class="radio-line">
+                        <input type="radio" name="payment" checked />
+                        Tiền mặt
+                    </label>
 
-                <label class="radio-line">
-                    <input type="radio" name="payment" />
-                    Ví điện tử MoMo
-                </label>
+                    <label class="radio-line">
+                        <input type="radio" name="payment" />
+                        Chuyển khoản
+                    </label>
 
-                <label class="radio-line">
-                    <input type="radio" name="payment" />
-                    Thẻ ngân hàng
-                </label>
+                    <label class="radio-line">
+                        <input type="radio" name="payment" />
+                        Ví điện tử MoMo
+                    </label>
 
-                <div class="wizard-actions">
-                    <button type="button" class="secondary-btn prev-step" data-prev="3">Quay lại</button>
-                    <button type="button" id="confirmPaymentBtn" class="primary-btn">
-                        Xác nhận thanh toán
-                    </button>
-                </div>
+                    <label class="radio-line">
+                        <input type="radio" name="payment" />
+                        Thẻ ngân hàng
+                    </label>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="secondary-btn prev-step" data-prev="3">Quay lại</button>
+                        <button type="submit" id="confirmPaymentBtn" class="primary-btn">
+                            Xác nhận thanh toán
+                        </button>
+                    </div>
+                </form>
             </div>
 
         </div>
