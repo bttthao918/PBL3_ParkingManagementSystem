@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using ParkingManagement.FE.Models;
 
 namespace ParkingManagement.FE.Services
@@ -17,7 +18,7 @@ namespace ParkingManagement.FE.Services
             int pageSize = 10);
         Task<ReservationDetailDto?> GetByIdAsync(string reservationId);
         Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
-        Task<ReservationDetailDto?> CreateAsync(CreateReservationDto dto);
+        Task<ServiceResultDto<ReservationDetailDto>> CreateAsync(CreateReservationDto dto);
         Task<ServiceResultDto?> CancelAsync(string reservationId);
         Task<ServiceResultDto?> CancelForEmployeeAsync(string reservationId);
     }
@@ -161,7 +162,7 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<ReservationDetailDto?> CreateAsync(CreateReservationDto dto)
+        public async Task<ServiceResultDto<ReservationDetailDto>> CreateAsync(CreateReservationDto dto)
         {
             try
             {
@@ -169,17 +170,82 @@ namespace ParkingManagement.FE.Services
                 var response = await _httpClient.PostAsJsonAsync("api/reservations", dto);
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<ReservationDetailDto>();
+                    var data = await response.Content.ReadFromJsonAsync<ReservationDetailDto>();
+                    return new ServiceResultDto<ReservationDetailDto>
+                    {
+                        Success = true,
+                        Message = "Đặt chỗ thành công!",
+                        Data = data
+                    };
                 }
+
                 var error = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning("CreateAsync failed: {StatusCode} {Error}", response.StatusCode, error);
-                return null;
+                var message = ExtractApiErrorMessage(error)
+                    ?? "Không thể đặt chỗ. Vui lòng thử lại.";
+
+                _logger.LogWarning("CreateAsync failed: {StatusCode} {Message} {Error}", response.StatusCode, message, error);
+                return new ServiceResultDto<ReservationDetailDto>
+                {
+                    Success = false,
+                    Message = message
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calling CreateAsync");
-                return null;
+                return new ServiceResultDto<ReservationDetailDto>
+                {
+                    Success = false,
+                    Message = "Không thể kết nối đến hệ thống đặt chỗ. Vui lòng thử lại."
+                };
             }
+        }
+
+        private static string? ExtractApiErrorMessage(string? error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+                return null;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(error);
+                var root = doc.RootElement;
+
+                if (root.ValueKind == JsonValueKind.Object)
+                {
+                    if (root.TryGetProperty("message", out var message)
+                        && message.ValueKind == JsonValueKind.String)
+                    {
+                        return message.GetString();
+                    }
+
+                    if (root.TryGetProperty("errors", out var errors)
+                        && errors.ValueKind == JsonValueKind.Object)
+                    {
+                        foreach (var property in errors.EnumerateObject())
+                        {
+                            if (property.Value.ValueKind == JsonValueKind.Array)
+                            {
+                                var first = property.Value.EnumerateArray().FirstOrDefault();
+                                if (first.ValueKind == JsonValueKind.String)
+                                    return first.GetString();
+                            }
+                        }
+                    }
+
+                    if (root.TryGetProperty("title", out var title)
+                        && title.ValueKind == JsonValueKind.String)
+                    {
+                        return title.GetString();
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                return error;
+            }
+
+            return null;
         }
 
         public async Task<ServiceResultDto?> CancelAsync(string reservationId)

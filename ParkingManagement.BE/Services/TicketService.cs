@@ -450,12 +450,14 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 var tickets = await _ticketRepository.GetByCustomerIdAsync(customerId);
                 var ticketIds = tickets.Select(t => t.TicketId).ToList();
+                var monthlyTickets = await _monthlyTicketRepository.GetByCustomerIdAsync(customerId);
+                var monthlyTicketIds = monthlyTickets.Select(t => t.MonthlyTicketId).ToList();
 
                 var allPayments = await _paymentRepo.GetAllAsync();
                 var customerPayments = allPayments
-                    .Where(p => ticketIds.Contains(p.TicketId ?? "") || 
-                               (p.MonthlyTicketId != null && 
-                                tickets.Any(t => t.CustomerId == customerId)))
+                    .Where(p =>
+                        (!string.IsNullOrEmpty(p.TicketId) && ticketIds.Contains(p.TicketId)) ||
+                        (!string.IsNullOrEmpty(p.MonthlyTicketId) && monthlyTicketIds.Contains(p.MonthlyTicketId)))
                     .ToList();
 
                 var filtered = customerPayments.AsEnumerable();
@@ -475,11 +477,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                 foreach (var payment in items)
                 {
                     var ticket = tickets.FirstOrDefault(t => t.TicketId == payment.TicketId);
+                    var monthlyTicket = monthlyTickets.FirstOrDefault(t => t.MonthlyTicketId == payment.MonthlyTicketId);
                     paymentDtos.Add(new CustomerPaymentListDto
                     {
                         PaymentId = payment.PaymentId,
                         TicketId = payment.TicketId ?? payment.MonthlyTicketId ?? "",
-                        VehiclePlate = ticket?.VehiclePlate,
+                        VehiclePlate = ticket?.VehiclePlate ?? monthlyTicket?.VehiclePlate,
                         Amount = payment.Amount,
                         PaymentMethod = payment.Method,
                         Status = payment.Status,
@@ -771,7 +774,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TicketId = ticket.TicketId,
                     Amount = finalFee,
                     PaymentTime = currentTime,
-                    Status = "Hoàn tất"
+                    Status = "Thành công"
                 };
                 await _paymentRepo.AddAsync(payment);
                 paymentId = payment.PaymentId;

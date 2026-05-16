@@ -62,22 +62,16 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy khách hàng.");
 
+            var vehicleSyncError = await SyncMonthlyTicketVehicleAsync(dto);
+            if (!string.IsNullOrEmpty(vehicleSyncError))
+                return ServiceResult<MonthlyTicketDto>.Fail(vehicleSyncError);
+
             var fee = await CalculateFeeAsync(dto.VehicleType!, dto.PackageType);
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
             var start = DateTime.Today;
             var end = start.AddMonths(GetPackageMonths(dto.PackageType)).AddDays(-1);
-
-            if (!await _vehicleRepo.ExistsAsync(dto.VehiclePlate))
-            {
-                await _vehicleRepo.AddAsync(new Vehicle
-                {
-                    VehiclePlate = dto.VehiclePlate,
-                    VehicleType = dto.VehicleType!,
-                    CustomerId = dto.CustomerId
-                });
-            }
 
             var id = await _repo.GenerateIdAsync();
             var monthly = new MonthlyTicket
@@ -98,6 +92,43 @@ namespace ParkingManagement.BLL.Services.Implementations
             await AddPaymentAsync(id, fee, dto.PaymentMethod);
 
             return ServiceResult<MonthlyTicketDto>.Ok(MapToDto(monthly), "Đăng ký vé tháng thành công!");
+        }
+
+        private async Task<string?> SyncMonthlyTicketVehicleAsync(RegisterMonthlyTicketDto dto)
+        {
+            var vehicle = await _vehicleRepo.GetByPlateAsync(dto.VehiclePlate);
+            if (vehicle == null)
+            {
+                await _vehicleRepo.AddAsync(new Vehicle
+                {
+                    VehiclePlate = dto.VehiclePlate,
+                    VehicleType = dto.VehicleType!,
+                    CustomerId = dto.CustomerId
+                });
+
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(vehicle.CustomerId) && vehicle.CustomerId != dto.CustomerId)
+                return "Biển số xe này đã thuộc khách hàng khác.";
+
+            var changed = false;
+            if (string.IsNullOrWhiteSpace(vehicle.CustomerId))
+            {
+                vehicle.CustomerId = dto.CustomerId;
+                changed = true;
+            }
+
+            if (!string.Equals(vehicle.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
+            {
+                vehicle.VehicleType = dto.VehicleType!;
+                changed = true;
+            }
+
+            if (changed)
+                await _vehicleRepo.UpdateAsync(vehicle);
+
+            return null;
         }
 
         public async Task<ServiceResult<MonthlyTicketDto>> RenewAsync(string monthlyTicketId, RenewMonthlyTicketDto dto)

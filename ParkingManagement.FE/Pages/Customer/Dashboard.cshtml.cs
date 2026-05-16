@@ -9,6 +9,8 @@ namespace ParkingManagement.FE.Pages.Customer
     [Authorize(Roles = "Customer")]
     public class DashboardModel : PageModel
     {
+        private const int CustomerSnapshotPageSize = 1000;
+
         private readonly ICustomerApiService _customerApiService;
         private readonly ILogger<DashboardModel> _logger;
 
@@ -32,10 +34,10 @@ namespace ParkingManagement.FE.Pages.Customer
             try
             {
                 var profileTask = _customerApiService.GetProfileAsync();
-                var reservationsTask = _customerApiService.GetReservationsAsync(1, 5);
-                var ticketsTask = _customerApiService.GetTicketsAsync(1, 5);
+                var reservationsTask = _customerApiService.GetReservationsAsync(1, CustomerSnapshotPageSize);
+                var ticketsTask = _customerApiService.GetTicketsAsync(1, CustomerSnapshotPageSize);
                 var monthlyTicketsTask = _customerApiService.GetMonthlyTicketsAsync();
-                var paymentsTask = _customerApiService.GetPaymentHistoryAsync(1, 50);
+                var paymentsTask = _customerApiService.GetPaymentHistoryAsync(1, CustomerSnapshotPageSize);
 
                 await Task.WhenAll(profileTask, reservationsTask, ticketsTask, monthlyTicketsTask, paymentsTask);
 

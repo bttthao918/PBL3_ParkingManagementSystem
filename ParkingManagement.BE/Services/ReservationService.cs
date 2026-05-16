@@ -11,15 +11,18 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly IReservationRepository _repo;
         private readonly IParkingSlotRepository _slotRepo;
         private readonly ICustomerRepository _customerRepo;
+        private readonly IVehicleRepository _vehicleRepo;
 
         public ReservationService(
             IReservationRepository repo,
             IParkingSlotRepository slotRepo,
-            ICustomerRepository customerRepo)
+            ICustomerRepository customerRepo,
+            IVehicleRepository vehicleRepo)
         {
             _repo = repo;
             _slotRepo = slotRepo;
             _customerRepo = customerRepo;
+            _vehicleRepo = vehicleRepo;
         }
 
         public async Task<List<ReservationDto>> GetAllAsync()
@@ -101,26 +104,40 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         public async Task<ServiceResult<ReservationDto>> CreateAsync(CreateReservationDto dto)
         {
+            dto.VehiclePlate = dto.VehiclePlate.Trim().ToUpperInvariant();
+            dto.VehicleType = dto.VehicleType?.Trim();
+
             // Validate DTO
             var (isValid, errorMessage) = ReservationValidator.Validate(dto);
             if (!isValid)
                 return ServiceResult<ReservationDto>.Fail(errorMessage ?? "Dữ liệu không hợp lệ.");
 
-            var customer = await _customerRepo.GetByIdAsync(dto.CustomerId);
+            var customerId = dto.CustomerId!;
+            var customer = await _customerRepo.GetByIdAsync(customerId);
             if (customer == null)
                 return ServiceResult<ReservationDto>.Fail("Không tìm thấy khách hàng.");
 
-            string? slotId = dto.PreferredSlotId;
+            var vehicleSyncError = await SyncReservationVehicleAsync(dto);
+            if (!string.IsNullOrEmpty(vehicleSyncError))
+                return ServiceResult<ReservationDto>.Fail(vehicleSyncError);
+
+            string? slotId = dto.PreferredSlotId?.Trim();
             if (!string.IsNullOrEmpty(slotId))
             {
                 var preferred = await _slotRepo.GetByIdAsync(slotId);
-                if (preferred == null || preferred.Status != "Trống")
-                    slotId = null;
+                if (preferred == null)
+                    return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không tồn tại.");
+
+                if (!string.Equals(preferred.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
+                    return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không phù hợp với loại xe.");
+
+                if (preferred.Status != "Trống")
+                    return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không còn trống. Vui lòng chọn chỗ khác.");
             }
 
             if (string.IsNullOrEmpty(slotId))
             {
-                var available = await _slotRepo.GetAvailableAsync(dto.VehicleType);
+                var available = await _slotRepo.GetAvailableAsync(dto.VehicleType!);
                 if (!available.Any())
                     return ServiceResult<ReservationDto>.Fail("Không còn chỗ trống cho loại xe này.");
                 slotId = available.First().SlotId;
@@ -130,7 +147,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var reservation = new Reservation
             {
                 ReservationId = id,
-                CustomerId = dto.CustomerId,
+                CustomerId = customerId,
                 VehiclePlate = dto.VehiclePlate,
                 SlotId = slotId,
                 ExpectedTime = dto.ExpectedTime,
@@ -143,6 +160,50 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             var result = await _repo.GetByIdAsync(id);
             return ServiceResult<ReservationDto>.Ok(MapToDto(result!), "Đặt chỗ thành công!");
+        }
+
+        private async Task<string?> SyncReservationVehicleAsync(CreateReservationDto dto)
+        {
+            var vehicle = await _vehicleRepo.GetByPlateAsync(dto.VehiclePlate);
+            if (vehicle == null)
+            {
+                await _vehicleRepo.AddAsync(new Vehicle
+                {
+                    VehiclePlate = dto.VehiclePlate,
+                    VehicleType = dto.VehicleType!,
+                    CustomerId = dto.CustomerId
+                });
+
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(vehicle.CustomerId) && vehicle.CustomerId != dto.CustomerId)
+            {
+                if (!string.Equals(vehicle.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
+                    return "Biển số xe này đã được lưu với loại xe khác.";
+
+                // Reservation is a one-off booking, so it can reference an existing plate
+                // without taking ownership away from the customer profile that saved it.
+                return null;
+            }
+
+            var changed = false;
+            if (string.IsNullOrWhiteSpace(vehicle.CustomerId))
+            {
+                vehicle.CustomerId = dto.CustomerId;
+                changed = true;
+            }
+
+            if (!string.Equals(vehicle.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
+            {
+                vehicle.VehicleType = dto.VehicleType!;
+                changed = true;
+            }
+
+            if (changed)
+                await _vehicleRepo.UpdateAsync(vehicle);
+
+            return null;
         }
 
         public async Task<ServiceResult<string>> CancelAsync(string id)

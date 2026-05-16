@@ -211,6 +211,15 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"ShiftSchedules schema repair was skipped. {ex.Message}");
     }
+
+    try
+    {
+        DemoCustomerDataSeeder.Seed(db);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Demo customer data seed was skipped. {ex.Message}");
+    }
 }
 
 // ... phần còn lại giữ nguyên

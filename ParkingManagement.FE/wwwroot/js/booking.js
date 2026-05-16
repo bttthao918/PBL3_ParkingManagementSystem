@@ -128,9 +128,23 @@ document.addEventListener("DOMContentLoaded", function () {
     if (expectedTimeInput) {
         const now = new Date();
         now.setMinutes(now.getMinutes() + 15);
-        const localISO = now.toISOString().slice(0, 16);
-        expectedTimeInput.value = localISO;
-        expectedTimeInput.min = new Date().toISOString().slice(0, 16);
+        // Format as local datetime for datetime-local input (YYYY-MM-DDTHH:MM)
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const localValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+        expectedTimeInput.value = localValue;
+
+        // Set min to current time
+        const minNow = new Date();
+        const minYear = minNow.getFullYear();
+        const minMonth = String(minNow.getMonth() + 1).padStart(2, "0");
+        const minDay = String(minNow.getDate()).padStart(2, "0");
+        const minHours = String(minNow.getHours()).padStart(2, "0");
+        const minMinutes = String(minNow.getMinutes()).padStart(2, "0");
+        expectedTimeInput.min = `${minYear}-${minMonth}-${minDay}T${minHours}:${minMinutes}`;
     }
 
     // Step navigation
@@ -178,14 +192,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const error = document.getElementById("step2Error");
             error.classList.add("hidden");
 
-            // If there are available slots displayed, user must pick one
-            const availableSlots = Array.from(currentSlotButtons).filter(s => s.dataset.selectable === "true");
-            if (availableSlots.length > 0 && !selectedSlotCode) {
-                showStepError("step2Error", "Vui lòng chọn một chỗ đỗ hoặc nhấn 'Chọn ngẫu nhiên'.");
+            const slotButtons = Array.from(currentSlotButtons);
+            const availableSlots = slotButtons.filter(s => s.dataset.selectable === "true");
+            if (slotButtons.length === 0) {
+                showStepError("step2Error", "Không có dữ liệu chỗ đỗ phù hợp với loại xe đã chọn.");
                 return;
             }
 
-            // If no slots available at all, allow proceeding (system will assign)
+            if (availableSlots.length === 0) {
+                showStepError("step2Error", "Hiện không còn chỗ trống cho loại xe này.");
+                return;
+            }
+
+            if (!selectedSlotCode) {
+                showStepError("step2Error", "Vui lòng chọn một chỗ đỗ trống hoặc nhấn 'Chọn ngẫu nhiên'.");
+                return;
+            }
+
             populateConfirmation();
             setStep("3");
         });
@@ -292,38 +315,58 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const url = "?handler=Slots&vehicleType=" + encodeURIComponent(vehicleType);
             const response = await fetch(url, {
-                headers: { "RequestVerificationToken": getAntiForgeryToken() }
+                credentials: "same-origin",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
             });
 
             if (!response.ok) {
-                throw new Error("API returned " + response.status);
+                const errorText = await response.text();
+                console.error("Slots API error:", response.status, errorText);
+                throw new Error("API returned " + response.status + ": " + errorText);
             }
 
             const slots = await response.json();
+            const normalizedSlots = Array.isArray(slots)
+                ? slots.map(normalizeSlot).filter(slot => slot.slotId)
+                : [];
+            const availableCount = normalizedSlots.filter(isSlotSelectable).length;
 
-            if (zoneCapacity) zoneCapacity.textContent = slots.length + " chỗ trống";
+            if (zoneCapacity) zoneCapacity.textContent = availableCount + "/" + normalizedSlots.length + " chỗ trống";
 
-            if (slots.length === 0) {
-                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Hiện không có chỗ đỗ trống cho ' + vehicleType + '. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.</p>';
+            if (normalizedSlots.length === 0) {
+                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Không có dữ liệu chỗ đỗ phù hợp cho ' + vehicleType + '.</p>';
                 currentSlotButtons = [];
                 return;
             }
 
             // Render slot buttons
             parkingMap.innerHTML = "";
-            slots.forEach(function (slot) {
+            normalizedSlots.forEach(function (slot) {
+                const selectable = isSlotSelectable(slot);
                 const btn = document.createElement("button");
                 btn.type = "button";
-                btn.className = "slot empty";
-                btn.dataset.selectable = "true";
+                btn.className = "slot " + getSlotStatusClass(slot.status);
+                btn.dataset.selectable = selectable ? "true" : "false";
                 btn.dataset.slotCode = slot.slotId;
                 btn.dataset.slotPosition = slot.location;
                 btn.dataset.slotVehicleType = slot.vehicleType;
-                btn.textContent = slot.slotId;
+                btn.dataset.slotStatus = slot.status;
+                btn.title = [slot.slotId, slot.location, slot.status].filter(Boolean).join(" - ");
 
-                btn.addEventListener("click", function () {
-                    selectSlot(btn);
-                });
+                const code = document.createElement("strong");
+                code.textContent = slot.slotId;
+                const meta = document.createElement("span");
+                meta.textContent = slot.location || slot.status || "-";
+                btn.appendChild(code);
+                btn.appendChild(meta);
+
+                if (selectable) {
+                    btn.addEventListener("click", function () {
+                        selectSlot(btn);
+                    });
+                } else {
+                    btn.disabled = true;
+                }
 
                 parkingMap.appendChild(btn);
             });
@@ -333,11 +376,58 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (err) {
             console.error("Failed to load slots:", err);
             if (parkingMap) {
-                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-exclamation"></i> Không tải được chỗ đỗ. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.</p>';
+                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-exclamation"></i> Không tải được dữ liệu chỗ đỗ. Vui lòng thử lại.</p>';
             }
             if (zoneCapacity) zoneCapacity.textContent = "Lỗi kết nối";
             currentSlotButtons = [];
         }
+    }
+
+    function normalizeSlot(slot) {
+        return {
+            slotId: readSlotValue(slot, "slotId", "SlotId"),
+            location: readSlotValue(slot, "location", "Location"),
+            vehicleType: readSlotValue(slot, "vehicleType", "VehicleType"),
+            status: readSlotValue(slot, "status", "Status")
+        };
+    }
+
+    function readSlotValue(slot, camelName, pascalName) {
+        return (slot && (slot[camelName] ?? slot[pascalName]) || "").toString().trim();
+    }
+
+    function isSlotSelectable(slot) {
+        return normalizeStatus(slot.status).includes("trong")
+            || normalizeStatus(slot.status).includes("empty")
+            || normalizeStatus(slot.status).includes("available");
+    }
+
+    function getSlotStatusClass(status) {
+        const normalized = normalizeStatus(status);
+        if (normalized.includes("trong") || normalized.includes("empty") || normalized.includes("available")) {
+            return "empty";
+        }
+        if (normalized.includes("dang su dung") || normalized.includes("occupied") || normalized.includes("using")) {
+            return "using";
+        }
+        if (normalized.includes("da dat") || normalized.includes("reserved") || normalized.includes("booked")) {
+            return "reserved";
+        }
+        if (normalized.includes("bao tri") || normalized.includes("maintenance")) {
+            return "maintenance";
+        }
+        return "error";
+    }
+
+    function normalizeStatus(value) {
+        return (value || "")
+            .toString()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "d")
+            .toLowerCase()
+            .trim();
     }
 
     if (randomSlotBtn) {
@@ -353,6 +443,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function selectSlot(slot) {
+        if (!slot || slot.dataset.selectable !== "true") return;
+
         // Remove selected from all
         if (currentSlotButtons.length > 0) {
             currentSlotButtons.forEach(x => x.classList.remove("selected"));
@@ -397,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (formPlate) formPlate.value = vehicle.plate;
         if (formType) formType.value = vehicle.type;
         if (formSlot) formSlot.value = selectedSlotCode || "";
-        if (formTime) formTime.value = timeVal ? new Date(timeVal).toISOString() : "";
+        if (formTime) formTime.value = timeVal || "";
     }
 
     function resetWizardState() {
@@ -413,7 +505,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (expectedTimeInput) {
             const now = new Date();
             now.setMinutes(now.getMinutes() + 15);
-            expectedTimeInput.value = now.toISOString().slice(0, 16);
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const day = String(now.getDate()).padStart(2, "0");
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            expectedTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
         }
     }
 

@@ -10,6 +10,8 @@ namespace ParkingManagement.FE.Pages.Customer
     [Authorize(Roles = "Customer")]
     public class BookingModel : PageModel
     {
+        private const int CustomerSnapshotPageSize = 1000;
+
         private readonly ICustomerApiService _customerApiService;
         private readonly IReservationService _reservationService;
         private readonly ILogger<BookingModel> _logger;
@@ -46,8 +48,18 @@ namespace ParkingManagement.FE.Pages.Customer
 
         public async Task<IActionResult> OnGetSlotsAsync(string? vehicleType)
         {
-            var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType);
-            return new JsonResult(slots ?? new List<AvailableSlotDto>());
+            _logger.LogInformation("OnGetSlotsAsync called with vehicleType: {VehicleType}", vehicleType);
+            try
+            {
+                var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType, includeUnavailable: true);
+                _logger.LogInformation("OnGetSlotsAsync returned {Count} slots", slots?.Count ?? 0);
+                return new JsonResult(slots ?? new List<AvailableSlotDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "OnGetSlotsAsync error");
+                return new JsonResult(new List<AvailableSlotDto>());
+            }
         }
 
         public async Task<IActionResult> OnPostCreateAsync(
@@ -76,13 +88,17 @@ namespace ParkingManagement.FE.Pages.Customer
             };
 
             var result = await _reservationService.CreateAsync(dto);
-            if (result != null)
+            if (result.Success)
             {
-                TempData["Success"] = "Đặt chỗ thành công!";
+                TempData["Success"] = string.IsNullOrWhiteSpace(result.Message)
+                    ? "Đặt chỗ thành công!"
+                    : result.Message;
             }
             else
             {
-                TempData["Error"] = "Không thể đặt chỗ. Vui lòng thử lại.";
+                TempData["Error"] = string.IsNullOrWhiteSpace(result.Message)
+                    ? "Không thể đặt chỗ. Vui lòng thử lại."
+                    : result.Message;
             }
 
             return RedirectToPage();
@@ -118,7 +134,7 @@ namespace ParkingManagement.FE.Pages.Customer
             {
                 // Load profile, reservations, and available slots in parallel
                 var profileTask = _customerApiService.GetProfileAsync();
-                var reservationsTask = _customerApiService.GetReservationsAsync(1, 100);
+                var reservationsTask = _customerApiService.GetReservationsAsync(1, CustomerSnapshotPageSize);
                 var slotsTask = _customerApiService.GetAvailableSlotsAsync();
 
                 await Task.WhenAll(profileTask, reservationsTask, slotsTask);
@@ -186,8 +202,8 @@ namespace ParkingManagement.FE.Pages.Customer
                 Id = index,
                 ReservationId = r.ReservationId,
                 Code = r.ReservationId.Length > 8 ? r.ReservationId[..8].ToUpper() : r.ReservationId.ToUpper(),
-                ParkingName = r.SlotLocation ?? "Bãi xe",
-                Position = r.SlotId ?? "Chưa xác định",
+                ParkingName = "Bãi xe",
+                Position = FormatSlotPosition(r.SlotId, r.SlotLocation),
                 VehiclePlate = r.VehiclePlate,
                 VehicleType = r.VehicleType,
                 VehicleClass = vehicleClass,
@@ -215,6 +231,17 @@ namespace ParkingManagement.FE.Pages.Customer
             if (normalized.Contains("hủy") || normalized.Contains("cancel"))
                 return "cancelled";
             return "pending";
+        }
+
+        private static string FormatSlotPosition(string? slotId, string? slotLocation)
+        {
+            if (string.IsNullOrWhiteSpace(slotId))
+                return "Chưa xác định";
+
+            if (string.IsNullOrWhiteSpace(slotLocation))
+                return slotId;
+
+            return $"{slotId} - {slotLocation}";
         }
 
         private static string GetVehicleClass(string vehicleType)

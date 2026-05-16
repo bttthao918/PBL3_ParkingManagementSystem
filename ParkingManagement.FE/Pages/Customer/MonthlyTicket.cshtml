@@ -247,44 +247,189 @@
             </button>
         </div>
 
-        <form method="post" asp-page-handler="Register" class="register-form">
+        <form method="post" asp-page-handler="Register" class="register-form" id="registerForm">
             <input asp-for="RegisterInput.VehicleType" type="hidden" id="registerVehicleType" />
             <input asp-for="RegisterInput.PackageType" type="hidden" id="registerPackageType" />
 
             <label>
                 <span>Biển số xe</span>
-                <input asp-for="RegisterInput.VehiclePlate" placeholder="43A-123.45" />
+                <input asp-for="RegisterInput.VehiclePlate" id="registerPlateInput" placeholder="43A-123.45" />
                 <span asp-validation-for="RegisterInput.VehiclePlate" class="field-validation"></span>
             </label>
 
             <label>
-                <span>Thanh toán</span>
-                <select asp-for="RegisterInput.PaymentMethod">
-                    <option value="Chuyển khoản">Chuyển khoản</option>
-                    <option value="Ví điện tử">Ví điện tử</option>
+                <span>Phương thức thanh toán</span>
+                <select asp-for="RegisterInput.PaymentMethod" id="paymentMethodSelect">
+                    <option value="Chuyển khoản">Chuyển khoản ngân hàng (QR)</option>
+                    <option value="Ví điện tử">Ví điện tử (MoMo / ZaloPay)</option>
                 </select>
                 <span asp-validation-for="RegisterInput.PaymentMethod" class="field-validation"></span>
             </label>
 
-            <button type="submit" class="primary-btn">
-                <i class="fa-solid fa-check"></i>
-                Xác nhận đăng ký
+            <p id="registerError" class="form-error-msg hidden"></p>
+
+            <button type="button" class="primary-btn" id="registerSubmitBtn" onclick="handleRegisterSubmit()">
+                <i class="fa-solid fa-qrcode"></i>
+                Thanh toán & Đăng ký
             </button>
         </form>
+    </div>
+</div>
+
+<!-- QR Payment Modal -->
+<div id="qrPaymentModal" class="modal-overlay hidden">
+    <div class="modal-card qr-modal-card">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-qrcode"></i> Thanh toán chuyển khoản</h3>
+            <button type="button" class="modal-close" onclick="closeQrModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="qr-payment-content">
+            <div class="qr-info-header">
+                <p>Quét mã QR bằng app ngân hàng để thanh toán</p>
+            </div>
+
+            <div class="qr-code-wrapper">
+                <img id="qrCodeImage" src="" alt="QR Code thanh toán" />
+            </div>
+
+            <div class="qr-details">
+                <div class="qr-detail-row">
+                    <span>Ngân hàng</span>
+                    <strong id="qrBankName">Vietcombank</strong>
+                </div>
+                <div class="qr-detail-row">
+                    <span>Số tài khoản</span>
+                    <strong id="qrAccountNo">1234567890</strong>
+                </div>
+                <div class="qr-detail-row">
+                    <span>Chủ tài khoản</span>
+                    <strong id="qrAccountName">BAI XE THONG MINH</strong>
+                </div>
+                <div class="qr-detail-row">
+                    <span>Số tiền</span>
+                    <strong id="qrAmount" class="qr-amount">0 đ</strong>
+                </div>
+                <div class="qr-detail-row">
+                    <span>Nội dung CK</span>
+                    <strong id="qrContent">-</strong>
+                </div>
+            </div>
+
+            <div class="qr-actions">
+                <button type="button" class="secondary-btn" onclick="closeQrModal()">
+                    Hủy bỏ
+                </button>
+                <button type="button" class="primary-btn" id="confirmPaidBtn" onclick="confirmQrPayment()">
+                    <i class="fa-solid fa-check-circle"></i>
+                    Đã thanh toán
+                </button>
+            </div>
+
+            <p class="qr-note">
+                <i class="fa-solid fa-circle-info"></i>
+                Sau khi chuyển khoản thành công, nhấn "Đã thanh toán" để hoàn tất đăng ký.
+            </p>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        // Bank config for QR generation (VietQR)
+        const BANK_CONFIG = {
+            bankId: "970436",          // Vietcombank BIN
+            accountNo: "1234567890",
+            accountName: "BAI XE THONG MINH",
+            bankName: "Vietcombank",
+            template: "compact2"
+        };
+
+        // Plan prices
+        const PLAN_PRICES = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.Plans
+                .GroupBy(plan => plan.VehicleType)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.ToDictionary(plan => plan.PackageType, plan => plan.Price))));
+
+        let currentAmount = 0;
+
         function openRegisterModal(vehicleType, packageType) {
             document.getElementById("registerVehicleType").value = vehicleType;
             document.getElementById("registerPackageType").value = packageType;
             document.getElementById("registerModal").classList.remove("hidden");
+            hideError();
+            currentAmount = PLAN_PRICES[vehicleType]?.[packageType] || 0;
         }
 
         function closeRegisterModal() {
             document.getElementById("registerModal").classList.add("hidden");
+        }
+
+        function handleRegisterSubmit() {
+            hideError();
+            const plate = document.getElementById("registerPlateInput").value.trim();
+            if (!plate) {
+                showError("Vui lòng nhập biển số xe.");
+                return;
+            }
+
+            // Show QR payment (both Chuyển khoản and Ví điện tử use same QR)
+            showQrPayment(plate);
+        }
+
+        function showQrPayment(plate) {
+            const vehicleType = document.getElementById("registerVehicleType").value;
+            const packageType = document.getElementById("registerPackageType").value;
+            const method = document.getElementById("paymentMethodSelect").value;
+            const amount = currentAmount;
+            const content = "VT " + plate.replace(/[^a-zA-Z0-9]/g, "") + " " + packageType.replace(" ", "");
+
+            // Generate VietQR image URL
+            const qrUrl = `https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNo}-${BANK_CONFIG.template}.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(BANK_CONFIG.accountName)}`;
+
+            document.getElementById("qrCodeImage").src = qrUrl;
+            document.getElementById("qrBankName").textContent = BANK_CONFIG.bankName;
+            document.getElementById("qrAccountNo").textContent = BANK_CONFIG.accountNo;
+            document.getElementById("qrAccountName").textContent = BANK_CONFIG.accountName;
+            document.getElementById("qrAmount").textContent = amount.toLocaleString("vi-VN") + " đ";
+            document.getElementById("qrContent").textContent = content;
+
+            // Close register modal, open QR modal
+            closeRegisterModal();
+            document.getElementById("qrPaymentModal").classList.remove("hidden");
+        }
+
+        function closeQrModal() {
+            document.getElementById("qrPaymentModal").classList.add("hidden");
+        }
+
+        function confirmQrPayment() {
+            // Show loading state
+            const btn = document.getElementById("confirmPaidBtn");
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+
+            // Submit the register form
+            closeQrModal();
+            document.getElementById("registerForm").submit();
+        }
+
+        function showError(msg) {
+            const el = document.getElementById("registerError");
+            if (el) {
+                el.textContent = msg;
+                el.classList.remove("hidden");
+            }
+        }
+
+        function hideError() {
+            const el = document.getElementById("registerError");
+            if (el) el.classList.add("hidden");
         }
     </script>
 }

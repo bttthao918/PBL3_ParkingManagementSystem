@@ -35,7 +35,7 @@ namespace ParkingManagement.BLL.DTOs
 
     public class CreateReservationDto
     {
-        public string CustomerId { get; set; } = string.Empty;
+        public string? CustomerId { get; set; }
         public string VehiclePlate { get; set; } = string.Empty;
         public string? VehicleType { get; set; }
         public string? PreferredSlotId { get; set; }

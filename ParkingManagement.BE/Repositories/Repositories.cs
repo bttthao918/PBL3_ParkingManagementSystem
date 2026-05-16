@@ -329,6 +329,7 @@ namespace ParkingManagement.DAL.Implementations
 
         public Task<Reservation?> GetByIdAsync(string id) =>
             _db.Reservations.Include(r => r.Customer)
+                            .Include(r => r.Vehicle)
                             .Include(r => r.ParkingSlot)
                             .FirstOrDefaultAsync(r => r.ReservationId == id);
 

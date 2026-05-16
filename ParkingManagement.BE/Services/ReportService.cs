@@ -107,15 +107,15 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var monthlyTickets = (await _monthlyRepo.GetAllAsync()).ToList();
 
                 var todayRevenue = payments
-                    .Where(p => p.PaymentTime.Date == today && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime.Date == today && IsSuccessfulPaymentStatus(p.Status))
                     .Sum(p => p.Amount);
 
                 var thisMonthRevenue = payments
-                    .Where(p => p.PaymentTime >= monthStart && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime >= monthStart && IsSuccessfulPaymentStatus(p.Status))
                     .Sum(p => p.Amount);
 
                 var thisYearRevenue = payments
-                    .Where(p => p.PaymentTime >= yearStart && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime >= yearStart && IsSuccessfulPaymentStatus(p.Status))
                     .Sum(p => p.Amount);
 
                 var todayTickets = tickets.Count(t => t.CheckInTime.Date == today);
@@ -162,7 +162,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 var periodTickets = tickets.Where(t => t.CheckInTime >= from && t.CheckInTime <= to).ToList();
                 var periodPayments = payments
-                    .Where(p => p.PaymentTime >= from && p.PaymentTime <= to && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime >= from && p.PaymentTime <= to && IsSuccessfulPaymentStatus(p.Status))
                     .ToList();
 
                 var totalRevenue = periodPayments.Sum(p => p.Amount);
@@ -263,6 +263,17 @@ namespace ParkingManagement.BLL.Services.Implementations
             }
         }
 
+        private static bool IsSuccessfulPaymentStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return false;
+
+            return status.Contains("Thành công", StringComparison.OrdinalIgnoreCase)
+                || status.Contains("Hoàn tất", StringComparison.OrdinalIgnoreCase)
+                || status.Contains("success", StringComparison.OrdinalIgnoreCase)
+                || status.Contains("completed", StringComparison.OrdinalIgnoreCase);
+        }
+
         // ── 3. Employee Reports ──
         public async Task<EmployeeDashboardDto> GetEmployeeDashboardAsync(string employeeId)
         {
@@ -281,7 +292,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 var ticketsToday = allTickets.Count(t => t.CheckInTime.Date == today);
                 var revenueToday = allPayments
-                    .Where(p => p.PaymentTime.Date == today && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime.Date == today && IsSuccessfulPaymentStatus(p.Status))
                     .Sum(p => p.Amount);
 
                 var workMinutesToday = allTickets
@@ -290,7 +301,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 var ticketsThisWeek = allTickets.Count(t => t.CheckInTime.Date >= thisWeekStart && t.CheckInTime.Date <= today);
                 var revenueThisWeek = allPayments
-                    .Where(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today && IsSuccessfulPaymentStatus(p.Status))
                     .Sum(p => p.Amount);
 
                 var workMinutesThisWeek = allTickets
@@ -305,7 +316,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 var ticketsThisMonth = allTickets.Count(t => t.CheckInTime >= thisMonthStart && t.CheckInTime <= today);
                 var revenueThisMonth = allPayments
-                    .Where(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today && IsSuccessfulPaymentStatus(p.Status))
                     .Sum(p => p.Amount);
 
                 var workMinutesThisMonth = allTickets
@@ -438,7 +449,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .ToList();
 
                 var paymentsInPeriod = allPayments
-                    .Where(p => p.PaymentTime.Date >= from && p.PaymentTime.Date <= to && p.Status == "Thành công")
+                    .Where(p => p.PaymentTime.Date >= from && p.PaymentTime.Date <= to && IsSuccessfulPaymentStatus(p.Status))
                     .ToList();
 
                 var totalRevenue = paymentsInPeriod.Sum(p => p.Amount);
@@ -474,7 +485,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                              : period == "week" ? from.AddDays(-7)
                              : new DateTime(from.Year, from.Month, 1).AddMonths(-1);
                 var prevTickets = allTickets.Where(t => t.CheckInTime.Date >= prevFrom && t.CheckInTime.Date < from).ToList();
-                var prevPayments = allPayments.Where(p => p.PaymentTime.Date >= prevFrom && p.PaymentTime.Date < from && p.Status == "Thành công").ToList();
+                var prevPayments = allPayments
+                    .Where(p => p.PaymentTime.Date >= prevFrom && p.PaymentTime.Date < from && IsSuccessfulPaymentStatus(p.Status))
+                    .ToList();
                 var prevRevenue = prevPayments.Sum(p => p.Amount);
 
                 var revenueChange = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0;

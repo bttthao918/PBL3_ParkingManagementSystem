@@ -11,6 +11,8 @@ namespace ParkingManagement.FE.Pages.Customer
     [Authorize(Roles = "Customer")]
     public class TicketModel : PageModel
     {
+        private const int CustomerSnapshotPageSize = 1000;
+
         private readonly ICustomerApiService _customerApiService;
         private readonly IPricingService _pricingService;
         private readonly ILogger<TicketModel> _logger;
@@ -51,7 +53,7 @@ namespace ParkingManagement.FE.Pages.Customer
             try
             {
                 var profileTask = _customerApiService.GetProfileAsync();
-                var ticketsTask = _customerApiService.GetTicketsAsync(1, 50);
+                var ticketsTask = _customerApiService.GetTicketsAsync(1, CustomerSnapshotPageSize);
                 var pricingTask = LoadPricingAsync();
 
                 await Task.WhenAll(profileTask, ticketsTask, pricingTask);
