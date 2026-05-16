@@ -11,15 +11,18 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly IReservationRepository _repo;
         private readonly IParkingSlotRepository _slotRepo;
         private readonly ICustomerRepository _customerRepo;
+        private readonly IVehicleRepository _vehicleRepo;
 
         public ReservationService(
             IReservationRepository repo,
             IParkingSlotRepository slotRepo,
-            ICustomerRepository customerRepo)
+            ICustomerRepository customerRepo,
+            IVehicleRepository vehicleRepo)
         {
             _repo = repo;
             _slotRepo = slotRepo;
             _customerRepo = customerRepo;
+            _vehicleRepo = vehicleRepo;
         }
 
         public async Task<List<ReservationDto>> GetAllAsync()
@@ -110,11 +113,34 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<ReservationDto>.Fail("Không tìm thấy khách hàng.");
 
+            var vehiclePlate = dto.VehiclePlate.Trim().ToUpperInvariant();
+            var vehicle = await _vehicleRepo.GetByPlateAsync(vehiclePlate);
+            if (vehicle == null)
+            {
+                await _vehicleRepo.AddAsync(new Vehicle
+                {
+                    VehiclePlate = vehiclePlate,
+                    VehicleType = dto.VehicleType,
+                    CustomerId = dto.CustomerId
+                });
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(vehicle.CustomerId) && vehicle.CustomerId != dto.CustomerId)
+                {
+                    return ServiceResult<ReservationDto>.Fail("Biển số xe này đã được liên kết với khách hàng khác.");
+                }
+
+                vehicle.VehicleType = dto.VehicleType;
+                vehicle.CustomerId = dto.CustomerId;
+                await _vehicleRepo.UpdateAsync(vehicle);
+            }
+
             string? slotId = dto.PreferredSlotId;
             if (!string.IsNullOrEmpty(slotId))
             {
                 var preferred = await _slotRepo.GetByIdAsync(slotId);
-                if (preferred == null || preferred.Status != "Trống")
+                if (preferred == null || preferred.Status != "Trống" || preferred.VehicleType != dto.VehicleType)
                     slotId = null;
             }
 
@@ -131,7 +157,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 ReservationId = id,
                 CustomerId = dto.CustomerId,
-                VehiclePlate = dto.VehiclePlate,
+                VehiclePlate = vehiclePlate,
                 SlotId = slotId,
                 ExpectedTime = dto.ExpectedTime,
                 CreatedAt = DateTime.Now,

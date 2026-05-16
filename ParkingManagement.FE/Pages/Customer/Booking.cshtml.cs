@@ -12,15 +12,18 @@ namespace ParkingManagement.FE.Pages.Customer
     {
         private readonly ICustomerApiService _customerApiService;
         private readonly IReservationService _reservationService;
+        private readonly IParkingSlotService _parkingSlotService;
         private readonly ILogger<BookingModel> _logger;
 
         public BookingModel(
             ICustomerApiService customerApiService,
             IReservationService reservationService,
+            IParkingSlotService parkingSlotService,
             ILogger<BookingModel> logger)
         {
             _customerApiService = customerApiService;
             _reservationService = reservationService;
+            _parkingSlotService = parkingSlotService;
             _logger = logger;
         }
 
@@ -46,8 +49,25 @@ namespace ParkingManagement.FE.Pages.Customer
 
         public async Task<IActionResult> OnGetSlotsAsync(string? vehicleType)
         {
-            var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType);
-            return new JsonResult(slots ?? new List<AvailableSlotDto>());
+            var slotsResult = await _parkingSlotService.GetEmployeeSlotsAsync(new EmployeeSlotFilterDto
+            {
+                PageNumber = 1,
+                PageSize = 1000
+            });
+
+            var slots = slotsResult?.Items?
+                .Where(slot => IsEmptySlotStatus(slot.Status))
+                .Where(slot => VehicleTypeMatches(slot.VehicleType, vehicleType))
+                .Select(slot => new AvailableSlotDto
+                {
+                    SlotId = slot.SlotId,
+                    Location = slot.Location,
+                    VehicleType = slot.VehicleType,
+                    Status = slot.Status
+                })
+                .ToList() ?? new List<AvailableSlotDto>();
+
+            return new JsonResult(slots);
         }
 
         public async Task<IActionResult> OnPostCreateAsync(
@@ -259,6 +279,59 @@ namespace ParkingManagement.FE.Pages.Customer
         {
             var normalized = status.ToLower().Trim();
             return normalized.Contains("hủy") || normalized.Contains("cancel");
+        }
+
+        private static bool IsEmptySlotStatus(string? status)
+        {
+            var normalized = NormalizeVietnameseText(status);
+            return normalized == "trong" || normalized == "empty" || normalized == "available";
+        }
+
+        private static bool VehicleTypeMatches(string? slotVehicleType, string? requestedVehicleType)
+        {
+            if (string.IsNullOrWhiteSpace(requestedVehicleType))
+            {
+                return true;
+            }
+
+            return NormalizeVehicleType(slotVehicleType) == NormalizeVehicleType(requestedVehicleType);
+        }
+
+        private static string NormalizeVehicleType(string? value)
+        {
+            var normalized = NormalizeVietnameseText(value);
+
+            if (normalized.Contains("may") || normalized.Contains("motor"))
+            {
+                return "motorcycle";
+            }
+
+            if (normalized.Contains("nho") || normalized.Contains("small"))
+            {
+                return "small-car";
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
+                return "large-car";
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizeVietnameseText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var chars = normalized
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                .Select(c => c == 'đ' ? 'd' : c == 'Đ' ? 'd' : c);
+
+            return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
         }
     }
 

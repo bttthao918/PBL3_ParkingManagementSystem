@@ -6,16 +6,16 @@ using ParkingManagement.DAL.Models;
 
 namespace ParkingManagement.Web.Controllers.Api
 {
-    /// <summary>
-    /// API chấm công cho nhân viên
-    /// Bắt đầu ca / Kết thúc ca / Xem lịch sử
-    /// </summary>
     [ApiController]
     [Route("api/worklogs")]
     [Authorize(Roles = "Employee")]
     [Produces("application/json")]
     public class WorkLogController : ControllerBase
     {
+        private const string ScheduledStatus = "Đã lên lịch";
+        private const string WorkingStatus = "Đang làm";
+        private const string CompletedStatus = "Hoàn thành";
+
         private readonly AppDbContext _db;
         private readonly ILogger<WorkLogController> _logger;
 
@@ -25,18 +25,16 @@ namespace ParkingManagement.Web.Controllers.Api
             _logger = logger;
         }
 
-        /// <summary>
-        /// Lấy trạng thái ca hiện tại của nhân viên (đang trong ca hay không)
-        /// Tự động đóng ca nếu quá 12 giờ hoặc qua ngày mới
-        /// </summary>
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentStatus()
         {
             var employeeId = GetEmployeeId();
-            if (employeeId == null) return Unauthorized(new { message = "Không xác định được nhân viên" });
+            if (employeeId == null)
+                return Unauthorized(new { message = "Không xác định được nhân viên" });
 
             var activeLog = await _db.WorkLogs
-                .Where(w => w.EmployeeId == employeeId && w.Status == "Đang làm")
+                .Include(w => w.ShiftSchedule)
+                .Where(w => w.EmployeeId == employeeId && w.Status == WorkingStatus)
                 .OrderByDescending(w => w.StartTime)
                 .FirstOrDefaultAsync();
 
@@ -49,14 +47,12 @@ namespace ParkingManagement.Web.Controllers.Api
                 });
             }
 
-            // Auto-close: nếu ca kéo dài quá 12 giờ hoặc qua ngày mới
             var now = DateTime.Now;
             var elapsed = (now - activeLog.StartTime).TotalHours;
             var isNextDay = activeLog.StartTime.Date < now.Date;
 
             if (elapsed > 12 || isNextDay)
             {
-                // Tự động đóng ca lúc 23:59 ngày bắt đầu (hoặc sau 12h)
                 var autoEndTime = isNextDay
                     ? activeLog.StartTime.Date.AddHours(23).AddMinutes(59)
                     : activeLog.StartTime.AddHours(12);
@@ -64,19 +60,26 @@ namespace ParkingManagement.Web.Controllers.Api
                 var totalMinutes = (int)(autoEndTime - activeLog.StartTime).TotalMinutes;
                 activeLog.EndTime = autoEndTime;
                 activeLog.TotalMinutes = totalMinutes;
-                activeLog.Status = "Hoàn thành";
-                activeLog.Note = (activeLog.Note ?? "") + " [Tự động đóng - quên kết thúc ca]";
+                activeLog.Status = CompletedStatus;
+                activeLog.Note = AppendNote(activeLog.Note, "Tự động đóng - quên kết thúc ca");
+
+                if (activeLog.ShiftSchedule != null)
+                {
+                    activeLog.ShiftSchedule.Status = CompletedStatus;
+                }
+
                 await _db.SaveChangesAsync();
 
-                _logger.LogWarning("Auto-closed shift {WorkLogId} for employee {EmployeeId} (forgot to end)", activeLog.WorkLogId, employeeId);
+                _logger.LogWarning("Auto-closed work log {WorkLogId} for employee {EmployeeId}", activeLog.WorkLogId, employeeId);
 
                 return Ok(new
                 {
                     isWorking = false,
-                    message = $"Ca trước đã được tự động đóng (quên bấm kết thúc). Tổng: {totalMinutes / 60}h {totalMinutes % 60}p.",
+                    message = $"Ca trước đã được tự động đóng. Tổng: {totalMinutes / 60}h {totalMinutes % 60}p.",
                     autoClosedShift = new
                     {
                         workLogId = activeLog.WorkLogId,
+                        scheduleId = activeLog.ScheduleId,
                         startTime = activeLog.StartTime,
                         endTime = autoEndTime,
                         totalMinutes
@@ -90,6 +93,8 @@ namespace ParkingManagement.Web.Controllers.Api
             {
                 isWorking = true,
                 workLogId = activeLog.WorkLogId,
+                scheduleId = activeLog.ScheduleId,
+                shiftType = activeLog.ShiftSchedule?.ShiftType,
                 startTime = activeLog.StartTime,
                 durationMinutes = duration,
                 note = activeLog.Note,
@@ -97,68 +102,104 @@ namespace ParkingManagement.Web.Controllers.Api
             });
         }
 
-        /// <summary>
-        /// Bắt đầu ca làm việc
-        /// </summary>
         [HttpPost("start")]
         public async Task<IActionResult> StartShift([FromBody] StartShiftDto? dto)
         {
             var employeeId = GetEmployeeId();
-            if (employeeId == null) return Unauthorized(new { message = "Không xác định được nhân viên" });
+            if (employeeId == null)
+                return Unauthorized(new { message = "Không xác định được nhân viên" });
 
-            // Kiểm tra đã có ca đang mở chưa
             var activeLog = await _db.WorkLogs
-                .FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.Status == "Đang làm");
+                .FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.Status == WorkingStatus);
 
             if (activeLog != null)
             {
                 return BadRequest(new
                 {
                     success = false,
-                    message = $"Bạn đang trong ca làm việc (bắt đầu lúc {activeLog.StartTime:HH:mm}). Vui lòng kết thúc ca trước."
+                    message = $"Bạn đang trong ca làm việc bắt đầu lúc {activeLog.StartTime:HH:mm}. Vui lòng kết thúc ca trước."
                 });
             }
 
             var now = DateTime.Now;
-            var workLogId = "WL" + now.ToString("yyyyMMddHHmmss") + new Random().Next(100, 999);
+            var schedule = await FindStartableScheduleAsync(employeeId, dto?.ScheduleId, now.Date);
+            if (schedule == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Bạn chưa có ca được phân công hôm nay hoặc ca đã hoàn thành."
+                });
+            }
 
+            if (schedule.Status == WorkingStatus)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Ca này đang được tính là đang hoạt động."
+                });
+            }
+
+            if (schedule.Status == CompletedStatus)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Ca này đã hoàn thành, không thể bắt đầu lại."
+                });
+            }
+
+            if (schedule.Status != ScheduledStatus)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = $"Ca này đang ở trạng thái {schedule.Status}, không thể bắt đầu."
+                });
+            }
+
+            var workLogId = "WL" + now.ToString("yyyyMMddHHmmss") + Random.Shared.Next(100, 999);
             var workLog = new WorkLog
             {
                 WorkLogId = workLogId,
                 EmployeeId = employeeId,
-                WorkDate = now.Date,
+                ScheduleId = schedule.ScheduleId,
+                WorkDate = schedule.WorkDate.Date,
                 StartTime = now,
                 EndTime = null,
                 TotalMinutes = null,
                 Note = dto?.Note,
-                Status = "Đang làm"
+                Status = WorkingStatus
             };
+
+            schedule.Status = WorkingStatus;
 
             _db.WorkLogs.Add(workLog);
             await _db.SaveChangesAsync();
 
-            _logger.LogInformation("Employee {EmployeeId} started shift at {Time}", employeeId, now);
+            _logger.LogInformation("Employee {EmployeeId} started schedule {ScheduleId} at {Time}", employeeId, schedule.ScheduleId, now);
 
             return Ok(new
             {
                 success = true,
-                message = $"Bắt đầu ca lúc {now:HH:mm}",
+                message = $"Bắt đầu ca {schedule.ShiftType} lúc {now:HH:mm}",
                 workLogId,
+                scheduleId = schedule.ScheduleId,
                 startTime = now
             });
         }
 
-        /// <summary>
-        /// Kết thúc ca làm việc
-        /// </summary>
         [HttpPost("end")]
         public async Task<IActionResult> EndShift([FromBody] EndShiftDto? dto)
         {
             var employeeId = GetEmployeeId();
-            if (employeeId == null) return Unauthorized(new { message = "Không xác định được nhân viên" });
+            if (employeeId == null)
+                return Unauthorized(new { message = "Không xác định được nhân viên" });
 
             var activeLog = await _db.WorkLogs
-                .FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.Status == "Đang làm");
+                .Include(w => w.ShiftSchedule)
+                .FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.Status == WorkingStatus);
 
             if (activeLog == null)
             {
@@ -174,33 +215,33 @@ namespace ParkingManagement.Web.Controllers.Api
 
             activeLog.EndTime = now;
             activeLog.TotalMinutes = totalMinutes;
-            activeLog.Status = "Hoàn thành";
+            activeLog.Status = CompletedStatus;
             if (!string.IsNullOrWhiteSpace(dto?.Note))
             {
-                activeLog.Note = (activeLog.Note ?? "") + " | " + dto.Note;
+                activeLog.Note = AppendNote(activeLog.Note, dto.Note);
+            }
+
+            if (activeLog.ShiftSchedule != null)
+            {
+                activeLog.ShiftSchedule.Status = CompletedStatus;
             }
 
             await _db.SaveChangesAsync();
 
-            _logger.LogInformation("Employee {EmployeeId} ended shift at {Time}, total {Minutes} min", employeeId, now, totalMinutes);
-
-            var hours = totalMinutes / 60;
-            var mins = totalMinutes % 60;
+            _logger.LogInformation("Employee {EmployeeId} ended work log {WorkLogId} at {Time}, total {Minutes} min", employeeId, activeLog.WorkLogId, now, totalMinutes);
 
             return Ok(new
             {
                 success = true,
-                message = $"Kết thúc ca lúc {now:HH:mm}. Tổng: {hours} giờ {mins} phút.",
+                message = $"Kết thúc ca lúc {now:HH:mm}. Tổng: {totalMinutes / 60} giờ {totalMinutes % 60} phút.",
                 workLogId = activeLog.WorkLogId,
+                scheduleId = activeLog.ScheduleId,
                 startTime = activeLog.StartTime,
                 endTime = now,
                 totalMinutes
             });
         }
 
-        /// <summary>
-        /// Lấy lịch sử chấm công của nhân viên
-        /// </summary>
         [HttpGet("history")]
         public async Task<IActionResult> GetHistory(
             [FromQuery] DateTime? fromDate,
@@ -209,12 +250,14 @@ namespace ParkingManagement.Web.Controllers.Api
             [FromQuery] int pageSize = 20)
         {
             var employeeId = GetEmployeeId();
-            if (employeeId == null) return Unauthorized(new { message = "Không xác định được nhân viên" });
+            if (employeeId == null)
+                return Unauthorized(new { message = "Không xác định được nhân viên" });
 
             var from = fromDate?.Date ?? DateTime.Now.AddMonths(-1).Date;
             var to = toDate?.Date ?? DateTime.Now.Date;
 
             var query = _db.WorkLogs
+                .Include(w => w.ShiftSchedule)
                 .Where(w => w.EmployeeId == employeeId && w.WorkDate >= from && w.WorkDate <= to)
                 .OrderByDescending(w => w.StartTime);
 
@@ -225,6 +268,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 .Select(w => new
                 {
                     w.WorkLogId,
+                    w.ScheduleId,
+                    ShiftType = w.ShiftSchedule != null ? w.ShiftSchedule.ShiftType : null,
                     w.WorkDate,
                     w.StartTime,
                     w.EndTime,
@@ -234,9 +279,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 })
                 .ToListAsync();
 
-            // Thống kê
             var completedLogs = await _db.WorkLogs
-                .Where(w => w.EmployeeId == employeeId && w.WorkDate >= from && w.WorkDate <= to && w.Status == "Hoàn thành")
+                .Where(w => w.EmployeeId == employeeId && w.WorkDate >= from && w.WorkDate <= to && w.Status == CompletedStatus)
                 .ToListAsync();
 
             var totalWorkDays = completedLogs.Select(w => w.WorkDate).Distinct().Count();
@@ -258,50 +302,66 @@ namespace ParkingManagement.Web.Controllers.Api
             });
         }
 
-        /// <summary>
-        /// Lấy thống kê tháng hiện tại
-        /// </summary>
         [HttpGet("monthly-summary")]
         public async Task<IActionResult> GetMonthlySummary()
         {
             var employeeId = GetEmployeeId();
-            if (employeeId == null) return Unauthorized(new { message = "Không xác định được nhân viên" });
+            if (employeeId == null)
+                return Unauthorized(new { message = "Không xác định được nhân viên" });
 
             var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var today = DateTime.Now.Date;
 
             var logs = await _db.WorkLogs
-                .Where(w => w.EmployeeId == employeeId && w.WorkDate >= firstDayOfMonth && w.WorkDate <= today && w.Status == "Hoàn thành")
+                .Where(w => w.EmployeeId == employeeId && w.WorkDate >= firstDayOfMonth && w.WorkDate <= today && w.Status == CompletedStatus)
                 .ToListAsync();
 
             var totalDays = logs.Select(w => w.WorkDate).Distinct().Count();
             var totalMinutes = logs.Sum(w => w.TotalMinutes ?? 0);
-            var totalHours = totalMinutes / 60;
-            var avgHoursPerDay = totalDays > 0 ? Math.Round(totalMinutes / 60.0 / totalDays, 1) : 0;
 
             return Ok(new
             {
                 totalDays,
                 totalMinutes,
-                totalHours,
-                averageHoursPerDay = avgHoursPerDay,
+                totalHours = totalMinutes / 60,
+                averageHoursPerDay = totalDays > 0 ? Math.Round(totalMinutes / 60.0 / totalDays, 1) : 0,
                 month = DateTime.Now.Month,
                 year = DateTime.Now.Year
             });
         }
 
-        // ── Helper ──
+        private async Task<ShiftSchedule?> FindStartableScheduleAsync(string employeeId, string? scheduleId, DateTime today)
+        {
+            var query = _db.ShiftSchedules
+                .Where(s => s.EmployeeId == employeeId);
+
+            if (!string.IsNullOrWhiteSpace(scheduleId))
+            {
+                return await query.FirstOrDefaultAsync(s => s.ScheduleId == scheduleId && s.WorkDate == today);
+            }
+
+            return await query
+                .Where(s => s.WorkDate == today && s.Status == ScheduledStatus)
+                .OrderBy(s => s.Status == WorkingStatus ? 0 : 1)
+                .ThenBy(s => s.StartTime)
+                .FirstOrDefaultAsync();
+        }
+
+        private static string AppendNote(string? current, string note)
+        {
+            return string.IsNullOrWhiteSpace(current) ? note : $"{current} | {note}";
+        }
+
         private string? GetEmployeeId()
         {
-            // JWT token dùng claim "employeeId", cookie dùng "related_id"
             return User.FindFirst("employeeId")?.Value
                 ?? User.FindFirst("related_id")?.Value;
         }
     }
 
-    // ── DTOs ──
     public class StartShiftDto
     {
+        public string? ScheduleId { get; set; }
         public string? Note { get; set; }
     }
 

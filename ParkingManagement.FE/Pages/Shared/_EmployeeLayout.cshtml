@@ -13,6 +13,11 @@
         <i class="fa-solid fa-house"></i> Tổng quan
     </a>
 
+    <a asp-page="/Employee/ShiftManagement"
+           class="@(currentPath.Contains("/Employee/ShiftManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-clock"></i> Ca làm việc
+    </a>
+
     <p>VẬN HÀNH</p>
 
     <a asp-page="/Employee/ParkingOperation"

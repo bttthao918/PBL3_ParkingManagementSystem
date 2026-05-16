@@ -24,8 +24,9 @@ namespace ParkingManagement.BLL.Validators
             if (string.IsNullOrWhiteSpace(dto.VehicleType))
                 return (false, "Loại xe không được để trống.");
 
-            var validTypes = new[] { "Xe máy", "Ô tô nhỏ", "Ô tô lớn" };
-            if (!validTypes.Contains(dto.VehicleType))
+            var normalizedVehicleType = NormalizeVehicleType(dto.VehicleType);
+            var validTypes = new[] { "motorcycle", "small-car", "large-car" };
+            if (!validTypes.Contains(normalizedVehicleType))
                 return (false, "Loại xe không hợp lệ. Vui lòng chọn: Xe máy, Ô tô nhỏ, Ô tô lớn.");
 
             // Kiểm tra ExpectedTime
@@ -40,6 +41,43 @@ namespace ParkingManagement.BLL.Validators
                 return (false, "SlotId tối đa 20 ký tự.");
 
             return (true, null);
+        }
+
+        private static string NormalizeVehicleType(string? value)
+        {
+            var normalized = NormalizeVietnameseText(value);
+
+            if (normalized.Contains("may") || normalized.Contains("motor"))
+            {
+                return "motorcycle";
+            }
+
+            if (normalized.Contains("nho") || normalized.Contains("small"))
+            {
+                return "small-car";
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
+                return "large-car";
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizeVietnameseText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var chars = normalized
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                .Select(c => c == 'đ' ? 'd' : c == 'Đ' ? 'd' : c);
+
+            return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
         }
     }
 }

@@ -178,14 +178,16 @@ document.addEventListener("DOMContentLoaded", function () {
             const error = document.getElementById("step2Error");
             error.classList.add("hidden");
 
-            // If there are available slots displayed, user must pick one
-            const availableSlots = Array.from(currentSlotButtons).filter(s => s.dataset.selectable === "true");
-            if (availableSlots.length > 0 && !selectedSlotCode) {
-                showStepError("step2Error", "Vui lòng chọn một chỗ đỗ hoặc nhấn 'Chọn ngẫu nhiên'.");
+            if (!selectedSlotCode) {
+                const availableSlots = Array.from(currentSlotButtons).filter(s => s.dataset.selectable === "true");
+                const message = availableSlots.length > 0
+                    ? "Vui lòng chọn một chỗ đỗ hoặc nhấn 'Chọn ngẫu nhiên' trước khi tiếp tục."
+                    : "Hiện không có chỗ đỗ trống phù hợp với loại xe đã chọn.";
+
+                showStepError("step2Error", message);
                 return;
             }
 
-            // If no slots available at all, allow proceeding (system will assign)
             populateConfirmation();
             setStep("3");
         });
@@ -214,6 +216,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelNewVehicleBtn = document.getElementById("cancelNewVehicleBtn");
     const newVehiclePlate = document.getElementById("newVehiclePlate");
     const newVehicleType = document.getElementById("newVehicleType");
+    const savedVehiclesStorageKey = "parking.customer.savedVehicles";
+
+    loadSavedVehiclesFromStorage();
+
+    if (savedVehicleSelect) {
+        savedVehicleSelect.addEventListener("change", async function () {
+            clearSelectedSlot();
+
+            if (isStepActive("2")) {
+                const vehicleInfo = getSelectedVehicle();
+                await loadSlotsForVehicleType(vehicleInfo.type);
+            }
+        });
+    }
 
     if (showNewVehicleFormBtn) {
         showNewVehicleFormBtn.addEventListener("click", () => {
@@ -244,11 +260,22 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add to select
             const value = plate + "|" + vehicle;
             const option = new Option(plate + " - " + vehicle, value, true, true);
-            savedVehicleSelect.add(option);
-            savedVehicleSelect.value = value;
+            upsertSavedVehicleOption(option);
+            saveVehicleToStorage(plate, vehicle);
 
             newVehicleForm.classList.add("hidden");
             clearNewVehicleForm();
+            clearSelectedSlot();
+        });
+    }
+
+    const createBookingForm = document.getElementById("createBookingForm");
+    if (createBookingForm) {
+        createBookingForm.addEventListener("submit", function () {
+            const vehicle = getSelectedVehicle();
+            if (vehicle.plate && vehicle.type) {
+                saveVehicleToStorage(vehicle.plate, vehicle.type);
+            }
         });
     }
 
@@ -264,6 +291,67 @@ document.addEventListener("DOMContentLoaded", function () {
         if (newVehicleType) newVehicleType.value = "Xe máy";
         const errorEl = document.getElementById("newVehicleError");
         if (errorEl) errorEl.classList.add("hidden");
+    }
+
+    function upsertSavedVehicleOption(option) {
+        if (!savedVehicleSelect) return;
+
+        const existing = Array.from(savedVehicleSelect.options)
+            .find(item => item.value.toLowerCase() === option.value.toLowerCase());
+
+        if (existing) {
+            existing.text = option.text;
+            savedVehicleSelect.value = existing.value;
+            return;
+        }
+
+        savedVehicleSelect.add(option);
+        savedVehicleSelect.value = option.value;
+    }
+
+    function loadSavedVehiclesFromStorage() {
+        if (!savedVehicleSelect) return;
+
+        getStoredVehicles().forEach(vehicle => {
+            const option = new Option(
+                vehicle.plate + " - " + vehicle.type,
+                vehicle.plate + "|" + vehicle.type
+            );
+            upsertSavedVehicleOption(option);
+        });
+    }
+
+    function saveVehicleToStorage(plate, type) {
+        const normalizedPlate = (plate || "").trim().toUpperCase();
+        const normalizedType = (type || "").trim();
+
+        if (!normalizedPlate || !normalizedType) return;
+
+        const vehicles = getStoredVehicles()
+            .filter(vehicle => vehicle.plate.toLowerCase() !== normalizedPlate.toLowerCase());
+
+        vehicles.unshift({
+            plate: normalizedPlate,
+            type: normalizedType
+        });
+
+        localStorage.setItem(savedVehiclesStorageKey, JSON.stringify(vehicles.slice(0, 10)));
+    }
+
+    function getStoredVehicles() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(savedVehiclesStorageKey) || "[]");
+            if (!Array.isArray(parsed)) return [];
+
+            return parsed
+                .filter(vehicle => vehicle && vehicle.plate && vehicle.type)
+                .map(vehicle => ({
+                    plate: String(vehicle.plate).trim().toUpperCase(),
+                    type: String(vehicle.type).trim()
+                }));
+        } catch {
+            return [];
+        }
     }
 
     // ── Slot selection ──
@@ -299,19 +387,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error("API returned " + response.status);
             }
 
-            const slots = await response.json();
+            const matchingSlots = await response.json();
 
-            if (zoneCapacity) zoneCapacity.textContent = slots.length + " chỗ trống";
+            if (zoneCapacity) zoneCapacity.textContent = matchingSlots.length + " chỗ trống";
 
-            if (slots.length === 0) {
-                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Hiện không có chỗ đỗ trống cho ' + vehicleType + '. Bạn vẫn có thể đặt chỗ và hệ thống sẽ tự phân bổ.</p>';
+            if (matchingSlots.length === 0) {
+                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Hiện không có chỗ đỗ trống cho ' + vehicleType + '.</p>';
                 currentSlotButtons = [];
                 return;
             }
 
             // Render slot buttons
             parkingMap.innerHTML = "";
-            slots.forEach(function (slot) {
+            matchingSlots.forEach(function (slot) {
                 const btn = document.createElement("button");
                 btn.type = "button";
                 btn.className = "slot empty";
@@ -368,6 +456,21 @@ document.addEventListener("DOMContentLoaded", function () {
         // Clear error
         const error = document.getElementById("step2Error");
         if (error) error.classList.add("hidden");
+    }
+
+    function clearSelectedSlot() {
+        selectedSlotCode = "";
+        selectedSlotPosition = "";
+        if (selectedSlotText) selectedSlotText.textContent = "Chưa chọn";
+        currentSlotButtons.forEach(slot => slot.classList.remove("selected"));
+
+        const error = document.getElementById("step2Error");
+        if (error) error.classList.add("hidden");
+    }
+
+    function isStepActive(step) {
+        const panel = document.querySelector('.wizard-panel[data-step="' + step + '"]');
+        return !!panel && panel.classList.contains("active");
     }
 
     function getAntiForgeryToken() {

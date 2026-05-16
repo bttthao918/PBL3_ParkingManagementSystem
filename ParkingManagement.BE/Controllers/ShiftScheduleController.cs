@@ -204,7 +204,8 @@ namespace ParkingManagement.Web.Controllers.Api
             var today = DateTime.Today;
             var todayShift = await _db.ShiftSchedules
                 .Where(s => s.EmployeeId == employeeId && s.WorkDate == today)
-                .OrderBy(s => s.StartTime)
+                .OrderBy(s => s.Status == "Đang làm" ? 0 : s.Status == "Đã lên lịch" ? 1 : 2)
+                .ThenBy(s => s.StartTime)
                 .Select(s => new
                 {
                     s.ScheduleId,
