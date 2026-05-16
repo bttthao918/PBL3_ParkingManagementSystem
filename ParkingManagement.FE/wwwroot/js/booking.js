@@ -192,22 +192,22 @@ document.addEventListener("DOMContentLoaded", function () {
             const error = document.getElementById("step2Error");
             error.classList.add("hidden");
 
-            const slotButtons = Array.from(currentSlotButtons);
-            const availableSlots = slotButtons.filter(s => s.dataset.selectable === "true");
-            if (slotButtons.length === 0) {
-                showStepError("step2Error", "Không có dữ liệu chỗ đỗ phù hợp với loại xe đã chọn.");
-                return;
-            }
+const slotButtons = Array.from(currentSlotButtons);
+const availableSlots = slotButtons.filter(s => s.dataset.selectable === "true");
+if (slotButtons.length === 0) {
+    showStepError("step2Error", "Không có dữ liệu chỗ đỗ phù hợp với loại xe đã chọn.");
+    return;
+}
 
-            if (availableSlots.length === 0) {
-                showStepError("step2Error", "Hiện không còn chỗ trống cho loại xe này.");
-                return;
-            }
+if (availableSlots.length === 0) {
+    showStepError("step2Error", "Hiện không còn chỗ trống cho loại xe này.");
+    return;
+}
 
-            if (!selectedSlotCode) {
-                showStepError("step2Error", "Vui lòng chọn một chỗ đỗ trống hoặc nhấn 'Chọn ngẫu nhiên'.");
-                return;
-            }
+if (!selectedSlotCode) {
+    showStepError("step2Error", "Vui lòng chọn một chỗ đỗ trống hoặc nhấn 'Chọn ngẫu nhiên'.");
+    return;
+}
 
             populateConfirmation();
             setStep("3");
@@ -237,6 +237,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelNewVehicleBtn = document.getElementById("cancelNewVehicleBtn");
     const newVehiclePlate = document.getElementById("newVehiclePlate");
     const newVehicleType = document.getElementById("newVehicleType");
+    const savedVehiclesStorageKey = "parking.customer.savedVehicles";
+
+    loadSavedVehiclesFromStorage();
+
+    if (savedVehicleSelect) {
+        savedVehicleSelect.addEventListener("change", async function () {
+            clearSelectedSlot();
+
+            if (isStepActive("2")) {
+                const vehicleInfo = getSelectedVehicle();
+                await loadSlotsForVehicleType(vehicleInfo.type);
+            }
+        });
+    }
 
     if (showNewVehicleFormBtn) {
         showNewVehicleFormBtn.addEventListener("click", () => {
@@ -267,11 +281,22 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add to select
             const value = plate + "|" + vehicle;
             const option = new Option(plate + " - " + vehicle, value, true, true);
-            savedVehicleSelect.add(option);
-            savedVehicleSelect.value = value;
+            upsertSavedVehicleOption(option);
+            saveVehicleToStorage(plate, vehicle);
 
             newVehicleForm.classList.add("hidden");
             clearNewVehicleForm();
+            clearSelectedSlot();
+        });
+    }
+
+    const createBookingForm = document.getElementById("createBookingForm");
+    if (createBookingForm) {
+        createBookingForm.addEventListener("submit", function () {
+            const vehicle = getSelectedVehicle();
+            if (vehicle.plate && vehicle.type) {
+                saveVehicleToStorage(vehicle.plate, vehicle.type);
+            }
         });
     }
 
@@ -287,6 +312,67 @@ document.addEventListener("DOMContentLoaded", function () {
         if (newVehicleType) newVehicleType.value = "Xe máy";
         const errorEl = document.getElementById("newVehicleError");
         if (errorEl) errorEl.classList.add("hidden");
+    }
+
+    function upsertSavedVehicleOption(option) {
+        if (!savedVehicleSelect) return;
+
+        const existing = Array.from(savedVehicleSelect.options)
+            .find(item => item.value.toLowerCase() === option.value.toLowerCase());
+
+        if (existing) {
+            existing.text = option.text;
+            savedVehicleSelect.value = existing.value;
+            return;
+        }
+
+        savedVehicleSelect.add(option);
+        savedVehicleSelect.value = option.value;
+    }
+
+    function loadSavedVehiclesFromStorage() {
+        if (!savedVehicleSelect) return;
+
+        getStoredVehicles().forEach(vehicle => {
+            const option = new Option(
+                vehicle.plate + " - " + vehicle.type,
+                vehicle.plate + "|" + vehicle.type
+            );
+            upsertSavedVehicleOption(option);
+        });
+    }
+
+    function saveVehicleToStorage(plate, type) {
+        const normalizedPlate = (plate || "").trim().toUpperCase();
+        const normalizedType = (type || "").trim();
+
+        if (!normalizedPlate || !normalizedType) return;
+
+        const vehicles = getStoredVehicles()
+            .filter(vehicle => vehicle.plate.toLowerCase() !== normalizedPlate.toLowerCase());
+
+        vehicles.unshift({
+            plate: normalizedPlate,
+            type: normalizedType
+        });
+
+        localStorage.setItem(savedVehiclesStorageKey, JSON.stringify(vehicles.slice(0, 10)));
+    }
+
+    function getStoredVehicles() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(savedVehiclesStorageKey) || "[]");
+            if (!Array.isArray(parsed)) return [];
+
+            return parsed
+                .filter(vehicle => vehicle && vehicle.plate && vehicle.type)
+                .map(vehicle => ({
+                    plate: String(vehicle.plate).trim().toUpperCase(),
+                    type: String(vehicle.type).trim()
+                }));
+        } catch {
+            return [];
+        }
     }
 
     // ── Slot selection ──
@@ -325,24 +411,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error("API returned " + response.status + ": " + errorText);
             }
 
-            const slots = await response.json();
-            const normalizedSlots = Array.isArray(slots)
-                ? slots.map(normalizeSlot).filter(slot => slot.slotId)
-                : [];
-            const availableCount = normalizedSlots.filter(isSlotSelectable).length;
+const slots = await response.json();
+const normalizedSlots = Array.isArray(slots)
+    ? slots.map(normalizeSlot).filter(slot => slot.slotId)
+    : [];
+const availableCount = normalizedSlots.filter(isSlotSelectable).length;
 
-            if (zoneCapacity) zoneCapacity.textContent = availableCount + "/" + normalizedSlots.length + " chỗ trống";
+if (zoneCapacity) zoneCapacity.textContent = availableCount + "/" + normalizedSlots.length + " chỗ trống";
 
-            if (normalizedSlots.length === 0) {
-                parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Không có dữ liệu chỗ đỗ phù hợp cho ' + vehicleType + '.</p>';
-                currentSlotButtons = [];
-                return;
-            }
+if (normalizedSlots.length === 0) {
+    parkingMap.innerHTML = '<p class="no-slots-msg"><i class="fa-solid fa-circle-info"></i> Không có dữ liệu chỗ đỗ phù hợp cho ' + vehicleType + '.</p>';
+    currentSlotButtons = [];
+    return;
+}
 
-            // Render slot buttons
-            parkingMap.innerHTML = "";
-            normalizedSlots.forEach(function (slot) {
-                const selectable = isSlotSelectable(slot);
+// Render slot buttons
+parkingMap.innerHTML = "";
+normalizedSlots.forEach(function (slot) {
+    const selectable = isSlotSelectable(slot);
                 const btn = document.createElement("button");
                 btn.type = "button";
                 btn.className = "slot " + getSlotStatusClass(slot.status);
@@ -460,6 +546,21 @@ document.addEventListener("DOMContentLoaded", function () {
         // Clear error
         const error = document.getElementById("step2Error");
         if (error) error.classList.add("hidden");
+    }
+
+    function clearSelectedSlot() {
+        selectedSlotCode = "";
+        selectedSlotPosition = "";
+        if (selectedSlotText) selectedSlotText.textContent = "Chưa chọn";
+        currentSlotButtons.forEach(slot => slot.classList.remove("selected"));
+
+        const error = document.getElementById("step2Error");
+        if (error) error.classList.add("hidden");
+    }
+
+    function isStepActive(step) {
+        const panel = document.querySelector('.wizard-panel[data-step="' + step + '"]');
+        return !!panel && panel.classList.contains("active");
     }
 
     function getAntiForgeryToken() {

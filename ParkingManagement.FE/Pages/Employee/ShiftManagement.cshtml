@@ -1,0 +1,282 @@
+@page
+@model ParkingManagement.FE.Pages.Employee.ShiftManagementModel
+@{
+    var todayShift = Model.TodayShift?.Shift;
+    var startTime = todayShift?.StartTime ?? "";
+    var endTime = todayShift?.EndTime ?? "";
+    var startedAt = Model.WorkStatus?.StartTime?.ToString("HH:mm");
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/employee/shift_management.css" />
+}
+
+<div class="employee-shift-page">
+    <div class="shift-greeting">
+        <div>
+            <h2>Ca làm việc</h2>
+            <p>@Model.EmployeeName · @(string.IsNullOrWhiteSpace(Model.EmployeeCode) ? "Nhân viên bãi xe" : Model.EmployeeCode)</p>
+        </div>
+        <div class="shift-date-badge">
+            <i class="fa-solid fa-calendar-day"></i>
+            @Model.FormatVietnameseDate(Model.Today)
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ShiftMessage))
+    {
+        <div class="shift-alert @(Model.ShiftSuccess ? "success" : "error")">
+            <i class="fa-solid @(Model.ShiftSuccess ? "fa-circle-check" : "fa-circle-xmark")"></i>
+            @Model.ShiftMessage
+        </div>
+    }
+
+    <section class="shift-hero-card"
+             data-shift-start="@startTime"
+             data-shift-end="@endTime">
+        <div class="shift-hero-top">
+            <span>Ca làm hôm nay</span>
+            <div class="live-status @Model.CurrentShiftStatusClass">
+                <span></span>
+                @(Model.WorkStatus?.IsWorking == true ? "Đang làm việc" : todayShift?.Status ?? "Chưa có ca")
+            </div>
+        </div>
+
+        <div class="shift-hero-main">
+            <div>
+                <h1>@Model.CurrentShiftName</h1>
+                <div class="shift-meta-line">
+                    <span class="shift-time-pill">@Model.CurrentShiftTime</span>
+                    @if (todayShift != null)
+                    {
+                        <span>@todayShift.Status</span>
+                    }
+                </div>
+            </div>
+            <div class="shift-clock-block">
+                <strong id="shiftLiveClock">--:--:--</strong>
+                <span>Giờ hiện tại</span>
+            </div>
+        </div>
+
+        <div class="shift-progress">
+            <div>
+                <span>Tiến độ ca làm</span>
+                <strong id="shiftProgressText">--</strong>
+            </div>
+            <div class="shift-progress-track">
+                <span id="shiftProgressFill"></span>
+            </div>
+            <div class="shift-progress-times">
+                <span>@(string.IsNullOrWhiteSpace(startTime) ? "--:--" : startTime)</span>
+                <span id="shiftRemaining">--</span>
+                <span>@(string.IsNullOrWhiteSpace(endTime) ? "--:--" : endTime)</span>
+            </div>
+        </div>
+
+        <div class="shift-action-row">
+            @if (Model.CanEndShift)
+            {
+                <button type="button" class="shift-action started" disabled>
+                    <i class="fa-solid fa-circle-check"></i>
+                    Đã bắt đầu@(string.IsNullOrWhiteSpace(startedAt) ? "" : $" · {startedAt}")
+                </button>
+                <form method="post" asp-page-handler="EndShift">
+                    <button type="submit" class="shift-action end"
+                            onclick="return confirmSubmit(this.form, 'Kết thúc ca', 'Xác nhận kết thúc ca làm việc?', 'warning')">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Kết thúc ca
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form method="post" asp-page-handler="StartShift">
+                    <input type="hidden" name="scheduleId" value="@todayShift?.ScheduleId" />
+                    @if (Model.CanStartShift)
+                    {
+                        <button type="submit" class="shift-action start"
+                                onclick="return confirmSubmit(this.form, 'Bắt đầu ca', 'Xác nhận bắt đầu ca làm việc?', 'success')">
+                            <i class="fa-solid fa-play"></i>
+                            Bắt đầu ca
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="shift-action start" disabled>
+                            <i class="fa-solid fa-play"></i>
+                            Bắt đầu ca
+                        </button>
+                    }
+                </form>
+                <button type="button" class="shift-action muted" disabled>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Kết thúc ca
+                </button>
+            }
+        </div>
+
+        <div class="shift-note">
+            @if (Model.WorkStatus?.IsWorking == true)
+            {
+                <span>Bắt đầu lúc <strong>@Model.WorkStatus.StartTime?.ToString("HH:mm")</strong> · Đã làm <strong>@(Model.WorkStatus.DurationMinutes / 60)h @(Model.WorkStatus.DurationMinutes % 60)p</strong></span>
+            }
+            else if (todayShift != null)
+            {
+                <span>Ca này chỉ được tính hoạt động sau khi bạn bấm <strong>Bắt đầu ca</strong>.</span>
+            }
+            else
+            {
+                <span>Hôm nay bạn chưa được phân ca.</span>
+            }
+        </div>
+    </section>
+
+    <div class="shift-dashboard-grid">
+        <section class="shift-panel">
+            <div class="shift-panel-head">
+                <i class="fa-solid fa-calendar-week"></i>
+                <h3>Lịch ca tuần này</h3>
+            </div>
+            <div class="week-shift-strip">
+                @foreach (var day in Model.WeekDays)
+                {
+                    var shift = day.Shift;
+                    var hasShift = shift != null;
+                    var shiftClass = hasShift ? Model.GetShiftClass(shift!.ShiftType, shift.Status) : "off";
+                    <div class="week-day @(day.WorkDate.Date == DateTime.Today ? "today" : "")">
+                        <span>@day.DayLabel</span>
+                        <strong>@day.WorkDate.Day</strong>
+                        <div class="week-shift-dot @shiftClass"
+                             title="@(hasShift ? $"{shift!.ShiftType} · {shift.StartTime}-{shift.EndTime}" : "Nghỉ")">
+                            @if (hasShift && Model.IsCompleted(shift!.Status))
+                            {
+                                <i class="fa-solid fa-check"></i>
+                            }
+                            else
+                            {
+                                @Model.GetShiftInitial(shift?.ShiftType)
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="shift-legend">
+                <span><i class="morning"></i>Ca sáng</span>
+                <span><i class="afternoon"></i>Ca chiều</span>
+                <span><i class="night"></i>Ca tối</span>
+                <span><i class="done"></i>Hoàn thành</span>
+            </div>
+        </section>
+
+        <section class="shift-panel">
+            <div class="shift-panel-head">
+                <i class="fa-solid fa-chart-simple"></i>
+                <h3>Thống kê tháng này</h3>
+            </div>
+            <div class="shift-mini-stats">
+                <div>
+                    <strong>@(Model.MonthlySummary?.TotalDays ?? 0)</strong>
+                    <span>Ngày đã làm</span>
+                </div>
+                <div>
+                    <strong>@(Model.MonthlySummary?.TotalHours ?? 0)h</strong>
+                    <span>Tổng giờ làm</span>
+                </div>
+                <div>
+                    <strong>@Model.MyWeekShifts.Count</strong>
+                    <span>Ca tuần này</span>
+                </div>
+                <div>
+                    <strong>@((Model.MonthlySummary?.AverageHoursPerDay ?? 0).ToString("0.0"))h</strong>
+                    <span>TB mỗi ngày</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="shift-panel">
+        <div class="shift-panel-head">
+            <i class="fa-solid fa-bell"></i>
+            <h3>Thông báo ca làm</h3>
+        </div>
+        <div class="shift-notifications">
+            @if (todayShift != null)
+            {
+                <div>
+                    <i class="fa-solid fa-calendar-check green"></i>
+                    <p>Ca hôm nay: <strong>@todayShift.ShiftType</strong> từ @todayShift.StartTime đến @todayShift.EndTime.</p>
+                </div>
+            }
+            @foreach (var upcoming in Model.MyWeekShifts.Where(s => s.WorkDate.Date > DateTime.Today).Take(2))
+            {
+                <div>
+                    <i class="fa-solid fa-clock blue"></i>
+                    <p>@upcoming.WorkDate.ToString("dd/MM"): <strong>@upcoming.ShiftType</strong> @upcoming.StartTime - @upcoming.EndTime.</p>
+                </div>
+            }
+            @if (todayShift == null && !Model.MyWeekShifts.Any(s => s.WorkDate.Date > DateTime.Today))
+            {
+                <div>
+                    <i class="fa-solid fa-circle-info blue"></i>
+                    <p>Chưa có thông báo ca làm mới trong tuần này.</p>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const card = document.querySelector(".shift-hero-card");
+            const clock = document.getElementById("shiftLiveClock");
+            const fill = document.getElementById("shiftProgressFill");
+            const text = document.getElementById("shiftProgressText");
+            const remaining = document.getElementById("shiftRemaining");
+
+            function parseTime(value, base) {
+                if (!value || !value.includes(":")) return null;
+                const [h, m] = value.split(":").map(Number);
+                const d = new Date(base);
+                d.setHours(h || 0, m || 0, 0, 0);
+                return d;
+            }
+
+            function pad(n) {
+                return String(n).padStart(2, "0");
+            }
+
+            function tick() {
+                const now = new Date();
+                if (clock) {
+                    clock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+                }
+
+                const start = parseTime(card?.dataset.shiftStart, now);
+                const end = parseTime(card?.dataset.shiftEnd, now);
+                if (!start || !end) {
+                    if (text) text.textContent = "--";
+                    if (remaining) remaining.textContent = "Chưa có ca";
+                    return;
+                }
+
+                if (end <= start) end.setDate(end.getDate() + 1);
+                const total = end - start;
+                const elapsed = Math.max(0, Math.min(now - start, total));
+                const pct = Math.round((elapsed / total) * 100);
+
+                if (fill) fill.style.width = `${pct}%`;
+                if (text) text.textContent = `${pct}%`;
+
+                const rem = Math.max(0, end - now);
+                const rh = Math.floor(rem / 3600000);
+                const rm = Math.floor((rem % 3600000) / 60000);
+                if (remaining) remaining.textContent = rem > 0 ? `Còn ${rh}h ${rm}p` : "Đã hết giờ ca";
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        })();
+    </script>
+}

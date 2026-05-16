@@ -48,5 +48,7 @@ namespace ParkingManagement.DAL.Models
         // Navigation
         [ForeignKey("EmployeeId")]
         public Employee Employee { get; set; } = null!;
+
+        public ICollection<WorkLog> WorkLogs { get; set; } = new List<WorkLog>();
     }
 }

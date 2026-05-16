@@ -14,15 +14,18 @@ namespace ParkingManagement.FE.Pages.Customer
 
         private readonly ICustomerApiService _customerApiService;
         private readonly IReservationService _reservationService;
+        private readonly IParkingSlotService _parkingSlotService;
         private readonly ILogger<BookingModel> _logger;
 
         public BookingModel(
             ICustomerApiService customerApiService,
             IReservationService reservationService,
+            IParkingSlotService parkingSlotService,
             ILogger<BookingModel> logger)
         {
             _customerApiService = customerApiService;
             _reservationService = reservationService;
+            _parkingSlotService = parkingSlotService;
             _logger = logger;
         }
 
@@ -48,18 +51,18 @@ namespace ParkingManagement.FE.Pages.Customer
 
         public async Task<IActionResult> OnGetSlotsAsync(string? vehicleType)
         {
-            _logger.LogInformation("OnGetSlotsAsync called with vehicleType: {VehicleType}", vehicleType);
-            try
-            {
-                var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType, includeUnavailable: true);
-                _logger.LogInformation("OnGetSlotsAsync returned {Count} slots", slots?.Count ?? 0);
-                return new JsonResult(slots ?? new List<AvailableSlotDto>());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "OnGetSlotsAsync error");
-                return new JsonResult(new List<AvailableSlotDto>());
-            }
+_logger.LogInformation("OnGetSlotsAsync called with vehicleType: {VehicleType}", vehicleType);
+try
+{
+    var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType, includeUnavailable: true);
+    _logger.LogInformation("OnGetSlotsAsync returned {Count} slots", slots?.Count ?? 0);
+    return new JsonResult(slots ?? new List<AvailableSlotDto>());
+}
+catch (Exception ex)
+{
+    _logger.LogError(ex, "OnGetSlotsAsync error");
+    return new JsonResult(new List<AvailableSlotDto>());
+}
         }
 
         public async Task<IActionResult> OnPostCreateAsync(
@@ -286,6 +289,59 @@ namespace ParkingManagement.FE.Pages.Customer
         {
             var normalized = status.ToLower().Trim();
             return normalized.Contains("hủy") || normalized.Contains("cancel");
+        }
+
+        private static bool IsEmptySlotStatus(string? status)
+        {
+            var normalized = NormalizeVietnameseText(status);
+            return normalized == "trong" || normalized == "empty" || normalized == "available";
+        }
+
+        private static bool VehicleTypeMatches(string? slotVehicleType, string? requestedVehicleType)
+        {
+            if (string.IsNullOrWhiteSpace(requestedVehicleType))
+            {
+                return true;
+            }
+
+            return NormalizeVehicleType(slotVehicleType) == NormalizeVehicleType(requestedVehicleType);
+        }
+
+        private static string NormalizeVehicleType(string? value)
+        {
+            var normalized = NormalizeVietnameseText(value);
+
+            if (normalized.Contains("may") || normalized.Contains("motor"))
+            {
+                return "motorcycle";
+            }
+
+            if (normalized.Contains("nho") || normalized.Contains("small"))
+            {
+                return "small-car";
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
+                return "large-car";
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizeVietnameseText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var chars = normalized
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                .Select(c => c == 'đ' ? 'd' : c == 'Đ' ? 'd' : c);
+
+            return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
         }
     }
 

@@ -75,9 +75,9 @@ namespace ParkingManagement.FE.Pages.Employee
             MyWeekShifts = await _shiftService.GetMyWeekAsync() ?? new List<Services.ShiftMyWeekItem>();
         }
 
-        public async Task<IActionResult> OnPostStartShiftAsync()
+        public async Task<IActionResult> OnPostStartShiftAsync(string? scheduleId)
         {
-            var result = await _workLogService.StartShiftAsync();
+            var result = await _workLogService.StartShiftAsync(scheduleId);
             ShiftSuccess = result?.Success ?? false;
             ShiftMessage = result?.Message ?? "Không thể bắt đầu ca.";
             return RedirectToPage();

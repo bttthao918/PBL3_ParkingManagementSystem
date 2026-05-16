@@ -24,6 +24,7 @@ namespace ParkingManagement.FE.Pages.Admin
 
         public List<EmployeeViewModel> Employees { get; set; } = new();
         public ManagerEmployeeDetailDto? SelectedEmployee { get; set; }
+        public List<EmployeeShiftDayView> SelectedEmployeeWeekShifts { get; set; } = new();
         public int TotalEmployees { get; set; }
         public int TotalActive { get; set; }
         public int TotalInactive { get; set; }
@@ -70,6 +71,8 @@ namespace ParkingManagement.FE.Pages.Admin
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => TotalPages > 0 && PageNumber < TotalPages;
         public bool IsDeletedFolder => IsDeletedStatus(Status);
+        public DateTime CurrentWeekStart => GetMondayOfWeek(DateTime.Today);
+        public DateTime CurrentWeekEnd => CurrentWeekStart.AddDays(6);
         public decimal ActiveRate => TotalAllEmployees == 0 ? 0 : TotalActive * 100m / TotalAllEmployees;
         public decimal InactiveRate => TotalAllEmployees == 0 ? 0 : TotalInactive * 100m / TotalAllEmployees;
         public decimal DeletedRate => TotalAllEmployees == 0 ? 0 : TotalDeleted * 100m / TotalAllEmployees;
@@ -240,11 +243,26 @@ namespace ParkingManagement.FE.Pages.Admin
             return RedirectToPage(BuildRouteValues(employeeId));
         }
 
-        public async Task<IActionResult> OnPostCreateShiftAsync(string employeeId, DateTime workDate, string shiftType)
+        public async Task<IActionResult> OnPostCreateShiftAsync(string employeeId, DateTime workDate, string shiftType, string? note)
         {
-            var result = await _shiftService.CreateAsync(employeeId, workDate, shiftType);
+            var result = await _shiftService.CreateAsync(employeeId, workDate, shiftType, note);
             ActionSuccess = result?.Success ?? false;
             ActionMessage = result?.Message ?? "Không thể tạo ca.";
+            return RedirectToPage(BuildRouteValues(employeeId));
+        }
+
+        public async Task<IActionResult> OnPostDeleteShiftAsync(string employeeId, string scheduleId)
+        {
+            if (string.IsNullOrWhiteSpace(employeeId) || string.IsNullOrWhiteSpace(scheduleId))
+            {
+                ActionSuccess = false;
+                ActionMessage = "Không tìm thấy ca cần xóa.";
+                return RedirectToPage(BuildRouteValues(employeeId));
+            }
+
+            var result = await _shiftService.DeleteAsync(scheduleId);
+            ActionSuccess = result?.Success ?? false;
+            ActionMessage = result?.Message ?? "Không thể xóa ca.";
             return RedirectToPage(BuildRouteValues(employeeId));
         }
 
@@ -313,7 +331,35 @@ namespace ParkingManagement.FE.Pages.Admin
             if (!string.IsNullOrWhiteSpace(SelectedEmployeeId))
             {
                 SelectedEmployee = await _employeeService.GetEmployeeDetailAsync(SelectedEmployeeId);
+                await LoadSelectedEmployeeWeekShiftsAsync(SelectedEmployeeId);
             }
+        }
+
+        private async Task LoadSelectedEmployeeWeekShiftsAsync(string employeeId)
+        {
+            var week = await _shiftService.GetWeekScheduleAsync(CurrentWeekStart);
+            var schedules = week?.Schedules
+                .Where(s => s.EmployeeId == employeeId)
+                .ToList() ?? new List<ShiftScheduleItem>();
+
+            SelectedEmployeeWeekShifts = Enumerable.Range(0, 7)
+                .Select(offset =>
+                {
+                    var date = CurrentWeekStart.AddDays(offset).Date;
+                    var daySchedules = schedules
+                        .Where(s => s.WorkDate.Date == date)
+                        .OrderBy(s => ParseTime(s.StartTime))
+                        .ToList();
+
+                    return new EmployeeShiftDayView
+                    {
+                        WorkDate = date,
+                        DayLabel = GetVietnameseDayLabel(date),
+                        IsToday = date == DateTime.Today,
+                        Schedules = daySchedules
+                    };
+                })
+                .ToList();
         }
 
         private object BuildRouteValues(string? selectedEmployeeId = null)
@@ -368,6 +414,81 @@ namespace ParkingManagement.FE.Pages.Admin
                    status.Contains("vo", StringComparison.OrdinalIgnoreCase) ||
                    status.Contains("disabled", StringComparison.OrdinalIgnoreCase);
         }
+
+        public static string GetShiftBadgeClass(string? shiftType)
+        {
+            if (string.IsNullOrWhiteSpace(shiftType))
+                return "none";
+
+            if (shiftType.Contains("SÃ¡ng", StringComparison.OrdinalIgnoreCase) ||
+                shiftType.Contains("Sáng", StringComparison.OrdinalIgnoreCase))
+                return "morning";
+
+            if (shiftType.Contains("Chiá»u", StringComparison.OrdinalIgnoreCase) ||
+                shiftType.Contains("Chiều", StringComparison.OrdinalIgnoreCase))
+                return "afternoon";
+
+            if (shiftType.Contains("Tá»‘i", StringComparison.OrdinalIgnoreCase) ||
+                shiftType.Contains("Tối", StringComparison.OrdinalIgnoreCase))
+                return "night";
+
+            return "none";
+        }
+
+        public static string GetScheduleStatusClass(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return "planned";
+
+            if (status.Contains("Äang", StringComparison.OrdinalIgnoreCase) ||
+                status.Contains("Đang", StringComparison.OrdinalIgnoreCase))
+                return "working";
+
+            if (status.Contains("HoÃ n", StringComparison.OrdinalIgnoreCase) ||
+                status.Contains("Hoàn", StringComparison.OrdinalIgnoreCase))
+                return "done";
+
+            return "planned";
+        }
+
+        public static bool CanDeleteSchedule(string? status)
+        {
+            var statusClass = GetScheduleStatusClass(status);
+            return statusClass != "working" && statusClass != "done";
+        }
+
+        private static DateTime GetMondayOfWeek(DateTime date)
+        {
+            var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+            return date.AddDays(-diff).Date;
+        }
+
+        private static TimeSpan ParseTime(string? value)
+        {
+            return TimeSpan.TryParse(value, out var time) ? time : TimeSpan.Zero;
+        }
+
+        private static string GetVietnameseDayLabel(DateTime date)
+        {
+            return date.DayOfWeek switch
+            {
+                DayOfWeek.Monday => "T2",
+                DayOfWeek.Tuesday => "T3",
+                DayOfWeek.Wednesday => "T4",
+                DayOfWeek.Thursday => "T5",
+                DayOfWeek.Friday => "T6",
+                DayOfWeek.Saturday => "T7",
+                _ => "CN"
+            };
+        }
+    }
+
+    public class EmployeeShiftDayView
+    {
+        public DateTime WorkDate { get; set; }
+        public string DayLabel { get; set; } = "";
+        public bool IsToday { get; set; }
+        public List<ShiftScheduleItem> Schedules { get; set; } = new();
     }
 
     public class CreateEmployeeFormInput

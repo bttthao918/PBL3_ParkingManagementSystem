@@ -96,6 +96,7 @@
                 </div>
             </div>
             <form method="post" asp-page-handler="StartShift">
+                <input type="hidden" name="scheduleId" value="@Model.TodayShift?.Shift?.ScheduleId" />
                 <button type="submit" class="shift-btn start"
                         onclick="return confirmSubmit(this.form, 'Bắt đầu ca', 'Xác nhận bắt đầu ca làm việc?', 'success')">
                     <i class="fa-solid fa-play"></i> Bắt đầu ca

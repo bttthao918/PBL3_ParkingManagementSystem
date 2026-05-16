@@ -117,22 +117,22 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<ReservationDto>.Fail("Không tìm thấy khách hàng.");
 
-            var vehicleSyncError = await SyncReservationVehicleAsync(dto);
-            if (!string.IsNullOrEmpty(vehicleSyncError))
-                return ServiceResult<ReservationDto>.Fail(vehicleSyncError);
+var vehicleSyncError = await SyncReservationVehicleAsync(dto);
+if (!string.IsNullOrEmpty(vehicleSyncError))
+    return ServiceResult<ReservationDto>.Fail(vehicleSyncError);
 
-            string? slotId = dto.PreferredSlotId?.Trim();
-            if (!string.IsNullOrEmpty(slotId))
-            {
-                var preferred = await _slotRepo.GetByIdAsync(slotId);
-                if (preferred == null)
-                    return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không tồn tại.");
+string? slotId = dto.PreferredSlotId?.Trim();
+if (!string.IsNullOrEmpty(slotId))
+{
+    var preferred = await _slotRepo.GetByIdAsync(slotId);
+    if (preferred == null)
+        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không tồn tại.");
 
-                if (!string.Equals(preferred.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
-                    return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không phù hợp với loại xe.");
+    if (!string.Equals(preferred.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
+        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không phù hợp với loại xe.");
 
-                if (preferred.Status != "Trống")
-                    return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không còn trống. Vui lòng chọn chỗ khác.");
+    if (preferred.Status != "Trống")
+        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không còn trống. Vui lòng chọn chỗ khác.");
             }
 
             if (string.IsNullOrEmpty(slotId))
@@ -147,8 +147,8 @@ namespace ParkingManagement.BLL.Services.Implementations
             var reservation = new Reservation
             {
                 ReservationId = id,
-                CustomerId = customerId,
-                VehiclePlate = dto.VehiclePlate,
+CustomerId = customerId,
+VehiclePlate = dto.VehiclePlate,
                 SlotId = slotId,
                 ExpectedTime = dto.ExpectedTime,
                 CreatedAt = DateTime.Now,

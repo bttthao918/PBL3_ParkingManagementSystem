@@ -4,11 +4,13 @@
     "Projects": [
       {
         "Path": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "ParkingManagement.FE"
       },
       {
         "Path": "ParkingManagement.BE\\BackendAPI.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "http"
       }
     ]
   }

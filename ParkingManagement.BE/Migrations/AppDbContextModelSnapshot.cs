@@ -3963,6 +3963,10 @@ namespace BackendAPI.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("ScheduleId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -3980,6 +3984,8 @@ namespace BackendAPI.Migrations
                     b.HasKey("WorkLogId");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ScheduleId");
 
                     b.ToTable("WorkLogs");
                 });
@@ -4151,7 +4157,14 @@ namespace BackendAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ParkingManagement.DAL.Models.ShiftSchedule", "ShiftSchedule")
+                        .WithMany("WorkLogs")
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Employee");
+
+                    b.Navigation("ShiftSchedule");
                 });
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.Account", b =>
@@ -4175,6 +4188,11 @@ namespace BackendAPI.Migrations
             modelBuilder.Entity("ParkingManagement.DAL.Models.Manager", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("ParkingManagement.DAL.Models.ShiftSchedule", b =>
+                {
+                    b.Navigation("WorkLogs");
                 });
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.MonthlyTicket", b =>

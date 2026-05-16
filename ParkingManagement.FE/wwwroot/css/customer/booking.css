@@ -587,6 +587,20 @@ body.modal-open {
     font-size: 13px;
 }
 
+.zone-summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: #334155;
+}
+
+.zone-summary span {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
 .dot {
     width: 9px;
     height: 9px;
@@ -630,6 +644,7 @@ body.modal-open {
     padding: 12px 6px;
     border: 1px solid transparent;
     cursor: pointer;
+    font: inherit;
 }
 
     .slot span {
