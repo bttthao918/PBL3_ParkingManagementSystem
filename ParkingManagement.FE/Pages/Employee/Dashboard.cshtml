@@ -5,13 +5,12 @@
 }
 
 <div class="kpi-grid">
-
     <div class="card kpi-card">
         <div class="kpi-icon blue"><i class="fa-solid fa-ticket"></i></div>
         <div>
             <p>Tổng vé đã xử lý</p>
             <h2>@Model.Stats.TicketsProcessedThisMonth</h2>
-            <span class="up">↑ 15.2%</span>
+            <span class="up">Hôm nay: @Model.Stats.TicketsProcessedToday vé</span>
         </div>
     </div>
 
@@ -20,7 +19,7 @@
         <div>
             <p>Doanh thu cá nhân</p>
             <h2>@Model.Stats.RevenueThisMonth.ToString("N0") đ</h2>
-            <span class="up">↑ 12.4%</span>
+            <span class="up">Tuần này: @Model.Stats.RevenueThisWeek.ToString("N0") đ</span>
         </div>
     </div>
 
@@ -36,15 +35,13 @@
     <div class="card kpi-card">
         <div class="kpi-icon green"><i class="fa-solid fa-bullseye"></i></div>
         <div>
-            <p>Tỷ lệ hoàn thành</p>
-            <h2>92%</h2>
-            <span class="badge-success">Đạt mục tiêu</span>
+            <p>Trung bình mỗi ngày</p>
+            <h2>@Model.Stats.AverageTicketsPerDay.ToString("0.0") vé</h2>
+            <span>TB/vé: @Model.Stats.AverageRevenuePerTicket.ToString("N0") đ</span>
         </div>
     </div>
-
 </div>
 
-<!-- Chấm công -->
 <div class="card shift-card">
     @if (!string.IsNullOrWhiteSpace(Model.ShiftMessage))
     {
@@ -119,10 +116,10 @@
 </div>
 
 <div class="card chart-card">
-    <h3>Doanh thu theo ngày</h3>
+    <h3>Doanh thu 7 ngày gần đây</h3>
 
     <svg viewBox="0 0 1000 260" preserveAspectRatio="none">
-        <polyline points="0,210 90,170 180,190 270,130 360,150 450,110 540,95 630,120 720,100 810,125 900,105 1000,90"
+        <polyline points="@Model.RevenueChartPoints"
                   fill="none"
                   stroke="#0d8bff"
                   stroke-width="4" />
@@ -130,7 +127,6 @@
 </div>
 
 <div class="card tabs">
-
     <div class="tab-header">
         <button class="active" onclick="showEmployeeTab(0)">Vé mới nhất</button>
         <button onclick="showEmployeeTab(1)">Ca làm việc</button>
@@ -145,24 +141,35 @@
                 <th>Thời gian</th>
                 <th>Trạng thái</th>
             </tr>
-            @foreach (var ticket in Model.RecentTickets)
+            @if (Model.RecentTickets.Count == 0)
             {
                 <tr>
-                    <td>@ticket.TicketId</td>
-                    <td>@ticket.CustomerName</td>
-                    <td>@ticket.VehicleType</td>
-                    <td>@ticket.CheckInTime</td>
-                    <td>
-                        @if (ticket.Status == "Đang trong bãi")
-                        {
-                            <span class="status-warning">@ticket.Status</span>
-                        }
-                        else
-                        {
-                            <span class="status-success">@ticket.Status</span>
-                        }
+                    <td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">
+                        Chưa có vé mới.
                     </td>
                 </tr>
+            }
+            else
+            {
+                @foreach (var ticket in Model.RecentTickets)
+                {
+                    <tr>
+                        <td>@ticket.TicketId</td>
+                        <td>@(ticket.CustomerName ?? ticket.VehiclePlate)</td>
+                        <td>@ticket.VehicleType</td>
+                        <td>@ticket.CheckInTime.ToString("dd/MM HH:mm")</td>
+                        <td>
+                            @if (ticket.Status.Contains("Đang", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="status-warning">@ticket.Status</span>
+                            }
+                            else
+                            {
+                                <span class="status-success">@ticket.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
             }
         </table>
     </div>
@@ -194,11 +201,11 @@
                         <td>@shift.StartTime</td>
                         <td>@shift.EndTime</td>
                         <td>
-                            @if (shift.Status == "Đang làm")
+                            @if (shift.Status.Contains("Đang", StringComparison.OrdinalIgnoreCase))
                             {
                                 <span class="status-warning">@shift.Status</span>
                             }
-                            else if (shift.Status == "Hoàn thành")
+                            else if (shift.Status.Contains("Hoàn", StringComparison.OrdinalIgnoreCase))
                             {
                                 <span class="status-success">@shift.Status</span>
                             }
@@ -212,7 +219,6 @@
             }
         </table>
     </div>
-
 </div>
 
 <script>

@@ -46,7 +46,6 @@ public class AuthenticateModel : PageModel
         ActiveTab ??= "login";
         ForgotStep ??= "email";
         LoginInput.Email = LoginEmail ?? string.Empty;
-        LoginInput.Password = string.Empty;
 
         if (!string.IsNullOrWhiteSpace(ForgotEmail))
         {

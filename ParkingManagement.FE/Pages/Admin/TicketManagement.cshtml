@@ -1,7 +1,7 @@
 @page
 @model ParkingManagement.FE.Pages.Admin.TicketManagementModel
 @{
-    ViewData["Title"] = "Quản lý vé";
+    ViewData["Title"] = "Quản lý vé lượt";
     ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
     ViewData["Role"] = "Quản trị hệ thống";
 }
@@ -59,131 +59,83 @@
             <input type="hidden" asp-for="PageNumber" />
             <input type="hidden" asp-for="PageSize" />
 
-            <div class="ticket-pricing-grid">
-                <div class="ticket-price-editor">
-                    <div class="ticket-price-editor-head">
-                        <span class="ticket-price-icon motorcycle"><i class="fa-solid fa-motorcycle"></i></span>
+            <div class="price-grid">
+                <div class="price-card green">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
                         <div>
-                            <span>Xe máy</span>
-                            <strong>@Model.PricingInput.MotorcycleHourlyRate.ToString("N0") đ <small>/ giờ</small></strong>
+                            <h4>Xe máy</h4>
+                            <h2>@Model.PricingInput.MotorcycleHourlyRate.ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
-
-                    <label>
-                        <span>Theo giờ</span>
-                        <input asp-for="PricingInput.MotorcycleHourlyRate" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>Tối đa / ngày</span>
-                        <input asp-for="PricingInput.MotorcycleMaxDailyFee" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <div class="ticket-price-minimum">
-                        <span>Tối thiểu</span>
-                        <strong>15 phút</strong>
+                    <div class="price-lines">
+                        <label>
+                            <span>Theo giờ</span>
+                            <input asp-for="PricingInput.MotorcycleHourlyRate" type="number" min="1000" step="1000" />
+                        </label>
+                        <label>
+                            <span>Tối đa / ngày</span>
+                            <input asp-for="PricingInput.MotorcycleMaxDailyFee" type="number" min="1000" step="1000" />
+                        </label>
+                        <div>
+                            <span>Tối thiểu</span>
+                            <strong>15 phút</strong>
+                        </div>
                     </div>
-
-                    <div class="ticket-price-section-title">Vé tháng</div>
-
-                    <label>
-                        <span>1 tháng</span>
-                        <input asp-for="PricingInput.MotorcycleMonthlyOneMonth" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>3 tháng</span>
-                        <input asp-for="PricingInput.MotorcycleMonthlyThreeMonth" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>6 tháng</span>
-                        <input asp-for="PricingInput.MotorcycleMonthlySixMonth" type="number" min="1000" step="1000" />
-                    </label>
                 </div>
 
-                <div class="ticket-price-editor">
-                    <div class="ticket-price-editor-head">
-                        <span class="ticket-price-icon small-car"><i class="fa-solid fa-car"></i></span>
+                <div class="price-card blue">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
                         <div>
-                            <span>Ô tô nhỏ</span>
-                            <strong>@Model.PricingInput.SmallCarHourlyRate.ToString("N0") đ <small>/ giờ</small></strong>
+                            <h4>Ô tô nhỏ</h4>
+                            <h2>@Model.PricingInput.SmallCarHourlyRate.ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
-
-                    <label>
-                        <span>Theo giờ</span>
-                        <input asp-for="PricingInput.SmallCarHourlyRate" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>Tối đa / ngày</span>
-                        <input asp-for="PricingInput.SmallCarMaxDailyFee" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <div class="ticket-price-minimum">
-                        <span>Tối thiểu</span>
-                        <strong>15 phút</strong>
+                    <div class="price-lines">
+                        <label>
+                            <span>Theo giờ</span>
+                            <input asp-for="PricingInput.SmallCarHourlyRate" type="number" min="1000" step="1000" />
+                        </label>
+                        <label>
+                            <span>Tối đa / ngày</span>
+                            <input asp-for="PricingInput.SmallCarMaxDailyFee" type="number" min="1000" step="1000" />
+                        </label>
+                        <div>
+                            <span>Tối thiểu</span>
+                            <strong>30 phút</strong>
+                        </div>
                     </div>
-
-                    <div class="ticket-price-section-title">Vé tháng</div>
-
-                    <label>
-                        <span>1 tháng</span>
-                        <input asp-for="PricingInput.SmallCarMonthlyOneMonth" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>3 tháng</span>
-                        <input asp-for="PricingInput.SmallCarMonthlyThreeMonth" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>6 tháng</span>
-                        <input asp-for="PricingInput.SmallCarMonthlySixMonth" type="number" min="1000" step="1000" />
-                    </label>
                 </div>
 
-                <div class="ticket-price-editor">
-                    <div class="ticket-price-editor-head">
-                        <span class="ticket-price-icon large-car"><i class="fa-solid fa-truck"></i></span>
+                <div class="price-card purple">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
                         <div>
-                            <span>Ô tô lớn</span>
-                            <strong>@Model.PricingInput.LargeCarHourlyRate.ToString("N0") đ <small>/ giờ</small></strong>
+                            <h4>Ô tô lớn</h4>
+                            <h2>@Model.PricingInput.LargeCarHourlyRate.ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
-
-                    <label>
-                        <span>Theo giờ</span>
-                        <input asp-for="PricingInput.LargeCarHourlyRate" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>Tối đa / ngày</span>
-                        <input asp-for="PricingInput.LargeCarMaxDailyFee" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <div class="ticket-price-minimum">
-                        <span>Tối thiểu</span>
-                        <strong>15 phút</strong>
+                    <div class="price-lines">
+                        <label>
+                            <span>Theo giờ</span>
+                            <input asp-for="PricingInput.LargeCarHourlyRate" type="number" min="1000" step="1000" />
+                        </label>
+                        <label>
+                            <span>Tối đa / ngày</span>
+                            <input asp-for="PricingInput.LargeCarMaxDailyFee" type="number" min="1000" step="1000" />
+                        </label>
+                        <div>
+                            <span>Tối thiểu</span>
+                            <strong>30 phút</strong>
+                        </div>
                     </div>
-
-                    <div class="ticket-price-section-title">Vé tháng</div>
-
-                    <label>
-                        <span>1 tháng</span>
-                        <input asp-for="PricingInput.LargeCarMonthlyOneMonth" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>3 tháng</span>
-                        <input asp-for="PricingInput.LargeCarMonthlyThreeMonth" type="number" min="1000" step="1000" />
-                    </label>
-
-                    <label>
-                        <span>6 tháng</span>
-                        <input asp-for="PricingInput.LargeCarMonthlySixMonth" type="number" min="1000" step="1000" />
-                    </label>
                 </div>
             </div>
 

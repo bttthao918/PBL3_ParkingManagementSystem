@@ -141,6 +141,7 @@
                                            placeholder="Email"
                                            type="email"
                                            autocomplete="username"
+                                           autofocus
                                            autocapitalize="none"
                                            spellcheck="false" />
                                 </div>
@@ -162,7 +163,7 @@
 
                             <div class="form-options">
                                 <label>
-                                    <input asp-for="LoginInput.RememberMe" type="checkbox" />
+                                    <input asp-for="LoginInput.RememberMe" type="checkbox" checked />
                                     <span>Ghi nhớ đăng nhập</span>
                                 </label>
 

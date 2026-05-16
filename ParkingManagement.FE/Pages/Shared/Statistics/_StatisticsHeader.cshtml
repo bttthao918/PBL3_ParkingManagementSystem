@@ -6,13 +6,13 @@
         <p>@Model.Description</p>
     </div>
 
-    <div class="stat-date-filter">
+    <nav class="stat-date-filter" aria-label="Bộ lọc thời gian thống kê">
         <span class="stat-date-range">
             <i class="fa-solid fa-calendar-days"></i>
             @Model.DateRangeText
         </span>
-        <a href="?period=today" class="@(Model.ActivePeriod == "today" ? "active" : "")">Hôm nay</a>
-        <a href="?period=7days" class="@(Model.ActivePeriod == "7days" ? "active" : "")">7 ngày</a>
-        <a href="?period=30days" class="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "active" : "")">30 ngày</a>
-    </div>
+        <a href="?period=today" class="@(Model.ActivePeriod == "today" ? "active" : "")" aria-current="@(Model.ActivePeriod == "today" ? "page" : null)">Hôm nay</a>
+        <a href="?period=7days" class="@(Model.ActivePeriod == "7days" ? "active" : "")" aria-current="@(Model.ActivePeriod == "7days" ? "page" : null)">7 ngày</a>
+        <a href="?period=30days" class="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "active" : "")" aria-current="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "page" : null)">30 ngày</a>
+    </nav>
 </div>

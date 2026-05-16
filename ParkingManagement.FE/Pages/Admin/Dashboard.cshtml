@@ -1,15 +1,12 @@
 @page
 @model ParkingManagement.FE.Pages.Admin.DashboardModel
 @{
-    ViewData["Title"] = "Tổng quan Admin";
+    ViewData["Title"] = "Tổng quan";
     ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
     ViewData["Role"] = "Quản trị hệ thống";
 }
 
-
-
 <div class="kpi-grid">
-
     <div class="card kpi-card">
         <div class="kpi-icon blue"><i class="fa-solid fa-dollar-sign"></i></div>
         <div>
@@ -31,7 +28,7 @@
     <div class="card kpi-card">
         <div class="kpi-icon purple"><i class="fa-solid fa-users"></i></div>
         <div>
-            <p>Nhân sự & Khách</p>
+            <p>Nhân sự & khách</p>
             <h2>@Model.Summary.EmployeesOnline / @Model.Summary.TotalActiveEmployees NV</h2>
             <span class="up">Khách hàng: @Model.Summary.TotalCustomers.ToString("N0")</span>
         </div>
@@ -48,7 +45,6 @@
             <span>@Model.Summary.SlotUtilizationRate.ToString("0.0")% đang sử dụng</span>
         </div>
     </div>
-
 </div>
 
 <div class="card quick-actions">
@@ -64,11 +60,11 @@
 </div>
 
 <div class="card chart-card">
-    <h3>Doanh thu toàn hệ thống</h3>
+    <h3>Doanh thu 7 ngày gần đây</h3>
 
     <svg viewBox="0 0 1000 260" preserveAspectRatio="none">
         <polyline
-            points="0,210 80,180 160,190 240,145 320,160 400,120 480,100 560,130 640,90 720,60 800,85 880,115 1000,80"
+            points="@Model.RevenueChartPoints"
             fill="none"
             stroke="#0d8bff"
             stroke-width="4" />
@@ -76,29 +72,32 @@
 </div>
 
 <div class="bottom-grid">
-
     <div class="card">
-        <h3>Nhân viên hoạt động</h3>
+        <h3>Nhân viên trong hệ thống</h3>
 
         <table>
             <tr>
                 <th>Nhân viên</th>
                 <th>Ca</th>
-                <th>Vé xử lý</th>
                 <th>Trạng thái</th>
             </tr>
-            <tr>
-                <td>Nguyễn Văn An<br><small>NV001</small></td>
-                <td>Ca sáng</td>
-                <td>128</td>
-                <td><span class="status-success">Đang làm</span></td>
-            </tr>
-            <tr>
-                <td>Trần Thị Bình<br><small>NV002</small></td>
-                <td>Ca chiều</td>
-                <td>98</td>
-                <td><span class="status-success">Đang làm</span></td>
-            </tr>
+            @if (Model.Employees.Count == 0)
+            {
+                <tr>
+                    <td colspan="3">Chưa có dữ liệu nhân viên.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var employee in Model.Employees)
+                {
+                    <tr>
+                        <td>@employee.FullName<br><small>@employee.EmployeeCode</small></td>
+                        <td>@(employee.Shift ?? "-")</td>
+                        <td><span class="status-success">@employee.Status</span></td>
+                    </tr>
+                }
+            }
         </table>
     </div>
 
@@ -111,25 +110,31 @@
                 <th>Khách hàng</th>
                 <th>Trạng thái</th>
             </tr>
-            <tr>
-                <td>VE0002345</td>
-                <td>Nguyễn Văn Nam</td>
-                <td><span class="status-success">Đã xử lý</span></td>
-            </tr>
-            <tr>
-                <td>VE0002344</td>
-                <td>Trần Thị Hoa</td>
-                <td><span class="status-warning">Đang xử lý</span></td>
-            </tr>
+            @if (Model.RecentTickets.Count == 0)
+            {
+                <tr>
+                    <td colspan="3">Chưa có dữ liệu vé.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var ticket in Model.RecentTickets)
+                {
+                    <tr>
+                        <td>@ticket.TicketId</td>
+                        <td>@(ticket.CustomerName ?? ticket.VehiclePlate)</td>
+                        <td><span class="@Model.GetTicketStatusClass(ticket.Status)">@ticket.Status</span></td>
+                    </tr>
+                }
+            }
         </table>
     </div>
 
     <div class="card">
         <h3>Trạng thái chỗ đỗ</h3>
 
-        <p>Đang trống: <strong>395</strong></p>
-        <p>Đang sử dụng: <strong>855</strong></p>
-        <p>Bảo trì: <strong>15</strong></p>
+        <p>Đang trống: <strong>@Model.GetSlotEmptyCount()</strong></p>
+        <p>Đang sử dụng: <strong>@Model.Summary.OccupiedSlots.ToString("N0")</strong></p>
+        <p>Tổng chỗ: <strong>@Model.Summary.TotalSlots.ToString("N0")</strong></p>
     </div>
-
 </div>

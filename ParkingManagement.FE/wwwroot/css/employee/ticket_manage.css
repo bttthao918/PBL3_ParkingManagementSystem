@@ -1667,3 +1667,134 @@
 .pricing-note i {
     color: #94a3b8;
 }
+
+/* Copied from Customer for Beautiful Pricing Table */
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.price-card {
+    position: relative;
+    overflow: hidden;
+    padding: 24px;
+    border-radius: 22px;
+    background: white;
+    border: 2px solid #bfdbfe;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, .08);
+    transition: .25s ease;
+}
+
+    .price-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(59, 130, 246, .14), transparent 55%);
+    }
+
+    .price-card:hover {
+        transform: translateY(-4px);
+        border-color: #2563eb;
+        box-shadow: 0 16px 36px rgba(37, 99, 235, .18);
+    }
+
+    .price-card.green {
+        border-color: #86efac;
+    }
+
+    .price-card.blue {
+        border-color: #93c5fd;
+    }
+
+    .price-card.purple {
+        border-color: #c4b5fd;
+    }
+
+.price-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.price-icon {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+}
+
+.price-card.green .price-icon {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.price-card.blue .price-icon {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.price-card.purple .price-icon {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.price-top h4 {
+    margin: 0 0 8px;
+}
+
+.price-top h2 {
+    margin: 0;
+    font-size: 28px;
+}
+
+    .price-top h2 span {
+        font-size: 15px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+.price-lines {
+    position: relative;
+    display: grid;
+    gap: 14px;
+}
+
+    .price-lines div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .price-lines span {
+        color: #475569;
+    }
+
+    .price-lines strong {
+        color: #0f172a;
+    }
+
+
+.price-lines input {
+    border: 1px solid #dbe4f0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    outline: none;
+    font-weight: 700;
+    text-align: right;
+    width: 100px;
+}
+.price-lines input:focus {
+    border-color: #0d6efd;
+}
+.price-lines label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}

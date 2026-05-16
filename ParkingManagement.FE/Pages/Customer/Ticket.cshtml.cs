@@ -44,7 +44,7 @@ namespace ParkingManagement.FE.Pages.Customer
 
         private async Task LoadDataAsync()
         {
-            ViewData["Title"] = "Quản lý vé xe";
+            ViewData["Title"] = "Quản lý vé lượt";
             ViewData["Role"] = "Khách hàng";
 
             var fallbackName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";

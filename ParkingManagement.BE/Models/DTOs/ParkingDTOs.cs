@@ -20,6 +20,7 @@ namespace ParkingManagement.BLL.DTOs
     // ── Report DTOs ───────────────────────────────────────────
     public class RevenueReportDto
     {
+        public string Period { get; set; } = "month";
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public decimal TotalRevenue { get; set; }
@@ -28,13 +29,35 @@ namespace ParkingManagement.BLL.DTOs
         public decimal RevenueFromSingleTickets { get; set; }
         public decimal RevenueFromMonthlyTickets { get; set; }
         public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
+        public List<DailyRevenueDto> PreviousDailyBreakdown { get; set; } = new();
+        public List<RevenueBreakdownDto> RevenueByPaymentMethod { get; set; } = new();
+        public List<RevenueBreakdownDto> RevenueByVehicleType { get; set; } = new();
+        public List<RevenueBreakdownDto> RevenueByArea { get; set; } = new();
+        public List<RevenueRankDto> TopRevenueDays { get; set; } = new();
     }
 
     public class DailyRevenueDto
     {
         public DateTime Date { get; set; }
+        public string Label { get; set; } = "";
         public decimal Revenue { get; set; }
         public int TicketCount { get; set; }
+    }
+
+    public class RevenueBreakdownDto
+    {
+        public string Label { get; set; } = "";
+        public decimal Amount { get; set; }
+        public int Count { get; set; }
+        public decimal Percentage { get; set; }
+    }
+
+    public class RevenueRankDto
+    {
+        public string Label { get; set; } = "";
+        public decimal Amount { get; set; }
+        public int Count { get; set; }
+        public decimal ChangePercentage { get; set; }
     }
 
     // ── Manager Dashboard DTOs ────────────────────────────────
@@ -64,14 +87,26 @@ namespace ParkingManagement.BLL.DTOs
 
     public class CustomerReportDto
     {
+        public string Period { get; set; } = "30days";
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
         public int TotalCustomers { get; set; }
         public int NewCustomersThisMonth { get; set; }
+        public int NewCustomersInPeriod { get; set; }
         public int ActiveMonthlyTickets { get; set; }
         public int ExpiredMonthlyTickets { get; set; }
         public int RegularCustomers { get; set; }
         public int VIPCustomers { get; set; }
         public int OneTimeCustomers { get; set; }
+        public int WalkInTickets { get; set; }
+        public int ReturningCustomers { get; set; }
+        public List<CustomerTrendPointDto> NewCustomerTrend { get; set; } = new();
+        public List<CustomerTrendPointDto> PreviousNewCustomerTrend { get; set; } = new();
+        public List<CustomerBreakdownDto> GroupBreakdown { get; set; } = new();
+        public List<CustomerBreakdownDto> AreaBreakdown { get; set; } = new();
+        public List<CustomerReturnBucketDto> ReturnBuckets { get; set; } = new();
         public List<CustomerDetailDto> TopCustomers { get; set; } = new();
+        public List<CustomerDetailDto> NewCustomers { get; set; } = new();
     }
 
     public class CustomerDetailDto
@@ -83,6 +118,29 @@ namespace ParkingManagement.BLL.DTOs
         public decimal TotalSpent { get; set; }
         public bool HasActiveMonthlyTicket { get; set; }
         public DateTime? LastVisit { get; set; }
+        public DateTime? RegisteredAt { get; set; }
+        public decimal VisitChangePercentage { get; set; }
+    }
+
+    public class CustomerTrendPointDto
+    {
+        public DateTime Date { get; set; }
+        public string Label { get; set; } = "";
+        public int Count { get; set; }
+    }
+
+    public class CustomerBreakdownDto
+    {
+        public string Label { get; set; } = "";
+        public int Count { get; set; }
+        public decimal Percentage { get; set; }
+    }
+
+    public class CustomerReturnBucketDto
+    {
+        public string Label { get; set; } = "";
+        public int Count { get; set; }
+        public decimal Percentage { get; set; }
     }
 
     public class TopCustomerDto

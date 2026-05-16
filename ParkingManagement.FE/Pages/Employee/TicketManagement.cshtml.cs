@@ -74,7 +74,7 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public async Task OnGetAsync()
         {
-            ViewData["Title"] = "Quản lý vé";
+            ViewData["Title"] = "Quản lý vé lượt";
             ViewData["Role"] = "Nhân viên";
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
 

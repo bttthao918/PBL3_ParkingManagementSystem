@@ -1,22 +1,9 @@
+@model ParkingManagement.FE.Models.ViewModels.IRevenueStatisticsViewModel
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script>
-    window.statisticsConfig = {
-        type: "revenue",
-        line: {
-            labels: ["01/05", "02/05", "03/05", "04/05", "05/05", "06/05", "07/05", "08/05", "09/05", "10/05"],
-            current: [2.1, 2.0, 4.0, 2.7, 3.6, 6.1, 4.2, 4.1, 2.8, 4.1],
-            previous: [1.0, 0.7, 3.3, 1.2, 2.9, 3.8, 2.7, 2.9, 1.1, 3.2]
-        },
-        donut: {
-            labels: ["Tiền mặt", "Chuyển khoản"],
-            data: [68.4, 31.6]
-        },
-        bar: {
-            labels: ["Khu A", "Khu B", "Khu C"],
-            data: [32.45, 52.8, 39.25]
-        }
-    };
+    window.statisticsConfig = @Html.Raw(Model.ChartConfigJson);
 </script>
 
 <script src="/js/statistics.js" asp-append-version="true"></script>

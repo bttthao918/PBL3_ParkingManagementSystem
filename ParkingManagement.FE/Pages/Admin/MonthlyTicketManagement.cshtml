@@ -1,8 +1,78 @@
 @page
-@model ParkingManagement.FE.Pages.Employee.MonthlyTicketManagementModel
+@model ParkingManagement.FE.Pages.Admin.MonthlyTicketManagementModel
 
 @section Styles {
     <link rel="stylesheet" href="/css/employee/monthly_ticket.css" asp-append-version="true" />
+    <style>
+        .pricing-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .pricing-input-group input {
+            width: 120px;
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            text-align: right;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .pricing-input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .pricing-detail-row {
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #f3f4f6;
+        }
+        .pricing-detail-row:last-child {
+            border-bottom: none;
+        }
+        .pricing-save-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .pricing-save-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .pricing-actions-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px;
+            border-top: 1px solid #f3f4f6;
+            background: #f9fafb;
+            border-radius: 0 0 12px 12px;
+            margin-top: 16px;
+        }
+        .pricing-vehicle-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .pricing-vehicle-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+    </style>
 }
 
 <div class="monthly-page">
@@ -17,20 +87,20 @@
     <div class="page-header">
         <div>
             <h1>Quản lý vé tháng</h1>
-            <p>Xem, gia hạn và hủy vé tháng cho khách hàng</p>
+            <p>Xem danh sách và điều chỉnh bảng giá vé tháng</p>
         </div>
         <button type="button" class="secondary-btn" onclick="document.getElementById('monthlyPricingPanel').classList.toggle('open')">
-            <i class="fa-solid fa-tags"></i> Bảng giá
+            <i class="fa-solid fa-tags"></i> Bảng giá & Cập nhật
         </button>
     </div>
 
     <!-- Bảng giá vé tháng -->
     <div class="pricing-collapse" id="monthlyPricingPanel">
-        <div class="pricing-section">
+        <form method="post" asp-page-handler="UpdatePricing" class="pricing-section">
             <div class="pricing-section-header">
                 <div>
-                    <h3>Bảng giá vé tháng</h3>
-                    <p>Gửi xe không giới hạn số lần trong thời hạn. Mỗi vé áp dụng cho 1 biển số.</p>
+                    <h3>Cập nhật bảng giá vé tháng</h3>
+                    <p>Thay đổi giá vé tháng áp dụng cho từng loại xe và gói thời hạn.</p>
                 </div>
                 <button type="button" class="pricing-close-btn" onclick="document.getElementById('monthlyPricingPanel').classList.remove('open')">
                     <i class="fa-solid fa-xmark"></i>
@@ -38,15 +108,6 @@
             </div>
 
             <div class="price-grid">
-                @{
-                    var motorcycleSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.Motorcycle, 3);
-                    var motorcycleSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.Motorcycle, 6);
-                    var smallCarSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.SmallCar, 3);
-                    var smallCarSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.SmallCar, 6);
-                    var largeCarSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.LargeCar, 3);
-                    var largeCarSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.LargeCar, 6);
-                }
-                
                 <div class="price-card green">
                     <div class="price-top">
                         <div class="price-icon">
@@ -54,34 +115,28 @@
                         </div>
                         <div>
                             <h4>Xe máy</h4>
-                            <h2>@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ <span>/ tháng</span></h2>
+                            <h2>Giá vé <span>/ tháng</span></h2>
                         </div>
                     </div>
                     <div class="price-lines">
-                        <div>
+                        <label>
                             <span>1 tháng</span>
-                            <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ</strong>
-                        </div>
-                        <div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.MotorcycleMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
                             <span>3 tháng</span>
-                            <strong>
-                                @Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 3).ToString("N0") đ
-                                @if (motorcycleSaving3 > 0)
-                                {
-                                    <em style="color:#16a34a;font-size:11px;">-@motorcycleSaving3.ToString("N0") đ</em>
-                                }
-                            </strong>
-                        </div>
-                        <div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.MotorcycleMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
                             <span>6 tháng</span>
-                            <strong>
-                                @Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 6).ToString("N0") đ
-                                @if (motorcycleSaving6 > 0)
-                                {
-                                    <em style="color:#16a34a;font-size:11px;">-@motorcycleSaving6.ToString("N0") đ</em>
-                                }
-                            </strong>
-                        </div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.MotorcycleMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
                     </div>
                 </div>
 
@@ -92,34 +147,28 @@
                         </div>
                         <div>
                             <h4>Ô tô nhỏ</h4>
-                            <h2>@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ <span>/ tháng</span></h2>
+                            <h2>Giá vé <span>/ tháng</span></h2>
                         </div>
                     </div>
                     <div class="price-lines">
-                        <div>
+                        <label>
                             <span>1 tháng</span>
-                            <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ</strong>
-                        </div>
-                        <div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.SmallCarMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
                             <span>3 tháng</span>
-                            <strong>
-                                @Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 3).ToString("N0") đ
-                                @if (smallCarSaving3 > 0)
-                                {
-                                    <em style="color:#16a34a;font-size:11px;">-@smallCarSaving3.ToString("N0") đ</em>
-                                }
-                            </strong>
-                        </div>
-                        <div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.SmallCarMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
                             <span>6 tháng</span>
-                            <strong>
-                                @Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 6).ToString("N0") đ
-                                @if (smallCarSaving6 > 0)
-                                {
-                                    <em style="color:#16a34a;font-size:11px;">-@smallCarSaving6.ToString("N0") đ</em>
-                                }
-                            </strong>
-                        </div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.SmallCarMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
                     </div>
                 </div>
 
@@ -130,38 +179,44 @@
                         </div>
                         <div>
                             <h4>Ô tô lớn</h4>
-                            <h2>@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ <span>/ tháng</span></h2>
+                            <h2>Giá vé <span>/ tháng</span></h2>
                         </div>
                     </div>
                     <div class="price-lines">
-                        <div>
+                        <label>
                             <span>1 tháng</span>
-                            <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ</strong>
-                        </div>
-                        <div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.LargeCarMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
                             <span>3 tháng</span>
-                            <strong>
-                                @Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 3).ToString("N0") đ
-                                @if (largeCarSaving3 > 0)
-                                {
-                                    <em style="color:#16a34a;font-size:11px;">-@largeCarSaving3.ToString("N0") đ</em>
-                                }
-                            </strong>
-                        </div>
-                        <div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.LargeCarMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
                             <span>6 tháng</span>
-                            <strong>
-                                @Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 6).ToString("N0") đ
-                                @if (largeCarSaving6 > 0)
-                                {
-                                    <em style="color:#16a34a;font-size:11px;">-@largeCarSaving6.ToString("N0") đ</em>
-                                }
-                            </strong>
-                        </div>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.LargeCarMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="pricing-actions-container">
+                <button type="submit" class="pricing-save-btn">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu bảng giá
+                </button>
+            </div>
+            
+            <input type="hidden" name="Search" value="@Model.Search" />
+            <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+            <input type="hidden" name="VehicleTypeFilter" value="@Model.VehicleTypeFilter" />
+            <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+            <input type="hidden" name="PageSize" value="@Model.PageSize" />
+        </form>
     </div>
 
     <!-- KPI Cards -->
@@ -302,18 +357,6 @@
                                            class="icon-btn" title="Xem chi tiết">
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
-
-
-                                        @if (ticket.Status == "Hoạt động")
-                                        {
-                                            <form method="post" asp-page-handler="Cancel" style="display:inline;">
-                                                <input type="hidden" name="monthlyTicketId" value="@ticket.MonthlyTicketId" />
-                                                <button type="submit" class="icon-btn cancel-btn" title="Hủy vé"
-                                                        onclick="return confirmSubmit(this.form, 'Hủy vé tháng', 'Bạn có chắc muốn hủy vé tháng @ticket.MonthlyTicketId?', 'danger')">
-                                                    <i class="fa-solid fa-ban"></i>
-                                                </button>
-                                            </form>
-                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -474,21 +517,11 @@
                 }
             </div>
 
-            @if (Model.SelectedTicket.Status == "Hoạt động")
-            {
-                <div class="panel-actions">
-                        <form method="post" asp-page-handler="Cancel" style="display:inline;">
-                            <input type="hidden" name="monthlyTicketId" value="@Model.SelectedTicket.MonthlyTicketId" />
-                            <button type="submit" class="danger-btn"
-                                    onclick="return confirmSubmit(this.form, 'Hủy vé tháng', 'Bạn có chắc muốn hủy vé tháng này? Hành động không thể hoàn tác.', 'danger')">
-                                <i class="fa-solid fa-ban"></i> Hủy vé
-                            </button>
-                        </form>
-                </div>
-            }
+
         </aside>
     }
 </div>
+
 
 
 @section Scripts {
@@ -507,6 +540,8 @@
             return amount.toLocaleString('vi-VN') + ' đ';
         }
 
+
+
         // Close modal on overlay click
         document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
             overlay.addEventListener('click', function (e) {
@@ -515,5 +550,12 @@
                 }
             });
         });
+        
+        function confirmSubmit(form, title, message, type) {
+            if (confirm(message)) {
+                return true;
+            }
+            return false;
+        }
     </script>
 }

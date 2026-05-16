@@ -19,7 +19,11 @@
 
     <p>QUẢN LÝ</p>
     <a asp-page="/Admin/TicketManagement" class="@(currentPath.Contains("/Admin/TicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-ticket"></i> Quản lý vé
+        <i class="fa-solid fa-ticket"></i> Quản lý vé lượt
+    </a>
+    
+    <a asp-page="/Admin/MonthlyTicketManagement" class="@(currentPath.Contains("/Admin/MonthlyTicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-id-card"></i> Quản lý vé tháng
     </a>
     
     <a asp-page="/Admin/EmployeeManagement" class="@(currentPath.Contains("/Admin/EmployeeManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
@@ -35,14 +39,14 @@
     <p>THỐNG KÊ VÀ BÁO CÁO</p>
     <a asp-page="/Admin/RevenueStatistics"
            class="@(currentPath.Contains("/Admin/RevenueStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-chart-line"></i> Doanh thu
+        <i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu
     </a>
     <a asp-page="/Admin/CustomerStatistics"
            class="@(currentPath.Contains("/Admin/CustomerStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-user-group"></i> Khách hàng
+        <i class="fa-solid fa-user-group"></i> Thống kê khách hàng
     </a>
     <a asp-page="/Admin/Dashboard" asp-route-view="summary" class="@(isDashboardPath && isSummaryView ? "active" : "")">
-        <i class="fa-solid fa-chart-column"></i> Tổng hợp
+        <i class="fa-solid fa-chart-column"></i> Báo cáo tổng hợp
     </a>
 
     <p>TÀI KHOẢN</p>

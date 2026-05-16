@@ -41,75 +41,81 @@
                 </button>
             </div>
 
-            <div class="pricing-cards-row">
-                <div class="pricing-vehicle-card">
-                    <div class="pricing-vehicle-header">
-                        <div class="pricing-vehicle-icon motorcycle"><i class="fa-solid fa-motorcycle"></i></div>
+            <div class="price-grid">
+                <div class="price-card green">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
                         <div>
-                            <span class="pricing-vehicle-name">Xe máy</span>
-                            <div class="pricing-vehicle-price">@Model.GetHourlyRate(PricingDisplayDefaults.Motorcycle).ToString("N0") đ <small>/ giờ</small></div>
+                            <h4>Xe máy</h4>
+                            <h2>@Model.GetHourlyRate(PricingDisplayDefaults.Motorcycle).ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
-                    <div class="pricing-vehicle-details">
-                        <div class="pricing-detail-row">
+                    <div class="price-lines">
+                        <div>
                             <span>Theo giờ</span>
                             <strong>@Model.GetHourlyRate(PricingDisplayDefaults.Motorcycle).ToString("N0") đ</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>Tối đa / ngày</span>
                             <strong>@Model.GetMaxDailyFee(PricingDisplayDefaults.Motorcycle).ToString("N0") đ/ngày</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>Tối thiểu</span>
                             <strong>15 phút</strong>
                         </div>
                     </div>
                 </div>
 
-                <div class="pricing-vehicle-card">
-                    <div class="pricing-vehicle-header">
-                        <div class="pricing-vehicle-icon car"><i class="fa-solid fa-car"></i></div>
+                <div class="price-card blue">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
                         <div>
-                            <span class="pricing-vehicle-name">Ô tô nhỏ</span>
-                            <div class="pricing-vehicle-price">@Model.GetHourlyRate(PricingDisplayDefaults.SmallCar).ToString("N0") đ <small>/ giờ</small></div>
+                            <h4>Ô tô nhỏ</h4>
+                            <h2>@Model.GetHourlyRate(PricingDisplayDefaults.SmallCar).ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
-                    <div class="pricing-vehicle-details">
-                        <div class="pricing-detail-row">
+                    <div class="price-lines">
+                        <div>
                             <span>Theo giờ</span>
                             <strong>@Model.GetHourlyRate(PricingDisplayDefaults.SmallCar).ToString("N0") đ</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>Tối đa / ngày</span>
                             <strong>@Model.GetMaxDailyFee(PricingDisplayDefaults.SmallCar).ToString("N0") đ/ngày</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>Tối thiểu</span>
-                            <strong>15 phút</strong>
+                            <strong>30 phút</strong>
                         </div>
                     </div>
                 </div>
 
-                <div class="pricing-vehicle-card">
-                    <div class="pricing-vehicle-header">
-                        <div class="pricing-vehicle-icon truck"><i class="fa-solid fa-truck"></i></div>
+                <div class="price-card purple">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
                         <div>
-                            <span class="pricing-vehicle-name">Ô tô lớn</span>
-                            <div class="pricing-vehicle-price">@Model.GetHourlyRate(PricingDisplayDefaults.LargeCar).ToString("N0") đ <small>/ giờ</small></div>
+                            <h4>Ô tô lớn</h4>
+                            <h2>@Model.GetHourlyRate(PricingDisplayDefaults.LargeCar).ToString("N0") đ <span>/ giờ</span></h2>
                         </div>
                     </div>
-                    <div class="pricing-vehicle-details">
-                        <div class="pricing-detail-row">
+                    <div class="price-lines">
+                        <div>
                             <span>Theo giờ</span>
                             <strong>@Model.GetHourlyRate(PricingDisplayDefaults.LargeCar).ToString("N0") đ</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>Tối đa / ngày</span>
                             <strong>@Model.GetMaxDailyFee(PricingDisplayDefaults.LargeCar).ToString("N0") đ/ngày</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>Tối thiểu</span>
-                            <strong>15 phút</strong>
+                            <strong>30 phút</strong>
                         </div>
                     </div>
                 </div>

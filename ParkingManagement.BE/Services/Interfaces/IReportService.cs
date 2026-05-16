@@ -12,7 +12,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
         // ── 2. Manager Dashboard & Reports (from IManagerReportService) ──
         Task<DashboardSummaryDto> GetDashboardSummaryAsync();
         Task<RevenueReportDto> GetRevenueReportAsync(RevenueReportFilterDto filter);
-        Task<CustomerReportDto> GetCustomerReportAsync();
+        Task<CustomerReportDto> GetCustomerReportAsync(string period = "30days");
 
         // ── 3. Employee Reports (from IEmployeeReportService) ──
         Task<EmployeeDashboardDto> GetEmployeeDashboardAsync(string employeeId);

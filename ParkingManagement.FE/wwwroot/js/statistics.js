@@ -20,38 +20,51 @@
     const orange = "#ff7a00";
 
     const config = window.statisticsConfig;
+    const formatCurrency = value => {
+        const number = Number(value || 0);
+        return number.toLocaleString("vi-VN") + " đ";
+    };
+    const lineLabels = config.line?.labels || [];
+    const lineCurrent = config.line?.current || [];
+    const linePrevious = config.line?.previous || [];
+    const hasPreviousLine = linePrevious.length > 0;
 
     const lineCtx = document.getElementById("mainLineChart");
     const donutCtx = document.getElementById("mainDonutChart");
     const barCtx = document.getElementById("mainBarChart");
 
     if (lineCtx) {
+        const datasets = [
+            {
+                label: "Kỳ hiện tại",
+                data: lineCurrent,
+                borderColor: blue,
+                backgroundColor: "rgba(13, 139, 255, 0.14)",
+                fill: true,
+                tension: 0.45,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }
+        ];
+
+        if (hasPreviousLine) {
+            datasets.push({
+                label: "Kỳ trước",
+                data: linePrevious,
+                borderColor: lightBlue,
+                backgroundColor: "transparent",
+                borderDash: [6, 6],
+                fill: false,
+                tension: 0.45,
+                pointRadius: 4
+            });
+        }
+
         new Chart(lineCtx, {
             type: "line",
             data: {
-                labels: config.line.labels,
-                datasets: [
-                    {
-                        label: "Kỳ hiện tại",
-                        data: config.line.current,
-                        borderColor: blue,
-                        backgroundColor: "rgba(13, 139, 255, 0.14)",
-                        fill: true,
-                        tension: 0.45,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    },
-                    {
-                        label: "Kỳ trước",
-                        data: config.line.previous,
-                        borderColor: lightBlue,
-                        backgroundColor: "transparent",
-                        borderDash: [6, 6],
-                        fill: false,
-                        tension: 0.45,
-                        pointRadius: 4
-                    }
-                ]
+                labels: lineLabels,
+                datasets
             },
             options: {
                 responsive: true,
@@ -77,7 +90,7 @@
                             title: context => context[0].label,
                             label: context => {
                                 if (config.type === "revenue") {
-                                    return `${context.dataset.label}: ${context.raw} triệu đồng`;
+                                    return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
                                 }
 
                                 return `${context.dataset.label}: ${context.raw} khách`;
@@ -91,7 +104,7 @@
                         ticks: {
                             color: "#334155",
                             font: { size: 13, weight: "600" },
-                            callback: value => config.type === "revenue" ? value + "M" : value
+                            callback: value => config.type === "revenue" ? formatCurrency(value) : value
                         },
                         grid: { color: "#e2e8f0" }
                     },
@@ -111,9 +124,9 @@
         new Chart(donutCtx, {
             type: "doughnut",
             data: {
-                labels: config.donut.labels,
+                labels: config.donut?.labels || [],
                 datasets: [{
-                    data: config.donut.data,
+                    data: config.donut?.data || [],
                     backgroundColor: [blue, green, orange, purple],
                     borderWidth: 0,
                     cutout: "68%"
@@ -134,9 +147,9 @@
         new Chart(barCtx, {
             type: "bar",
             data: {
-                labels: config.bar.labels,
+                labels: config.bar?.labels || [],
                 datasets: [{
-                    data: config.bar.data,
+                    data: config.bar?.data || [],
                     backgroundColor: [blue, green, purple, orange],
                     borderRadius: 8,
                     barThickness: 52
@@ -154,7 +167,7 @@
                         ticks: {
                             color: "#334155",
                             font: { size: 13, weight: "600" },
-                            callback: value => config.type === "revenue" ? value + "M" : value
+                            callback: value => config.type === "revenue" ? formatCurrency(value) : value
                         },
                         grid: { color: "#e2e8f0" }
                     },

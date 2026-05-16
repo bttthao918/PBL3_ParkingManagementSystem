@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ParkingManagement.FE.Pages.Employee
@@ -13,6 +14,9 @@ namespace ParkingManagement.FE.Pages.Employee
         {
             _reportService = reportService;
         }
+
+        [BindProperty(SupportsGet = true)]
+        public string Period { get; set; } = "month";
 
         public string FromDate { get; set; } = DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy");
         public string ToDate { get; set; } = DateTime.Now.ToString("dd/MM/yyyy");
@@ -37,15 +41,19 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["Role"] = "Nhân viên";
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
 
-            // Lấy employeeId từ related_id claim (không phải NameIdentifier vì đó là AccountId)
             var employeeId = User.FindFirst("related_id")?.Value;
             if (!string.IsNullOrEmpty(employeeId))
             {
-                var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, "month");
-                var attendanceReport = await _reportService.GetShiftAttendanceReportAsync(employeeId);
-
+                Period = string.IsNullOrWhiteSpace(Period) ? "month" : Period.ToLower();
+                var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, Period);
+                
                 if (revenueReport != null)
                 {
+                    var attendanceReport = await _reportService.GetShiftAttendanceReportAsync(employeeId, revenueReport.PeriodStart, revenueReport.PeriodEnd);
+
+                    FromDate = revenueReport.PeriodStart.ToString("dd/MM/yyyy");
+                    ToDate = revenueReport.PeriodEnd.ToString("dd/MM/yyyy");
+                    
                     TotalTickets = revenueReport.TotalTickets;
                     TotalRevenue = revenueReport.TotalRevenue;
                     
@@ -58,11 +66,10 @@ namespace ParkingManagement.FE.Pages.Employee
                             TicketChartData.Add(day.TicketCount);
                         }
                     }
-                }
 
-                if (attendanceReport != null)
-                {
-                    TotalShifts = attendanceReport.TotalWorkDays;
+                    if (attendanceReport != null)
+                    {
+                        TotalShifts = attendanceReport.TotalWorkDays;
                     int hours = attendanceReport.TotalWorkMinutes / 60;
                     int mins = attendanceReport.TotalWorkMinutes % 60;
                     TotalWorkingHours = $"{hours} giờ {mins} phút";
@@ -92,6 +99,7 @@ namespace ParkingManagement.FE.Pages.Employee
                         }).ToList();
                     }
                 }
+            }
             }
 
             // Calendar Days

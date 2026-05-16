@@ -117,7 +117,7 @@ public class MonthlyTicketModel : PageModel
 
     private async Task LoadDataAsync()
     {
-        ViewData["Title"] = "Vé tháng";
+        ViewData["Title"] = "Quản lý vé tháng";
         ViewData["Role"] = "Khách hàng";
 
         var fallbackName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";

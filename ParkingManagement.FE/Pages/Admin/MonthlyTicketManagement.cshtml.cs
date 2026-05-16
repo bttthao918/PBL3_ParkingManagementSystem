@@ -5,19 +5,21 @@ using ParkingManagement.FE.Models;
 using ParkingManagement.FE.Services;
 using System.Security.Claims;
 
-namespace ParkingManagement.FE.Pages.Employee
+namespace ParkingManagement.FE.Pages.Admin
 {
-    [Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Manager,Admin")]
     public class MonthlyTicketManagementModel : PageModel
     {
         private readonly IEmployeeMonthlyTicketService _service;
+        private readonly IPricingService _pricingService;
         private const string MotorcycleType = "Xe máy";
         private const string SmallCarType = "Ô tô nhỏ";
         private const string LargeCarType = "Ô tô lớn";
 
-        public MonthlyTicketManagementModel(IEmployeeMonthlyTicketService service)
+        public MonthlyTicketManagementModel(IEmployeeMonthlyTicketService service, IPricingService pricingService)
         {
             _service = service;
+            _pricingService = pricingService;
         }
 
         // KPI
@@ -55,6 +57,9 @@ namespace ParkingManagement.FE.Pages.Employee
         // Pricing
         public List<EmployeeMonthlyTicketPricingItem> Pricing { get; set; } = new();
 
+        [BindProperty]
+        public PricingInputModel PricingInput { get; set; } = new();
+
         // Messages
         [TempData]
         public string? ActionMessage { get; set; }
@@ -65,8 +70,8 @@ namespace ParkingManagement.FE.Pages.Employee
         public async Task OnGetAsync()
         {
             ViewData["Title"] = "Quản lý vé tháng";
-            ViewData["Role"] = "Nhân viên";
-            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
+            ViewData["Role"] = "Quản lý";
+            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Quản lý";
 
             PageNumber = Math.Max(1, PageNumber);
 
@@ -98,6 +103,24 @@ namespace ParkingManagement.FE.Pages.Employee
             {
                 Pricing = CreateDefaultPricing();
             }
+
+            LoadPricingInput();
+        }
+
+        private void LoadPricingInput()
+        {
+            PricingInput = new PricingInputModel
+            {
+                MotorcycleMonthlyOneMonth = GetMonthlyPrice(MotorcycleType, 1),
+                MotorcycleMonthlyThreeMonth = GetMonthlyPrice(MotorcycleType, 3),
+                MotorcycleMonthlySixMonth = GetMonthlyPrice(MotorcycleType, 6),
+                SmallCarMonthlyOneMonth = GetMonthlyPrice(SmallCarType, 1),
+                SmallCarMonthlyThreeMonth = GetMonthlyPrice(SmallCarType, 3),
+                SmallCarMonthlySixMonth = GetMonthlyPrice(SmallCarType, 6),
+                LargeCarMonthlyOneMonth = GetMonthlyPrice(LargeCarType, 1),
+                LargeCarMonthlyThreeMonth = GetMonthlyPrice(LargeCarType, 3),
+                LargeCarMonthlySixMonth = GetMonthlyPrice(LargeCarType, 6)
+            };
         }
 
         public decimal GetMonthlyPrice(string vehicleType, int months)
@@ -147,34 +170,67 @@ namespace ParkingManagement.FE.Pages.Employee
                 .ToList();
         }
 
-        public async Task<IActionResult> OnPostCreateAsync(
-            string vehiclePlate, string vehicleType, int durationMonths,
-            string? customerId, string? customerPhone, string? paymentMethod)
+
+
+        public async Task<IActionResult> OnPostUpdatePricingAsync()
         {
-            var dto = new CreateEmployeeMonthlyTicketRequest
+            try
             {
-                VehiclePlate = vehiclePlate?.Trim().ToUpper() ?? "",
-                VehicleType = vehicleType ?? "Xe máy",
-                DurationMonths = durationMonths,
-                CustomerId = customerId,
-                CustomerPhone = customerPhone,
-                PaymentMethod = paymentMethod ?? "Tiền mặt"
-            };
+                if (PricingInput.MotorcycleMonthlyOneMonth <= 0 ||
+                    PricingInput.MotorcycleMonthlyThreeMonth <= 0 ||
+                    PricingInput.MotorcycleMonthlySixMonth <= 0 ||
+                    PricingInput.SmallCarMonthlyOneMonth <= 0 ||
+                    PricingInput.SmallCarMonthlyThreeMonth <= 0 ||
+                    PricingInput.SmallCarMonthlySixMonth <= 0 ||
+                    PricingInput.LargeCarMonthlyOneMonth <= 0 ||
+                    PricingInput.LargeCarMonthlyThreeMonth <= 0 ||
+                    PricingInput.LargeCarMonthlySixMonth <= 0)
+                {
+                    ActionSuccess = false;
+                    ActionMessage = "Giá vé tháng phải lớn hơn 0.";
+                    return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
+                }
 
-            var result = await _service.CreateAsync(dto);
-            ActionSuccess = result?.Success ?? false;
-            ActionMessage = result?.Message ?? "Đăng ký vé tháng thất bại.";
+                var currentPricing = await _pricingService.GetCurrentPricingAsync();
+                
+                var input = new UpdatePricingDto
+                {
+                    HourlyRate = currentPricing?.HourlyRate ?? new Dictionary<string, decimal>(),
+                    MaxDailyFee = currentPricing?.MaxDailyFee ?? new Dictionary<string, decimal>(),
+                    MonthlyTicketPrice = new Dictionary<string, UpdateMonthlyPricingDto>
+                    {
+                        [MotorcycleType] = new()
+                        {
+                            OneMonth = PricingInput.MotorcycleMonthlyOneMonth,
+                            ThreeMonth = PricingInput.MotorcycleMonthlyThreeMonth,
+                            SixMonth = PricingInput.MotorcycleMonthlySixMonth
+                        },
+                        [SmallCarType] = new()
+                        {
+                            OneMonth = PricingInput.SmallCarMonthlyOneMonth,
+                            ThreeMonth = PricingInput.SmallCarMonthlyThreeMonth,
+                            SixMonth = PricingInput.SmallCarMonthlySixMonth
+                        },
+                        [LargeCarType] = new()
+                        {
+                            OneMonth = PricingInput.LargeCarMonthlyOneMonth,
+                            ThreeMonth = PricingInput.LargeCarMonthlyThreeMonth,
+                            SixMonth = PricingInput.LargeCarMonthlySixMonth
+                        }
+                    }
+                };
 
-            return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
-        }
-
-
-
-        public async Task<IActionResult> OnPostCancelAsync(string monthlyTicketId)
-        {
-            var result = await _service.CancelAsync(monthlyTicketId);
-            ActionSuccess = result?.Success ?? false;
-            ActionMessage = result?.Message ?? "Hủy vé tháng thất bại.";
+                var result = await _pricingService.UpdatePricingAsync(input);
+                ActionSuccess = result?.Success == true;
+                ActionMessage = ActionSuccess
+                    ? "Đã cập nhật bảng giá vé tháng."
+                    : result?.Message ?? "Không thể cập nhật bảng giá vé tháng.";
+            }
+            catch (Exception ex)
+            {
+                ActionSuccess = false;
+                ActionMessage = $"Lỗi: {ex.Message}";
+            }
 
             return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
         }
