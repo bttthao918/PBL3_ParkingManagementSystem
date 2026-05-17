@@ -10,17 +10,22 @@ namespace ParkingManagement.FE.Pages.Customer
     [Authorize(Roles = "Customer")]
     public class BookingModel : PageModel
     {
+        private const int CustomerSnapshotPageSize = 1000;
+
         private readonly ICustomerApiService _customerApiService;
         private readonly IReservationService _reservationService;
+        private readonly IParkingSlotService _parkingSlotService;
         private readonly ILogger<BookingModel> _logger;
 
         public BookingModel(
             ICustomerApiService customerApiService,
             IReservationService reservationService,
+            IParkingSlotService parkingSlotService,
             ILogger<BookingModel> logger)
         {
             _customerApiService = customerApiService;
             _reservationService = reservationService;
+            _parkingSlotService = parkingSlotService;
             _logger = logger;
         }
 
@@ -46,8 +51,18 @@ namespace ParkingManagement.FE.Pages.Customer
 
         public async Task<IActionResult> OnGetSlotsAsync(string? vehicleType)
         {
-            var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType);
-            return new JsonResult(slots ?? new List<AvailableSlotDto>());
+_logger.LogInformation("OnGetSlotsAsync called with vehicleType: {VehicleType}", vehicleType);
+try
+{
+    var slots = await _customerApiService.GetAvailableSlotsAsync(vehicleType, includeUnavailable: true);
+    _logger.LogInformation("OnGetSlotsAsync returned {Count} slots", slots?.Count ?? 0);
+    return new JsonResult(slots ?? new List<AvailableSlotDto>());
+}
+catch (Exception ex)
+{
+    _logger.LogError(ex, "OnGetSlotsAsync error");
+    return new JsonResult(new List<AvailableSlotDto>());
+}
         }
 
         public async Task<IActionResult> OnPostCreateAsync(
@@ -76,6 +91,7 @@ namespace ParkingManagement.FE.Pages.Customer
             };
 
             var result = await _reservationService.CreateAsync(dto);
+<<<<<<< HEAD
             if (result?.Success == true)
             {
                 TempData["Success"] = result.Message ?? "Đặt chỗ thành công!";
@@ -83,6 +99,19 @@ namespace ParkingManagement.FE.Pages.Customer
             else
             {
                 TempData["Error"] = result?.Message ?? "Không thể đặt chỗ. Vui lòng thử lại.";
+=======
+            if (result.Success)
+            {
+                TempData["Success"] = string.IsNullOrWhiteSpace(result.Message)
+                    ? "Đặt chỗ thành công!"
+                    : result.Message;
+            }
+            else
+            {
+                TempData["Error"] = string.IsNullOrWhiteSpace(result.Message)
+                    ? "Không thể đặt chỗ. Vui lòng thử lại."
+                    : result.Message;
+>>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             }
 
             return RedirectToPage();
@@ -118,7 +147,7 @@ namespace ParkingManagement.FE.Pages.Customer
             {
                 // Load profile, reservations, and available slots in parallel
                 var profileTask = _customerApiService.GetProfileAsync();
-                var reservationsTask = _customerApiService.GetReservationsAsync(1, 100);
+                var reservationsTask = _customerApiService.GetReservationsAsync(1, CustomerSnapshotPageSize);
                 var slotsTask = _customerApiService.GetAvailableSlotsAsync();
 
                 await Task.WhenAll(profileTask, reservationsTask, slotsTask);
@@ -186,8 +215,8 @@ namespace ParkingManagement.FE.Pages.Customer
                 Id = index,
                 ReservationId = r.ReservationId,
                 Code = r.ReservationId.Length > 8 ? r.ReservationId[..8].ToUpper() : r.ReservationId.ToUpper(),
-                ParkingName = r.SlotLocation ?? "Bãi xe",
-                Position = r.SlotId ?? "Chưa xác định",
+                ParkingName = "Bãi xe",
+                Position = FormatSlotPosition(r.SlotId, r.SlotLocation),
                 VehiclePlate = r.VehiclePlate,
                 VehicleType = r.VehicleType,
                 VehicleClass = vehicleClass,
@@ -215,6 +244,17 @@ namespace ParkingManagement.FE.Pages.Customer
             if (normalized.Contains("hủy") || normalized.Contains("cancel"))
                 return "cancelled";
             return "pending";
+        }
+
+        private static string FormatSlotPosition(string? slotId, string? slotLocation)
+        {
+            if (string.IsNullOrWhiteSpace(slotId))
+                return "Chưa xác định";
+
+            if (string.IsNullOrWhiteSpace(slotLocation))
+                return slotId;
+
+            return $"{slotId} - {slotLocation}";
         }
 
         private static string GetVehicleClass(string vehicleType)
@@ -259,6 +299,59 @@ namespace ParkingManagement.FE.Pages.Customer
         {
             var normalized = status.ToLower().Trim();
             return normalized.Contains("hủy") || normalized.Contains("cancel");
+        }
+
+        private static bool IsEmptySlotStatus(string? status)
+        {
+            var normalized = NormalizeVietnameseText(status);
+            return normalized == "trong" || normalized == "empty" || normalized == "available";
+        }
+
+        private static bool VehicleTypeMatches(string? slotVehicleType, string? requestedVehicleType)
+        {
+            if (string.IsNullOrWhiteSpace(requestedVehicleType))
+            {
+                return true;
+            }
+
+            return NormalizeVehicleType(slotVehicleType) == NormalizeVehicleType(requestedVehicleType);
+        }
+
+        private static string NormalizeVehicleType(string? value)
+        {
+            var normalized = NormalizeVietnameseText(value);
+
+            if (normalized.Contains("may") || normalized.Contains("motor"))
+            {
+                return "motorcycle";
+            }
+
+            if (normalized.Contains("nho") || normalized.Contains("small"))
+            {
+                return "small-car";
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
+                return "large-car";
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizeVietnameseText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var chars = normalized
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                .Select(c => c == 'đ' ? 'd' : c == 'Đ' ? 'd' : c);
+
+            return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
         }
     }
 

@@ -181,7 +181,7 @@ public class MonthlyTicketModel : PageModel
 
     private async Task LoadDataAsync()
     {
-        ViewData["Title"] = "Vé tháng";
+        ViewData["Title"] = "Quản lý vé tháng";
         ViewData["Role"] = "Khách hàng";
 
         var fallbackName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";
@@ -311,7 +311,11 @@ public class MonthlyTicketModel : PageModel
 public class RegisterMonthlyTicketInput
 {
     [Required(ErrorMessage = "Vui lòng nhập biển số xe.")]
+<<<<<<< HEAD
     [RegularExpression(@"^\d{2}-?[A-Za-z]\d?-?\d{3}\.\d{2}$", ErrorMessage = "Biển số cần đúng định dạng 43A-123.45 hoặc 43D1-256.31.")]
+=======
+    [StringLength(15, MinimumLength = 5, ErrorMessage = "Biển số xe không hợp lệ.")]
+>>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
     public string VehiclePlate { get; set; } = "";
 
     [Required(ErrorMessage = "Vui lòng chọn loại xe.")]

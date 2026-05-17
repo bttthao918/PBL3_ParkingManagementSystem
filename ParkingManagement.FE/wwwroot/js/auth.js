@@ -5,12 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (loginEmail && loginPassword) {
         let previousEmail = loginEmail.value;
 
+        // Xóa logic tự động xóa mật khẩu khi email thay đổi.
+        // Điều này gây lỗi khi trình duyệt autofill điền email sau đó.
+        /*
         loginEmail.addEventListener("input", function () {
             if (loginEmail.value !== previousEmail) {
                 loginPassword.value = "";
                 previousEmail = loginEmail.value;
             }
         });
+        */
     }
 
     document.querySelectorAll(".eye-icon").forEach(icon => {

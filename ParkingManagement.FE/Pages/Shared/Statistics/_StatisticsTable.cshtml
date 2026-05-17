@@ -7,22 +7,27 @@
             {
                 <th>@header</th>
             }
-            <th>Thao tác</th>
         </tr>
     </thead>
 
     <tbody>
-        @foreach (var row in Model.Rows)
+        @if (Model.Rows.Count == 0)
         {
             <tr>
-                @foreach (var col in row)
-                {
-                    <td>@col</td>
-                }
-                <td>
-                    <i class="fa-solid fa-eye table-eye"></i>
-                </td>
+                <td colspan="@Model.Headers.Count" class="stat-table-empty">Chưa có dữ liệu trong khoảng thời gian này.</td>
             </tr>
+        }
+        else
+        {
+            @foreach (var row in Model.Rows)
+            {
+                <tr>
+                    @foreach (var col in row)
+                    {
+                        <td>@col</td>
+                    }
+                </tr>
+            }
         }
     </tbody>
 </table>

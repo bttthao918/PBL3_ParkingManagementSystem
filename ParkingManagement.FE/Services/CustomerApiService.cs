@@ -18,7 +18,7 @@ namespace ParkingManagement.FE.Services
         Task<ApiActionResult<BasicApiResponseDto>> ConfirmPayOsReturnAsync(long orderCode);
         Task<ApiActionResult<BasicApiResponseDto>> ConfirmMonthlyTicketPaymentAsync(string monthlyTicketId);
         Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50);
-        Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
+        Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null, bool includeUnavailable = false);
         Task<CreateVnPayPaymentResponseDto?> CreateVnPayPaymentAsync(CreateVnPayPaymentRequestDto request);
         Task<ListEmployeeCustomerSearchDto?> SearchForEmployeeAsync(EmployeeCustomerSearchFilterDto filter);
         Task<EmployeeCustomerDetailDto?> GetEmployeeCustomerDetailAsync(string customerId);
@@ -58,7 +58,7 @@ namespace ParkingManagement.FE.Services
         }
 
         public Task<ListCustomerMonthlyTicketDto?> GetMonthlyTicketsAsync()
-            => GetAsync<ListCustomerMonthlyTicketDto>("api/customers/monthly-tickets");
+            => GetAsync<ListCustomerMonthlyTicketDto>("api/monthly-tickets");
 
         public Task<MonthlyTicketPricingDto?> GetMonthlyTicketPricingAsync()
             => GetAsync<MonthlyTicketPricingDto>("api/monthly-tickets/pricing");
@@ -112,11 +112,25 @@ namespace ParkingManagement.FE.Services
         public Task<EmployeeCustomerDetailDto?> GetEmployeeCustomerDetailAsync(string customerId)
             => GetAsync<EmployeeCustomerDetailDto>($"api/customers/employee/{Uri.EscapeDataString(customerId)}/detail");
 
-        public Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null)
+        public Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null, bool includeUnavailable = false)
         {
-            var url = "api/reservations/available-slots";
+            var query = new List<string>();
             if (!string.IsNullOrWhiteSpace(vehicleType))
-                url += $"?vehicleType={Uri.EscapeDataString(vehicleType)}";
+            {
+                query.Add($"vehicleType={Uri.EscapeDataString(vehicleType)}");
+            }
+
+            if (includeUnavailable)
+            {
+                query.Add("includeUnavailable=true");
+            }
+
+            var url = "api/reservations/available-slots";
+            if (query.Count > 0)
+            {
+                url += $"?{string.Join("&", query)}";
+            }
+
             return GetAsync<List<AvailableSlotDto>>(url);
         }
 

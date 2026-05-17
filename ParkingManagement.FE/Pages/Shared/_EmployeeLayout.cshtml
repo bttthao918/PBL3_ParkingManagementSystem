@@ -13,6 +13,11 @@
         <i class="fa-solid fa-house"></i> Tổng quan
     </a>
 
+    <a asp-page="/Employee/ShiftManagement"
+           class="@(currentPath.Contains("/Employee/ShiftManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-clock"></i> Ca làm việc
+    </a>
+
     <p>VẬN HÀNH</p>
 
     <a asp-page="/Employee/ParkingOperation"
@@ -32,29 +37,29 @@
 
     <a asp-page="/Employee/TicketManagement"
            class="@(currentPath.Contains("/Employee/TicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-ticket"></i> Quản lý vé
+        <i class="fa-solid fa-ticket"></i> Quản lý vé lượt
     </a>
 
     <a asp-page="/Employee/MonthlyTicketManagement"
            class="@(currentPath.Contains("/Employee/MonthlyTicketManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-calendar-check"></i> Vé tháng
+        <i class="fa-solid fa-calendar-check"></i> Quản lý vé tháng
     </a>
 
     <a asp-page="/Employee/ParkingSlotManagement"
            class="@(currentPath.Contains("/Employee/ParkingSlotManagement", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-square-parking"></i> Chỗ đỗ xe
+        <i class="fa-solid fa-square-parking"></i> Quản lý chỗ đỗ
     </a>
 
     <p>THỐNG KÊ VÀ BÁO CÁO</p>
 
     <a asp-page="/Employee/PersonalReport"
            class="@(currentPath.Contains("/Employee/PersonalReport", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-clipboard-user"></i> Cá nhân
+        <i class="fa-solid fa-clipboard-user"></i> Báo cáo cá nhân
     </a>
 
     <a asp-page="/Employee/RevenueStatistics"
            class="@(currentPath.Contains("/Employee/RevenueStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-        <i class="fa-solid fa-chart-line"></i> Doanh thu
+        <i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu
     </a>
 
     <p>TÀI KHOẢN</p>

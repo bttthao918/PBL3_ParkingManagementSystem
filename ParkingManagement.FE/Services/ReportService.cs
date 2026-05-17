@@ -10,7 +10,7 @@ namespace ParkingManagement.FE.Services
         Task<EmployeeRevenueReportDto?> GetEmployeeRevenueReportAsync(string employeeId, string period = "month");
         Task<DashboardSummaryDto?> GetManagerDashboardAsync();
         Task<RevenueReportDto?> GetManagerRevenueReportAsync(RevenueReportFilterDto filter);
-        Task<CustomerReportDto?> GetManagerCustomerReportAsync();
+        Task<CustomerReportDto?> GetManagerCustomerReportAsync(string period = "30days");
     }
 
     public class ReportService : IReportService
@@ -147,12 +147,13 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<CustomerReportDto?> GetManagerCustomerReportAsync()
+        public async Task<CustomerReportDto?> GetManagerCustomerReportAsync(string period = "30days")
         {
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync("api/reports/manager/customers");
+                var safePeriod = string.IsNullOrWhiteSpace(period) ? "30days" : Uri.EscapeDataString(period);
+                var response = await _httpClient.GetAsync($"api/reports/manager/customers?period={safePeriod}");
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadFromJsonAsync<CustomerReportDto>();

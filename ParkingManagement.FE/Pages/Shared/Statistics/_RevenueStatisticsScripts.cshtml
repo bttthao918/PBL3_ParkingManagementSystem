@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @using System.Text.Json
 @model ParkingManagement.FE.Models.ViewModels.IRevenueStatisticsViewModel
 
@@ -28,6 +29,14 @@
 
 <script>
     window.statisticsConfig = @Html.Raw(JsonSerializer.Serialize(chartConfig));
+=======
+@model ParkingManagement.FE.Models.ViewModels.IRevenueStatisticsViewModel
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+    window.statisticsConfig = @Html.Raw(Model.ChartConfigJson);
+>>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
 </script>
 
 <script src="/js/statistics.js" asp-append-version="true"></script>

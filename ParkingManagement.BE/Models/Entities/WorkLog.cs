@@ -17,6 +17,9 @@ namespace ParkingManagement.DAL.Models
         [MaxLength(20)]
         public string EmployeeId { get; set; } = null!;
 
+        [MaxLength(20)]
+        public string? ScheduleId { get; set; }
+
         /// <summary>Ngày làm việc</summary>
         public DateTime WorkDate { get; set; }
 
@@ -40,5 +43,8 @@ namespace ParkingManagement.DAL.Models
         // Navigation
         [ForeignKey("EmployeeId")]
         public Employee Employee { get; set; } = null!;
+
+        [ForeignKey("ScheduleId")]
+        public ShiftSchedule? ShiftSchedule { get; set; }
     }
 }

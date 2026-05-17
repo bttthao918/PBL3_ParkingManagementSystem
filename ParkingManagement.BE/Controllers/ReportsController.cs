@@ -85,9 +85,9 @@ namespace ParkingManagement.Web.Controllers.Api
         /// </summary>
         [HttpGet("manager/customers")]
         [ProducesResponseType(typeof(CustomerReportDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetManagerCustomerReport()
+        public async Task<IActionResult> GetManagerCustomerReport([FromQuery] string period = "30days")
         {
-            var result = await _reportService.GetCustomerReportAsync();
+            var result = await _reportService.GetCustomerReportAsync(period);
             return Ok(result);
         }
 

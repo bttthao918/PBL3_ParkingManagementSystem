@@ -278,6 +278,18 @@
                                                    asp-route-selectedEmployeeId="@emp.Id">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
+                                                <a class="emp-action-btn"
+                                                   title="Phân ca"
+                                                   asp-page="/Admin/EmployeeManagement"
+                                                   asp-route-keyword="@Model.Keyword"
+                                                   asp-route-status="@Model.Status"
+                                                   asp-route-shift="@Model.Shift"
+                                                   asp-route-pageNumber="@Model.PageNumber"
+                                                   asp-route-pageSize="@Model.PageSize"
+                                                   asp-route-selectedEmployeeId="@emp.Id"
+                                                   asp-fragment="shift">
+                                                    <i class="fa-solid fa-calendar-days"></i>
+                                                </a>
                                                 @if (isDeleted)
                                                 {
                                                     <form method="post" asp-page-handler="RestoreEmployee" class="emp-inline-form">
@@ -453,9 +465,13 @@
 
                 <div id="empShiftTab" class="emp-tab-content">
                     <div class="emp-shift-section">
-                        <h4 style="margin:0 0 12px; font-size:14px; color:#475569;">
-                            <i class="fa-solid fa-calendar-days"></i> Phân ca tuần này
-                        </h4>
+                        <div class="emp-shift-head">
+                            <div>
+                                <h4><i class="fa-solid fa-calendar-days"></i> Lịch ca tuần này</h4>
+                                <span>@Model.CurrentWeekStart.ToString("dd/MM") - @Model.CurrentWeekEnd.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <span class="emp-shift-count">@Model.SelectedEmployeeWeekShifts.Sum(d => d.Schedules.Count) ca</span>
+                        </div>
 
                         @if (detailIsDeleted)
                         {
@@ -465,44 +481,92 @@
                         }
                         else
                         {
-                            <!-- Form thêm ca nhanh -->
-                            <form method="post" asp-page-handler="CreateShift" class="emp-shift-form">
-                                <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
-                                <input type="hidden" asp-for="Keyword" />
-                                <input type="hidden" asp-for="Status" />
-                                <input type="hidden" asp-for="Shift" />
-                                <input type="hidden" asp-for="PageNumber" />
-                                <input type="hidden" asp-for="PageSize" />
-                                <input type="hidden" asp-for="SelectedEmployeeId" />
-                                <div style="display:flex; gap:8px; margin-bottom:12px;">
-                                    <input type="date" name="workDate" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;" />
-                                    <select name="shiftType" required style="flex:1; height:36px; border:1px solid #e3ebf6; border-radius:8px; padding:0 10px; font-size:13px;">
-                                        <option value="Sáng">Sáng (6-14h)</option>
-                                        <option value="Chiều">Chiều (14-22h)</option>
-                                        <option value="Tối">Tối (22-6h)</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="emp-btn-primary" style="width:100%; height:36px; font-size:13px;">
-                                    <i class="fa-solid fa-plus"></i> Thêm ca
-                                </button>
-                            </form>
-                        }
+                            <div class="emp-week-schedule">
+                                @foreach (var day in Model.SelectedEmployeeWeekShifts)
+                                {
+                                    <div class="emp-day-row @(day.IsToday ? "today" : "")">
+                                        <div class="emp-day-label">
+                                            <strong>@day.DayLabel</strong>
+                                            <span>@day.WorkDate.ToString("dd/MM")</span>
+                                        </div>
 
-                        <!-- Thông tin ca mặc định -->
-                        <div class="emp-shift-list" style="margin-top:14px;">
-                            <div style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
-                                <span style="font-size:12px; color:#94a3b8;">Ca mặc định</span>
-                                <strong style="display:block; font-size:14px; color:#10233f;">@(detail.Shift ?? "Chưa phân ca")</strong>
+                                        <div class="emp-day-content">
+                                            @if (day.Schedules.Count == 0)
+                                            {
+                                                <div class="emp-day-empty">Chưa có ca</div>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var schedule in day.Schedules)
+                                                {
+                                                    var shiftClass = EmployeeManagementModel.GetShiftBadgeClass(schedule.ShiftType);
+                                                    var statusClass = EmployeeManagementModel.GetScheduleStatusClass(schedule.Status);
+
+                                                    <div class="emp-shift-chip @shiftClass">
+                                                        <div>
+                                                            <strong>@schedule.ShiftType</strong>
+                                                            <span>@schedule.StartTime - @schedule.EndTime</span>
+                                                        </div>
+                                                        <span class="emp-shift-state @statusClass">@schedule.Status</span>
+                                                        @if (EmployeeManagementModel.CanDeleteSchedule(schedule.Status))
+                                                        {
+                                                            <form method="post" asp-page-handler="DeleteShift"
+                                                                  onsubmit="return confirm('Xóa ca @schedule.ShiftType ngày @day.WorkDate.ToString("dd/MM")?');">
+                                                                <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
+                                                                <input type="hidden" name="scheduleId" value="@schedule.ScheduleId" />
+                                                                <input type="hidden" name="Keyword" value="@Model.Keyword" />
+                                                                <input type="hidden" name="Status" value="@Model.Status" />
+                                                                <input type="hidden" name="Shift" value="@Model.Shift" />
+                                                                <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+                                                                <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                                                                <input type="hidden" name="SelectedEmployeeId" value="@detail.EmployeeId" />
+                                                                <button type="submit" title="Xóa ca">
+                                                                    <i class="fa-solid fa-xmark"></i>
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                    </div>
+                                                }
+                                            }
+
+                                            <form method="post" asp-page-handler="CreateShift" class="emp-add-shift-row">
+                                                <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
+                                                <input type="hidden" name="workDate" value="@day.WorkDate.ToString("yyyy-MM-dd")" />
+                                                <input type="hidden" name="Keyword" value="@Model.Keyword" />
+                                                <input type="hidden" name="Status" value="@Model.Status" />
+                                                <input type="hidden" name="Shift" value="@Model.Shift" />
+                                                <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+                                                <input type="hidden" name="PageSize" value="@Model.PageSize" />
+                                                <input type="hidden" name="SelectedEmployeeId" value="@detail.EmployeeId" />
+                                                <select name="shiftType" aria-label="Chọn ca">
+                                                    <option value="Sáng">Sáng</option>
+                                                    <option value="Chiều">Chiều</option>
+                                                    <option value="Tối">Tối</option>
+                                                </select>
+                                                <button type="submit" title="Thêm ca">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
                             </div>
-                            <div style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
-                                <span style="font-size:12px; color:#94a3b8;">Tổng ngày làm</span>
-                                <strong style="display:block; font-size:14px; color:#10233f;">@detail.WorkDaysCount ngày</strong>
+
+                            <div class="emp-shift-summary">
+                                <div>
+                                    <strong>@Model.SelectedEmployeeWeekShifts.Count(d => d.Schedules.Count > 0)</strong>
+                                    <span>ngày có ca</span>
+                                </div>
+                                <div>
+                                    <strong>@Model.SelectedEmployeeWeekShifts.Sum(d => d.Schedules.Count)</strong>
+                                    <span>tổng ca</span>
+                                </div>
+                                <div>
+                                    <strong>@Model.SelectedEmployeeWeekShifts.Count(d => d.Schedules.Count == 0)</strong>
+                                    <span>ngày trống</span>
+                                </div>
                             </div>
-                            <div style="padding:10px 0;">
-                                <span style="font-size:12px; color:#94a3b8;">Vé xử lý tháng này</span>
-                                <strong style="display:block; font-size:14px; color:#10233f;">@detail.TicketsProcessedThisMonth vé</strong>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
 
@@ -686,6 +750,10 @@
                 document.getElementById("empShiftTab")?.classList.add("active");
                 document.querySelectorAll(".emp-detail-tabs button")[1]?.classList.add("active");
             }
+        }
+
+        if (window.location.hash === "#shift") {
+            showEmpTab("shift");
         }
 
         function openCreateModal() {

@@ -12,18 +12,38 @@ namespace ParkingManagement.FE.Pages.Employee
     {
         private readonly IParkingOperationService _service;
         private readonly ITicketService _ticketService;
+        private readonly ICustomerApiService _customerApiService;
 
-        public ParkingOperationModel(IParkingOperationService service, ITicketService ticketService)
+        public ParkingOperationModel(IParkingOperationService service, ITicketService ticketService, ICustomerApiService customerApiService)
         {
             _service = service;
             _ticketService = ticketService;
+            _customerApiService = customerApiService;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Tab { get; set; } = "checkin";
 
+<<<<<<< HEAD
         public CheckInValidationResponse? CheckInValidation { get; set; }
         public CheckInResultResponse? CheckInResult { get; set; }
+=======
+        [BindProperty]
+        public string? VehiclePlate { get; set; }
+
+        [BindProperty]
+        public string? VehicleType { get; set; }
+
+        [BindProperty]
+        public string? VehiclePlateOrTicketId { get; set; }
+
+        // Check-in state
+        public CheckInValidationResponse? CheckInValidation { get; set; }
+        public CheckInResultResponse? CheckInResult { get; set; }
+        public List<AvailableSlotDto>? AllSlotsForMap { get; set; }
+
+        // Check-out state
+>>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         public CheckOutValidationResponse? CheckOutValidation { get; set; }
         public CheckOutResultResponse? CheckOutResult { get; set; }
 
@@ -49,6 +69,9 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public async Task<IActionResult> OnPostValidateCheckInAsync(string vehiclePlate, string vehicleType)
         {
+            VehiclePlate = vehiclePlate;
+            VehicleType = vehicleType;
+
             SetViewData();
             Tab = "checkin";
             await LoadSummaryAsync();
@@ -61,6 +84,10 @@ namespace ParkingManagement.FE.Pages.Employee
             }
 
             CheckInValidation = await _service.ValidateCheckInAsync(vehiclePlate.Trim().ToUpper(), vehicleType ?? "Xe máy");
+            if (CheckInValidation != null)
+            {
+                AllSlotsForMap = await _customerApiService.GetAvailableSlotsAsync(vehicleType ?? "Xe máy", true);
+            }
             return Page();
         }
 
@@ -86,6 +113,8 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public async Task<IActionResult> OnPostValidateCheckOutAsync(string vehiclePlateOrTicketId)
         {
+            VehiclePlateOrTicketId = vehiclePlateOrTicketId;
+
             SetViewData();
             Tab = "checkout";
             await LoadActiveTicketsAsync();

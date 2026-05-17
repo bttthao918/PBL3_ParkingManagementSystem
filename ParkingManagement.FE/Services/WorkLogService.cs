@@ -6,7 +6,7 @@ namespace ParkingManagement.FE.Services
     public interface IWorkLogService
     {
         Task<WorkLogStatusResponse?> GetCurrentStatusAsync();
-        Task<WorkLogActionResponse?> StartShiftAsync(string? note = null);
+        Task<WorkLogActionResponse?> StartShiftAsync(string? scheduleId = null, string? note = null);
         Task<WorkLogActionResponse?> EndShiftAsync(string? note = null);
         Task<WorkLogMonthlySummaryResponse?> GetMonthlySummaryAsync();
     }
@@ -50,12 +50,12 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<WorkLogActionResponse?> StartShiftAsync(string? note = null)
+        public async Task<WorkLogActionResponse?> StartShiftAsync(string? scheduleId = null, string? note = null)
         {
             try
             {
                 AddAuth();
-                var response = await _httpClient.PostAsJsonAsync("api/worklogs/start", new { note });
+                var response = await _httpClient.PostAsJsonAsync("api/worklogs/start", new { scheduleId, note });
                 return await response.Content.ReadFromJsonAsync<WorkLogActionResponse>();
             }
             catch (Exception ex)
@@ -103,6 +103,8 @@ namespace ParkingManagement.FE.Services
     {
         public bool IsWorking { get; set; }
         public string? WorkLogId { get; set; }
+        public string? ScheduleId { get; set; }
+        public string? ShiftType { get; set; }
         public DateTime? StartTime { get; set; }
         public int DurationMinutes { get; set; }
         public string? Note { get; set; }
@@ -114,6 +116,7 @@ namespace ParkingManagement.FE.Services
         public bool Success { get; set; }
         public string? Message { get; set; }
         public string? WorkLogId { get; set; }
+        public string? ScheduleId { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public int? TotalMinutes { get; set; }

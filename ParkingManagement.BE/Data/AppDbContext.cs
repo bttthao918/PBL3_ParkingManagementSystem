@@ -78,6 +78,12 @@ namespace ParkingManagement.DAL.Data
             // ── OTP Configuration ─────────────────────────────────────
             modelBuilder.Entity<Otp>()
                 .HasIndex(o => o.Email);
+
+            modelBuilder.Entity<WorkLog>()
+                .HasOne(w => w.ShiftSchedule)
+                .WithMany(s => s.WorkLogs)
+                .HasForeignKey(w => w.ScheduleId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
         private static void ConfigureConstraints(ModelBuilder modelBuilder)

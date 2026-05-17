@@ -1,0 +1,561 @@
+@page
+@model ParkingManagement.FE.Pages.Admin.MonthlyTicketManagementModel
+
+@section Styles {
+    <link rel="stylesheet" href="/css/employee/monthly_ticket.css" asp-append-version="true" />
+    <style>
+        .pricing-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .pricing-input-group input {
+            width: 120px;
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            text-align: right;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .pricing-input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .pricing-detail-row {
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #f3f4f6;
+        }
+        .pricing-detail-row:last-child {
+            border-bottom: none;
+        }
+        .pricing-save-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .pricing-save-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .pricing-actions-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px;
+            border-top: 1px solid #f3f4f6;
+            background: #f9fafb;
+            border-radius: 0 0 12px 12px;
+            margin-top: 16px;
+        }
+        .pricing-vehicle-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .pricing-vehicle-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+    </style>
+}
+
+<div class="monthly-page">
+    @if (!string.IsNullOrWhiteSpace(Model.ActionMessage))
+    {
+        <div class="alert-banner @(Model.ActionSuccess ? "success" : "error")">
+            <i class="fa-solid @(Model.ActionSuccess ? "fa-circle-check" : "fa-circle-xmark")"></i>
+            <span>@Model.ActionMessage</span>
+        </div>
+    }
+
+    <div class="page-header">
+        <div>
+            <h1>Quản lý vé tháng</h1>
+            <p>Xem danh sách và điều chỉnh bảng giá vé tháng</p>
+        </div>
+        <button type="button" class="secondary-btn" onclick="document.getElementById('monthlyPricingPanel').classList.toggle('open')">
+            <i class="fa-solid fa-tags"></i> Bảng giá & Cập nhật
+        </button>
+    </div>
+
+    <!-- Bảng giá vé tháng -->
+    <div class="pricing-collapse" id="monthlyPricingPanel">
+        <form method="post" asp-page-handler="UpdatePricing" class="pricing-section">
+            <div class="pricing-section-header">
+                <div>
+                    <h3>Cập nhật bảng giá vé tháng</h3>
+                    <p>Thay đổi giá vé tháng áp dụng cho từng loại xe và gói thời hạn.</p>
+                </div>
+                <button type="button" class="pricing-close-btn" onclick="document.getElementById('monthlyPricingPanel').classList.remove('open')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="price-grid">
+                <div class="price-card green">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
+                        <div>
+                            <h4>Xe máy</h4>
+                            <h2>Giá vé <span>/ tháng</span></h2>
+                        </div>
+                    </div>
+                    <div class="price-lines">
+                        <label>
+                            <span>1 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.MotorcycleMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
+                            <span>3 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.MotorcycleMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
+                            <span>6 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.MotorcycleMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="price-card blue">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
+                        <div>
+                            <h4>Ô tô nhỏ</h4>
+                            <h2>Giá vé <span>/ tháng</span></h2>
+                        </div>
+                    </div>
+                    <div class="price-lines">
+                        <label>
+                            <span>1 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.SmallCarMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
+                            <span>3 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.SmallCarMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
+                            <span>6 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.SmallCarMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="price-card purple">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
+                        <div>
+                            <h4>Ô tô lớn</h4>
+                            <h2>Giá vé <span>/ tháng</span></h2>
+                        </div>
+                    </div>
+                    <div class="price-lines">
+                        <label>
+                            <span>1 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.LargeCarMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
+                            <span>3 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.LargeCarMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                        <label>
+                            <span>6 tháng</span>
+                            <div class="pricing-input-group">
+                                <input asp-for="PricingInput.LargeCarMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-actions-container">
+                <button type="submit" class="pricing-save-btn">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu bảng giá
+                </button>
+            </div>
+            
+            <input type="hidden" name="Search" value="@Model.Search" />
+            <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
+            <input type="hidden" name="VehicleTypeFilter" value="@Model.VehicleTypeFilter" />
+            <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
+            <input type="hidden" name="PageSize" value="@Model.PageSize" />
+        </form>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-id-card"></i></div>
+            <div>
+                <span>Tổng vé tháng</span>
+                <h3>@Model.TotalTickets</h3>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div>
+                <span>Đang hoạt động</span>
+                <h3>@Model.ActiveTickets</h3>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon orange"><i class="fa-solid fa-clock"></i></div>
+            <div>
+                <span>Sắp hết hạn</span>
+                <h3>@Model.ExpiringSoonTickets</h3>
+                <small>Trong 7 ngày tới</small>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon red"><i class="fa-solid fa-calendar-xmark"></i></div>
+            <div>
+                <span>Đã hết hạn</span>
+                <h3>@Model.ExpiredTickets</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="table-card">
+        <form method="get" class="filter-form">
+            <div class="filter-row">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input name="Search" value="@Model.Search"
+                           placeholder="Tìm theo biển số, mã vé, tên khách hàng, SĐT..." />
+                </div>
+
+                <select name="StatusFilter">
+                    <option value="">Trạng thái: Tất cả</option>
+                    <option value="Hoạt động" selected="@(Model.StatusFilter == "Hoạt động")">Hoạt động</option>
+                    <option value="Hết hạn" selected="@(Model.StatusFilter == "Hết hạn")">Hết hạn</option>
+                    <option value="Đã hủy" selected="@(Model.StatusFilter == "Đã hủy")">Đã hủy</option>
+                </select>
+
+                <select name="VehicleTypeFilter">
+                    <option value="">Loại xe: Tất cả</option>
+                    <option value="Xe máy" selected="@(Model.VehicleTypeFilter == "Xe máy")">Xe máy</option>
+                    <option value="Ô tô nhỏ" selected="@(Model.VehicleTypeFilter == "Ô tô nhỏ")">Ô tô nhỏ</option>
+                    <option value="Ô tô lớn" selected="@(Model.VehicleTypeFilter == "Ô tô lớn")">Ô tô lớn</option>
+                </select>
+
+                <button type="submit" class="secondary-btn">
+                    <i class="fa-solid fa-filter"></i> Lọc
+                </button>
+
+                <a asp-page="./MonthlyTicketManagement" class="clear-btn">
+                    <i class="fa-solid fa-rotate-right"></i> Xóa lọc
+                </a>
+            </div>
+        </form>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mã vé</th>
+                        <th>Khách hàng</th>
+                        <th>Biển số</th>
+                        <th>Loại xe</th>
+                        <th>Gói</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày hết hạn</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Tickets.Any())
+                    {
+                        @foreach (var ticket in Model.Tickets)
+                        {
+                            var statusClass = ticket.Status switch
+                            {
+                                "Hoạt động" => "active",
+                                "Hết hạn" => "expired",
+                                "Đã hủy" => "cancelled",
+                                _ => ""
+                            };
+                            var isExpiringSoon = ticket.Status == "Hoạt động" && ticket.DaysRemaining <= 7;
+
+                            <tr>
+                                <td>
+                                    <strong>@ticket.MonthlyTicketId</strong>
+                                </td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <strong>@ticket.CustomerName</strong>
+                                        <span>@ticket.CustomerPhone</span>
+                                    </div>
+                                </td>
+                                <td><strong>@ticket.VehiclePlate</strong></td>
+                                <td>
+                                    <span class="vehicle-badge">
+                                        <i class="fa-solid @(ticket.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                        @ticket.VehicleType
+                                    </span>
+                                </td>
+                                <td>@ticket.PackageType</td>
+                                <td>@ticket.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @ticket.EndDate.ToString("dd/MM/yyyy")
+                                    @if (isExpiringSoon)
+                                    {
+                                        <span class="expiring-badge">@ticket.DaysRemaining ngày</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="status-badge @statusClass">@ticket.Status</span>
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-page="./MonthlyTicketManagement"
+                                           asp-route-selectedId="@ticket.MonthlyTicketId"
+                                           asp-route-search="@Model.Search"
+                                           asp-route-statusFilter="@Model.StatusFilter"
+                                           asp-route-vehicleTypeFilter="@Model.VehicleTypeFilter"
+                                           asp-route-pageNumber="@Model.PageNumber"
+                                           asp-route-pageSize="@Model.PageSize"
+                                           class="icon-btn" title="Xem chi tiết">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="empty-state">
+                                <i class="fa-solid fa-inbox"></i>
+                                <p>Không có vé tháng nào</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination-row">
+                <span>Hiển thị @((Model.PageNumber - 1) * Model.PageSize + 1) - @Math.Min(Model.PageNumber * Model.PageSize, Model.TotalItems) trong @Model.TotalItems vé</span>
+                <div class="pagination">
+                    @if (Model.PageNumber > 1)
+                    {
+                        <a asp-page="./MonthlyTicketManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleTypeFilter="@Model.VehicleTypeFilter"
+                           asp-route-pageNumber="@(Model.PageNumber - 1)"
+                           asp-route-pageSize="@Model.PageSize">‹</a>
+                    }
+                    @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+                    {
+                        <a asp-page="./MonthlyTicketManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleTypeFilter="@Model.VehicleTypeFilter"
+                           asp-route-pageNumber="@i"
+                           asp-route-pageSize="@Model.PageSize"
+                           class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                    }
+                    @if (Model.PageNumber < Model.TotalPages)
+                    {
+                        <a asp-page="./MonthlyTicketManagement"
+                           asp-route-search="@Model.Search"
+                           asp-route-statusFilter="@Model.StatusFilter"
+                           asp-route-vehicleTypeFilter="@Model.VehicleTypeFilter"
+                           asp-route-pageNumber="@(Model.PageNumber + 1)"
+                           asp-route-pageSize="@Model.PageSize">›</a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Detail Panel -->
+    @if (Model.SelectedTicket != null)
+    {
+        <div class="detail-overlay" onclick="window.location.href='@Url.Page("./MonthlyTicketManagement", new { Model.Search, Model.StatusFilter, Model.VehicleTypeFilter, Model.PageNumber, Model.PageSize })'"></div>
+        <aside class="detail-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="panel-label">CHI TIẾT VÉ THÁNG</span>
+                    <h2>@Model.SelectedTicket.MonthlyTicketId</h2>
+                </div>
+                <a asp-page="./MonthlyTicketManagement"
+                   asp-route-search="@Model.Search"
+                   asp-route-statusFilter="@Model.StatusFilter"
+                   asp-route-vehicleTypeFilter="@Model.VehicleTypeFilter"
+                   asp-route-pageNumber="@Model.PageNumber"
+                   asp-route-pageSize="@Model.PageSize"
+                   class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+            </div>
+
+            <div class="panel-status">
+                @{
+                    var detailStatusClass = Model.SelectedTicket.Status switch
+                    {
+                        "Hoạt động" => "active",
+                        "Hết hạn" => "expired",
+                        "Đã hủy" => "cancelled",
+                        _ => ""
+                    };
+                }
+                <span class="status-badge @detailStatusClass">@Model.SelectedTicket.Status</span>
+                @if (Model.SelectedTicket.Status == "Hoạt động" && Model.SelectedTicket.DaysRemaining <= 7)
+                {
+                    <span class="expiring-badge">Còn @Model.SelectedTicket.DaysRemaining ngày</span>
+                }
+            </div>
+
+            <div class="detail-section">
+                <h4><i class="fa-solid fa-user"></i> Khách hàng</h4>
+                <div class="info-row">
+                    <span>Họ tên</span>
+                    <strong>@(Model.SelectedTicket.CustomerName ?? "N/A")</strong>
+                </div>
+                <div class="info-row">
+                    <span>Số điện thoại</span>
+                    <strong>@(Model.SelectedTicket.CustomerPhone ?? "N/A")</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4><i class="fa-solid fa-car"></i> Thông tin xe</h4>
+                <div class="info-row">
+                    <span>Biển số</span>
+                    <strong>@Model.SelectedTicket.VehiclePlate</strong>
+                </div>
+                <div class="info-row">
+                    <span>Loại xe</span>
+                    <strong>@Model.SelectedTicket.VehicleType</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4><i class="fa-solid fa-calendar"></i> Thời hạn</h4>
+                <div class="info-row">
+                    <span>Gói</span>
+                    <strong>@Model.SelectedTicket.PackageType</strong>
+                </div>
+                <div class="info-row">
+                    <span>Ngày bắt đầu</span>
+                    <strong>@Model.SelectedTicket.StartDate.ToString("dd/MM/yyyy")</strong>
+                </div>
+                <div class="info-row">
+                    <span>Ngày hết hạn</span>
+                    <strong>@Model.SelectedTicket.EndDate.ToString("dd/MM/yyyy")</strong>
+                </div>
+                <div class="info-row">
+                    <span>Còn lại</span>
+                    <strong>@Model.SelectedTicket.DaysRemaining ngày</strong>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4><i class="fa-solid fa-money-bill"></i> Thanh toán</h4>
+                <div class="info-row">
+                    <span>Tổng phí</span>
+                    <strong>@Model.SelectedTicket.TotalFee.ToString("N0") đ</strong>
+                </div>
+                @if (Model.SelectedTicket.Payments.Any())
+                {
+                    <div class="payment-history">
+                        @foreach (var payment in Model.SelectedTicket.Payments)
+                        {
+                            <div class="payment-item">
+                                <span>@payment.PaymentTime.ToString("dd/MM/yyyy HH:mm")</span>
+                                <span>@payment.Amount.ToString("N0") đ</span>
+                                <span class="payment-method">@payment.Method</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+
+        </aside>
+    }
+</div>
+
+
+
+@section Scripts {
+    <script>
+        // Bảng giá
+        var pricing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.Pricing,
+            new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
+
+        function getPrice(vehicleType, months) {
+            var item = pricing.find(p => p.vehicleType === vehicleType && p.months === months);
+            return item ? item.price : 0;
+        }
+
+        function formatCurrency(amount) {
+            return amount.toLocaleString('vi-VN') + ' đ';
+        }
+
+
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('open');
+                }
+            });
+        });
+        
+        function confirmSubmit(form, title, message, type) {
+            if (confirm(message)) {
+                return true;
+            }
+            return false;
+        }
+    </script>
+}

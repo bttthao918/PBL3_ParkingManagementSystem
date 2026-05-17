@@ -168,20 +168,7 @@ namespace ParkingManagement.FE.Pages.Employee
             return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
         }
 
-        public async Task<IActionResult> OnPostRenewAsync(string monthlyTicketId, int monthsToAdd, string? paymentMethod)
-        {
-            var dto = new RenewEmployeeMonthlyTicketRequest
-            {
-                MonthsToAdd = monthsToAdd,
-                PaymentMethod = paymentMethod ?? "Tiền mặt"
-            };
 
-            var result = await _service.RenewAsync(monthlyTicketId, dto);
-            ActionSuccess = result?.Success ?? false;
-            ActionMessage = result?.Message ?? "Gia hạn vé tháng thất bại.";
-
-            return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
-        }
 
         public async Task<IActionResult> OnPostCancelAsync(string monthlyTicketId)
         {

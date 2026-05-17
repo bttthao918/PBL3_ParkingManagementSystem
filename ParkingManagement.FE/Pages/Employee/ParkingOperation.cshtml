@@ -61,15 +61,15 @@
                         <label>Biển số xe <span class="required">*</span></label>
                         <div class="input-with-icon">
                             <i class="fa-solid fa-car-side"></i>
-                            <input type="text" name="vehiclePlate" placeholder="VD: 43A-123.45" required autofocus />
+                            <input type="text" name="vehiclePlate" value="@Model.VehiclePlate" placeholder="VD: 43A-123.45" required autofocus />
                         </div>
                     </div>
                     <div class="form-group flex-1">
                         <label>Loại xe</label>
                         <select name="vehicleType">
-                            <option value="Xe máy">🏍️ Xe máy</option>
-                            <option value="Ô tô nhỏ">🚗 Ô tô nhỏ</option>
-                            <option value="Ô tô lớn">🚐 Ô tô lớn</option>
+                            <option value="Xe máy" selected="@(Model.VehicleType == "Xe máy")">🏍️ Xe máy</option>
+                            <option value="Ô tô nhỏ" selected="@(Model.VehicleType == "Ô tô nhỏ")">🚗 Ô tô nhỏ</option>
+                            <option value="Ô tô lớn" selected="@(Model.VehicleType == "Ô tô lớn")">🚐 Ô tô lớn</option>
                         </select>
                     </div>
                     <div class="form-group btn-group">
@@ -87,7 +87,7 @@
                     <div class="info-chips">
                         @if (v.HasMonthlyTicket)
                         {
-                            <div class="chip success"><i class="fa-solid fa-calendar-check"></i> Vé tháng — Miễn phí gửi xe</div>
+                            <div class="chip success"><i class="fa-solid fa-calendar-check"></i> Quản lý vé tháng — Miễn phí gửi xe</div>
                         }
                         @if (v.HasReservation)
                         {
@@ -119,18 +119,54 @@
 
                             <div class="slot-section">
                                 <h4><i class="fa-solid fa-square-parking"></i> Chọn chỗ đỗ <span class="slot-count">@v.AvailableSlots.Count chỗ trống</span></h4>
-                                <div class="slot-grid">
-                                    @foreach (var slot in v.AvailableSlots.Take(20))
+                                
+                                <div class="legend">
+                                    <span><i class="dot green"></i>Trống</span>
+                                    <span><i class="dot orange"></i>Đang dùng</span>
+                                    <span><i class="dot blue"></i>Đã đặt</span>
+                                    <span><i class="dot gray"></i>Bảo trì</span>
+                                </div>
+
+                                <div class="parking-map">
+                                    @if (Model.AllSlotsForMap != null && Model.AllSlotsForMap.Any())
                                     {
-                                        var isPref = slot.SlotId == v.PreferredSlotId;
-                                        <label class="slot-option">
-                                            <input type="radio" name="slotId" value="@slot.SlotId" @(isPref ? "checked" : "") required />
-                                            <div class="slot-box @(isPref ? "preferred" : "")">
-                                                <strong>@slot.SlotId</strong>
-                                                <span>@slot.Location</span>
-                                                @if (isPref) { <i class="fa-solid fa-star preferred-star"></i> }
-                                            </div>
-                                        </label>
+                                        @foreach (var slot in Model.AllSlotsForMap)
+                                        {
+                                            var isSelectable = IsSlotSelectable(slot.Status);
+                                            var isPref = slot.SlotId == v.PreferredSlotId;
+                                            var statusClass = GetSlotStatusClass(slot.Status);
+
+                                            <label class="slot-option @(isSelectable ? "" : "disabled-slot")">
+                                                @if (isSelectable)
+                                                {
+                                                    <input type="radio" name="slotId" value="@slot.SlotId" @(isPref ? "checked" : "") required />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" disabled />
+                                                }
+                                                <div class="slot @statusClass @(isPref ? "preferred" : "")">
+                                                    <strong>@slot.SlotId</strong>
+                                                    <span>@(slot.Location ?? "-")</span>
+                                                    @if (isPref) { <i class="fa-solid fa-star preferred-star"></i> }
+                                                </div>
+                                            </label>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @foreach (var slot in v.AvailableSlots)
+                                        {
+                                            var isPref = slot.SlotId == v.PreferredSlotId;
+                                            <label class="slot-option">
+                                                <input type="radio" name="slotId" value="@slot.SlotId" @(isPref ? "checked" : "") required />
+                                                <div class="slot empty @(isPref ? "preferred" : "")">
+                                                    <strong>@slot.SlotId</strong>
+                                                    <span>@slot.Location</span>
+                                                    @if (isPref) { <i class="fa-solid fa-star preferred-star"></i> }
+                                                </div>
+                                            </label>
+                                        }
                                     }
                                 </div>
                             </div>
@@ -166,7 +202,7 @@
                         <label>Biển số xe hoặc mã vé</label>
                         <div class="input-with-icon">
                             <i class="fa-solid fa-search"></i>
-                            <input type="text" name="vehiclePlateOrTicketId" placeholder="VD: 43A-123.45 hoặc TKT0001" required />
+                            <input type="text" name="vehiclePlateOrTicketId" value="@Model.VehiclePlateOrTicketId" placeholder="VD: 43A-123.45 hoặc TKT0001" required />
                         </div>
                     </div>
                     <div class="form-group btn-group">
@@ -375,5 +411,21 @@
         var d = h / 24;
         var rh = h % 24;
         return rh > 0 ? $"{d}d {rh}h" : $"{d} ngày";
+    }
+
+    string GetSlotStatusClass(string status)
+    {
+        var s = (status ?? "").ToLower();
+        if (s.Contains("trống") || s.Contains("empty") || s.Contains("available")) return "empty";
+        if (s.Contains("đang") || s.Contains("dùng") || s.Contains("using") || s.Contains("occupied")) return "using";
+        if (s.Contains("đã đặt") || s.Contains("reserved") || s.Contains("booked")) return "reserved";
+        if (s.Contains("bảo trì") || s.Contains("maintenance")) return "maintenance";
+        return "error";
+    }
+
+    bool IsSlotSelectable(string status)
+    {
+        var s = (status ?? "").ToLower();
+        return s.Contains("trống") || s.Contains("empty") || s.Contains("available");
     }
 }

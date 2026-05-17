@@ -37,7 +37,7 @@
                 </button>
             </div>
 
-            <div class="pricing-cards-row">
+            <div class="price-grid">
                 @{
                     var motorcycleSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.Motorcycle, 3);
                     var motorcycleSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.Motorcycle, 6);
@@ -46,20 +46,23 @@
                     var largeCarSaving3 = Model.GetMonthlySaving(PricingDisplayDefaults.LargeCar, 3);
                     var largeCarSaving6 = Model.GetMonthlySaving(PricingDisplayDefaults.LargeCar, 6);
                 }
-                <div class="pricing-vehicle-card">
-                    <div class="pricing-vehicle-header">
-                        <div class="pricing-vehicle-icon motorcycle"><i class="fa-solid fa-motorcycle"></i></div>
+                
+                <div class="price-card green">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
                         <div>
-                            <span class="pricing-vehicle-name">Xe máy</span>
-                            <div class="pricing-vehicle-price">@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ <small>/ tháng</small></div>
+                            <h4>Xe máy</h4>
+                            <h2>@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ <span>/ tháng</span></h2>
                         </div>
                     </div>
-                    <div class="pricing-vehicle-details">
-                        <div class="pricing-detail-row">
+                    <div class="price-lines">
+                        <div>
                             <span>1 tháng</span>
                             <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>3 tháng</span>
                             <strong>
                                 @Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 3).ToString("N0") đ
@@ -69,7 +72,7 @@
                                 }
                             </strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>6 tháng</span>
                             <strong>
                                 @Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 6).ToString("N0") đ
@@ -82,20 +85,22 @@
                     </div>
                 </div>
 
-                <div class="pricing-vehicle-card">
-                    <div class="pricing-vehicle-header">
-                        <div class="pricing-vehicle-icon car"><i class="fa-solid fa-car"></i></div>
+                <div class="price-card blue">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
                         <div>
-                            <span class="pricing-vehicle-name">Ô tô nhỏ</span>
-                            <div class="pricing-vehicle-price">@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ <small>/ tháng</small></div>
+                            <h4>Ô tô nhỏ</h4>
+                            <h2>@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ <span>/ tháng</span></h2>
                         </div>
                     </div>
-                    <div class="pricing-vehicle-details">
-                        <div class="pricing-detail-row">
+                    <div class="price-lines">
+                        <div>
                             <span>1 tháng</span>
                             <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 1).ToString("N0") đ</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>3 tháng</span>
                             <strong>
                                 @Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 3).ToString("N0") đ
@@ -105,7 +110,7 @@
                                 }
                             </strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>6 tháng</span>
                             <strong>
                                 @Model.GetMonthlyPrice(PricingDisplayDefaults.SmallCar, 6).ToString("N0") đ
@@ -118,20 +123,22 @@
                     </div>
                 </div>
 
-                <div class="pricing-vehicle-card">
-                    <div class="pricing-vehicle-header">
-                        <div class="pricing-vehicle-icon truck"><i class="fa-solid fa-truck"></i></div>
+                <div class="price-card purple">
+                    <div class="price-top">
+                        <div class="price-icon">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
                         <div>
-                            <span class="pricing-vehicle-name">Ô tô lớn</span>
-                            <div class="pricing-vehicle-price">@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ <small>/ tháng</small></div>
+                            <h4>Ô tô lớn</h4>
+                            <h2>@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ <span>/ tháng</span></h2>
                         </div>
                     </div>
-                    <div class="pricing-vehicle-details">
-                        <div class="pricing-detail-row">
+                    <div class="price-lines">
+                        <div>
                             <span>1 tháng</span>
                             <strong>@Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 1).ToString("N0") đ</strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>3 tháng</span>
                             <strong>
                                 @Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 3).ToString("N0") đ
@@ -141,7 +148,7 @@
                                 }
                             </strong>
                         </div>
-                        <div class="pricing-detail-row">
+                        <div>
                             <span>6 tháng</span>
                             <strong>
                                 @Model.GetMonthlyPrice(PricingDisplayDefaults.LargeCar, 6).ToString("N0") đ
@@ -296,14 +303,6 @@
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
 
-                                        @if (ticket.Status == "Hoạt động" || ticket.Status == "Hết hạn")
-                                        {
-                                            <button type="button" class="icon-btn renew-btn"
-                                                    title="Gia hạn"
-                                                    onclick="openRenewModal('@ticket.MonthlyTicketId', '@ticket.VehiclePlate', '@ticket.VehicleType')">
-                                                <i class="fa-solid fa-arrows-rotate"></i>
-                                            </button>
-                                        }
 
                                         @if (ticket.Status == "Hoạt động")
                                         {
@@ -475,15 +474,9 @@
                 }
             </div>
 
-            @if (Model.SelectedTicket.Status == "Hoạt động" || Model.SelectedTicket.Status == "Hết hạn")
+            @if (Model.SelectedTicket.Status == "Hoạt động")
             {
                 <div class="panel-actions">
-                    <button type="button" class="primary-btn"
-                            onclick="openRenewModal('@Model.SelectedTicket.MonthlyTicketId', '@Model.SelectedTicket.VehiclePlate', '@Model.SelectedTicket.VehicleType')">
-                        <i class="fa-solid fa-arrows-rotate"></i> Gia hạn
-                    </button>
-                    @if (Model.SelectedTicket.Status == "Hoạt động")
-                    {
                         <form method="post" asp-page-handler="Cancel" style="display:inline;">
                             <input type="hidden" name="monthlyTicketId" value="@Model.SelectedTicket.MonthlyTicketId" />
                             <button type="submit" class="danger-btn"
@@ -491,56 +484,12 @@
                                 <i class="fa-solid fa-ban"></i> Hủy vé
                             </button>
                         </form>
-                    }
                 </div>
             }
         </aside>
     }
 </div>
 
-<!-- Modal Gia hạn -->
-<div class="modal-overlay" id="renewModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3>Gia hạn vé tháng</h3>
-            <button type="button" onclick="closeRenewModal()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <form method="post" asp-page-handler="Renew">
-            <input type="hidden" name="monthlyTicketId" id="renewTicketId" />
-            <div class="modal-body">
-                <div class="renew-info">
-                    <p>Biển số: <strong id="renewPlate"></strong></p>
-                    <p>Loại xe: <strong id="renewVehicleType"></strong></p>
-                </div>
-                <div class="form-group">
-                    <label>Gói gia hạn</label>
-                    <select name="monthsToAdd" id="renewMonths" onchange="updateRenewPrice()">
-                        <option value="1">1 tháng</option>
-                        <option value="3">3 tháng</option>
-                        <option value="6">6 tháng</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Phương thức thanh toán</label>
-                    <select name="paymentMethod">
-                        <option value="Tiền mặt">Tiền mặt</option>
-                        <option value="Chuyển khoản">Chuyển khoản</option>
-                    </select>
-                </div>
-                <div class="price-display" id="renewPriceDisplay">
-                    <span>Phí gia hạn:</span>
-                    <strong id="renewPriceValue">@Model.GetMonthlyPrice(PricingDisplayDefaults.Motorcycle, 1).ToString("N0") đ</strong>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="secondary-btn" onclick="closeRenewModal()">Hủy</button>
-                <button type="submit" class="primary-btn">
-                    <i class="fa-solid fa-arrows-rotate"></i> Gia hạn
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 @section Scripts {
     <script>
@@ -556,28 +505,6 @@
 
         function formatCurrency(amount) {
             return amount.toLocaleString('vi-VN') + ' đ';
-        }
-
-        // Renew modal
-        var renewVehicleTypeValue = '';
-
-        function openRenewModal(ticketId, plate, vehicleType) {
-            document.getElementById('renewTicketId').value = ticketId;
-            document.getElementById('renewPlate').textContent = plate;
-            document.getElementById('renewVehicleType').textContent = vehicleType;
-            renewVehicleTypeValue = vehicleType;
-            document.getElementById('renewModal').classList.add('open');
-            updateRenewPrice();
-        }
-
-        function closeRenewModal() {
-            document.getElementById('renewModal').classList.remove('open');
-        }
-
-        function updateRenewPrice() {
-            var months = parseInt(document.getElementById('renewMonths').value);
-            var price = getPrice(renewVehicleTypeValue, months);
-            document.getElementById('renewPriceValue').textContent = formatCurrency(price);
         }
 
         // Close modal on overlay click

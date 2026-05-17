@@ -1,14 +1,14 @@
-using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.OpenApi.Models;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services;
 using ParkingManagement.BLL.Services.Implementations;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.Web.Extensions;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -231,6 +231,7 @@ using (var scope = app.Services.CreateScope())
                     [StartTime] datetime2 NOT NULL,
                     [EndTime] datetime2 NULL,
                     [TotalMinutes] int NULL,
+                    [ScheduleId] nvarchar(20) NULL,
                     [Note] nvarchar(200) NULL,
                     [Status] nvarchar(20) NOT NULL,
                     CONSTRAINT [PK_WorkLogs] PRIMARY KEY ([WorkLogId]),
@@ -239,6 +240,36 @@ using (var scope = app.Services.CreateScope())
                 );
 
                 CREATE INDEX [IX_WorkLogs_EmployeeId] ON [dbo].[WorkLogs] ([EmployeeId]);
+            END
+
+            IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NULL
+            BEGIN
+                ALTER TABLE [dbo].[WorkLogs] ADD [ScheduleId] nvarchar(20) NULL;
+            END
+
+            IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
+               AND NOT EXISTS (
+                    SELECT 1 FROM sys.indexes
+                    WHERE name = N'IX_WorkLogs_ScheduleId'
+                      AND object_id = OBJECT_ID(N'[dbo].[WorkLogs]')
+               )
+            BEGIN
+                CREATE INDEX [IX_WorkLogs_ScheduleId] ON [dbo].[WorkLogs] ([ScheduleId]);
+            END
+
+            IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+               AND NOT EXISTS (
+                    SELECT 1
+                    FROM sys.foreign_keys
+                    WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+               )
+            BEGIN
+                ALTER TABLE [dbo].[WorkLogs]
+                ADD CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId]
+                    FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE SET NULL;
             END
             """);
     }
@@ -270,11 +301,34 @@ using (var scope = app.Services.CreateScope())
 
                 CREATE INDEX [IX_ShiftSchedules_EmployeeId] ON [dbo].[ShiftSchedules] ([EmployeeId]);
             END
+
+            IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
+               AND NOT EXISTS (
+                    SELECT 1
+                    FROM sys.foreign_keys
+                    WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+               )
+            BEGIN
+                ALTER TABLE [dbo].[WorkLogs]
+                ADD CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId]
+                    FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE SET NULL;
+            END
             """);
     }
     catch (Exception ex)
     {
         Console.WriteLine($"ShiftSchedules schema repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        DemoCustomerDataSeeder.Seed(db);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Demo customer data seed was skipped. {ex.Message}");
     }
 }
 

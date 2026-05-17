@@ -16,7 +16,7 @@ namespace ParkingManagement.Web.Controllers.Api
     /// </summary>
     [ApiController]
     [Route("api/employee/monthly-tickets")]
-    [Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee,Manager,Admin")]
     [Produces("application/json")]
     public class EmployeeMonthlyTicketsController : ControllerBase
     {

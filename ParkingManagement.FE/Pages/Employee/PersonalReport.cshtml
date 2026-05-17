@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ParkingManagement.FE.Pages.Employee.PersonalReportModel
 
 @{
@@ -24,9 +24,9 @@
             <span>@Model.FromDate - @Model.ToDate</span>
         </div>
 
-        <a href="?period=today" class="filter-btn">Hôm nay</a>
-        <a href="?period=7days" class="filter-btn">7 ngày</a>
-        <a href="?period=month" class="filter-btn active">Tháng này</a>
+        <a href="?period=today" class="filter-btn @(Model.Period == "today" ? "active" : "")">Hôm nay</a>
+        <a href="?period=7days" class="filter-btn @(Model.Period == "7days" ? "active" : "")">7 ngày</a>
+        <a href="?period=month" class="filter-btn @(Model.Period == "month" ? "active" : "")">Tháng này</a>
     </div>
 
     <div class="report-layout">

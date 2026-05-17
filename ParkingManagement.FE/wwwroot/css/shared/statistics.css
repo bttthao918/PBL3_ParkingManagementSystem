@@ -5,7 +5,8 @@
 .stat-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 18px;
     margin-bottom: 22px;
 }
 
@@ -21,24 +22,54 @@
 
 .stat-date-filter {
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #dbe6f5;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
 }
 
-    .stat-date-filter button {
-        height: 44px;
-        border: 1px solid #d7e2f2;
-        background: white;
-        border-radius: 12px;
-        padding: 0 16px;
+    .stat-date-filter a {
+        height: 34px;
+        min-width: 78px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 700;
         color: #173b68;
+        text-decoration: none;
         cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
-        .stat-date-filter button.active {
-            background: linear-gradient(135deg, #0ea5ff, #005eff);
+        .stat-date-filter a:hover {
+            background: #f0f7ff;
+            border-color: #bdd7f4;
+        }
+
+        .stat-date-filter a.active {
+            background: #006bff;
+            border-color: #006bff;
             color: white;
         }
+
+.stat-date-range {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    border-right: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 700;
+    white-space: nowrap;
+}
 
 .stat-kpi-grid {
     display: grid;
@@ -66,10 +97,14 @@
     }
 
     .stat-kpi-card span {
-        color: #16a34a;
+        color: #66758d;
         font-size: 14px;
         font-weight: 700;
     }
+
+        .stat-kpi-card span:empty {
+            display: none;
+        }
 
 .stat-kpi-icon {
     width: 58px;
@@ -96,6 +131,10 @@
 
     .stat-kpi-icon.orange {
         background: linear-gradient(135deg, #ff9f1c, #ff7a00);
+    }
+
+    .stat-kpi-icon.red {
+        background: linear-gradient(135deg, #f43f5e, #dc2626);
     }
 
     .stat-kpi-icon.cyan {
@@ -144,6 +183,20 @@
         border: 1px solid #d7e2f2;
         border-radius: 10px;
         padding: 0 12px;
+    }
+
+    .stat-card-title > span {
+        min-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #d7e2f2;
+        border-radius: 10px;
+        padding: 0 12px;
+        color: #52627a;
+        font-weight: 700;
+        background: #f8fbff;
+        white-space: nowrap;
     }
 
 .stat-chart-card canvas {
@@ -255,6 +308,16 @@
         font-weight: 700;
     }
 
+        .stat-rank-list em.down {
+            color: #dc2626;
+        }
+
+.stat-empty {
+    color: #66758d;
+    font-weight: 700;
+    margin: 18px 0 0;
+}
+
 .stat-progress-row {
     margin-top: 24px;
 }
@@ -342,6 +405,12 @@
         font-weight: 600;
     }
 
+.stat-table-empty {
+    text-align: center;
+    color: #66758d !important;
+    font-weight: 700;
+}
+
 .table-eye {
     color: #0066ff;
     cursor: pointer;
@@ -355,5 +424,17 @@
     .stat-main-grid,
     .stat-bottom-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .stat-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .stat-date-filter {
+        justify-content: flex-start;
+        overflow-x: auto;
     }
 }

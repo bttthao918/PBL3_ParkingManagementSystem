@@ -177,7 +177,7 @@
 .chip.info { background: #dbeafe; color: #1e40af; }
 .chip.neutral { background: #f1f5f9; color: #475569; }
 
-/* Slot Grid */
+/* Slot Map Layout */
 .slot-section { margin-top: 8px; }
 .slot-section h4 {
     margin: 0 0 14px; font-size: 15px; color: #10233f;
@@ -185,26 +185,69 @@
 }
 .slot-count { font-size: 12px; color: #64748b; font-weight: 400; margin-left: 4px; }
 
-.slot-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+.legend {
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 600;
 }
-.slot-option { cursor: pointer; }
+.dot {
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.dot.green { background: #22c55e; }
+.dot.orange { background: #f97316; }
+.dot.blue { background: #2563eb; }
+.dot.gray { background: #94a3b8; }
+.dot.red { background: #ef4444; }
+
+.parking-map {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    background: #eaf1fb;
+    border-radius: 16px;
+    padding: 14px;
+}
+
+.slot-option { cursor: pointer; display: block; }
 .slot-option input { display: none; }
-.slot-box {
-    border: 2px solid #e3ebf6; border-radius: 12px;
-    padding: 12px 8px; text-align: center;
-    transition: all 0.15s; position: relative;
+.slot-option.disabled-slot { cursor: not-allowed; }
+
+.slot {
+    border-radius: 12px;
+    min-height: 62px;
+    padding: 12px 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    transition: all 0.15s;
 }
-.slot-box strong { display: block; font-size: 15px; color: #10233f; }
-.slot-box span { display: block; font-size: 11px; color: #94a3b8; margin-top: 2px; }
-.slot-box:hover { border-color: #1479ff; background: #f0f7ff; }
-.slot-option input:checked + .slot-box {
-    border-color: #16a34a; background: #f0fdf4;
-    box-shadow: 0 0 0 3px rgba(22,163,74,0.15);
+.slot strong { display: block; font-size: 15px; font-weight: 700; color: inherit; }
+.slot span { display: block; font-size: 11px; margin-top: 5px; color: inherit; opacity: 0.8; }
+
+.slot.empty { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.slot.empty:hover { border-color: #16a34a; background: #f0fdf4; }
+.slot.using { background: #ffedd5; color: #c2410c; border-color: #fdba74; cursor: not-allowed; opacity: 0.85; }
+.slot.reserved { background: #dbeafe; color: #2563eb; border-color: #93c5fd; cursor: not-allowed; opacity: 0.85; }
+.slot.maintenance { background: #e2e8f0; color: #475569; border-color: #cbd5e1; cursor: not-allowed; opacity: 0.85; }
+.slot.error { background: #fee2e2; color: #ef4444; border-color: #fca5a5; cursor: not-allowed; opacity: 0.85; }
+
+.slot-option input:checked + .slot {
+    outline: 3px solid #0d6efd;
+    background: #eff6ff !important;
+    color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
 }
-.slot-box.preferred { border-color: #f59e0b; background: #fffbeb; }
+
+.slot.preferred { border-color: #f59e0b; background: #fffbeb; }
 .preferred-star {
     position: absolute; top: 6px; right: 6px;
     color: #f59e0b; font-size: 10px;
