@@ -177,14 +177,16 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(new { message = "Invalid input" });
-
                 var customerId = User.FindFirst("customerId")?.Value;
                 if (string.IsNullOrEmpty(customerId))
                     return Unauthorized(new { message = "Invalid token" });
 
                 dto.CustomerId = customerId;
+                ModelState.Remove(nameof(CreateReservationDto.CustomerId));
+
+                if (!ModelState.IsValid)
+                    return BadRequest(new { message = "Invalid input" });
+
                 var result = await _reservationService.CreateAsync(dto);
 
                 if (!result.Success)
@@ -344,18 +346,20 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(new { message = "Invalid input" });
-
                 var customerId = User.FindFirst("customerId")?.Value;
                 if (string.IsNullOrEmpty(customerId))
                     return Unauthorized(new { message = "Invalid token" });
+
+                dto.CustomerId = customerId;
+                ModelState.Remove(nameof(RegisterMonthlyTicketDto.CustomerId));
+
+                if (!ModelState.IsValid)
+                    return BadRequest(new { message = "Invalid input" });
 
                 // Validate package type
                 if (!new[] { "1 tháng", "3 tháng", "6 tháng" }.Contains(dto.PackageType))
                     return BadRequest(new { message = "Invalid package type" });
 
-                dto.CustomerId = customerId;
                 var result = await _monthlyTicketService.RegisterAsync(dto);
 
                 if (!result.Success)
@@ -378,6 +382,10 @@ namespace ParkingManagement.Web.Controllers.Api
                     Success = true,
                     Message = "Monthly ticket registered successfully",
                     Fee = monthlyTicket.TotalFee,
+                    OrderCode = monthlyTicket.PayOsOrderCode,
+                    PaymentLinkId = monthlyTicket.PayOsPaymentLinkId,
+                    CheckoutUrl = monthlyTicket.CheckoutUrl,
+                    QrCode = monthlyTicket.QrCode,
                     Data = new MonthlyTicketDetailDto
                     {
                         MonthlyTicketId = monthlyTicket.MonthlyTicketId,

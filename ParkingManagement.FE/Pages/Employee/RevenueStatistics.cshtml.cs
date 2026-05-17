@@ -7,7 +7,7 @@ using ParkingManagement.FE.Services;
 namespace ParkingManagement.FE.Pages.Employee
 {
     [Authorize(Roles = "Employee")]
-    public class RevenueStatisticsModel : PageModel
+    public class RevenueStatisticsModel : PageModel, IRevenueStatisticsViewModel
     {
         private readonly IReportService _reportService;
 
@@ -19,6 +19,11 @@ namespace ParkingManagement.FE.Pages.Employee
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
+        public RevenueStatisticsChartConfig Charts { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
+        public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
+        public string RankingTitle { get; set; } = "Top ngày doanh thu cao nhất";
 
         public async Task OnGetAsync()
         {
@@ -92,6 +97,39 @@ namespace ParkingManagement.FE.Pages.Employee
                             });
                         }
                     }
+
+                    PaymentMethodBreakdown = BuildBreakdown(report.RevenueByPaymentMethod);
+                    VehicleTypeBreakdown = BuildBreakdown(report.RevenueByVehicleType);
+                    Rankings = report.TopDays.Select((day, index) => new StatisticsRankItemViewModel
+                    {
+                        Rank = (index + 1).ToString(),
+                        Label = day.Date.ToString("dd/MM/yyyy"),
+                        Value = $"{day.TotalRevenue:N0} đ",
+                        Note = $"{day.TicketCount:N0} vé"
+                    }).ToList();
+
+                    var dailyBreakdown = report.DailyBreakdown ?? new();
+                    var revenueByPaymentMethod = report.RevenueByPaymentMethod ?? new();
+                    var revenueByVehicleType = report.RevenueByVehicleType ?? new();
+
+                    Charts = new RevenueStatisticsChartConfig
+                    {
+                        Line = new RevenueLineChartConfig
+                        {
+                            Labels = dailyBreakdown.OrderBy(x => x.Date).Select(x => x.Date.ToString("dd/MM")).ToList(),
+                            Current = dailyBreakdown.OrderBy(x => x.Date).Select(x => x.TotalRevenue).ToList()
+                        },
+                        Donut = new RevenueSeriesChartConfig
+                        {
+                            Labels = revenueByPaymentMethod.Keys.ToList(),
+                            Data = revenueByPaymentMethod.Values.ToList()
+                        },
+                        Bar = new RevenueSeriesChartConfig
+                        {
+                            Labels = revenueByVehicleType.Keys.ToList(),
+                            Data = revenueByVehicleType.Values.ToList()
+                        }
+                    };
                 }
                 else
                 {
@@ -118,6 +156,23 @@ namespace ParkingManagement.FE.Pages.Employee
                 Headers = new() { "Ngày", "Tổng doanh thu", "Số vé", "Trung bình/vé" },
                 Rows = new()
             };
+        }
+
+        private static List<StatisticsBreakdownItemViewModel> BuildBreakdown(Dictionary<string, decimal>? values)
+        {
+            var total = values?.Values.Sum() ?? 0;
+            var colors = new[] { "blue", "green", "purple", "orange", "cyan" };
+
+            return (values ?? new())
+                .OrderByDescending(x => x.Value)
+                .Select((x, index) => new StatisticsBreakdownItemViewModel
+                {
+                    Label = x.Key,
+                    Value = x.Value,
+                    Percentage = total > 0 ? Math.Round(x.Value / total * 100, 1) : 0,
+                    ColorClass = colors[index % colors.Length]
+                })
+                .ToList();
         }
     }
 }

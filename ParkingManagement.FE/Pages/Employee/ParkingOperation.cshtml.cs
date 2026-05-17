@@ -22,15 +22,11 @@ namespace ParkingManagement.FE.Pages.Employee
         [BindProperty(SupportsGet = true)]
         public string Tab { get; set; } = "checkin";
 
-        // Check-in state
         public CheckInValidationResponse? CheckInValidation { get; set; }
         public CheckInResultResponse? CheckInResult { get; set; }
-
-        // Check-out state
         public CheckOutValidationResponse? CheckOutValidation { get; set; }
         public CheckOutResultResponse? CheckOutResult { get; set; }
 
-        // Danh sách xe đang trong bãi (cho tab check-out)
         public List<EmployeeTicketListDto> ActiveTickets { get; set; } = new();
         public int ActiveCount { get; set; }
         public int TotalSlots { get; set; }
@@ -44,19 +40,13 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public async Task OnGetAsync()
         {
-            ViewData["Title"] = "Quản lý ra vào";
-            ViewData["Role"] = "Nhân viên";
-            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
-
+            SetViewData();
             await LoadSummaryAsync();
 
             if (Tab == "checkout")
-            {
                 await LoadActiveTicketsAsync();
-            }
         }
 
-        // Bước 1 Check-in: Validate biển số
         public async Task<IActionResult> OnPostValidateCheckInAsync(string vehiclePlate, string vehicleType)
         {
             SetViewData();
@@ -74,7 +64,6 @@ namespace ParkingManagement.FE.Pages.Employee
             return Page();
         }
 
-        // Bước 2 Check-in: Xác nhận
         public async Task<IActionResult> OnPostConfirmCheckInAsync(string vehiclePlate, string vehicleType, string slotId, string? customerId)
         {
             SetViewData();
@@ -95,7 +84,6 @@ namespace ParkingManagement.FE.Pages.Employee
             return Page();
         }
 
-        // Bước 1 Check-out: Validate
         public async Task<IActionResult> OnPostValidateCheckOutAsync(string vehiclePlateOrTicketId)
         {
             SetViewData();
@@ -114,13 +102,22 @@ namespace ParkingManagement.FE.Pages.Employee
             return Page();
         }
 
-        // Bước 2 Check-out: Xác nhận
-        public async Task<IActionResult> OnPostConfirmCheckOutAsync(string ticketId, decimal fee, string? paymentMethod)
+        public async Task<IActionResult> OnPostConfirmCheckOutAsync(
+            string ticketId,
+            decimal fee,
+            string? paymentMethod,
+            bool paymentReceivedConfirmed,
+            string? bankTransferRef)
         {
             SetViewData();
             Tab = "checkout";
 
-            CheckOutResult = await _service.ConfirmCheckOutAsync(ticketId, fee, paymentMethod ?? "Tiền mặt");
+            CheckOutResult = await _service.ConfirmCheckOutAsync(
+                ticketId,
+                fee,
+                paymentMethod ?? "Cash",
+                paymentReceivedConfirmed,
+                bankTransferRef);
 
             if (CheckOutResult?.Success == true)
             {
@@ -151,7 +148,7 @@ namespace ParkingManagement.FE.Pages.Employee
             if (summary != null)
             {
                 ActiveCount = summary.ActiveTickets;
-                TotalSlots = summary.TotalTickets; // approximate
+                TotalSlots = summary.TotalTickets;
             }
         }
 

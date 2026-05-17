@@ -157,6 +157,71 @@ using (var scope = app.Services.CreateScope())
     try
     {
         db.Database.ExecuteSqlRaw("""
+            SET QUOTED_IDENTIFIER ON;
+
+            IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
+            BEGIN
+                IF COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NULL
+                    ALTER TABLE [dbo].[Payments] ADD [CollectedByEmployeeId] nvarchar(20) NULL;
+
+                IF COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NOT NULL
+                   AND NOT EXISTS (
+                       SELECT 1
+                       FROM sys.indexes
+                       WHERE [name] = N'IX_Payments_CollectedByEmployeeId'
+                         AND [object_id] = OBJECT_ID(N'[dbo].[Payments]')
+                   )
+                    CREATE INDEX [IX_Payments_CollectedByEmployeeId]
+                        ON [dbo].[Payments] ([CollectedByEmployeeId]);
+
+                IF OBJECT_ID(N'[dbo].[Employees]', N'U') IS NOT NULL
+                   AND COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NOT NULL
+                   AND NOT EXISTS (
+                       SELECT 1
+                       FROM sys.foreign_keys
+                       WHERE [name] = N'FK_Payments_Employees_CollectedByEmployeeId'
+                   )
+                    ALTER TABLE [dbo].[Payments] WITH CHECK ADD CONSTRAINT [FK_Payments_Employees_CollectedByEmployeeId]
+                        FOREIGN KEY ([CollectedByEmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId]);
+
+                IF OBJECT_ID(N'[dbo].[__EFMigrationsHistory]', N'U') IS NOT NULL
+                   AND COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NOT NULL
+                   AND NOT EXISTS (
+                       SELECT 1
+                       FROM [dbo].[__EFMigrationsHistory]
+                       WHERE [MigrationId] = N'20260515180000_AddPaymentEmployeeAttribution'
+                   )
+                    INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+                    VALUES (N'20260515180000_AddPaymentEmployeeAttribution', N'10.0.6');
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Payments employee attribution schema repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
+            IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+            BEGIN
+                IF OBJECT_ID(N'[dbo].[CK_MonthlyTicket_Status]', N'C') IS NOT NULL
+                    ALTER TABLE [dbo].[MonthlyTickets] DROP CONSTRAINT [CK_MonthlyTicket_Status];
+
+                ALTER TABLE [dbo].[MonthlyTickets] WITH CHECK ADD CONSTRAINT [CK_MonthlyTicket_Status]
+                    CHECK ([Status] IN (N'Hoạt động', N'Hết hạn', N'Đã hủy', N'Chờ thanh toán'));
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"MonthlyTickets status schema repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
             IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NULL
             BEGIN
                 CREATE TABLE [dbo].[WorkLogs] (

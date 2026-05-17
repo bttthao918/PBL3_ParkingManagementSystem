@@ -15,6 +15,8 @@ namespace ParkingManagement.FE.Services
         Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> RegisterMonthlyTicketAsync(RegisterMonthlyTicketRequestDto request);
         Task<ApiActionResult<RenewMonthlyTicketResponseDto>> RenewMonthlyTicketAsync(string monthlyTicketId, RenewMonthlyTicketRequestDto request);
         Task<ApiActionResult<BasicApiResponseDto>> CancelMonthlyTicketAsync(string monthlyTicketId);
+        Task<ApiActionResult<BasicApiResponseDto>> ConfirmPayOsReturnAsync(long orderCode);
+        Task<ApiActionResult<BasicApiResponseDto>> ConfirmMonthlyTicketPaymentAsync(string monthlyTicketId);
         Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50);
         Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
         Task<CreateVnPayPaymentResponseDto?> CreateVnPayPaymentAsync(CreateVnPayPaymentRequestDto request);
@@ -73,6 +75,16 @@ namespace ParkingManagement.FE.Services
             => SendAsync<BasicApiResponseDto>(
                 () => _httpClient.DeleteAsync($"api/monthly-tickets/{Uri.EscapeDataString(monthlyTicketId)}"),
                 $"api/monthly-tickets/{monthlyTicketId}");
+
+        public Task<ApiActionResult<BasicApiResponseDto>> ConfirmPayOsReturnAsync(long orderCode)
+            => SendAsync<BasicApiResponseDto>(
+                () => _httpClient.PostAsync($"api/payments/payos/confirm-return/{orderCode}", null),
+                $"api/payments/payos/confirm-return/{orderCode}");
+
+        public Task<ApiActionResult<BasicApiResponseDto>> ConfirmMonthlyTicketPaymentAsync(string monthlyTicketId)
+            => SendAsync<BasicApiResponseDto>(
+                () => _httpClient.PostAsync($"api/payments/payos/confirm-monthly-ticket/{Uri.EscapeDataString(monthlyTicketId)}", null),
+                $"api/payments/payos/confirm-monthly-ticket/{monthlyTicketId}");
 
         public Task<ListCustomerPaymentDto?> GetPaymentHistoryAsync(int pageNumber = 1, int pageSize = 50)
             => GetAsync<ListCustomerPaymentDto>($"api/customers/payment-history?pageNumber={pageNumber}&pageSize={pageSize}");
@@ -198,6 +210,11 @@ namespace ParkingManagement.FE.Services
                 {
                     return message.GetString();
                 }
+
+                if (TryGetValidationMessage(root, out var validationMessage))
+                {
+                    return validationMessage;
+                }
             }
             catch (JsonException)
             {
@@ -205,6 +222,45 @@ namespace ParkingManagement.FE.Services
             }
 
             return null;
+        }
+
+        private static bool TryGetValidationMessage(JsonElement element, out string message)
+        {
+            message = string.Empty;
+
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (element.TryGetProperty("errors", out var errors) &&
+                    TryGetValidationMessage(errors, out message))
+                {
+                    return true;
+                }
+
+                foreach (var property in element.EnumerateObject())
+                {
+                    if (property.Value.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var item in property.Value.EnumerateArray())
+                        {
+                            if (item.ValueKind == JsonValueKind.String &&
+                                !string.IsNullOrWhiteSpace(item.GetString()))
+                            {
+                                message = $"{property.Name}: {item.GetString()}";
+                                return true;
+                            }
+                        }
+                    }
+
+                    if (property.Value.ValueKind == JsonValueKind.Object &&
+                        TryGetValidationMessage(property.Value, out var nestedMessage))
+                    {
+                        message = nestedMessage;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private void AttachBearerToken()

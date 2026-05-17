@@ -28,6 +28,10 @@ namespace ParkingManagement.BLL.DTOs
         public decimal RevenueFromSingleTickets { get; set; }
         public decimal RevenueFromMonthlyTickets { get; set; }
         public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByArea { get; set; } = new();
+        public List<EmployeeRevenueSummaryDto> TopEmployees { get; set; } = new();
     }
 
     public class DailyRevenueDto
@@ -35,6 +39,14 @@ namespace ParkingManagement.BLL.DTOs
         public DateTime Date { get; set; }
         public decimal Revenue { get; set; }
         public int TicketCount { get; set; }
+    }
+
+    public class EmployeeRevenueSummaryDto
+    {
+        public string? EmployeeId { get; set; }
+        public string EmployeeName { get; set; } = "Chưa gán nhân viên";
+        public decimal TotalRevenue { get; set; }
+        public int PaymentCount { get; set; }
     }
 
     // ── Manager Dashboard DTOs ────────────────────────────────

@@ -12,6 +12,11 @@ namespace ParkingManagement.FE.Pages.Admin
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
+        public RevenueStatisticsChartConfig Charts { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
+        public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
+        public string RankingTitle { get; set; } = "Top 5 nhân viên doanh thu cao nhất";
 
         private readonly IReportService _reportService;
 
@@ -60,6 +65,35 @@ namespace ParkingManagement.FE.Pages.Admin
                         $"{x.TicketCount:N0}"
                     }).ToList()
                 };
+
+                PaymentMethodBreakdown = BuildBreakdown(data.RevenueByPaymentMethod);
+                VehicleTypeBreakdown = BuildBreakdown(data.RevenueByVehicleType);
+                Rankings = data.TopEmployees.Select((employee, index) => new StatisticsRankItemViewModel
+                {
+                    Rank = (index + 1).ToString(),
+                    Label = employee.EmployeeName,
+                    Value = $"{employee.TotalRevenue:N0} đ",
+                    Note = $"{employee.PaymentCount:N0} giao dịch"
+                }).ToList();
+
+                Charts = new RevenueStatisticsChartConfig
+                {
+                    Line = new RevenueLineChartConfig
+                    {
+                        Labels = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Date.ToString("dd/MM")).ToList(),
+                        Current = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Revenue).ToList()
+                    },
+                    Donut = new RevenueSeriesChartConfig
+                    {
+                        Labels = data.RevenueByPaymentMethod.Keys.ToList(),
+                        Data = data.RevenueByPaymentMethod.Values.ToList()
+                    },
+                    Bar = new RevenueSeriesChartConfig
+                    {
+                        Labels = data.RevenueByArea.Any() ? data.RevenueByArea.Keys.ToList() : data.RevenueByVehicleType.Keys.ToList(),
+                        Data = data.RevenueByArea.Any() ? data.RevenueByArea.Values.ToList() : data.RevenueByVehicleType.Values.ToList()
+                    }
+                };
             }
             else
             {
@@ -70,6 +104,23 @@ namespace ParkingManagement.FE.Pages.Admin
                     DateRangeText = ""
                 };
             }
+        }
+
+        private static List<StatisticsBreakdownItemViewModel> BuildBreakdown(Dictionary<string, decimal>? values)
+        {
+            var total = values?.Values.Sum() ?? 0;
+            var colors = new[] { "blue", "green", "purple", "orange", "cyan" };
+
+            return (values ?? new())
+                .OrderByDescending(x => x.Value)
+                .Select((x, index) => new StatisticsBreakdownItemViewModel
+                {
+                    Label = x.Key,
+                    Value = x.Value,
+                    Percentage = total > 0 ? Math.Round(x.Value / total * 100, 1) : 0,
+                    ColorClass = colors[index % colors.Length]
+                })
+                .ToList();
         }
     }
 }

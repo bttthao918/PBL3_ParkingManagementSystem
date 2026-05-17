@@ -11,15 +11,18 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly IReservationRepository _repo;
         private readonly IParkingSlotRepository _slotRepo;
         private readonly ICustomerRepository _customerRepo;
+        private readonly IVehicleRepository _vehicleRepo;
 
         public ReservationService(
             IReservationRepository repo,
             IParkingSlotRepository slotRepo,
-            ICustomerRepository customerRepo)
+            ICustomerRepository customerRepo,
+            IVehicleRepository vehicleRepo)
         {
             _repo = repo;
             _slotRepo = slotRepo;
             _customerRepo = customerRepo;
+            _vehicleRepo = vehicleRepo;
         }
 
         public async Task<List<ReservationDto>> GetAllAsync()
@@ -106,21 +109,60 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (!isValid)
                 return ServiceResult<ReservationDto>.Fail(errorMessage ?? "Dữ liệu không hợp lệ.");
 
-            var customer = await _customerRepo.GetByIdAsync(dto.CustomerId);
+            dto.VehiclePlate = dto.VehiclePlate.Trim().ToUpperInvariant();
+            dto.VehicleType = dto.VehicleType?.Trim();
+            dto.PreferredSlotId = string.IsNullOrWhiteSpace(dto.PreferredSlotId) ? null : dto.PreferredSlotId.Trim();
+            var customerId = dto.CustomerId!.Trim();
+            var vehicleType = dto.VehicleType!;
+            dto.CustomerId = customerId;
+
+            var customer = await _customerRepo.GetByIdAsync(customerId);
             if (customer == null)
                 return ServiceResult<ReservationDto>.Fail("Không tìm thấy khách hàng.");
+
+            var vehicle = await _vehicleRepo.GetByPlateAsync(dto.VehiclePlate);
+            if (vehicle == null)
+            {
+                await _vehicleRepo.AddAsync(new Vehicle
+                {
+                    VehiclePlate = dto.VehiclePlate,
+                    VehicleType = vehicleType,
+                    CustomerId = customerId
+                });
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(vehicle.CustomerId) &&
+                    !string.Equals(vehicle.CustomerId, customerId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return ServiceResult<ReservationDto>.Fail("Biển số xe này đã thuộc khách hàng khác.");
+                }
+
+                if (!string.Equals(vehicle.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
+                {
+                    return ServiceResult<ReservationDto>.Fail("Loại xe không khớp với biển số đã lưu.");
+                }
+
+                if (string.IsNullOrWhiteSpace(vehicle.CustomerId))
+                {
+                    vehicle.CustomerId = customerId;
+                    await _vehicleRepo.UpdateAsync(vehicle);
+                }
+            }
 
             string? slotId = dto.PreferredSlotId;
             if (!string.IsNullOrEmpty(slotId))
             {
                 var preferred = await _slotRepo.GetByIdAsync(slotId);
-                if (preferred == null || preferred.Status != "Trống")
+                if (preferred == null ||
+                    preferred.Status != "Trống" ||
+                    !string.Equals(preferred.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
                     slotId = null;
             }
 
             if (string.IsNullOrEmpty(slotId))
             {
-                var available = await _slotRepo.GetAvailableAsync(dto.VehicleType);
+                var available = await _slotRepo.GetAvailableAsync(vehicleType);
                 if (!available.Any())
                     return ServiceResult<ReservationDto>.Fail("Không còn chỗ trống cho loại xe này.");
                 slotId = available.First().SlotId;
@@ -130,7 +172,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var reservation = new Reservation
             {
                 ReservationId = id,
-                CustomerId = dto.CustomerId,
+                CustomerId = customerId,
                 VehiclePlate = dto.VehiclePlate,
                 SlotId = slotId,
                 ExpectedTime = dto.ExpectedTime,

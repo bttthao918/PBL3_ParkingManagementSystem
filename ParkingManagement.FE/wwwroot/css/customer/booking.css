@@ -579,6 +579,20 @@ body.modal-open {
     color: #64748b;
 }
 
+@media (max-width: 640px) {
+    .new-vehicle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .new-vehicle-actions {
+        flex-direction: column;
+    }
+
+    .compact-btn {
+        width: 100%;
+    }
+}
+
 .legend {
     display: flex;
     flex-wrap: wrap;

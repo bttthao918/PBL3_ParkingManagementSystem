@@ -35,7 +35,7 @@ namespace ParkingManagement.BLL.DTOs
 
     public class CreateReservationDto
     {
-        public string CustomerId { get; set; } = string.Empty;
+        public string? CustomerId { get; set; }
         public string VehiclePlate { get; set; } = string.Empty;
         public string? VehicleType { get; set; }
         public string? PreferredSlotId { get; set; }
@@ -97,7 +97,7 @@ namespace ParkingManagement.BLL.DTOs
 
     public class RegisterMonthlyTicketDto
     {
-        public string CustomerId { get; set; } = string.Empty;
+        public string? CustomerId { get; set; }
         public string VehiclePlate { get; set; } = string.Empty;
         public string? VehicleType { get; set; }
         public string PackageType { get; set; } = string.Empty;  // "1 tháng", "3 tháng", "6 tháng"
@@ -109,6 +109,10 @@ namespace ParkingManagement.BLL.DTOs
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
         public decimal Fee { get; set; }
+        public long? OrderCode { get; set; }
+        public string? PaymentLinkId { get; set; }
+        public string? CheckoutUrl { get; set; }
+        public string? QrCode { get; set; }
         public MonthlyTicketDetailDto? Data { get; set; }
     }
 

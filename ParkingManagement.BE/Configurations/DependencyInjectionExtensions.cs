@@ -4,6 +4,7 @@ using ParkingManagement.DAL.Interfaces;
 using ParkingManagement.DAL.Implementations;
 using ParkingManagement.DAL.Repositories;
 using ParkingManagement.BLL.Interfaces;
+using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Services.Implementations;
@@ -23,6 +24,7 @@ namespace ParkingManagement.Web.Extensions
                     sql => sql.MigrationsAssembly("BackendAPI")
                 )
             );
+            services.Configure<PayOsOptions>(configuration.GetSection("PayOS"));
 
             // 2. Repositories (DAL)
             services.AddScoped<IAccountRepository, AccountRepository>();
@@ -63,6 +65,7 @@ namespace ParkingManagement.Web.Extensions
             services.AddScoped<IPricingService, PricingService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddSingleton<IVnPayService, VnPayService>();
+            services.AddHttpClient<IPayOsService, PayOsService>();
 
             return services;
         }

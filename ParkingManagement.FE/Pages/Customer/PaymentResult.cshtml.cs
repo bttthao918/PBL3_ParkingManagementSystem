@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ParkingManagement.FE.Services;
 
 namespace ParkingManagement.FE.Pages.Customer
 {
@@ -9,10 +10,14 @@ namespace ParkingManagement.FE.Pages.Customer
     public class PaymentResultModel : PageModel
     {
         private readonly ILogger<PaymentResultModel> _logger;
+        private readonly ICustomerApiService _customerApiService;
 
-        public PaymentResultModel(ILogger<PaymentResultModel> logger)
+        public PaymentResultModel(
+            ILogger<PaymentResultModel> logger,
+            ICustomerApiService customerApiService)
         {
             _logger = logger;
+            _customerApiService = customerApiService;
         }
 
         public bool IsSuccess { get; set; }
@@ -24,12 +29,55 @@ namespace ParkingManagement.FE.Pages.Customer
         public string? OrderInfo { get; set; }
         public string UserName { get; set; } = "Customer";
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
             UserName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";
             ViewData["Title"] = "Kết quả thanh toán";
             ViewData["UserName"] = UserName;
             ViewData["Role"] = "Khách hàng";
+
+            var payOsOrderCode = Request.Query["orderCode"].ToString();
+            var payOsStatus = Request.Query["status"].ToString();
+            var payOsCode = Request.Query["code"].ToString();
+            var payOsPaymentLinkId = Request.Query["id"].ToString();
+            var payOsCancelled = string.Equals(Request.Query["cancel"].ToString(), "true", StringComparison.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrWhiteSpace(payOsOrderCode) ||
+                !string.IsNullOrWhiteSpace(payOsStatus) ||
+                !string.IsNullOrWhiteSpace(payOsCode))
+            {
+                TxnRef = payOsOrderCode;
+                TransactionNo = payOsPaymentLinkId;
+                OrderInfo = "payOS VietQR";
+                IsSuccess = !payOsCancelled &&
+                    string.Equals(payOsStatus, "PAID", StringComparison.OrdinalIgnoreCase);
+                Message = payOsCancelled
+                    ? "Bạn đã hủy thanh toán payOS."
+                    : IsSuccess
+                        ? "Thanh toán payOS đã hoàn tất. Vé tháng sẽ chuyển sang hoạt động sau khi webhook xác nhận giao dịch."
+                        : "Thanh toán payOS chưa hoàn tất hoặc đang chờ ngân hàng xác nhận.";
+
+                if (IsSuccess && long.TryParse(payOsOrderCode, out var orderCode))
+                {
+                    var confirmResult = await _customerApiService.ConfirmPayOsReturnAsync(orderCode);
+                    if (confirmResult.Success)
+                    {
+                        Message = confirmResult.Message;
+                    }
+                    else
+                    {
+                        IsSuccess = false;
+                        Message = confirmResult.Message;
+                    }
+                }
+
+                _logger.LogInformation("PayOS Return: Code={Code}, Status={Status}, OrderCode={OrderCode}, Success={Success}",
+                    payOsCode,
+                    payOsStatus,
+                    payOsOrderCode,
+                    IsSuccess);
+                return;
+            }
 
             // Parse VNPay return parameters
             var vnpResponseCode = Request.Query["vnp_ResponseCode"].ToString();

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
 using ParkingManagement.DAL.Interfaces;
@@ -294,11 +295,11 @@ namespace ParkingManagement.DAL.Implementations
             _db.MonthlyTickets.ToListAsync();
 
         public Task<MonthlyTicket?> GetActiveByPlateAsync(string plate) =>
-            _db.MonthlyTickets.FirstOrDefaultAsync(m => m.VehiclePlate == plate && m.Status == "Hoạt động");
+            _db.MonthlyTickets.FirstOrDefaultAsync(m => m.VehiclePlate == plate && m.Status == MonthlyTicketStatuses.ACTIVE);
 
         public Task<List<MonthlyTicket>> GetExpiringSoonAsync(int days) =>
             _db.MonthlyTickets
-               .Where(m => m.Status == "Hoạt động" && m.EndDate <= DateTime.Now.AddDays(days))
+               .Where(m => m.Status == MonthlyTicketStatuses.ACTIVE && m.EndDate <= DateTime.Now.AddDays(days))
                .ToListAsync();
 
         public async Task<string> GenerateIdAsync()
@@ -329,6 +330,7 @@ namespace ParkingManagement.DAL.Implementations
 
         public Task<Reservation?> GetByIdAsync(string id) =>
             _db.Reservations.Include(r => r.Customer)
+                            .Include(r => r.Vehicle)
                             .Include(r => r.ParkingSlot)
                             .FirstOrDefaultAsync(r => r.ReservationId == id);
 

@@ -78,6 +78,7 @@ namespace ParkingManagement.BLL.DTOs
         public decimal? ReceivedAmount { get; set; }            // Tiền nhận (tiền mặt)
         public string? BankTransferRef { get; set; }            // Mã tham chiếu chuyển khoản
         public string? EWalletTransactionId { get; set; }       // Mã giao dịch ví điện tử
+        public string? CollectedByEmployeeId { get; set; }      // Nhân viên thu tiền (nếu có)
     }
 
     /// <summary>
@@ -94,6 +95,7 @@ namespace ParkingManagement.BLL.DTOs
         public DateTime PaymentTime { get; set; }               // Thời gian thanh toán
         public decimal? Change { get; set; }                    // Tiền thừa (nếu tiền mặt)
         public string? PaymentStatus { get; set; }              // Trạng thái thanh toán
+        public string? CollectedByEmployeeId { get; set; }      // Nhân viên thu tiền (nếu có)
         public string? Message { get; set; }
     }
 }

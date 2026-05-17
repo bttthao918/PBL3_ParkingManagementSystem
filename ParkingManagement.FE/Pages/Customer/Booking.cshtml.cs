@@ -76,13 +76,13 @@ namespace ParkingManagement.FE.Pages.Customer
             };
 
             var result = await _reservationService.CreateAsync(dto);
-            if (result != null)
+            if (result?.Success == true)
             {
-                TempData["Success"] = "Đặt chỗ thành công!";
+                TempData["Success"] = result.Message ?? "Đặt chỗ thành công!";
             }
             else
             {
-                TempData["Error"] = "Không thể đặt chỗ. Vui lòng thử lại.";
+                TempData["Error"] = result?.Message ?? "Không thể đặt chỗ. Vui lòng thử lại.";
             }
 
             return RedirectToPage();

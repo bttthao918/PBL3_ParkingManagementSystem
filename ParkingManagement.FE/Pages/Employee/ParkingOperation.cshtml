@@ -189,6 +189,7 @@
                 }
                 else
                 {
+                    var hasQrPay = !co.IsFreeTicket && !string.IsNullOrWhiteSpace(co.BankTransferQrUrl);
                     <div class="checkout-detail">
                         <div class="checkout-grid">
                             <div class="co-card">
@@ -231,16 +232,39 @@
                         <form method="post" asp-page-handler="ConfirmCheckOut">
                             <input type="hidden" name="ticketId" value="@co.TicketId" />
                             <input type="hidden" name="fee" value="@co.CalculatedFee" />
+                            @if (hasQrPay)
+                            {
+                                <div class="qr-pay-panel" data-qr-pay-panel>
+                                    <div class="qr-pay-card">
+                                        <div class="qr-image-wrap">
+                                            <img src="@co.BankTransferQrUrl" alt="QR Pay BIDV" />
+                                        </div>
+                                        <div class="qr-pay-info">
+                                            <h4><i class="fa-solid fa-qrcode"></i> QR Pay BIDV</h4>
+                                            <div class="co-row"><span>Ngân hàng</span><strong>@co.BankName</strong></div>
+                                            <div class="co-row"><span>Số tài khoản</span><strong>@co.BankAccount</strong></div>
+                                            <div class="co-row"><span>Chủ tài khoản</span><strong>@co.BankAccountHolder</strong></div>
+                                            <div class="co-row"><span>Nội dung</span><strong>@co.BankTransferContent</strong></div>
+                                            <div class="co-row highlight"><span>Số tiền</span><strong>@co.CalculatedFee.ToString("N0") đ</strong></div>
+                                            <label class="qr-confirm-check">
+                                                <input type="checkbox" name="paymentReceivedConfirmed" value="true" />
+                                                <span>Đã kiểm tra tài khoản BIDV và xác nhận đã nhận tiền</span>
+                                            </label>
+                                            <input class="qr-ref-input" type="text" name="bankTransferRef" placeholder="Mã giao dịch / ghi chú xác nhận (nếu có)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                             <div class="confirm-bar">
                                 <div class="form-group" style="min-width:200px;">
                                     <label>Thanh toán</label>
-                                    <select name="paymentMethod">
-                                        <option value="Tiền mặt">💵 Tiền mặt</option>
-                                        <option value="Chuyển khoản">🏦 Chuyển khoản</option>
+                                    <select name="paymentMethod" data-payment-method onchange="toggleQrPayPanel(this)">
+                                        <option value="QR Pay" selected="@(hasQrPay ? "selected" : null)">QR Pay BIDV</option>
+                                        <option value="Cash" selected="@(!hasQrPay ? "selected" : null)">Tiền mặt</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="confirm-btn orange"
-                                        onclick="return confirmSubmit(this.form, 'Check-out', 'Xác nhận check-out và thu phí @(co.CalculatedFee.ToString("N0"))đ?', 'warning')">>
+                                        onclick="return confirmCheckoutSubmit(this.form, '@(co.CalculatedFee.ToString("N0"))đ')">
                                     <i class="fa-solid fa-check-circle"></i> Xác nhận Check-out
                                 </button>
                             </div>
@@ -305,6 +329,41 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        function toggleQrPayPanel(select) {
+            const form = select.closest('form');
+            const panel = form?.querySelector('[data-qr-pay-panel]');
+            if (!panel) return;
+
+            const isQrPay = select.value === 'QR Pay';
+            panel.hidden = !isQrPay;
+
+            if (!isQrPay) {
+                const checkbox = panel.querySelector('input[name="paymentReceivedConfirmed"]');
+                if (checkbox) checkbox.checked = false;
+            }
+        }
+
+        function confirmCheckoutSubmit(form, feeText) {
+            const method = form.querySelector('[data-payment-method]')?.value;
+            if (method === 'QR Pay') {
+                const confirmed = form.querySelector('input[name="paymentReceivedConfirmed"]')?.checked;
+                if (!confirmed) {
+                    alert('Vui lòng kiểm tra tài khoản BIDV và tick xác nhận đã nhận tiền trước khi check-out.');
+                    return false;
+                }
+            }
+
+            return confirmSubmit(form, 'Check-out', `Xác nhận check-out và thu phí ${feeText}?`, 'warning');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-payment-method]').forEach(toggleQrPayPanel);
+        });
+    </script>
+}
 
 @functions {
     string FormatDuration(int minutes)

@@ -8,6 +8,11 @@ namespace ParkingManagement.FE.Pages.Shared.Statistics
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
+        public RevenueStatisticsChartConfig Charts { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
+        public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
+        public string RankingTitle { get; set; } = "Top 5 nhân viên doanh thu cao nhất";
 
         public void OnGet()
         {

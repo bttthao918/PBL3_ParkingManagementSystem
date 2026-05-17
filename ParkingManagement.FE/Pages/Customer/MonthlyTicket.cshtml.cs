@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -28,6 +29,7 @@ public class MonthlyTicketModel : PageModel
     public string UserName { get; set; } = "Customer";
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
+    public MonthlyTicketPaymentVm? PendingPayment { get; set; }
     public List<MonthlyPlanVm> Plans { get; set; } = new();
     public CustomerMonthlyTicketDto? CurrentTicket { get; set; }
     public List<CustomerMonthlyTicketDto> TicketHistories { get; set; } = new();
@@ -39,6 +41,7 @@ public class MonthlyTicketModel : PageModel
     {
         SuccessMessage = TempData["Success"] as string;
         ErrorMessage = TempData["Error"] as string;
+        PendingPayment = ReadPendingPayment();
         await LoadDataAsync();
     }
 
@@ -50,44 +53,6 @@ public class MonthlyTicketModel : PageModel
             return Page();
         }
 
-        // If online payment method, create VNPay payment and redirect
-        if (RegisterInput.PaymentMethod == "Chuyển khoản" || RegisterInput.PaymentMethod == "Ví điện tử")
-        {
-            // First register the monthly ticket
-            var registerResult = await _customerApiService.RegisterMonthlyTicketAsync(new RegisterMonthlyTicketRequestDto
-            {
-                VehiclePlate = RegisterInput.VehiclePlate,
-                VehicleType = RegisterInput.VehicleType,
-                PackageType = RegisterInput.PackageType,
-                PaymentMethod = RegisterInput.PaymentMethod
-            });
-
-            if (!registerResult.Success)
-            {
-                TempData["Error"] = registerResult.Message;
-                return RedirectToPage();
-            }
-
-            // Create VNPay payment
-            var vnpayResult = await _customerApiService.CreateVnPayPaymentAsync(new Models.CreateVnPayPaymentRequestDto
-            {
-                MonthlyTicketId = registerResult.Data?.Data?.MonthlyTicketId,
-                Amount = registerResult.Data?.Fee ?? 0,
-                PaymentMethod = RegisterInput.PaymentMethod,
-                Description = $"Thanh toan ve thang {RegisterInput.VehiclePlate} - {RegisterInput.PackageType}"
-            });
-
-            if (vnpayResult?.Success == true && !string.IsNullOrEmpty(vnpayResult.PaymentUrl))
-            {
-                return Redirect(vnpayResult.PaymentUrl);
-            }
-
-            // Fallback: VNPay not available, show success with pending payment
-            TempData["Success"] = registerResult.Message + " (Thanh toán VNPay không khả dụng, vui lòng thanh toán sau)";
-            return RedirectToPage();
-        }
-
-        // Cash payment - register normally
         var result = await _customerApiService.RegisterMonthlyTicketAsync(new RegisterMonthlyTicketRequestDto
         {
             VehiclePlate = RegisterInput.VehiclePlate,
@@ -96,7 +61,28 @@ public class MonthlyTicketModel : PageModel
             PaymentMethod = RegisterInput.PaymentMethod
         });
 
-        TempData[result.Success ? "Success" : "Error"] = result.Message;
+        if (!result.Success)
+        {
+            TempData["Error"] = result.Message;
+            return RedirectToPage();
+        }
+
+        if (!string.IsNullOrWhiteSpace(result.Data?.CheckoutUrl) ||
+            !string.IsNullOrWhiteSpace(result.Data?.QrCode))
+        {
+            TempData["Success"] = result.Message;
+            TempData["MonthlyTicketPayment"] = JsonSerializer.Serialize(new MonthlyTicketPaymentVm
+            {
+                MonthlyTicketId = result.Data?.Data?.MonthlyTicketId,
+                OrderCode = result.Data?.OrderCode,
+                Amount = result.Data?.Fee ?? 0,
+                CheckoutUrl = result.Data?.CheckoutUrl,
+                QrCode = result.Data?.QrCode
+            });
+            return RedirectToPage();
+        }
+
+        TempData["Success"] = result.Message;
         return RedirectToPage();
     }
 
@@ -131,10 +117,45 @@ public class MonthlyTicketModel : PageModel
         return RedirectToPage();
     }
 
+    public async Task<IActionResult> OnPostConfirmPaymentAsync(string monthlyTicketId)
+    {
+        ApiActionResult<BasicApiResponseDto> result;
+        if (string.IsNullOrWhiteSpace(monthlyTicketId))
+        {
+            result = new ApiActionResult<BasicApiResponseDto>
+            {
+                Success = false,
+                Message = "Không xác định được vé cần kiểm tra thanh toán."
+            };
+        }
+        else
+        {
+            result = await _customerApiService.ConfirmMonthlyTicketPaymentAsync(monthlyTicketId);
+        }
+
+        if (IsAjaxRequest())
+        {
+            return new JsonResult(new
+            {
+                success = result.Success,
+                message = result.Message
+            });
+        }
+
+        TempData[result.Success ? "Success" : "Error"] = result.Message;
+        return RedirectToPage();
+    }
+
     public bool IsActive(CustomerMonthlyTicketDto ticket)
     {
         var status = NormalizeStatus(ticket.Status);
         return ticket.DaysRemaining >= 0 && (status.Contains("hoat dong") || status.Contains("active"));
+    }
+
+    public bool IsPending(CustomerMonthlyTicketDto ticket)
+    {
+        var status = NormalizeStatus(ticket.Status);
+        return status.Contains("cho thanh toan") || status.Contains("pending");
     }
 
     public string GetStatusText(CustomerMonthlyTicketDto ticket)
@@ -148,6 +169,11 @@ public class MonthlyTicketModel : PageModel
         if (status.Contains("huy") || status.Contains("cancel"))
         {
             return "Đã hủy";
+        }
+
+        if (status.Contains("cho thanh toan") || status.Contains("pending"))
+        {
+            return "Chờ thanh toán";
         }
 
         return "Đã hết hạn";
@@ -258,12 +284,34 @@ public class MonthlyTicketModel : PageModel
             .Replace("ư", "u").Replace("ứ", "u").Replace("ừ", "u").Replace("ử", "u").Replace("ữ", "u").Replace("ự", "u")
             .Replace("ý", "y").Replace("ỳ", "y").Replace("ỷ", "y").Replace("ỹ", "y").Replace("ỵ", "y");
     }
+
+    private MonthlyTicketPaymentVm? ReadPendingPayment()
+    {
+        var json = TempData["MonthlyTicketPayment"] as string;
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<MonthlyTicketPaymentVm>(json);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Could not read pending monthly ticket payment data");
+            return null;
+        }
+    }
+
+    private bool IsAjaxRequest() =>
+        string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
 }
 
 public class RegisterMonthlyTicketInput
 {
     [Required(ErrorMessage = "Vui lòng nhập biển số xe.")]
-    [RegularExpression(@"^\d{2}[A-Za-z]-\d{3}\.\d{2}$", ErrorMessage = "Biển số cần đúng định dạng 43A-123.45.")]
+    [RegularExpression(@"^\d{2}-?[A-Za-z]\d?-?\d{3}\.\d{2}$", ErrorMessage = "Biển số cần đúng định dạng 43A-123.45 hoặc 43D1-256.31.")]
     public string VehiclePlate { get; set; } = "";
 
     [Required(ErrorMessage = "Vui lòng chọn loại xe.")]
@@ -288,4 +336,17 @@ public class MonthlyPlanVm
     public string Icon { get; set; } = "";
     public string IconClass { get; set; } = "";
     public bool IsSelected { get; set; }
+}
+
+public class MonthlyTicketPaymentVm
+{
+    public string? MonthlyTicketId { get; set; }
+    public long? OrderCode { get; set; }
+    public decimal Amount { get; set; }
+    public string? CheckoutUrl { get; set; }
+    public string? QrCode { get; set; }
+
+    public string? QrImageUrl => string.IsNullOrWhiteSpace(QrCode)
+        ? null
+        : $"https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=12&data={Uri.EscapeDataString(QrCode)}";
 }

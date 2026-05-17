@@ -128,9 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (expectedTimeInput) {
         const now = new Date();
         now.setMinutes(now.getMinutes() + 15);
-        const localISO = now.toISOString().slice(0, 16);
-        expectedTimeInput.value = localISO;
-        expectedTimeInput.min = new Date().toISOString().slice(0, 16);
+        expectedTimeInput.value = toDateTimeLocalValue(now);
+        expectedTimeInput.min = toDateTimeLocalValue(new Date());
     }
 
     // Step navigation
@@ -397,7 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (formPlate) formPlate.value = vehicle.plate;
         if (formType) formType.value = vehicle.type;
         if (formSlot) formSlot.value = selectedSlotCode || "";
-        if (formTime) formTime.value = timeVal ? new Date(timeVal).toISOString() : "";
+        if (formTime) formTime.value = timeVal || "";
     }
 
     function resetWizardState() {
@@ -413,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (expectedTimeInput) {
             const now = new Date();
             now.setMinutes(now.getMinutes() + 15);
-            expectedTimeInput.value = now.toISOString().slice(0, 16);
+            expectedTimeInput.value = toDateTimeLocalValue(now);
         }
     }
 
@@ -496,6 +495,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const h = date.getHours().toString().padStart(2, "0");
         const min = date.getMinutes().toString().padStart(2, "0");
         return d + "/" + m + "/" + y + " " + h + ":" + min;
+    }
+
+    function toDateTimeLocalValue(date) {
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, "0");
+        const d = date.getDate().toString().padStart(2, "0");
+        const h = date.getHours().toString().padStart(2, "0");
+        const min = date.getMinutes().toString().padStart(2, "0");
+        return y + "-" + m + "-" + d + "T" + h + ":" + min;
     }
 
     // Auto-open wizard if URL has ?openCreate=1

@@ -215,6 +215,10 @@
         background: #ff7a00;
     }
 
+    .dot.cyan {
+        background: #06b6d4;
+    }
+
 .stat-rank-list {
     margin-top: 20px;
 }
@@ -289,6 +293,10 @@
 
     .stat-progress .orange {
         background: #ff7a00;
+    }
+
+    .stat-progress .cyan {
+        background: #06b6d4;
     }
 
 .stat-view-btn,

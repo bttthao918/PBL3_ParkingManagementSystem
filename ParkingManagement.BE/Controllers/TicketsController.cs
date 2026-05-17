@@ -277,6 +277,7 @@ namespace ParkingManagement.Web.Controllers.Api
             try
             {
                 input.TicketId = ticketId;
+                input.CollectedByEmployeeId = GetEmployeeId();
                 var result = await _ticketService.ConfirmCheckOutAsync(input);
                 if (!result.Success)
                     return BadRequest(result);
@@ -332,6 +333,12 @@ namespace ParkingManagement.Web.Controllers.Api
                 _logger.LogError($"Search error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
             }
+        }
+
+        private string? GetEmployeeId()
+        {
+            return User.FindFirst("employeeId")?.Value
+                ?? User.FindFirst("related_id")?.Value;
         }
     }
 }

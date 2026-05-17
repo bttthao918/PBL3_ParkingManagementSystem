@@ -128,15 +128,22 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (!validation.IsValid)
                     return ServiceResult<PaymentCompletedDto>.Fail(validation.ErrorMessage!);
 
-                // Kiểm tra vé tồn tại
-                var ticket = await _ticketRepo.GetByIdAsync(confirmDto.TicketId);
-                if (ticket == null)
-                    return ServiceResult<PaymentCompletedDto>.Fail("Vé không tồn tại");
+                if (!string.IsNullOrWhiteSpace(confirmDto.TicketId))
+                {
+                    var ticket = await _ticketRepo.GetByIdAsync(confirmDto.TicketId);
+                    if (ticket == null)
+                        return ServiceResult<PaymentCompletedDto>.Fail("Vé không tồn tại");
 
-                // Kiểm tra vé chưa thanh toán
-                var existingPayment = await _paymentRepo.GetByTicketIdAsync(confirmDto.TicketId);
-                if (existingPayment != null)
-                    return ServiceResult<PaymentCompletedDto>.Fail("Vé này đã thanh toán rồi");
+                    var existingPayment = await _paymentRepo.GetByTicketIdAsync(confirmDto.TicketId);
+                    if (existingPayment != null)
+                        return ServiceResult<PaymentCompletedDto>.Fail("Vé này đã thanh toán rồi");
+                }
+                else if (!string.IsNullOrWhiteSpace(confirmDto.MonthlyTicketId))
+                {
+                    var monthlyTicket = await _monthlyTicketRepo.GetByIdAsync(confirmDto.MonthlyTicketId);
+                    if (monthlyTicket == null)
+                        return ServiceResult<PaymentCompletedDto>.Fail("Vé tháng không tồn tại");
+                }
 
                 // Tạo bản ghi Payment
                 var paymentId = await _paymentRepo.GenerateIdAsync();
@@ -144,10 +151,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                 {
                     PaymentId = paymentId,
                     TicketId = confirmDto.TicketId,
+                    MonthlyTicketId = confirmDto.MonthlyTicketId,
                     Amount = confirmDto.Amount,
-                    Method = confirmDto.PaymentMethod,
+                    Method = PaymentMethods.Normalize(confirmDto.PaymentMethod),
                     PaymentTime = DateTime.Now,
-                    Status = PaymentStatuses.COMPLETED
+                    Status = PaymentStatuses.SUCCESS,
+                    CollectedByEmployeeId = confirmDto.CollectedByEmployeeId
                 };
 
                 await _paymentRepo.AddAsync(payment);
@@ -158,10 +167,13 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Success = true,
                     PaymentId = paymentId,
                     TicketId = confirmDto.TicketId,
-                    PaymentMethod = confirmDto.PaymentMethod,
+                    MonthlyTicketId = confirmDto.MonthlyTicketId,
+                    PaymentMethod = payment.Method,
                     Amount = confirmDto.Amount,
                     PaymentTime = payment.PaymentTime,
-                    Change = confirmDto.PaymentMethod == PaymentMethods.CASH && confirmDto.ReceivedAmount.HasValue
+                    PaymentStatus = payment.Status,
+                    CollectedByEmployeeId = payment.CollectedByEmployeeId,
+                    Change = payment.Method == PaymentMethods.CASH && confirmDto.ReceivedAmount.HasValue
                         ? confirmDto.ReceivedAmount.Value - confirmDto.Amount
                         : null
                 };
@@ -181,7 +193,8 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var payment = await _paymentRepo.GetByTicketIdAsync(paymentId);
+                var payment = (await _paymentRepo.GetAllAsync())
+                    .FirstOrDefault(p => p.PaymentId == paymentId);
                 if (payment == null)
                     return null;
 
@@ -337,9 +350,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                 Success = true,
                 PaymentId = payment.PaymentId,
                 TicketId = payment.TicketId,
+                MonthlyTicketId = payment.MonthlyTicketId,
                 Amount = payment.Amount,
                 PaymentMethod = payment.Method,
                 PaymentTime = payment.PaymentTime,
+                PaymentStatus = PaymentStatuses.Normalize(payment.Status),
+                CollectedByEmployeeId = payment.CollectedByEmployeeId,
                 Message = $"Thanh toán {payment.Status.ToLower()}"
             };
         }

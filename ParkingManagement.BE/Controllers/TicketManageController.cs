@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
@@ -34,6 +35,7 @@ namespace ParkingManagement.Web.Controllers
         public async Task<IActionResult> GetStats()
         {
             var today = DateTime.Today;
+            var successfulStatuses = PaymentStatuses.SuccessfulStatuses;
 
             var stats = new
             {
@@ -42,8 +44,8 @@ namespace ParkingManagement.Web.Controllers
                 totalMonthlyTickets = await _db.MonthlyTickets.CountAsync(),
                 activeMonthlyTickets = await _db.MonthlyTickets.CountAsync(t => t.Status == "Hoạt động" && t.EndDate >= today),
                 expiringSoon = await _db.MonthlyTickets.CountAsync(t => t.EndDate >= today && t.EndDate <= today.AddDays(7) && t.Status == "Hoạt động"),
-                todayRevenue = await _db.Payments.Where(p => p.PaymentTime.Date == today && p.Status == "Thành công").SumAsync(p => p.Amount),
-                totalRevenue = await _db.Payments.Where(p => p.Status == "Thành công").SumAsync(p => p.Amount)
+                todayRevenue = await _db.Payments.Where(p => p.PaymentTime.Date == today && successfulStatuses.Contains(p.Status)).SumAsync(p => p.Amount),
+                totalRevenue = await _db.Payments.Where(p => successfulStatuses.Contains(p.Status)).SumAsync(p => p.Amount)
             };
 
             return Json(stats);

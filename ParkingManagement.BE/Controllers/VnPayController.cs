@@ -67,7 +67,7 @@ namespace ParkingManagement.Web.Controllers.Api
                     TicketId = request.TicketId,
                     MonthlyTicketId = request.MonthlyTicketId,
                     Amount = request.Amount,
-                    Method = request.PaymentMethod,
+                    Method = PaymentMethods.Normalize(request.PaymentMethod),
                     PaymentTime = DateTime.Now,
                     Status = PaymentStatuses.PENDING,
                     VnpTxnRef = txnRef
@@ -157,7 +157,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 // Update payment status
                 if (response.ResponseCode == "00")
                 {
-                    payment.Status = PaymentStatuses.COMPLETED;
+                    payment.Status = PaymentStatuses.SUCCESS;
                     payment.PaymentTime = DateTime.Now;
                     _logger.LogInformation("VNPay IPN: Payment confirmed. TxnRef={TxnRef}", response.TxnRef);
                 }
