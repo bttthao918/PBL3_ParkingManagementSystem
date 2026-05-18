@@ -67,18 +67,8 @@ public class MonthlyTicketModel : PageModel
             return RedirectToPage();
         }
 
-        if (!string.IsNullOrWhiteSpace(result.Data?.CheckoutUrl) ||
-            !string.IsNullOrWhiteSpace(result.Data?.QrCode))
+        if (StorePendingPayment(result.Data, result.Message))
         {
-            TempData["Success"] = result.Message;
-            TempData["MonthlyTicketPayment"] = JsonSerializer.Serialize(new MonthlyTicketPaymentVm
-            {
-                MonthlyTicketId = result.Data?.Data?.MonthlyTicketId,
-                OrderCode = result.Data?.OrderCode,
-                Amount = result.Data?.Fee ?? 0,
-                CheckoutUrl = result.Data?.CheckoutUrl,
-                QrCode = result.Data?.QrCode
-            });
             return RedirectToPage();
         }
 
@@ -101,6 +91,61 @@ public class MonthlyTicketModel : PageModel
         });
 
         TempData[result.Success ? "Success" : "Error"] = result.Message;
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostShowPaymentAsync(string ticketId)
+    {
+        if (string.IsNullOrWhiteSpace(ticketId))
+        {
+            TempData["Error"] = "Không xác định được vé cần in lại QR.";
+            return RedirectToPage();
+        }
+
+        var result = await _customerApiService.CreateMonthlyTicketPaymentLinkAsync(ticketId);
+        if (!result.Success)
+        {
+            TempData["Error"] = result.Message;
+            return RedirectToPage();
+        }
+
+        if (StorePendingPayment(result.Data, result.Message))
+        {
+            return RedirectToPage();
+        }
+
+        TempData["Success"] = result.Message;
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostReorderAsync(string vehiclePlate, string? vehicleType, string packageType)
+    {
+        if (string.IsNullOrWhiteSpace(vehiclePlate))
+        {
+            TempData["Error"] = "Không xác định được biển số cần đặt lại.";
+            return RedirectToPage();
+        }
+
+        var result = await _customerApiService.RegisterMonthlyTicketAsync(new RegisterMonthlyTicketRequestDto
+        {
+            VehiclePlate = vehiclePlate,
+            VehicleType = vehicleType,
+            PackageType = string.IsNullOrWhiteSpace(packageType) ? "1 tháng" : packageType,
+            PaymentMethod = "Chuyển khoản"
+        });
+
+        if (!result.Success)
+        {
+            TempData["Error"] = result.Message;
+            return RedirectToPage();
+        }
+
+        if (StorePendingPayment(result.Data, result.Message))
+        {
+            return RedirectToPage();
+        }
+
+        TempData["Success"] = result.Message;
         return RedirectToPage();
     }
 
@@ -306,16 +351,33 @@ public class MonthlyTicketModel : PageModel
 
     private bool IsAjaxRequest() =>
         string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
+
+    private bool StorePendingPayment(RegisterMonthlyTicketResponseDto? payment, string? message)
+    {
+        if (string.IsNullOrWhiteSpace(payment?.CheckoutUrl) &&
+            string.IsNullOrWhiteSpace(payment?.QrCode))
+        {
+            return false;
+        }
+
+        TempData["Success"] = message ?? payment.Message;
+        TempData["MonthlyTicketPayment"] = JsonSerializer.Serialize(new MonthlyTicketPaymentVm
+        {
+            MonthlyTicketId = payment.Data?.MonthlyTicketId,
+            OrderCode = payment.OrderCode,
+            Amount = payment.Fee,
+            CheckoutUrl = payment.CheckoutUrl,
+            QrCode = payment.QrCode
+        });
+
+        return true;
+    }
 }
 
 public class RegisterMonthlyTicketInput
 {
     [Required(ErrorMessage = "Vui lòng nhập biển số xe.")]
-<<<<<<< HEAD
     [RegularExpression(@"^\d{2}-?[A-Za-z]\d?-?\d{3}\.\d{2}$", ErrorMessage = "Biển số cần đúng định dạng 43A-123.45 hoặc 43D1-256.31.")]
-=======
-    [StringLength(15, MinimumLength = 5, ErrorMessage = "Biển số xe không hợp lệ.")]
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
     public string VehiclePlate { get; set; } = "";
 
     [Required(ErrorMessage = "Vui lòng chọn loại xe.")]

@@ -112,7 +112,6 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (!isValid)
                 return ServiceResult<ReservationDto>.Fail(errorMessage ?? "Dữ liệu không hợp lệ.");
 
-<<<<<<< HEAD
             dto.VehiclePlate = dto.VehiclePlate.Trim().ToUpperInvariant();
             dto.VehicleType = dto.VehicleType?.Trim();
             dto.PreferredSlotId = string.IsNullOrWhiteSpace(dto.PreferredSlotId) ? null : dto.PreferredSlotId.Trim();
@@ -120,14 +119,10 @@ namespace ParkingManagement.BLL.Services.Implementations
             var vehicleType = dto.VehicleType!;
             dto.CustomerId = customerId;
 
-=======
-            var customerId = dto.CustomerId!;
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             var customer = await _customerRepo.GetByIdAsync(customerId);
             if (customer == null)
                 return ServiceResult<ReservationDto>.Fail("Không tìm thấy khách hàng.");
 
-<<<<<<< HEAD
             var vehicle = await _vehicleRepo.GetByPlateAsync(dto.VehiclePlate);
             if (vehicle == null)
             {
@@ -166,33 +161,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                     preferred.Status != "Trống" ||
                     !string.Equals(preferred.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
                     slotId = null;
-=======
-var vehicleSyncError = await SyncReservationVehicleAsync(dto);
-if (!string.IsNullOrEmpty(vehicleSyncError))
-    return ServiceResult<ReservationDto>.Fail(vehicleSyncError);
-
-string? slotId = dto.PreferredSlotId?.Trim();
-if (!string.IsNullOrEmpty(slotId))
-{
-    var preferred = await _slotRepo.GetByIdAsync(slotId);
-    if (preferred == null)
-        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không tồn tại.");
-
-    if (!string.Equals(preferred.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
-        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không phù hợp với loại xe.");
-
-    if (preferred.Status != "Trống")
-        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không còn trống. Vui lòng chọn chỗ khác.");
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             }
 
             if (string.IsNullOrEmpty(slotId))
             {
-<<<<<<< HEAD
                 var available = await _slotRepo.GetAvailableAsync(vehicleType);
-=======
-                var available = await _slotRepo.GetAvailableAsync(dto.VehicleType!);
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 if (!available.Any())
                     return ServiceResult<ReservationDto>.Fail("Không còn chỗ trống cho loại xe này.");
                 slotId = available.First().SlotId;
@@ -202,13 +175,8 @@ if (!string.IsNullOrEmpty(slotId))
             var reservation = new Reservation
             {
                 ReservationId = id,
-<<<<<<< HEAD
                 CustomerId = customerId,
                 VehiclePlate = dto.VehiclePlate,
-=======
-CustomerId = customerId,
-VehiclePlate = dto.VehiclePlate,
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 SlotId = slotId,
                 ExpectedTime = dto.ExpectedTime,
                 CreatedAt = DateTime.Now,

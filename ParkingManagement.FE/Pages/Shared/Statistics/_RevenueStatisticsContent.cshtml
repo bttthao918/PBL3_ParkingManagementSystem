@@ -26,7 +26,6 @@
                 <canvas id="mainDonutChart"></canvas>
 
                 <div class="stat-donut-legend">
-<<<<<<< HEAD
                     @if (Model.PaymentMethodBreakdown.Any())
                     {
                         foreach (var item in Model.PaymentMethodBreakdown)
@@ -42,16 +41,6 @@
                     else
                     {
                         <div><span class="dot blue"></span><strong>Chưa có dữ liệu</strong><p>0 đ</p><small>0%</small></div>
-=======
-                    @foreach (var item in Model.DonutItems)
-                    {
-                        <div>
-                            <span class="dot @item.ColorClass"></span>
-                            <strong>@item.Label</strong>
-                            <p>@item.Value</p>
-                            <small>@item.Percentage.ToString("N1")%</small>
-                        </div>
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                     }
                 </div>
             </div>
@@ -68,7 +57,6 @@
         </div>
 
         <div class="card stat-list-card">
-<<<<<<< HEAD
             <h3>@Model.RankingTitle</h3>
             <div class="stat-rank-list">
                 @if (Model.Rankings.Any())
@@ -81,25 +69,6 @@
                 else
                 {
                     <div><b>-</b><span>Chưa có dữ liệu</span><strong>0 đ</strong><em>0 giao dịch</em></div>
-=======
-            <h3>@Model.RankTitle</h3>
-            <div class="stat-rank-list">
-                @if (Model.RankItems.Count == 0)
-                {
-                    <p class="stat-empty">Chưa có dữ liệu trong khoảng thời gian này.</p>
-                }
-                else
-                {
-                    @foreach (var item in Model.RankItems)
-                    {
-                        <div>
-                            <b>@item.Rank</b>
-                            <span>@item.Label</span>
-                            <strong>@item.Value</strong>
-                            <em class="@item.ChangeClass">@item.ChangeText</em>
-                        </div>
-                    }
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 }
             </div>
         </div>
@@ -107,7 +76,6 @@
         <div class="card stat-side-card">
             <h3>@Model.ProgressTitle</h3>
 
-<<<<<<< HEAD
             @if (Model.VehicleTypeBreakdown.Any())
             {
                 foreach (var item in Model.VehicleTypeBreakdown)
@@ -129,21 +97,6 @@
             <button class="stat-download-btn">
                 <i class="fa-solid fa-download"></i> Tải báo cáo
             </button>
-=======
-            @foreach (var item in Model.ProgressItems)
-            {
-                var width = Math.Clamp(item.Percentage, 0, 100).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
-                <div class="stat-progress-row">
-                    <div>
-                        <span>@item.Label</span>
-                        <strong>@item.Value</strong>
-                    </div>
-                    <div class="stat-progress">
-                        <span class="@item.ColorClass" style="width: @width%"></span>
-                    </div>
-                </div>
-            }
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         </div>
     </div>
 
@@ -155,8 +108,5 @@
 
         <partial name="/Pages/Shared/Statistics/_StatisticsTable.cshtml" model="Model.Table" />
     </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
 </div>

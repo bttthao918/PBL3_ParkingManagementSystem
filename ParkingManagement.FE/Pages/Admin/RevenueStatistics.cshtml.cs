@@ -4,25 +4,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models;
 using ParkingManagement.FE.Models.ViewModels;
 using ParkingManagement.FE.Services;
-using System.Text.Json;
 
 namespace ParkingManagement.FE.Pages.Admin
 {
     [Authorize(Roles = "Manager,Admin")]
     public class RevenueStatisticsModel : PageModel, IRevenueStatisticsViewModel
     {
-<<<<<<< HEAD
-        public StatisticsHeaderViewModel Header { get; set; } = new();
-        public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
-        public StatisticsTableViewModel Table { get; set; } = new();
-        public RevenueStatisticsChartConfig Charts { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
-        public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
-        public string RankingTitle { get; set; } = "Top 5 nhân viên doanh thu cao nhất";
-
-=======
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         private readonly IReportService _reportService;
 
         public RevenueStatisticsModel(IReportService reportService)
@@ -36,24 +23,20 @@ namespace ParkingManagement.FE.Pages.Admin
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
-        public string ChartConfigJson { get; set; } = "{}";
+        public RevenueStatisticsChartConfig Charts { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
+        public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
+        public string RankingTitle { get; set; } = "Top 5 nhân viên doanh thu cao nhất";
         public string LineChartTitle { get; set; } = "Doanh thu theo ngày";
         public string DonutTitle { get; set; } = "Cơ cấu doanh thu theo phương thức thanh toán";
         public string BarTitle { get; set; } = "Doanh thu theo khu vực";
-        public string RankTitle { get; set; } = "Top 5 ngày doanh thu cao nhất";
         public string ProgressTitle { get; set; } = "Doanh thu theo loại xe";
-        public List<StatisticsBreakdownItemViewModel> DonutItems { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> BarItems { get; set; } = new();
-        public List<StatisticsRankItemViewModel> RankItems { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> ProgressItems { get; set; } = new();
 
         public async Task OnGetAsync(string? fromDate = null, string? toDate = null)
         {
             Period = NormalizePeriod(Period);
-            var filter = new RevenueReportFilterDto
-            {
-                Period = Period
-            };
+            var filter = new RevenueReportFilterDto { Period = Period };
 
             if (DateTime.TryParse(fromDate, out var from))
             {
@@ -83,7 +66,7 @@ namespace ParkingManagement.FE.Pages.Admin
 
             Kpis = new()
             {
-                new() { Title = "Tổng doanh thu", Value = $"{data.TotalRevenue:N0} đ", ChangeText = BuildChangeText(data.TotalRevenue, data.PreviousDailyBreakdown.Sum(x => x.Revenue)), Icon = "fa-solid fa-sack-dollar", ColorClass = "blue" },
+                new() { Title = "Tổng doanh thu", Value = $"{data.TotalRevenue:N0} đ", ChangeText = "Dữ liệu thực tế", Icon = "fa-solid fa-sack-dollar", ColorClass = "blue" },
                 new() { Title = "Doanh thu vé lượt", Value = $"{data.RevenueFromSingleTickets:N0} đ", ChangeText = $"{data.TotalTickets:N0} lượt thanh toán", Icon = "fa-solid fa-money-bill", ColorClass = "green" },
                 new() { Title = "Doanh thu vé tháng", Value = $"{data.RevenueFromMonthlyTickets:N0} đ", ChangeText = $"{data.TotalMonthlyTickets:N0} vé tháng", Icon = "fa-solid fa-credit-card", ColorClass = "purple" },
                 new() { Title = "Tổng giao dịch", Value = $"{data.TotalTickets + data.TotalMonthlyTickets:N0}", ChangeText = "Vé lượt + vé tháng", Icon = "fa-solid fa-ticket", ColorClass = "orange" },
@@ -100,63 +83,38 @@ namespace ParkingManagement.FE.Pages.Admin
                         x.Date.ToString("dd/MM/yyyy"),
                         $"{x.Revenue:N0} đ",
                         $"{x.TicketCount:N0}"
-<<<<<<< HEAD
-                    }).ToList()
-                };
-
-                PaymentMethodBreakdown = BuildBreakdown(data.RevenueByPaymentMethod);
-                VehicleTypeBreakdown = BuildBreakdown(data.RevenueByVehicleType);
-                Rankings = data.TopEmployees.Select((employee, index) => new StatisticsRankItemViewModel
-                {
-                    Rank = (index + 1).ToString(),
-                    Label = employee.EmployeeName,
-                    Value = $"{employee.TotalRevenue:N0} đ",
-                    Note = $"{employee.PaymentCount:N0} giao dịch"
-                }).ToList();
-
-                Charts = new RevenueStatisticsChartConfig
-                {
-                    Line = new RevenueLineChartConfig
-                    {
-                        Labels = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Date.ToString("dd/MM")).ToList(),
-                        Current = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Revenue).ToList()
-                    },
-                    Donut = new RevenueSeriesChartConfig
-                    {
-                        Labels = data.RevenueByPaymentMethod.Keys.ToList(),
-                        Data = data.RevenueByPaymentMethod.Values.ToList()
-                    },
-                    Bar = new RevenueSeriesChartConfig
-                    {
-                        Labels = data.RevenueByArea.Any() ? data.RevenueByArea.Keys.ToList() : data.RevenueByVehicleType.Keys.ToList(),
-                        Data = data.RevenueByArea.Any() ? data.RevenueByArea.Values.ToList() : data.RevenueByVehicleType.Values.ToList()
-                    }
-                };
-            }
-            else
-            {
-                Header = new StatisticsHeaderViewModel
-=======
                     })
                     .ToList()
             };
 
-            DonutItems = BuildBreakdownItems(data.RevenueByPaymentMethod);
-            BarItems = BuildBreakdownItems(data.RevenueByArea);
-            ProgressItems = BuildBreakdownItems(data.RevenueByVehicleType);
-            RankItems = data.TopRevenueDays
-                .Select((x, index) => new StatisticsRankItemViewModel
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
-                {
-                    Rank = index + 1,
-                    Label = x.Label,
-                    Value = $"{x.Amount:N0} đ",
-                    ChangeText = BuildPercentText(x.ChangePercentage),
-                    ChangeClass = x.ChangePercentage < 0 ? "down" : ""
-                })
-                .ToList();
+            PaymentMethodBreakdown = BuildBreakdown(data.RevenueByPaymentMethod);
+            VehicleTypeBreakdown = BuildBreakdown(data.RevenueByVehicleType);
+            Rankings = data.TopEmployees.Select((employee, index) => new StatisticsRankItemViewModel
+            {
+                Rank = (index + 1).ToString(),
+                Label = employee.EmployeeName,
+                Value = $"{employee.TotalRevenue:N0} đ",
+                Note = $"{employee.PaymentCount:N0} giao dịch"
+            }).ToList();
 
-            ChartConfigJson = BuildChartConfig(data);
+            Charts = new RevenueStatisticsChartConfig
+            {
+                Line = new RevenueLineChartConfig
+                {
+                    Labels = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Date.ToString("dd/MM")).ToList(),
+                    Current = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Revenue).ToList()
+                },
+                Donut = new RevenueSeriesChartConfig
+                {
+                    Labels = data.RevenueByPaymentMethod.Keys.ToList(),
+                    Data = data.RevenueByPaymentMethod.Values.ToList()
+                },
+                Bar = new RevenueSeriesChartConfig
+                {
+                    Labels = data.RevenueByArea.Any() ? data.RevenueByArea.Keys.ToList() : data.RevenueByVehicleType.Keys.ToList(),
+                    Data = data.RevenueByArea.Any() ? data.RevenueByArea.Values.ToList() : data.RevenueByVehicleType.Values.ToList()
+                }
+            };
         }
 
         private void SetEmptyState()
@@ -174,7 +132,10 @@ namespace ParkingManagement.FE.Pages.Admin
                 Headers = new() { "Ngày", "Tổng doanh thu", "Số giao dịch" },
                 Rows = new()
             };
-            ChartConfigJson = BuildChartConfig(new RevenueReportDto());
+            PaymentMethodBreakdown = new();
+            VehicleTypeBreakdown = new();
+            Rankings = new();
+            Charts = new();
         }
 
         private static string NormalizePeriod(string? period)
@@ -193,56 +154,6 @@ namespace ParkingManagement.FE.Pages.Admin
         {
             var days = Math.Max(1, data.DailyBreakdown.Count);
             return data.TotalRevenue / days;
-        }
-
-        private static string BuildChangeText(decimal current, decimal previous)
-        {
-            return previous <= 0
-                ? "Kỳ trước chưa có doanh thu"
-                : $"{BuildPercentText(Math.Round((current - previous) * 100m / previous, 1))} so với kỳ trước";
-        }
-
-        private static string BuildPercentText(decimal percentage)
-        {
-            return percentage > 0 ? $"+{percentage:N1}%" : $"{percentage:N1}%";
-        }
-
-        private static List<StatisticsBreakdownItemViewModel> BuildBreakdownItems(List<RevenueBreakdownDto> items)
-        {
-            var colors = new[] { "blue", "green", "orange", "purple", "cyan" };
-            return items.Select((x, index) => new StatisticsBreakdownItemViewModel
-            {
-                Label = x.Label,
-                Value = $"{x.Amount:N0} đ",
-                Percentage = x.Percentage,
-                ColorClass = colors[index % colors.Length]
-            }).ToList();
-        }
-
-        private static string BuildChartConfig(RevenueReportDto data)
-        {
-            var config = new
-            {
-                type = "revenue",
-                line = new
-                {
-                    labels = data.DailyBreakdown.Select(x => x.Label).ToList(),
-                    current = data.DailyBreakdown.Select(x => x.Revenue).ToList(),
-                    previous = data.PreviousDailyBreakdown.Select(x => x.Revenue).ToList()
-                },
-                donut = new
-                {
-                    labels = data.RevenueByPaymentMethod.Select(x => x.Label).ToList(),
-                    data = data.RevenueByPaymentMethod.Select(x => x.Amount).ToList()
-                },
-                bar = new
-                {
-                    labels = data.RevenueByArea.Select(x => x.Label).ToList(),
-                    data = data.RevenueByArea.Select(x => x.Amount).ToList()
-                }
-            };
-
-            return JsonSerializer.Serialize(config);
         }
 
         private static List<StatisticsBreakdownItemViewModel> BuildBreakdown(Dictionary<string, decimal>? values)

@@ -795,12 +795,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Amount = finalFee,
                     Method = normalizedPaymentMethod,
                     PaymentTime = currentTime,
-<<<<<<< HEAD
                     Status = PaymentStatuses.SUCCESS,
                     CollectedByEmployeeId = input.CollectedByEmployeeId
-=======
-                    Status = "Thành công"
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 };
                 await _paymentRepo.AddAsync(payment);
                 paymentId = payment.PaymentId;

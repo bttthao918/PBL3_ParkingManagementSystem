@@ -13,6 +13,7 @@ namespace ParkingManagement.FE.Services
         Task<ListCustomerMonthlyTicketDto?> GetMonthlyTicketsAsync();
         Task<MonthlyTicketPricingDto?> GetMonthlyTicketPricingAsync();
         Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> RegisterMonthlyTicketAsync(RegisterMonthlyTicketRequestDto request);
+        Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> CreateMonthlyTicketPaymentLinkAsync(string monthlyTicketId);
         Task<ApiActionResult<RenewMonthlyTicketResponseDto>> RenewMonthlyTicketAsync(string monthlyTicketId, RenewMonthlyTicketRequestDto request);
         Task<ApiActionResult<BasicApiResponseDto>> CancelMonthlyTicketAsync(string monthlyTicketId);
         Task<ApiActionResult<BasicApiResponseDto>> ConfirmPayOsReturnAsync(long orderCode);
@@ -65,6 +66,11 @@ namespace ParkingManagement.FE.Services
 
         public Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> RegisterMonthlyTicketAsync(RegisterMonthlyTicketRequestDto request)
             => SendAsync<RegisterMonthlyTicketResponseDto>(() => _httpClient.PostAsJsonAsync("api/monthly-tickets", request), "api/monthly-tickets");
+
+        public Task<ApiActionResult<RegisterMonthlyTicketResponseDto>> CreateMonthlyTicketPaymentLinkAsync(string monthlyTicketId)
+            => SendAsync<RegisterMonthlyTicketResponseDto>(
+                () => _httpClient.PostAsync($"api/monthly-tickets/{Uri.EscapeDataString(monthlyTicketId)}/payment-link", null),
+                $"api/monthly-tickets/{monthlyTicketId}/payment-link");
 
         public Task<ApiActionResult<RenewMonthlyTicketResponseDto>> RenewMonthlyTicketAsync(string monthlyTicketId, RenewMonthlyTicketRequestDto request)
             => SendAsync<RenewMonthlyTicketResponseDto>(

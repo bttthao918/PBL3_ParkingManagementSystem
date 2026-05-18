@@ -128,28 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (expectedTimeInput) {
         const now = new Date();
         now.setMinutes(now.getMinutes() + 15);
-<<<<<<< HEAD
         expectedTimeInput.value = toDateTimeLocalValue(now);
         expectedTimeInput.min = toDateTimeLocalValue(new Date());
-=======
-        // Format as local datetime for datetime-local input (YYYY-MM-DDTHH:MM)
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-        const hours = String(now.getHours()).padStart(2, "0");
-        const minutes = String(now.getMinutes()).padStart(2, "0");
-        const localValue = `${year}-${month}-${day}T${hours}:${minutes}`;
-        expectedTimeInput.value = localValue;
-
-        // Set min to current time
-        const minNow = new Date();
-        const minYear = minNow.getFullYear();
-        const minMonth = String(minNow.getMonth() + 1).padStart(2, "0");
-        const minDay = String(minNow.getDate()).padStart(2, "0");
-        const minHours = String(minNow.getHours()).padStart(2, "0");
-        const minMinutes = String(minNow.getMinutes()).padStart(2, "0");
-        expectedTimeInput.min = `${minYear}-${minMonth}-${minDay}T${minHours}:${minMinutes}`;
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
     }
 
     // Step navigation
@@ -611,16 +591,7 @@ normalizedSlots.forEach(function (slot) {
         if (expectedTimeInput) {
             const now = new Date();
             now.setMinutes(now.getMinutes() + 15);
-<<<<<<< HEAD
             expectedTimeInput.value = toDateTimeLocalValue(now);
-=======
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, "0");
-            const day = String(now.getDate()).padStart(2, "0");
-            const hours = String(now.getHours()).padStart(2, "0");
-            const minutes = String(now.getMinutes()).padStart(2, "0");
-            expectedTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         }
     }
 

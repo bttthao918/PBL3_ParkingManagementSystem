@@ -1,9 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-<<<<<<< HEAD
 using System.Net;
-=======
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
 using System.Text.Json;
 using ParkingManagement.FE.Models;
 
@@ -22,12 +19,8 @@ namespace ParkingManagement.FE.Services
             int pageSize = 10);
         Task<ReservationDetailDto?> GetByIdAsync(string reservationId);
         Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
-<<<<<<< HEAD
         Task<ServiceResultDto<ReservationDetailDto>?> CreateAsync(CreateReservationDto dto);
         Task<ServiceResultDto<ReservationDetailDto>?> CreateForEmployeeAsync(CreateReservationDto dto);
-=======
-        Task<ServiceResultDto<ReservationDetailDto>> CreateAsync(CreateReservationDto dto);
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         Task<ServiceResultDto?> CancelAsync(string reservationId);
         Task<ServiceResultDto?> CancelForEmployeeAsync(string reservationId);
     }
@@ -171,11 +164,7 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-<<<<<<< HEAD
         public async Task<ServiceResultDto<ReservationDetailDto>?> CreateAsync(CreateReservationDto dto)
-=======
-        public async Task<ServiceResultDto<ReservationDetailDto>> CreateAsync(CreateReservationDto dto)
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         {
             try
             {
@@ -183,37 +172,17 @@ namespace ParkingManagement.FE.Services
                 var response = await _httpClient.PostAsJsonAsync("api/reservations", dto);
                 if (response.IsSuccessStatusCode)
                 {
-<<<<<<< HEAD
-=======
-                    var data = await response.Content.ReadFromJsonAsync<ReservationDetailDto>();
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                     return new ServiceResultDto<ReservationDetailDto>
                     {
                         Success = true,
                         Message = "Đặt chỗ thành công!",
-<<<<<<< HEAD
                         Data = await response.Content.ReadFromJsonAsync<ReservationDetailDto>()
-=======
-                        Data = data
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                     };
                 }
 
                 var error = await response.Content.ReadAsStringAsync();
-<<<<<<< HEAD
                 _logger.LogWarning("CreateAsync failed: {StatusCode} {Error}", response.StatusCode, error);
                 return ParseErrorResult(response.StatusCode, error, "Không thể đặt chỗ. Vui lòng kiểm tra thông tin xe và thời gian.");
-=======
-                var message = ExtractApiErrorMessage(error)
-                    ?? "Không thể đặt chỗ. Vui lòng thử lại.";
-
-                _logger.LogWarning("CreateAsync failed: {StatusCode} {Message} {Error}", response.StatusCode, message, error);
-                return new ServiceResultDto<ReservationDetailDto>
-                {
-                    Success = false,
-                    Message = message
-                };
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             }
             catch (Exception ex)
             {
@@ -221,16 +190,11 @@ namespace ParkingManagement.FE.Services
                 return new ServiceResultDto<ReservationDetailDto>
                 {
                     Success = false,
-<<<<<<< HEAD
                     Message = "Không gọi được backend. Kiểm tra BE đã chạy và FE đang trỏ đúng BackendApi:BaseUrl."
-=======
-                    Message = "Không thể kết nối đến hệ thống đặt chỗ. Vui lòng thử lại."
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 };
             }
         }
 
-<<<<<<< HEAD
         public async Task<ServiceResultDto<ReservationDetailDto>?> CreateForEmployeeAsync(CreateReservationDto dto)
         {
             try
@@ -354,41 +318,10 @@ namespace ParkingManagement.FE.Services
                             {
                                 message = $"{property.Name}: {item.GetString()}";
                                 return true;
-=======
-        private static string? ExtractApiErrorMessage(string? error)
-        {
-            if (string.IsNullOrWhiteSpace(error))
-                return null;
-
-            try
-            {
-                using var doc = JsonDocument.Parse(error);
-                var root = doc.RootElement;
-
-                if (root.ValueKind == JsonValueKind.Object)
-                {
-                    if (root.TryGetProperty("message", out var message)
-                        && message.ValueKind == JsonValueKind.String)
-                    {
-                        return message.GetString();
-                    }
-
-                    if (root.TryGetProperty("errors", out var errors)
-                        && errors.ValueKind == JsonValueKind.Object)
-                    {
-                        foreach (var property in errors.EnumerateObject())
-                        {
-                            if (property.Value.ValueKind == JsonValueKind.Array)
-                            {
-                                var first = property.Value.EnumerateArray().FirstOrDefault();
-                                if (first.ValueKind == JsonValueKind.String)
-                                    return first.GetString();
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                             }
                         }
                     }
 
-<<<<<<< HEAD
                     if (property.Value.ValueKind == JsonValueKind.Object &&
                         TryGetValidationMessage(property.Value, out var nestedMessage))
                     {
@@ -412,21 +345,6 @@ namespace ParkingManagement.FE.Services
             }
 
             return false;
-=======
-                    if (root.TryGetProperty("title", out var title)
-                        && title.ValueKind == JsonValueKind.String)
-                    {
-                        return title.GetString();
-                    }
-                }
-            }
-            catch (JsonException)
-            {
-                return error;
-            }
-
-            return null;
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         }
 
         public async Task<ServiceResultDto?> CancelAsync(string reservationId)

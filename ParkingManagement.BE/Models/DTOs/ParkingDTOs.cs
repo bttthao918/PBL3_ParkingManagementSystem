@@ -29,18 +29,12 @@ namespace ParkingManagement.BLL.DTOs
         public decimal RevenueFromSingleTickets { get; set; }
         public decimal RevenueFromMonthlyTickets { get; set; }
         public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
-<<<<<<< HEAD
+        public List<DailyRevenueDto> PreviousDailyBreakdown { get; set; } = new();
         public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
         public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
         public Dictionary<string, decimal> RevenueByArea { get; set; } = new();
         public List<EmployeeRevenueSummaryDto> TopEmployees { get; set; } = new();
-=======
-        public List<DailyRevenueDto> PreviousDailyBreakdown { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByPaymentMethod { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByVehicleType { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByArea { get; set; } = new();
         public List<RevenueRankDto> TopRevenueDays { get; set; } = new();
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
     }
 
     public class DailyRevenueDto
@@ -51,20 +45,12 @@ namespace ParkingManagement.BLL.DTOs
         public int TicketCount { get; set; }
     }
 
-<<<<<<< HEAD
     public class EmployeeRevenueSummaryDto
     {
         public string? EmployeeId { get; set; }
         public string EmployeeName { get; set; } = "Chưa gán nhân viên";
         public decimal TotalRevenue { get; set; }
         public int PaymentCount { get; set; }
-=======
-    public class RevenueBreakdownDto
-    {
-        public string Label { get; set; } = "";
-        public decimal Amount { get; set; }
-        public int Count { get; set; }
-        public decimal Percentage { get; set; }
     }
 
     public class RevenueRankDto
@@ -73,7 +59,6 @@ namespace ParkingManagement.BLL.DTOs
         public decimal Amount { get; set; }
         public int Count { get; set; }
         public decimal ChangePercentage { get; set; }
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
     }
 
     // ── Manager Dashboard DTOs ────────────────────────────────

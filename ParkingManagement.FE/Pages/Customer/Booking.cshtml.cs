@@ -91,7 +91,6 @@ catch (Exception ex)
             };
 
             var result = await _reservationService.CreateAsync(dto);
-<<<<<<< HEAD
             if (result?.Success == true)
             {
                 TempData["Success"] = result.Message ?? "Đặt chỗ thành công!";
@@ -99,19 +98,6 @@ catch (Exception ex)
             else
             {
                 TempData["Error"] = result?.Message ?? "Không thể đặt chỗ. Vui lòng thử lại.";
-=======
-            if (result.Success)
-            {
-                TempData["Success"] = string.IsNullOrWhiteSpace(result.Message)
-                    ? "Đặt chỗ thành công!"
-                    : result.Message;
-            }
-            else
-            {
-                TempData["Error"] = string.IsNullOrWhiteSpace(result.Message)
-                    ? "Không thể đặt chỗ. Vui lòng thử lại."
-                    : result.Message;
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             }
 
             return RedirectToPage();

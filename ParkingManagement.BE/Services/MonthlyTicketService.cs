@@ -83,15 +83,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy khách hàng.");
 
-<<<<<<< HEAD
             var fee = await CalculateFeeAsync(vehicleType, dto.PackageType);
-=======
-            var vehicleSyncError = await SyncMonthlyTicketVehicleAsync(dto);
-            if (!string.IsNullOrEmpty(vehicleSyncError))
-                return ServiceResult<MonthlyTicketDto>.Fail(vehicleSyncError);
-
-            var fee = await CalculateFeeAsync(dto.VehicleType!, dto.PackageType);
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
@@ -99,7 +91,6 @@ namespace ParkingManagement.BLL.Services.Implementations
             var end = start.AddMonths(GetPackageMonths(dto.PackageType)).AddDays(-1);
             var orderCode = GeneratePayOsOrderCode();
 
-<<<<<<< HEAD
             var vehicle = await _vehicleRepo.GetByPlateAsync(dto.VehiclePlate);
             if (vehicle == null)
             {
@@ -130,8 +121,6 @@ namespace ParkingManagement.BLL.Services.Implementations
                 }
             }
 
-=======
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
             var id = await _repo.GenerateIdAsync();
             var monthly = new MonthlyTicket
             {
@@ -359,6 +348,71 @@ namespace ParkingManagement.BLL.Services.Implementations
             }
 
             return await ConfirmPayOsReturnAsync(orderCode);
+        }
+
+        public async Task<ServiceResult<MonthlyTicketDto>> CreatePendingPayOsPaymentAsync(string monthlyTicketId, string? customerId)
+        {
+            if (string.IsNullOrWhiteSpace(monthlyTicketId))
+            {
+                return ServiceResult<MonthlyTicketDto>.Fail("Không xác định được vé tháng cần in lại QR.");
+            }
+
+            var ticket = await _repo.GetByIdAsync(monthlyTicketId.Trim());
+            if (ticket == null)
+            {
+                return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy vé tháng cần in lại QR.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(customerId) &&
+                !string.Equals(ticket.CustomerId, customerId.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return ServiceResult<MonthlyTicketDto>.Fail("Bạn không có quyền in lại QR cho vé tháng này.");
+            }
+
+            if (!IsPendingPaymentTicket(ticket))
+            {
+                if (MonthlyTicketStatuses.IsActive(ticket.Status))
+                {
+                    return ServiceResult<MonthlyTicketDto>.Fail("Vé tháng này đã hoạt động nên không cần in lại QR.");
+                }
+
+                if (string.Equals(ticket.Status, MonthlyTicketStatuses.CANCELLED, StringComparison.OrdinalIgnoreCase))
+                {
+                    return ServiceResult<MonthlyTicketDto>.Fail("Vé tháng đã hủy. Vui lòng đặt lại vé mới.");
+                }
+
+                return ServiceResult<MonthlyTicketDto>.Fail("Chỉ có thể in lại QR cho vé đang chờ thanh toán.");
+            }
+
+            await TrySyncPayOsPaymentAsync(ticket);
+            if (MonthlyTicketStatuses.IsActive(ticket.Status))
+            {
+                return ServiceResult<MonthlyTicketDto>.Ok(MapToDto(ticket), "Thanh toán đã được xác nhận. Vé tháng đã được kích hoạt.");
+            }
+
+            var orderCode = GeneratePayOsOrderCode();
+            var paymentLink = await _payOsService.CreatePaymentLinkAsync(new PayOsCreatePaymentLinkDto
+            {
+                OrderCode = orderCode,
+                Amount = decimal.ToInt32(ticket.TotalFee),
+                Description = ticket.MonthlyTicketId,
+                ItemName = $"Ve thang {ticket.MonthlyTicketId}"
+            });
+
+            if (!paymentLink.Success || paymentLink.Data == null)
+            {
+                return ServiceResult<MonthlyTicketDto>.Fail(paymentLink.Message ?? "Không tạo lại được QR thanh toán payOS.");
+            }
+
+            await AddPendingPaymentAsync(ticket.MonthlyTicketId, ticket.TotalFee, PaymentMethods.BANK_TRANSFER, orderCode);
+
+            var dto = MapToDto(ticket);
+            dto.PayOsOrderCode = orderCode;
+            dto.PayOsPaymentLinkId = paymentLink.Data.PaymentLinkId;
+            dto.CheckoutUrl = paymentLink.Data.CheckoutUrl;
+            dto.QrCode = paymentLink.Data.QrCode;
+
+            return ServiceResult<MonthlyTicketDto>.Ok(dto, "Đã tạo lại QR thanh toán cho vé tháng đang chờ thanh toán.");
         }
 
         public async Task<List<MonthlyTicketDto>> GetExpiringSoonAsync(int days = 7)

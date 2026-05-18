@@ -8,12 +8,15 @@ namespace ParkingManagement.FE.Pages.Shared.Statistics
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
-<<<<<<< HEAD
         public RevenueStatisticsChartConfig Charts { get; set; } = new();
         public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
         public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
         public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
         public string RankingTitle { get; set; } = "Top 5 nhân viên doanh thu cao nhất";
+        public string LineChartTitle { get; set; } = "Doanh thu theo ngày";
+        public string DonutTitle { get; set; } = "Cơ cấu doanh thu";
+        public string BarTitle { get; set; } = "Doanh thu theo khu vực";
+        public string ProgressTitle { get; set; } = "Doanh thu theo loại xe";
 
         public void OnGet()
         {
@@ -44,17 +47,5 @@ namespace ParkingManagement.FE.Pages.Shared.Statistics
                 }
             };
         }
-=======
-        public string ChartConfigJson { get; set; } = "{}";
-        public string LineChartTitle { get; set; } = "Doanh thu theo ngày";
-        public string DonutTitle { get; set; } = "Cơ cấu doanh thu";
-        public string BarTitle { get; set; } = "Doanh thu theo nhóm";
-        public string RankTitle { get; set; } = "Top doanh thu";
-        public string ProgressTitle { get; set; } = "Tỷ trọng doanh thu";
-        public List<StatisticsBreakdownItemViewModel> DonutItems { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> BarItems { get; set; } = new();
-        public List<StatisticsRankItemViewModel> RankItems { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> ProgressItems { get; set; } = new();
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
     }
 }

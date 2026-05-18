@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     if (typeof Chart === "undefined") {
         console.error("Chart.js chưa được load");
         return;
@@ -45,11 +45,7 @@
         const datasets = [
             {
                 label: "Kỳ hiện tại",
-<<<<<<< HEAD
                 data: config.line.labels.length ? config.line.current : [0],
-=======
-                data: lineCurrent,
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 borderColor: blue,
                 backgroundColor: "rgba(13, 139, 255, 0.14)",
                 fill: true,
@@ -59,17 +55,10 @@
             }
         ];
 
-<<<<<<< HEAD
         if (config.line.previous && config.line.previous.length) {
             datasets.push({
                 label: "Kỳ trước",
                 data: config.line.previous,
-=======
-        if (hasPreviousLine) {
-            datasets.push({
-                label: "Kỳ trước",
-                data: linePrevious,
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 borderColor: lightBlue,
                 backgroundColor: "transparent",
                 borderDash: [6, 6],
@@ -82,11 +71,7 @@
         new Chart(lineCtx, {
             type: "line",
             data: {
-<<<<<<< HEAD
                 labels: config.line.labels.length ? config.line.labels : ["Chưa có dữ liệu"],
-=======
-                labels: lineLabels,
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                 datasets
             },
             options: {
@@ -127,11 +112,7 @@
                         ticks: {
                             color: "#334155",
                             font: { size: 13, weight: "600" },
-<<<<<<< HEAD
                             callback: value => formatAxisValue(value)
-=======
-                            callback: value => config.type === "revenue" ? formatCurrency(value) : value
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                         },
                         grid: { color: "#e2e8f0" }
                     },
@@ -151,15 +132,9 @@
         new Chart(donutCtx, {
             type: "doughnut",
             data: {
-<<<<<<< HEAD
                 labels: config.donut.labels.length ? config.donut.labels : ["Chưa có dữ liệu"],
                 datasets: [{
                     data: config.donut.data.length ? config.donut.data : [1],
-=======
-                labels: config.donut?.labels || [],
-                datasets: [{
-                    data: config.donut?.data || [],
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                     backgroundColor: [blue, green, orange, purple],
                     borderWidth: 0,
                     cutout: "68%"
@@ -180,15 +155,9 @@
         new Chart(barCtx, {
             type: "bar",
             data: {
-<<<<<<< HEAD
                 labels: config.bar.labels.length ? config.bar.labels : ["Chưa có dữ liệu"],
                 datasets: [{
                     data: config.bar.data.length ? config.bar.data : [0],
-=======
-                labels: config.bar?.labels || [],
-                datasets: [{
-                    data: config.bar?.data || [],
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                     backgroundColor: [blue, green, purple, orange],
                     borderRadius: 8,
                     barThickness: 52
@@ -206,11 +175,7 @@
                         ticks: {
                             color: "#334155",
                             font: { size: 13, weight: "600" },
-<<<<<<< HEAD
                             callback: value => formatAxisValue(value)
-=======
-                            callback: value => config.type === "revenue" ? formatCurrency(value) : value
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
                         },
                         grid: { color: "#e2e8f0" }
                     },

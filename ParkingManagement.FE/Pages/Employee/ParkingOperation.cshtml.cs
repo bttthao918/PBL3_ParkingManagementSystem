@@ -24,29 +24,15 @@ namespace ParkingManagement.FE.Pages.Employee
         [BindProperty(SupportsGet = true)]
         public string Tab { get; set; } = "checkin";
 
-<<<<<<< HEAD
         public CheckInValidationResponse? CheckInValidation { get; set; }
         public CheckInResultResponse? CheckInResult { get; set; }
-=======
-        [BindProperty]
-        public string? VehiclePlate { get; set; }
-
-        [BindProperty]
-        public string? VehicleType { get; set; }
-
-        [BindProperty]
-        public string? VehiclePlateOrTicketId { get; set; }
-
-        // Check-in state
-        public CheckInValidationResponse? CheckInValidation { get; set; }
-        public CheckInResultResponse? CheckInResult { get; set; }
-        public List<AvailableSlotDto>? AllSlotsForMap { get; set; }
-
-        // Check-out state
->>>>>>> 29cb39c9e66b6e80c2371e7511d5036209209a10
         public CheckOutValidationResponse? CheckOutValidation { get; set; }
         public CheckOutResultResponse? CheckOutResult { get; set; }
 
+        public string? VehiclePlate { get; set; }
+        public string VehicleType { get; set; } = "Xe máy";
+        public string? VehiclePlateOrTicketId { get; set; }
+        public List<AvailableSlotDto>? AllSlotsForMap { get; set; } = new();
         public List<EmployeeTicketListDto> ActiveTickets { get; set; } = new();
         public int ActiveCount { get; set; }
         public int TotalSlots { get; set; }
