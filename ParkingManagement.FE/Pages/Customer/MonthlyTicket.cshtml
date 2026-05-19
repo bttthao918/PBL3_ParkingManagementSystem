@@ -30,6 +30,87 @@
 
 <div class="monthly-grid">
     <div class="card monthly-plan-section">
+        <div class="monthly-pricing-table" data-pricing-table>
+            <h3>1. Chọn gói vé phù hợp</h3>
+
+            <div class="duration-tabs" role="tablist" aria-label="Thời hạn vé tháng">
+                <button type="button" class="duration-tab active" data-duration-tab="1">1 tháng</button>
+                <button type="button" class="duration-tab" data-duration-tab="3">3 tháng</button>
+                <button type="button" class="duration-tab" data-duration-tab="6">6 tháng</button>
+            </div>
+
+            @foreach (var duration in new[] { 1, 3, 6 })
+            {
+                <div class="pricing-card-grid @(duration == 1 ? "" : "hidden")" data-duration-panel="@duration">
+                    @foreach (var plan in Model.Plans.Where(plan => plan.Months == duration))
+                    {
+                        var monthlyPrice = duration > 0 ? Math.Round(plan.Price / duration) : plan.Price;
+                        var monthlySaving = Math.Max(0, plan.OneMonthPrice - monthlyPrice);
+
+                        <article class="pricing-plan-card @(plan.IsSelected ? "selected" : "")" onclick="selectPricingCard(this)">
+                            <div class="popular-badge @(plan.IsSelected ? "" : "hidden")">Phổ biến</div>
+                            <div class="pricing-plan-header">
+                                <div class="pricing-icon @plan.IconClass">
+                                    <i class="@plan.Icon"></i>
+                                </div>
+                                <div>
+                                    <h4>@plan.Name</h4>
+                                    <p>@plan.SubTitle</p>
+                                </div>
+                            </div>
+
+                            <div class="pricing-price-row">
+                                <div class="pricing-main-price">@monthlyPrice.ToString("N0") đ</div>
+                                <div class="pricing-unit">/ tháng@(duration > 1 ? $" × {duration} tháng" : "")</div>
+                                @if (duration > 1 && monthlySaving > 0)
+                                {
+                                    <div class="pricing-monthly-saving">Tiết kiệm @monthlySaving.ToString("N0") đ/tháng so với mua lẻ</div>
+                                }
+                                @if (duration > 1)
+                                {
+                                    <div class="pricing-total">Tổng thanh toán: <strong>@plan.Price.ToString("N0") đ</strong></div>
+                                }
+                            </div>
+
+                            <hr />
+
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-circle-check"></i> Gửi xe không giới hạn</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Áp dụng theo biển số xe</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Ra vào tự do</li>
+                            </ul>
+
+                            <button type="button"
+                                    class="pricing-register-btn @(plan.IsSelected ? "primary" : "outline")"
+                                    onclick="event.stopPropagation(); openRegisterModal('@plan.VehicleType', '@plan.PackageType')">
+                                Đăng ký ngay
+                            </button>
+                        </article>
+                    }
+                </div>
+
+                @if (duration > 1)
+                {
+                    var durationSaving = Model.Plans
+                        .Where(plan => plan.Months == duration)
+                        .Select(plan => Math.Max(0, (plan.OneMonthPrice * duration) - plan.Price))
+                        .DefaultIfEmpty(0)
+                        .Max();
+
+                    <p class="savings-note hidden" data-duration-note="@duration">
+                        @if (durationSaving > 0)
+                        {
+                            <text>Tiết kiệm đến <span>@durationSaving.ToString("N0") đ</span> khi mua gói @duration tháng</text>
+                        }
+                    </p>
+                }
+            }
+
+            <div class="note-box pricing-data-note">
+                <i class="fa-solid fa-circle-info"></i>
+                Giá trên lấy trực tiếp từ bảng giá quản trị và đã bao gồm VAT
+            </div>
+        </div>
         <h3>1. Chọn gói vé phù hợp</h3>
 
         <div class="plan-grid">
@@ -339,6 +420,37 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        document.querySelectorAll("[data-pricing-table]").forEach(function (table) {
+            table.querySelectorAll("[data-duration-tab]").forEach(function (tab) {
+                tab.addEventListener("click", function () {
+                    const duration = tab.dataset.durationTab;
+                    table.querySelectorAll("[data-duration-tab]").forEach(function (item) {
+                        item.classList.toggle("active", item === tab);
+                    });
+                    table.querySelectorAll("[data-duration-panel]").forEach(function (panel) {
+                        panel.classList.toggle("hidden", panel.dataset.durationPanel !== duration);
+                    });
+                    table.querySelectorAll("[data-duration-note]").forEach(function (note) {
+                        note.classList.toggle("hidden", note.dataset.durationNote !== duration);
+                    });
+                });
+            });
+        });
+
+        function selectPricingCard(card) {
+            const panel = card.closest("[data-duration-panel]");
+            if (!panel) return;
+            panel.querySelectorAll(".pricing-plan-card").forEach(function (item) {
+                const selected = item === card;
+                item.classList.toggle("selected", selected);
+                const button = item.querySelector(".pricing-register-btn");
+                if (button) {
+                    button.classList.toggle("primary", selected);
+                    button.classList.toggle("outline", !selected);
+                }
+            });
+        }
+
         // Bank config for QR generation (VietQR)
         const BANK_CONFIG = {
             bankId: "970436",          // Vietcombank BIN

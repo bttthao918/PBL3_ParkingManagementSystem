@@ -166,37 +166,57 @@ public class MonthlyTicketModel : PageModel
         }
     }
 
-    private static List<MonthlyPlanVm> BuildPlans(PricingDto pricing) =>
-    [
-        new MonthlyPlanVm
+    private static List<MonthlyPlanVm> BuildPlans(PricingDto pricing)
+    {
+        var vehiclePlans = new[]
         {
-            VehicleType = PricingDisplayDefaults.Motorcycle,
-            PackageType = "1 tháng",
-            Name = "Vé xe máy",
-            Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, PricingDisplayDefaults.Motorcycle, 1),
-            Icon = "fa-solid fa-motorcycle",
-            IconClass = "blue",
-            IsSelected = true
-        },
-        new MonthlyPlanVm
-        {
-            VehicleType = PricingDisplayDefaults.SmallCar,
-            PackageType = "1 tháng",
-            Name = "Vé ô tô nhỏ",
-            Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, PricingDisplayDefaults.SmallCar, 1),
-            Icon = "fa-solid fa-car",
-            IconClass = "green"
-        },
-        new MonthlyPlanVm
-        {
-            VehicleType = PricingDisplayDefaults.LargeCar,
-            PackageType = "1 tháng",
-            Name = "Vé ô tô lớn",
-            Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, PricingDisplayDefaults.LargeCar, 1),
-            Icon = "fa-solid fa-van-shuttle",
-            IconClass = "purple"
-        }
-    ];
+            new
+            {
+                VehicleType = PricingDisplayDefaults.Motorcycle,
+                Name = "Vé xe máy",
+                SubTitle = "Xe máy, scooter",
+                Icon = "fa-solid fa-motorcycle",
+                IconClass = "blue",
+                IsSelected = false
+            },
+            new
+            {
+                VehicleType = PricingDisplayDefaults.SmallCar,
+                Name = "Vé ô tô nhỏ",
+                SubTitle = "Xe dưới 7 chỗ",
+                Icon = "fa-solid fa-car",
+                IconClass = "green",
+                IsSelected = true
+            },
+            new
+            {
+                VehicleType = PricingDisplayDefaults.LargeCar,
+                Name = "Vé ô tô lớn",
+                SubTitle = "Xe từ 7 chỗ trở lên",
+                Icon = "fa-solid fa-van-shuttle",
+                IconClass = "purple",
+                IsSelected = false
+            }
+        };
+
+        var durations = new[] { 1, 3, 6 };
+
+        return vehiclePlans
+            .SelectMany(plan => durations.Select(months => new MonthlyPlanVm
+            {
+                VehicleType = plan.VehicleType,
+                PackageType = $"{months} tháng",
+                Months = months,
+                Name = plan.Name,
+                SubTitle = plan.SubTitle,
+                Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, plan.VehicleType, months),
+                OneMonthPrice = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, plan.VehicleType, 1),
+                Icon = plan.Icon,
+                IconClass = plan.IconClass,
+                IsSelected = plan.IsSelected
+            }))
+            .ToList();
+    }
 
     private static string NormalizeStatus(string? status)
     {
@@ -244,8 +264,11 @@ public class MonthlyPlanVm
 
     public string PackageType { get; set; } = "";
 
+    public int Months { get; set; } = 1;
     public string Name { get; set; } = "";
+    public string SubTitle { get; set; } = "";
     public decimal Price { get; set; }
+    public decimal OneMonthPrice { get; set; }
     public string? Discount { get; set; }
     public string Icon { get; set; } = "";
     public string IconClass { get; set; } = "";

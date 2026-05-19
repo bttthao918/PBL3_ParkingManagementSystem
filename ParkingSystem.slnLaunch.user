@@ -3,11 +3,6 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "ParkingManagement.FE\\ParkingManagement.FE.csproj",
-        "Action": "Start",
-        "DebugTarget": "ParkingManagement.FE"
-      },
-      {
         "Path": "ParkingManagement.BE\\BackendAPI.csproj",
         "Action": "Start",
         "DebugTarget": "http"
