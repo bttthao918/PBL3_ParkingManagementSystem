@@ -7,20 +7,124 @@
     ViewData["Role"] = "Khách hàng";
 }
 
-<link rel="stylesheet" href="/css/customer/monthly_ticket.css" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/customer/monthly_ticket.css" asp-append-version="true" />
+}
 
-@if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+@if (!string.IsNullOrWhiteSpace(Model.SuccessMessage) || !string.IsNullOrWhiteSpace(Model.ErrorMessage))
 {
-    <div class="card success-card">
-        @Model.SuccessMessage
+    <div class="toast-stack" aria-live="polite" aria-atomic="true">
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="app-toast toast-success" data-auto-dismiss="true">
+                <div class="app-toast-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    <strong>Thành công</strong>
+                    <span>@Model.SuccessMessage</span>
+                </div>
+                <button type="button" class="app-toast-close" aria-label="Đóng thông báo">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="app-toast toast-error">
+                <div class="app-toast-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <strong>Cần kiểm tra</strong>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+                <button type="button" class="app-toast-close" aria-label="Đóng thông báo">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        }
     </div>
 }
 
-@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+@if (Model.PendingPayment != null)
 {
-    <div class="card error-card">
-        @Model.ErrorMessage
-    </div>
+    <section class="payment-notification" id="paymentNotice" role="dialog" aria-modal="false" aria-labelledby="paymentTitle">
+        <div class="payment-notification-header">
+            <div>
+                <div class="payment-eyebrow">
+                    <i class="fa-solid fa-qrcode"></i>
+                    Mã QR đã sẵn sàng
+                </div>
+                <h3 id="paymentTitle">Hoàn tất thanh toán vé tháng</h3>
+            </div>
+            <button type="button" class="payment-notice-close" aria-label="Đóng thông báo thanh toán">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <p class="payment-description">
+            Quét mã bằng app ngân hàng hoặc mở payOS. Hệ thống sẽ tự kiểm tra và kích hoạt vé sau khi nhận tiền.
+        </p>
+
+        <div class="payment-visual">
+            @if (!string.IsNullOrWhiteSpace(Model.PendingPayment.QrImageUrl))
+            {
+                <div class="payment-qr-box">
+                    <img src="@Model.PendingPayment.QrImageUrl" alt="QR thanh toán payOS" />
+                </div>
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.PendingPayment.CheckoutUrl))
+            {
+                <iframe class="payment-frame" src="@Model.PendingPayment.CheckoutUrl" title="payOS checkout"></iframe>
+            }
+        </div>
+
+        <div class="payment-summary">
+            <div>
+                <span>Mã đơn</span>
+                <strong>@Model.PendingPayment.OrderCode</strong>
+            </div>
+            <div>
+                <span>Số tiền</span>
+                <strong class="payment-amount">@Model.PendingPayment.Amount.ToString("N0") đ</strong>
+            </div>
+            <div>
+                <span>Trạng thái</span>
+                <strong class="payment-state">Chờ thanh toán</strong>
+            </div>
+        </div>
+
+        <div class="payment-actions">
+            @if (!string.IsNullOrWhiteSpace(Model.PendingPayment.CheckoutUrl))
+            {
+                <a class="primary-link-btn" href="@Model.PendingPayment.CheckoutUrl" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    Mở payOS
+                </a>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.PendingPayment.MonthlyTicketId))
+            {
+                <form method="post"
+                      asp-page-handler="ConfirmPayment"
+                      class="payment-check-form"
+                      data-auto-confirm="true">
+                    <input type="hidden" name="monthlyTicketId" value="@Model.PendingPayment.MonthlyTicketId" />
+                    <button type="submit" class="payment-check-btn">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        Tôi đã thanh toán
+                    </button>
+                </form>
+            }
+        </div>
+
+        <div class="payment-progress">
+            <i class="fa-solid fa-circle-notch"></i>
+            <span id="paymentCheckStatus">Hệ thống đang tự kiểm tra trạng thái thanh toán.</span>
+        </div>
+    </section>
 }
 
 <div class="card banner-card">
@@ -257,6 +361,7 @@
                 @foreach (var ticket in Model.TicketHistories)
                 {
                     var isActive = Model.IsActive(ticket);
+                    var isPending = Model.IsPending(ticket);
                     <tr>
                         <td>@ticket.MonthlyTicketId</td>
                         <td>@ticket.VehiclePlate</td>
@@ -274,13 +379,26 @@
                         <td>@ticket.TotalFee.ToString("N0") đ</td>
 
                         <td>
-                            <span class="status-badge @(isActive ? "active" : "expired")">
+                            <span class="status-badge @(isActive ? "active" : isPending ? "pending" : "expired")">
                                 @Model.GetStatusText(ticket)
                             </span>
                         </td>
 
                         <td class="action-column">
-                            <form method="post" asp-page-handler="Renew">
+                            @if (isPending)
+                            {
+                                <form method="post" asp-page-handler="ShowPayment">
+                                    <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
+
+                                    <button type="submit" class="icon-btn blue" title="In lại mã QR">
+                                        <i class="fa-solid fa-qrcode"></i>
+                                    </button>
+                                </form>
+                            }
+
+                            else if (isActive)
+                            {
+                                <form method="post" asp-page-handler="Renew">
                                 <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
                                 <input type="hidden" name="packageType" value="1 tháng" />
                                 <input type="hidden" name="paymentMethod" value="Chuyển khoản" />
@@ -290,13 +408,23 @@
                                 </button>
                             </form>
 
-                            @if (isActive)
-                            {
                                 <form method="post" asp-page-handler="Cancel">
                                     <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
 
                                     <button type="submit" class="icon-btn red" title="Hủy vé">
                                         <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-page-handler="Reorder">
+                                    <input type="hidden" name="vehiclePlate" value="@ticket.VehiclePlate" />
+                                    <input type="hidden" name="vehicleType" value="@ticket.VehicleType" />
+                                    <input type="hidden" name="packageType" value="@ticket.PackageType" />
+
+                                    <button type="submit" class="icon-btn blue" title="Đặt lại vé">
+                                        <i class="fa-solid fa-rotate-right"></i>
                                     </button>
                                 </form>
                             }
@@ -339,17 +467,14 @@
             </label>
 
             <label>
-                <span>Phương thức thanh toán</span>
-                <select asp-for="RegisterInput.PaymentMethod" id="paymentMethodSelect">
-                    <option value="Chuyển khoản">Chuyển khoản ngân hàng (QR)</option>
-                    <option value="Ví điện tử">Ví điện tử (MoMo / ZaloPay)</option>
+                <span>Thanh toán</span>
+                <select asp-for="RegisterInput.PaymentMethod">
+                    <option value="Chuyển khoản">VietQR / MB Bank</option>
                 </select>
                 <span asp-validation-for="RegisterInput.PaymentMethod" class="field-validation"></span>
             </label>
 
-            <p id="registerError" class="form-error-msg hidden"></p>
-
-            <button type="button" class="primary-btn" id="registerSubmitBtn" onclick="handleRegisterSubmit()">
+            <button type="submit" class="primary-btn" id="registerSubmitBtn">
                 <i class="fa-solid fa-qrcode"></i>
                 Thanh toán & Đăng ký
             </button>
@@ -357,69 +482,10 @@
     </div>
 </div>
 
-<!-- QR Payment Modal -->
-<div id="qrPaymentModal" class="modal-overlay hidden">
-    <div class="modal-card qr-modal-card">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-qrcode"></i> Thanh toán chuyển khoản</h3>
-            <button type="button" class="modal-close" onclick="closeQrModal()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <div class="qr-payment-content">
-            <div class="qr-info-header">
-                <p>Quét mã QR bằng app ngân hàng để thanh toán</p>
-            </div>
-
-            <div class="qr-code-wrapper">
-                <img id="qrCodeImage" src="" alt="QR Code thanh toán" />
-            </div>
-
-            <div class="qr-details">
-                <div class="qr-detail-row">
-                    <span>Ngân hàng</span>
-                    <strong id="qrBankName">Vietcombank</strong>
-                </div>
-                <div class="qr-detail-row">
-                    <span>Số tài khoản</span>
-                    <strong id="qrAccountNo">1234567890</strong>
-                </div>
-                <div class="qr-detail-row">
-                    <span>Chủ tài khoản</span>
-                    <strong id="qrAccountName">BAI XE THONG MINH</strong>
-                </div>
-                <div class="qr-detail-row">
-                    <span>Số tiền</span>
-                    <strong id="qrAmount" class="qr-amount">0 đ</strong>
-                </div>
-                <div class="qr-detail-row">
-                    <span>Nội dung CK</span>
-                    <strong id="qrContent">-</strong>
-                </div>
-            </div>
-
-            <div class="qr-actions">
-                <button type="button" class="secondary-btn" onclick="closeQrModal()">
-                    Hủy bỏ
-                </button>
-                <button type="button" class="primary-btn" id="confirmPaidBtn" onclick="confirmQrPayment()">
-                    <i class="fa-solid fa-check-circle"></i>
-                    Đã thanh toán
-                </button>
-            </div>
-
-            <p class="qr-note">
-                <i class="fa-solid fa-circle-info"></i>
-                Sau khi chuyển khoản thành công, nhấn "Đã thanh toán" để hoàn tất đăng ký.
-            </p>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+
         document.querySelectorAll("[data-pricing-table]").forEach(function (table) {
             table.querySelectorAll("[data-duration-tab]").forEach(function (tab) {
                 tab.addEventListener("click", function () {
@@ -460,88 +526,104 @@
             template: "compact2"
         };
 
-        // Plan prices
-        const PLAN_PRICES = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-            Model.Plans
-                .GroupBy(plan => plan.VehicleType)
-                .ToDictionary(
-                    group => group.Key,
-                    group => group.ToDictionary(plan => plan.PackageType, plan => plan.Price))));
+        let paymentAutoCheckTimer;
+        let paymentAutoCheckInterval;
 
-        let currentAmount = 0;
+
+        function closePaymentNotice() {
+            const notice = document.getElementById("paymentNotice");
+            if (!notice) {
+                return;
+            }
+
+            notice.classList.add("is-hidden");
+            window.clearTimeout(paymentAutoCheckTimer);
+            window.clearInterval(paymentAutoCheckInterval);
+            window.setTimeout(() => notice.remove(), 240);
+        }
 
         function openRegisterModal(vehicleType, packageType) {
             document.getElementById("registerVehicleType").value = vehicleType;
             document.getElementById("registerPackageType").value = packageType;
             document.getElementById("registerModal").classList.remove("hidden");
-            hideError();
-            currentAmount = PLAN_PRICES[vehicleType]?.[packageType] || 0;
         }
 
         function closeRegisterModal() {
             document.getElementById("registerModal").classList.add("hidden");
         }
 
-        function handleRegisterSubmit() {
-            hideError();
-            const plate = document.getElementById("registerPlateInput").value.trim();
-            if (!plate) {
-                showError("Vui lòng nhập biển số xe.");
-                return;
+        document.querySelectorAll(".app-toast").forEach((toast) => {
+            const closeButton = toast.querySelector(".app-toast-close");
+            const hideToast = () => toast.classList.add("is-hidden");
+
+            closeButton?.addEventListener("click", hideToast);
+
+            if (toast.dataset.autoDismiss === "true") {
+                window.setTimeout(hideToast, 5200);
+            }
+        });
+
+        const paymentNotice = document.getElementById("paymentNotice");
+        if (paymentNotice) {
+            paymentNotice.querySelector(".payment-notice-close")?.addEventListener("click", closePaymentNotice);
+
+            window.setTimeout(() => paymentNotice.classList.add("is-soft"), 7000);
+        }
+
+        const payOsConfirmForm = document.querySelector("[data-auto-confirm='true']");
+        if (payOsConfirmForm) {
+            const statusElement = document.querySelector(".payment-progress span");
+            let isCheckingPayment = false;
+
+            async function confirmPayOsPayment(showPendingText) {
+                if (isCheckingPayment) {
+                    return;
+                }
+
+                isCheckingPayment = true;
+                if (showPendingText && statusElement) {
+                    statusElement.textContent = "Đang kiểm tra trạng thái thanh toán...";
+                }
+
+                try {
+                    const response = await fetch(payOsConfirmForm.action, {
+                        method: "POST",
+                        body: new FormData(payOsConfirmForm),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        if (statusElement) {
+                            statusElement.textContent = result.message || "Thanh toán đã được xác nhận.";
+                        }
+                        paymentNotice?.classList.remove("is-soft");
+                        paymentNotice?.classList.add("is-success");
+                        window.setTimeout(() => window.location.reload(), 900);
+                        return;
+                    }
+
+                    if (showPendingText && statusElement) {
+                        statusElement.textContent = result.message || "payOS chưa xác nhận thanh toán.";
+                    }
+                } catch {
+                    if (showPendingText && statusElement) {
+                        statusElement.textContent = "Chưa kiểm tra được payOS, vui lòng thử lại.";
+                    }
+                } finally {
+                    isCheckingPayment = false;
+                }
             }
 
-            // Show QR payment (both Chuyển khoản and Ví điện tử use same QR)
-            showQrPayment(plate);
-        }
+            payOsConfirmForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                confirmPayOsPayment(true);
+            });
 
-        function showQrPayment(plate) {
-            const vehicleType = document.getElementById("registerVehicleType").value;
-            const packageType = document.getElementById("registerPackageType").value;
-            const method = document.getElementById("paymentMethodSelect").value;
-            const amount = currentAmount;
-            const content = "VT " + plate.replace(/[^a-zA-Z0-9]/g, "") + " " + packageType.replace(" ", "");
-
-            // Generate VietQR image URL
-            const qrUrl = `https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNo}-${BANK_CONFIG.template}.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(BANK_CONFIG.accountName)}`;
-
-            document.getElementById("qrCodeImage").src = qrUrl;
-            document.getElementById("qrBankName").textContent = BANK_CONFIG.bankName;
-            document.getElementById("qrAccountNo").textContent = BANK_CONFIG.accountNo;
-            document.getElementById("qrAccountName").textContent = BANK_CONFIG.accountName;
-            document.getElementById("qrAmount").textContent = amount.toLocaleString("vi-VN") + " đ";
-            document.getElementById("qrContent").textContent = content;
-
-            // Close register modal, open QR modal
-            closeRegisterModal();
-            document.getElementById("qrPaymentModal").classList.remove("hidden");
-        }
-
-        function closeQrModal() {
-            document.getElementById("qrPaymentModal").classList.add("hidden");
-        }
-
-        function confirmQrPayment() {
-            // Show loading state
-            const btn = document.getElementById("confirmPaidBtn");
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
-
-            // Submit the register form
-            closeQrModal();
-            document.getElementById("registerForm").submit();
-        }
-
-        function showError(msg) {
-            const el = document.getElementById("registerError");
-            if (el) {
-                el.textContent = msg;
-                el.classList.remove("hidden");
-            }
-        }
-
-        function hideError() {
-            const el = document.getElementById("registerError");
-            if (el) el.classList.add("hidden");
+            paymentAutoCheckTimer = window.setTimeout(() => confirmPayOsPayment(false), 4000);
+            paymentAutoCheckInterval = window.setInterval(() => confirmPayOsPayment(false), 8000);
         }
     </script>
 }

@@ -91,17 +91,13 @@ catch (Exception ex)
             };
 
             var result = await _reservationService.CreateAsync(dto);
-            if (result.Success)
+            if (result?.Success == true)
             {
-                TempData["Success"] = string.IsNullOrWhiteSpace(result.Message)
-                    ? "Đặt chỗ thành công!"
-                    : result.Message;
+                TempData["Success"] = result.Message ?? "Đặt chỗ thành công!";
             }
             else
             {
-                TempData["Error"] = string.IsNullOrWhiteSpace(result.Message)
-                    ? "Không thể đặt chỗ. Vui lòng thử lại."
-                    : result.Message;
+                TempData["Error"] = result?.Message ?? "Không thể đặt chỗ. Vui lòng thử lại.";
             }
 
             return RedirectToPage();

@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net;
 using System.Text.Json;
 using ParkingManagement.FE.Models;
 
@@ -18,7 +19,8 @@ namespace ParkingManagement.FE.Services
             int pageSize = 10);
         Task<ReservationDetailDto?> GetByIdAsync(string reservationId);
         Task<List<AvailableSlotDto>?> GetAvailableSlotsAsync(string? vehicleType = null);
-        Task<ServiceResultDto<ReservationDetailDto>> CreateAsync(CreateReservationDto dto);
+        Task<ServiceResultDto<ReservationDetailDto>?> CreateAsync(CreateReservationDto dto);
+        Task<ServiceResultDto<ReservationDetailDto>?> CreateForEmployeeAsync(CreateReservationDto dto);
         Task<ServiceResultDto?> CancelAsync(string reservationId);
         Task<ServiceResultDto?> CancelForEmployeeAsync(string reservationId);
     }
@@ -162,7 +164,7 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<ServiceResultDto<ReservationDetailDto>> CreateAsync(CreateReservationDto dto)
+        public async Task<ServiceResultDto<ReservationDetailDto>?> CreateAsync(CreateReservationDto dto)
         {
             try
             {
@@ -170,25 +172,17 @@ namespace ParkingManagement.FE.Services
                 var response = await _httpClient.PostAsJsonAsync("api/reservations", dto);
                 if (response.IsSuccessStatusCode)
                 {
-                    var data = await response.Content.ReadFromJsonAsync<ReservationDetailDto>();
                     return new ServiceResultDto<ReservationDetailDto>
                     {
                         Success = true,
                         Message = "Đặt chỗ thành công!",
-                        Data = data
+                        Data = await response.Content.ReadFromJsonAsync<ReservationDetailDto>()
                     };
                 }
 
                 var error = await response.Content.ReadAsStringAsync();
-                var message = ExtractApiErrorMessage(error)
-                    ?? "Không thể đặt chỗ. Vui lòng thử lại.";
-
-                _logger.LogWarning("CreateAsync failed: {StatusCode} {Message} {Error}", response.StatusCode, message, error);
-                return new ServiceResultDto<ReservationDetailDto>
-                {
-                    Success = false,
-                    Message = message
-                };
+                _logger.LogWarning("CreateAsync failed: {StatusCode} {Error}", response.StatusCode, error);
+                return ParseErrorResult(response.StatusCode, error, "Không thể đặt chỗ. Vui lòng kiểm tra thông tin xe và thời gian.");
             }
             catch (Exception ex)
             {
@@ -196,56 +190,161 @@ namespace ParkingManagement.FE.Services
                 return new ServiceResultDto<ReservationDetailDto>
                 {
                     Success = false,
-                    Message = "Không thể kết nối đến hệ thống đặt chỗ. Vui lòng thử lại."
+                    Message = "Không gọi được backend. Kiểm tra BE đã chạy và FE đang trỏ đúng BackendApi:BaseUrl."
                 };
             }
         }
 
-        private static string? ExtractApiErrorMessage(string? error)
+        public async Task<ServiceResultDto<ReservationDetailDto>?> CreateForEmployeeAsync(CreateReservationDto dto)
         {
-            if (string.IsNullOrWhiteSpace(error))
-                return null;
+            try
+            {
+                AddAuthorizationHeader();
+                var response = await _httpClient.PostAsJsonAsync("api/reservations/employee", dto);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<ServiceResultDto<ReservationDetailDto>>();
+                }
+
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("CreateForEmployeeAsync failed: {StatusCode} {Error}", response.StatusCode, errorBody);
+                return ParseErrorResult(response.StatusCode, errorBody, "Không thể đặt chỗ. Vui lòng kiểm tra thông tin khách hàng, xe và thời gian.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling CreateForEmployeeAsync");
+                return new ServiceResultDto<ReservationDetailDto>
+                {
+                    Success = false,
+                    Message = "Không gọi được backend. Kiểm tra BE đã chạy và FE đang trỏ đúng BackendApi:BaseUrl."
+                };
+            }
+        }
+
+        private static ServiceResultDto<ReservationDetailDto> ParseErrorResult(HttpStatusCode statusCode, string errorBody, string fallbackMessage)
+        {
+            if (statusCode == HttpStatusCode.Unauthorized)
+            {
+                return new ServiceResultDto<ReservationDetailDto>
+                {
+                    Success = false,
+                    Message = "Phiên đăng nhập backend đã hết hạn hoặc thiếu token. Vui lòng đăng xuất rồi đăng nhập lại."
+                };
+            }
+
+            if (statusCode == HttpStatusCode.Forbidden)
+            {
+                return new ServiceResultDto<ReservationDetailDto>
+                {
+                    Success = false,
+                    Message = "Tài khoản hiện tại không có quyền tạo đặt chỗ."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(errorBody))
+            {
+                return new ServiceResultDto<ReservationDetailDto> { Success = false, Message = fallbackMessage };
+            }
 
             try
             {
-                using var doc = JsonDocument.Parse(error);
-                var root = doc.RootElement;
-
-                if (root.ValueKind == JsonValueKind.Object)
+                var result = JsonSerializer.Deserialize<ServiceResultDto<ReservationDetailDto>>(
+                    errorBody,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (!string.IsNullOrWhiteSpace(result?.Message))
                 {
-                    if (root.TryGetProperty("message", out var message)
-                        && message.ValueKind == JsonValueKind.String)
-                    {
-                        return message.GetString();
-                    }
+                    result.Success = false;
+                    return result;
+                }
+            }
+            catch
+            {
+            }
 
-                    if (root.TryGetProperty("errors", out var errors)
-                        && errors.ValueKind == JsonValueKind.Object)
+            try
+            {
+                using var document = JsonDocument.Parse(errorBody);
+                if (document.RootElement.TryGetProperty("message", out var message) &&
+                    message.ValueKind == JsonValueKind.String &&
+                    !string.IsNullOrWhiteSpace(message.GetString()))
+                {
+                    return new ServiceResultDto<ReservationDetailDto>
                     {
-                        foreach (var property in errors.EnumerateObject())
+                        Success = false,
+                        Message = message.GetString()!
+                    };
+                }
+
+                if (TryGetValidationMessage(document.RootElement, out var validationMessage))
+                {
+                    return new ServiceResultDto<ReservationDetailDto>
+                    {
+                        Success = false,
+                        Message = validationMessage
+                    };
+                }
+            }
+            catch
+            {
+            }
+
+            return new ServiceResultDto<ReservationDetailDto>
+            {
+                Success = false,
+                Message = $"{fallbackMessage} Backend trả về {(int)statusCode}."
+            };
+        }
+
+        private static bool TryGetValidationMessage(JsonElement element, out string message)
+        {
+            message = string.Empty;
+
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (element.TryGetProperty("errors", out var errors) &&
+                    TryGetValidationMessage(errors, out message))
+                {
+                    return true;
+                }
+
+                foreach (var property in element.EnumerateObject())
+                {
+                    if (property.Value.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var item in property.Value.EnumerateArray())
                         {
-                            if (property.Value.ValueKind == JsonValueKind.Array)
+                            if (item.ValueKind == JsonValueKind.String &&
+                                !string.IsNullOrWhiteSpace(item.GetString()))
                             {
-                                var first = property.Value.EnumerateArray().FirstOrDefault();
-                                if (first.ValueKind == JsonValueKind.String)
-                                    return first.GetString();
+                                message = $"{property.Name}: {item.GetString()}";
+                                return true;
                             }
                         }
                     }
 
-                    if (root.TryGetProperty("title", out var title)
-                        && title.ValueKind == JsonValueKind.String)
+                    if (property.Value.ValueKind == JsonValueKind.Object &&
+                        TryGetValidationMessage(property.Value, out var nestedMessage))
                     {
-                        return title.GetString();
+                        message = nestedMessage;
+                        return true;
                     }
                 }
             }
-            catch (JsonException)
+
+            if (element.ValueKind == JsonValueKind.Array)
             {
-                return error;
+                foreach (var item in element.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.String &&
+                        !string.IsNullOrWhiteSpace(item.GetString()))
+                    {
+                        message = item.GetString()!;
+                        return true;
+                    }
+                }
             }
 
-            return null;
+            return false;
         }
 
         public async Task<ServiceResultDto?> CancelAsync(string reservationId)

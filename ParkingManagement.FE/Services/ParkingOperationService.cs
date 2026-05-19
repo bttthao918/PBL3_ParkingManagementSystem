@@ -9,7 +9,12 @@ namespace ParkingManagement.FE.Services
         Task<CheckInValidationResponse?> ValidateCheckInAsync(string vehiclePlate, string vehicleType, string? customerId = null);
         Task<CheckInResultResponse?> ConfirmCheckInAsync(string vehiclePlate, string vehicleType, string slotId, string? customerId = null);
         Task<CheckOutValidationResponse?> ValidateCheckOutAsync(string vehiclePlateOrTicketId);
-        Task<CheckOutResultResponse?> ConfirmCheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt");
+        Task<CheckOutResultResponse?> ConfirmCheckOutAsync(
+            string ticketId,
+            decimal fee,
+            string paymentMethod = "Cash",
+            bool paymentReceivedConfirmed = false,
+            string? bankTransferRef = null);
     }
 
     public class ParkingOperationService : IParkingOperationService
@@ -30,8 +35,10 @@ namespace ParkingManagement.FE.Services
             var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt_token")?.Value
                 ?? _httpContextAccessor.HttpContext?.Session.GetString("jwt_token")
                 ?? _httpContextAccessor.HttpContext?.Request.Cookies["jwt_token"];
+
             _httpClient.DefaultRequestHeaders.Authorization = !string.IsNullOrEmpty(token)
-                ? new AuthenticationHeaderValue("Bearer", token) : null;
+                ? new AuthenticationHeaderValue("Bearer", token)
+                : null;
         }
 
         public async Task<CheckInValidationResponse?> ValidateCheckInAsync(string vehiclePlate, string vehicleType, string? customerId = null)
@@ -45,6 +52,7 @@ namespace ParkingManagement.FE.Services
                     vehicleType,
                     customerId
                 });
+
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadFromJsonAsync<CheckInValidationResponse>();
 
@@ -71,6 +79,7 @@ namespace ParkingManagement.FE.Services
                     slotId,
                     customerId
                 });
+
                 return await response.Content.ReadFromJsonAsync<CheckInResultResponse>();
             }
             catch (Exception ex)
@@ -89,6 +98,7 @@ namespace ParkingManagement.FE.Services
                 {
                     vehiclePlateOrTicketId
                 });
+
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadFromJsonAsync<CheckOutValidationResponse>();
 
@@ -103,7 +113,12 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<CheckOutResultResponse?> ConfirmCheckOutAsync(string ticketId, decimal fee, string paymentMethod = "Tiền mặt")
+        public async Task<CheckOutResultResponse?> ConfirmCheckOutAsync(
+            string ticketId,
+            decimal fee,
+            string paymentMethod = "Cash",
+            bool paymentReceivedConfirmed = false,
+            string? bankTransferRef = null)
         {
             try
             {
@@ -112,8 +127,11 @@ namespace ParkingManagement.FE.Services
                 {
                     ticketId,
                     fee,
-                    paymentMethod
+                    paymentMethod,
+                    paymentReceivedConfirmed,
+                    bankTransferRef
                 });
+
                 return await response.Content.ReadFromJsonAsync<CheckOutResultResponse>();
             }
             catch (Exception ex)

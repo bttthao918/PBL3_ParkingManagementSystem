@@ -13,6 +13,10 @@ namespace ParkingManagement.BLL.DTOs
         public decimal TotalFee { get; set; }
         public string Status { get; set; } = null!;
         public int DaysRemaining { get; set; }
+        public long? PayOsOrderCode { get; set; }
+        public string? PayOsPaymentLinkId { get; set; }
+        public string? CheckoutUrl { get; set; }
+        public string? QrCode { get; set; }
     }
 
     public class ReservationDto

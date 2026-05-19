@@ -1,9 +1,33 @@
+@using System.Text.Json
 @model ParkingManagement.FE.Models.ViewModels.IRevenueStatisticsViewModel
+
+@{
+    var chartConfig = new
+    {
+        type = Model.Charts.Type,
+        line = new
+        {
+            labels = Model.Charts.Line.Labels,
+            current = Model.Charts.Line.Current,
+            previous = Model.Charts.Line.Previous
+        },
+        donut = new
+        {
+            labels = Model.Charts.Donut.Labels,
+            data = Model.Charts.Donut.Data
+        },
+        bar = new
+        {
+            labels = Model.Charts.Bar.Labels,
+            data = Model.Charts.Bar.Data
+        }
+    };
+}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script>
-    window.statisticsConfig = @Html.Raw(Model.ChartConfigJson);
+    window.statisticsConfig = @Html.Raw(JsonSerializer.Serialize(chartConfig));
 </script>
 
 <script src="/js/statistics.js" asp-append-version="true"></script>

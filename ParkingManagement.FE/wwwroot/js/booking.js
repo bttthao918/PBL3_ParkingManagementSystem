@@ -128,23 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (expectedTimeInput) {
         const now = new Date();
         now.setMinutes(now.getMinutes() + 15);
-        // Format as local datetime for datetime-local input (YYYY-MM-DDTHH:MM)
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-        const hours = String(now.getHours()).padStart(2, "0");
-        const minutes = String(now.getMinutes()).padStart(2, "0");
-        const localValue = `${year}-${month}-${day}T${hours}:${minutes}`;
-        expectedTimeInput.value = localValue;
-
-        // Set min to current time
-        const minNow = new Date();
-        const minYear = minNow.getFullYear();
-        const minMonth = String(minNow.getMonth() + 1).padStart(2, "0");
-        const minDay = String(minNow.getDate()).padStart(2, "0");
-        const minHours = String(minNow.getHours()).padStart(2, "0");
-        const minMinutes = String(minNow.getMinutes()).padStart(2, "0");
-        expectedTimeInput.min = `${minYear}-${minMonth}-${minDay}T${minHours}:${minMinutes}`;
+        expectedTimeInput.value = toDateTimeLocalValue(now);
+        expectedTimeInput.min = toDateTimeLocalValue(new Date());
     }
 
     // Step navigation
@@ -606,12 +591,7 @@ normalizedSlots.forEach(function (slot) {
         if (expectedTimeInput) {
             const now = new Date();
             now.setMinutes(now.getMinutes() + 15);
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, "0");
-            const day = String(now.getDate()).padStart(2, "0");
-            const hours = String(now.getHours()).padStart(2, "0");
-            const minutes = String(now.getMinutes()).padStart(2, "0");
-            expectedTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            expectedTimeInput.value = toDateTimeLocalValue(now);
         }
     }
 
@@ -694,6 +674,15 @@ normalizedSlots.forEach(function (slot) {
         const h = date.getHours().toString().padStart(2, "0");
         const min = date.getMinutes().toString().padStart(2, "0");
         return d + "/" + m + "/" + y + " " + h + ":" + min;
+    }
+
+    function toDateTimeLocalValue(date) {
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, "0");
+        const d = date.getDate().toString().padStart(2, "0");
+        const h = date.getHours().toString().padStart(2, "0");
+        const min = date.getMinutes().toString().padStart(2, "0");
+        return y + "-" + m + "-" + d + "T" + h + ":" + min;
     }
 
     // Auto-open wizard if URL has ?openCreate=1

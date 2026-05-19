@@ -50,8 +50,7 @@ namespace ParkingManagement.BLL.Validators
             if (string.IsNullOrWhiteSpace(paymentMethod))
                 return ValidationResult.Fail("Phương thức thanh toán không được để trống");
 
-            var allowedMethods = PaymentMethods.GetAll();
-            if (!allowedMethods.Contains(paymentMethod))
+            if (!PaymentMethods.IsSupported(paymentMethod))
                 return ValidationResult.Fail($"Phương thức thanh toán '{paymentMethod}' không hợp lệ");
 
             return ValidationResult.Success();
@@ -70,8 +69,10 @@ namespace ParkingManagement.BLL.Validators
 
         public ValidationResult ValidateConfirmPayment(ConfirmPaymentDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.TicketId))
-                return ValidationResult.Fail("Mã vé không được để trống");
+            var hasTicket = !string.IsNullOrWhiteSpace(dto.TicketId);
+            var hasMonthlyTicket = !string.IsNullOrWhiteSpace(dto.MonthlyTicketId);
+            if (hasTicket == hasMonthlyTicket)
+                return ValidationResult.Fail("Thanh toán phải gắn với đúng một vé lượt hoặc vé tháng");
 
             var methodValidation = ValidatePaymentMethod(dto.PaymentMethod);
             if (!methodValidation.IsValid)

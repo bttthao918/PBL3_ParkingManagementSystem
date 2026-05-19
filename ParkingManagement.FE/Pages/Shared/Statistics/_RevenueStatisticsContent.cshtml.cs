@@ -8,15 +8,44 @@ namespace ParkingManagement.FE.Pages.Shared.Statistics
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
-        public string ChartConfigJson { get; set; } = "{}";
+        public RevenueStatisticsChartConfig Charts { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> PaymentMethodBreakdown { get; set; } = new();
+        public List<StatisticsBreakdownItemViewModel> VehicleTypeBreakdown { get; set; } = new();
+        public List<StatisticsRankItemViewModel> Rankings { get; set; } = new();
+        public string RankingTitle { get; set; } = "Top 5 nhân viên doanh thu cao nhất";
         public string LineChartTitle { get; set; } = "Doanh thu theo ngày";
         public string DonutTitle { get; set; } = "Cơ cấu doanh thu";
-        public string BarTitle { get; set; } = "Doanh thu theo nhóm";
-        public string RankTitle { get; set; } = "Top doanh thu";
-        public string ProgressTitle { get; set; } = "Tỷ trọng doanh thu";
-        public List<StatisticsBreakdownItemViewModel> DonutItems { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> BarItems { get; set; } = new();
-        public List<StatisticsRankItemViewModel> RankItems { get; set; } = new();
-        public List<StatisticsBreakdownItemViewModel> ProgressItems { get; set; } = new();
+        public string BarTitle { get; set; } = "Doanh thu theo khu vực";
+        public string ProgressTitle { get; set; } = "Doanh thu theo loại xe";
+
+        public void OnGet()
+        {
+            Header = new StatisticsHeaderViewModel
+            {
+                Title = "Báo cáo doanh thu",
+                Description = "Thống kê doanh thu theo thời gian và hình thức thanh toán",
+                DateRangeText = "01/05/2026 - 10/05/2026"
+            };
+
+            Kpis = new()
+            {
+                new() { Title = "Tổng doanh thu", Value = "124,500,000 đ", ChangeText = "↑ 8.2% so với kỳ trước", Icon = "fa-solid fa-sack-dollar", ColorClass = "blue" },
+                new() { Title = "Doanh thu tiền mặt", Value = "85,250,000 đ", ChangeText = "↑ 6.5% so với kỳ trước", Icon = "fa-solid fa-money-bill", ColorClass = "green" },
+                new() { Title = "Doanh thu chuyển khoản", Value = "39,250,000 đ", ChangeText = "↑ 11.3% so với kỳ trước", Icon = "fa-solid fa-credit-card", ColorClass = "purple" },
+                new() { Title = "Tổng số vé", Value = "18,654 vé", ChangeText = "↑ 5.7% so với kỳ trước", Icon = "fa-solid fa-ticket", ColorClass = "orange" },
+                new() { Title = "Doanh thu trung bình/ngày", Value = "4,150,000 đ", ChangeText = "↑ 8.2% so với kỳ trước", Icon = "fa-solid fa-clock", ColorClass = "cyan" }
+            };
+
+            Table = new StatisticsTableViewModel
+            {
+                Headers = new() { "Ngày", "Tổng doanh thu", "Tiền mặt", "Chuyển khoản", "Số vé", "Trung bình/vé" },
+                Rows = new()
+                {
+                    new() { "10/05/2026", "4,850,000 đ", "3,250,000 đ", "1,600,000 đ", "756 vé", "6,415 đ" },
+                    new() { "09/05/2026", "4,320,000 đ", "2,950,000 đ", "1,370,000 đ", "702 vé", "6,153 đ" },
+                    new() { "08/05/2026", "4,010,000 đ", "2,780,000 đ", "1,230,000 đ", "680 vé", "5,897 đ" }
+                }
+            };
+        }
     }
 }

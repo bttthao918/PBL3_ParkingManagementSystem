@@ -168,6 +168,10 @@ namespace ParkingManagement.FE.Models
         public bool Success { get; set; }
         public string Message { get; set; } = "";
         public decimal Fee { get; set; }
+        public long? OrderCode { get; set; }
+        public string? PaymentLinkId { get; set; }
+        public string? CheckoutUrl { get; set; }
+        public string? QrCode { get; set; }
         public CustomerMonthlyTicketDto? Data { get; set; }
     }
 

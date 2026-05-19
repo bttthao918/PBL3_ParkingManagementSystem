@@ -112,32 +112,60 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (!isValid)
                 return ServiceResult<ReservationDto>.Fail(errorMessage ?? "Dữ liệu không hợp lệ.");
 
-            var customerId = dto.CustomerId!;
+            dto.VehiclePlate = dto.VehiclePlate.Trim().ToUpperInvariant();
+            dto.VehicleType = dto.VehicleType?.Trim();
+            dto.PreferredSlotId = string.IsNullOrWhiteSpace(dto.PreferredSlotId) ? null : dto.PreferredSlotId.Trim();
+            var customerId = dto.CustomerId!.Trim();
+            var vehicleType = dto.VehicleType!;
+            dto.CustomerId = customerId;
+
             var customer = await _customerRepo.GetByIdAsync(customerId);
             if (customer == null)
                 return ServiceResult<ReservationDto>.Fail("Không tìm thấy khách hàng.");
 
-var vehicleSyncError = await SyncReservationVehicleAsync(dto);
-if (!string.IsNullOrEmpty(vehicleSyncError))
-    return ServiceResult<ReservationDto>.Fail(vehicleSyncError);
+            var vehicle = await _vehicleRepo.GetByPlateAsync(dto.VehiclePlate);
+            if (vehicle == null)
+            {
+                await _vehicleRepo.AddAsync(new Vehicle
+                {
+                    VehiclePlate = dto.VehiclePlate,
+                    VehicleType = vehicleType,
+                    CustomerId = customerId
+                });
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(vehicle.CustomerId) &&
+                    !string.Equals(vehicle.CustomerId, customerId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return ServiceResult<ReservationDto>.Fail("Biển số xe này đã thuộc khách hàng khác.");
+                }
 
-string? slotId = dto.PreferredSlotId?.Trim();
-if (!string.IsNullOrEmpty(slotId))
-{
-    var preferred = await _slotRepo.GetByIdAsync(slotId);
-    if (preferred == null)
-        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không tồn tại.");
+                if (!string.Equals(vehicle.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
+                {
+                    return ServiceResult<ReservationDto>.Fail("Loại xe không khớp với biển số đã lưu.");
+                }
 
-    if (!string.Equals(preferred.VehicleType, dto.VehicleType, StringComparison.OrdinalIgnoreCase))
-        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không phù hợp với loại xe.");
+                if (string.IsNullOrWhiteSpace(vehicle.CustomerId))
+                {
+                    vehicle.CustomerId = customerId;
+                    await _vehicleRepo.UpdateAsync(vehicle);
+                }
+            }
 
-    if (preferred.Status != "Trống")
-        return ServiceResult<ReservationDto>.Fail("Chỗ đỗ đã chọn không còn trống. Vui lòng chọn chỗ khác.");
+            string? slotId = dto.PreferredSlotId;
+            if (!string.IsNullOrEmpty(slotId))
+            {
+                var preferred = await _slotRepo.GetByIdAsync(slotId);
+                if (preferred == null ||
+                    preferred.Status != "Trống" ||
+                    !string.Equals(preferred.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
+                    slotId = null;
             }
 
             if (string.IsNullOrEmpty(slotId))
             {
-                var available = await _slotRepo.GetAvailableAsync(dto.VehicleType!);
+                var available = await _slotRepo.GetAvailableAsync(vehicleType);
                 if (!available.Any())
                     return ServiceResult<ReservationDto>.Fail("Không còn chỗ trống cho loại xe này.");
                 slotId = available.First().SlotId;
@@ -147,8 +175,8 @@ if (!string.IsNullOrEmpty(slotId))
             var reservation = new Reservation
             {
                 ReservationId = id,
-CustomerId = customerId,
-VehiclePlate = dto.VehiclePlate,
+                CustomerId = customerId,
+                VehiclePlate = dto.VehiclePlate,
                 SlotId = slotId,
                 ExpectedTime = dto.ExpectedTime,
                 CreatedAt = DateTime.Now,

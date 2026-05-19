@@ -46,6 +46,13 @@
     font-size: 14px;
 }
 
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .primary-btn,
 .secondary-btn,
 .danger-btn {
@@ -79,6 +86,70 @@
     background: #fee2e2;
     color: #dc2626;
     border: 1px solid #fecaca;
+}
+
+.reservation-create-card {
+    background: white;
+    border: 1px solid #e3ebf6;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(15, 35, 68, 0.04), 0 8px 24px rgba(15, 35, 68, 0.06);
+}
+
+.create-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.create-card-head h2 {
+    margin: 0;
+    color: #10233f;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.create-card-head p {
+    margin: 6px 0 0;
+    color: #71809a;
+    font-size: 13px;
+}
+
+.reservation-create-form {
+    display: grid;
+    grid-template-columns: 1.1fr 1.1fr 0.9fr 1.1fr 1.3fr auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.reservation-create-form label {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+    color: #40516d;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.reservation-create-form input,
+.reservation-create-form select {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #dbe5f2;
+    border-radius: 12px;
+    padding: 0 12px;
+    background: white;
+    color: #10233f;
+    font-family: inherit;
+    font-weight: 700;
+    min-width: 0;
+}
+
+.reservation-create-form button {
+    white-space: nowrap;
 }
 
 .kpi-grid {
@@ -634,11 +705,19 @@
         position: static;
         max-height: none;
     }
+
+    .reservation-create-form {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 992px) {
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reservation-create-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .filter-top,
@@ -661,8 +740,15 @@
         align-items: flex-start;
     }
 
-    .reservation-toolbar .secondary-btn {
+    .toolbar-actions,
+    .reservation-toolbar .secondary-btn,
+    .reservation-toolbar .primary-btn,
+    .reservation-create-form button {
         width: 100%;
+    }
+
+    .reservation-create-form {
+        grid-template-columns: 1fr;
     }
 
     .kpi-grid,

@@ -7,6 +7,7 @@
     <LangVersion>preview</LangVersion>
     <RootNamespace>BackendAPI</RootNamespace>
     <UseAppHost>false</UseAppHost>
+    <UserSecretsId>parking-management-payos-local</UserSecretsId>
 	  <NoWarn>NU1510</NoWarn>
   </PropertyGroup>
 

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
 using ParkingManagement.DAL.Interfaces;
@@ -246,8 +247,8 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task<string> GenerateIdAsync()
         {
-            var lastId = await _db.Tickets.OrderByDescending(t => t.TicketId).FirstOrDefaultAsync();
-            var num = lastId == null ? 1 : int.Parse(lastId.TicketId.Replace("TKT", "")) + 1;
+            var ids = await _db.Tickets.Select(t => t.TicketId).ToListAsync();
+            var num = RepositoryIdGenerator.GetNextNumber(ids, "TKT");
             return $"TKT{num:D3}";
         }
 
@@ -294,17 +295,17 @@ namespace ParkingManagement.DAL.Implementations
             _db.MonthlyTickets.ToListAsync();
 
         public Task<MonthlyTicket?> GetActiveByPlateAsync(string plate) =>
-            _db.MonthlyTickets.FirstOrDefaultAsync(m => m.VehiclePlate == plate && m.Status == "Hoạt động");
+            _db.MonthlyTickets.FirstOrDefaultAsync(m => m.VehiclePlate == plate && m.Status == MonthlyTicketStatuses.ACTIVE);
 
         public Task<List<MonthlyTicket>> GetExpiringSoonAsync(int days) =>
             _db.MonthlyTickets
-               .Where(m => m.Status == "Hoạt động" && m.EndDate <= DateTime.Now.AddDays(days))
+               .Where(m => m.Status == MonthlyTicketStatuses.ACTIVE && m.EndDate <= DateTime.Now.AddDays(days))
                .ToListAsync();
 
         public async Task<string> GenerateIdAsync()
         {
-            var lastId = await _db.MonthlyTickets.OrderByDescending(m => m.MonthlyTicketId).FirstOrDefaultAsync();
-            var num = lastId == null ? 1 : int.Parse(lastId.MonthlyTicketId.Replace("MTK", "")) + 1;
+            var ids = await _db.MonthlyTickets.Select(m => m.MonthlyTicketId).ToListAsync();
+            var num = RepositoryIdGenerator.GetNextNumber(ids, "MTK");
             return $"MTK{num:D3}";
         }
 
@@ -351,8 +352,8 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task<string> GenerateIdAsync()
         {
-            var lastId = await _db.Reservations.OrderByDescending(r => r.ReservationId).FirstOrDefaultAsync();
-            var num = lastId == null ? 1 : int.Parse(lastId.ReservationId.Replace("RES", "")) + 1;
+            var ids = await _db.Reservations.Select(r => r.ReservationId).ToListAsync();
+            var num = RepositoryIdGenerator.GetNextNumber(ids, "RES");
             return $"RES{num:D3}";
         }
 
@@ -391,8 +392,8 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task<string> GenerateIdAsync()
         {
-            var lastId = await _db.Payments.OrderByDescending(p => p.PaymentId).FirstOrDefaultAsync();
-            var num = lastId == null ? 1 : int.Parse(lastId.PaymentId.Replace("PAY", "")) + 1;
+            var ids = await _db.Payments.Select(p => p.PaymentId).ToListAsync();
+            var num = RepositoryIdGenerator.GetNextNumber(ids, "PAY");
             return $"PAY{num:D3}";
         }
 
@@ -513,8 +514,8 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task<string> GenerateIdAsync()
         {
-            var lastId = await _db.ParkingSlotAuditLogs.OrderByDescending(l => l.LogId).FirstOrDefaultAsync();
-            var num = lastId == null ? 1 : int.Parse(lastId.LogId.Replace("LOG", "")) + 1;
+            var ids = await _db.ParkingSlotAuditLogs.Select(l => l.LogId).ToListAsync();
+            var num = RepositoryIdGenerator.GetNextNumber(ids, "LOG");
             return $"LOG{num:D4}";
         }
 
@@ -595,6 +596,29 @@ namespace ParkingManagement.DAL.Implementations
     }
 
     // ── PricingRepository ────────────────────────────────────
+    internal static class RepositoryIdGenerator
+    {
+        public static int GetNextNumber(IEnumerable<string?> ids, string prefix)
+        {
+            return ids
+                .Select(id => TryGetNumber(id, prefix, out var number) ? number : 0)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+        }
+
+        private static bool TryGetNumber(string? id, string prefix, out int number)
+        {
+            number = 0;
+            if (string.IsNullOrWhiteSpace(id) ||
+                !id.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return int.TryParse(id[prefix.Length..], out number);
+        }
+    }
+
     public class PricingRepository : IPricingRepository
     {
         private readonly AppDbContext _db;

@@ -17,7 +17,7 @@ namespace ParkingManagement.BLL.Validators
                 return (false, "Biển số xe tối đa 20 ký tự.");
 
             if (!IsValidVehiclePlate(dto.VehiclePlate))
-                return (false, "Biển số xe không hợp lệ. Định dạng: 43A-123.45");
+                return (false, "Biển số xe không hợp lệ. Ví dụ: 43A-123.45 hoặc 43D1-256.31.");
 
             if (string.IsNullOrWhiteSpace(dto.VehicleType))
                 return (false, "Loại xe không được để trống.");
@@ -48,7 +48,17 @@ namespace ParkingManagement.BLL.Validators
             if (string.IsNullOrWhiteSpace(plate))
                 return false;
 
-            return Regex.IsMatch(plate.Trim().ToUpperInvariant(), @"^\d{2}[A-Z]-\d{3}\.\d{2}$");
+            var normalized = NormalizeVehiclePlate(plate);
+            return Regex.IsMatch(normalized, @"^\d{2}[A-Z]\d?-\d{3}\.\d{2}$");
+        }
+
+        public static string NormalizeVehiclePlate(string plate)
+        {
+            var normalized = Regex.Replace(plate.Trim().ToUpperInvariant(), @"\s+", "");
+            var match = Regex.Match(normalized, @"^(\d{2})-?([A-Z]\d?)-?(\d{3}\.\d{2})$");
+            return match.Success
+                ? $"{match.Groups[1].Value}{match.Groups[2].Value}-{match.Groups[3].Value}"
+                : normalized;
         }
     }
 }

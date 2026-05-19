@@ -32,6 +32,12 @@ namespace ParkingManagement.DAL.Models
         public string Status { get; set; } = "Thành công"; // Thành công / Thất bại
 
         /// <summary>
+        /// Nhân viên thu tiền/xác nhận thanh toán. Null nghĩa là thanh toán tự động hoặc dữ liệu cũ.
+        /// </summary>
+        [MaxLength(20)]
+        public string? CollectedByEmployeeId { get; set; }
+
+        /// <summary>
         /// VNPay transaction reference (dùng để map callback từ VNPay)
         /// </summary>
         [MaxLength(50)]
@@ -43,6 +49,9 @@ namespace ParkingManagement.DAL.Models
 
         [ForeignKey("MonthlyTicketId")]
         public MonthlyTicket? MonthlyTicket { get; set; }
+
+        [ForeignKey("CollectedByEmployeeId")]
+        public Employee? CollectedByEmployee { get; set; }
     }
 }
 

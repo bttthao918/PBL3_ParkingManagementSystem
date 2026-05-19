@@ -892,7 +892,7 @@ namespace BackendAPI.Migrations
 
                     b.ToTable("MonthlyTickets", t =>
                         {
-                            t.HasCheckConstraint("CK_MonthlyTicket_Status", "Status IN (N'Hoạt động', N'Hết hạn', N'Đã hủy')");
+                            t.HasCheckConstraint("CK_MonthlyTicket_Status", "Status IN (N'Hoạt động', N'Hết hạn', N'Đã hủy', N'Chờ thanh toán')");
                         });
 
                     b.HasData(
@@ -2324,6 +2324,10 @@ namespace BackendAPI.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(10,0)");
 
+                    b.Property<string>("CollectedByEmployeeId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("Method")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -2350,6 +2354,8 @@ namespace BackendAPI.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("PaymentId");
+
+                    b.HasIndex("CollectedByEmployeeId");
 
                     b.HasIndex("MonthlyTicketId")
                         .IsUnique()
@@ -4070,6 +4076,11 @@ namespace BackendAPI.Migrations
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.Payment", b =>
                 {
+                    b.HasOne("ParkingManagement.DAL.Models.Employee", "CollectedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("CollectedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ParkingManagement.DAL.Models.MonthlyTicket", "MonthlyTicket")
                         .WithOne("Payment")
                         .HasForeignKey("ParkingManagement.DAL.Models.Payment", "MonthlyTicketId");
@@ -4077,6 +4088,8 @@ namespace BackendAPI.Migrations
                     b.HasOne("ParkingManagement.DAL.Models.Ticket", "Ticket")
                         .WithOne("Payment")
                         .HasForeignKey("ParkingManagement.DAL.Models.Payment", "TicketId");
+
+                    b.Navigation("CollectedByEmployee");
 
                     b.Navigation("MonthlyTicket");
 

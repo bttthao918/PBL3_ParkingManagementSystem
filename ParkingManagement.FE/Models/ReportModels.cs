@@ -61,6 +61,7 @@ namespace ParkingManagement.FE.Models
         public decimal AverageRevenuePerTicket { get; set; }
         public Dictionary<string, int> TicketsByVehicleType { get; set; } = new();
         public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
         public List<DailyRevenueDetailDto> DailyBreakdown { get; set; } = new();
         public decimal PreviousPeriodRevenue { get; set; }
         public decimal RevenueChangePercentage { get; set; }
@@ -103,11 +104,10 @@ namespace ParkingManagement.FE.Models
         public decimal RevenueFromSingleTickets { get; set; }
         public decimal RevenueFromMonthlyTickets { get; set; }
         public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
-        public List<DailyRevenueDto> PreviousDailyBreakdown { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByPaymentMethod { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByVehicleType { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByArea { get; set; } = new();
-        public List<RevenueRankDto> TopRevenueDays { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByArea { get; set; } = new();
+        public List<EmployeeRevenueSummaryDto> TopEmployees { get; set; } = new();
     }
 
     public class DailyRevenueDto
@@ -118,20 +118,12 @@ namespace ParkingManagement.FE.Models
         public int TicketCount { get; set; }
     }
 
-    public class RevenueBreakdownDto
+    public class EmployeeRevenueSummaryDto
     {
-        public string Label { get; set; } = "";
-        public decimal Amount { get; set; }
-        public int Count { get; set; }
-        public decimal Percentage { get; set; }
-    }
-
-    public class RevenueRankDto
-    {
-        public string Label { get; set; } = "";
-        public decimal Amount { get; set; }
-        public int Count { get; set; }
-        public decimal ChangePercentage { get; set; }
+        public string? EmployeeId { get; set; }
+        public string EmployeeName { get; set; } = "";
+        public decimal TotalRevenue { get; set; }
+        public int PaymentCount { get; set; }
     }
 
     public class CustomerReportDto

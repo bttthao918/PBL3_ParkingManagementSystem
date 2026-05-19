@@ -94,6 +94,7 @@ namespace ParkingManagement.BLL.DTOs
         // By vehicle type
         public Dictionary<string, int> TicketsByVehicleType { get; set; } = new();
         public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
 
         // Daily breakdown
         public List<DailyRevenueDetailDto> DailyBreakdown { get; set; } = new();

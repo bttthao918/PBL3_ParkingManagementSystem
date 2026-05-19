@@ -1,9 +1,11 @@
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Validators;
 using ParkingManagement.BLL.Strategies;
 using ParkingManagement.DAL.Models;
 using ParkingManagement.DAL.Interfaces;
+using System.Globalization;
 
 namespace ParkingManagement.BLL.Services.Implementations
 {
@@ -718,6 +720,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             var ticketType = isFreeTicket ? "Vé tháng" : "Vé lượt";
             var message = BuildCheckOutMessage(ticketType, durationMinutes, calculatedFee, isFreeTicket);
+            var bankTransferContent = BuildBankTransferContent(ticket.TicketId);
 
             return new CheckOutValidationDto
             {
@@ -732,6 +735,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                 TicketType = ticketType,
                 IsFreeTicket = isFreeTicket,
                 CalculatedFee = calculatedFee,
+                BankName = BidvQrInfo.BANK_NAME,
+                BankAccount = BidvQrInfo.BANK_ACCOUNT,
+                BankAccountHolder = BidvQrInfo.ACCOUNT_HOLDER,
+                BankTransferContent = bankTransferContent,
+                BankTransferQrUrl = calculatedFee > 0 ? BuildVietQrUrl(calculatedFee, bankTransferContent) : null,
                 Message = message
             };
         }
@@ -755,6 +763,18 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return new CheckOutResultDto { Success = false, Message = validation.Message };
 
             var finalFee = input.Fee > 0 ? input.Fee : validation.CalculatedFee;
+            var normalizedPaymentMethod = PaymentMethods.Normalize(input.PaymentMethod);
+
+            if (finalFee > 0 &&
+                RequiresReceivedConfirmation(input.PaymentMethod) &&
+                !input.PaymentReceivedConfirmed)
+            {
+                return new CheckOutResultDto
+                {
+                    Success = false,
+                    Message = "QR Pay chua duoc xac nhan da nhan tien vao tai khoan BIDV. Vui long kiem tra giao dich truoc khi check-out."
+                };
+            }
 
             var currentTime = DateTime.Now;
             ticket.CheckOutTime = currentTime;
@@ -773,8 +793,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                     PaymentId = await _paymentRepo.GenerateIdAsync(),
                     TicketId = ticket.TicketId,
                     Amount = finalFee,
+                    Method = normalizedPaymentMethod,
                     PaymentTime = currentTime,
-                    Status = "Thành công"
+                    Status = PaymentStatuses.SUCCESS,
+                    CollectedByEmployeeId = input.CollectedByEmployeeId
                 };
                 await _paymentRepo.AddAsync(payment);
                 paymentId = payment.PaymentId;
@@ -795,6 +817,26 @@ namespace ParkingManagement.BLL.Services.Implementations
                 IsFree = finalFee == 0,
                 PaymentId = paymentId
             };
+        }
+
+        private static bool RequiresReceivedConfirmation(string? paymentMethod)
+        {
+            return string.Equals(PaymentMethods.Normalize(paymentMethod), PaymentMethods.BANK_TRANSFER, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string BuildBankTransferContent(string ticketId)
+        {
+            return $"PARKING-{ticketId}";
+        }
+
+        private static string BuildVietQrUrl(decimal amount, string transferContent)
+        {
+            var roundedAmount = Math.Round(amount, 0, MidpointRounding.AwayFromZero)
+                .ToString("0", CultureInfo.InvariantCulture);
+            var addInfo = Uri.EscapeDataString(transferContent);
+            var accountName = Uri.EscapeDataString(BidvQrInfo.ACCOUNT_HOLDER);
+
+            return $"https://img.vietqr.io/image/{BidvQrInfo.BANK_ID}-{BidvQrInfo.BANK_ACCOUNT}-{BidvQrInfo.QR_TEMPLATE}.png?amount={roundedAmount}&addInfo={addInfo}&accountName={accountName}";
         }
 
         /// <summary>

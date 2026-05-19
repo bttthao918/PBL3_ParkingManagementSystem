@@ -47,6 +47,11 @@ namespace ParkingManagement.FE.Models
         public string? TicketType { get; set; }
         public bool IsFreeTicket { get; set; }
         public decimal CalculatedFee { get; set; }
+        public string? BankName { get; set; }
+        public string? BankAccount { get; set; }
+        public string? BankAccountHolder { get; set; }
+        public string? BankTransferContent { get; set; }
+        public string? BankTransferQrUrl { get; set; }
         public string? Message { get; set; }
     }
 

@@ -1,9 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.Services.Interfaces;
+using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Interfaces;
 using ParkingManagement.DAL.Models;
-using ParkingManagement.DAL.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace ParkingManagement.BLL.Services.Implementations
 {
@@ -43,10 +44,13 @@ namespace ParkingManagement.BLL.Services.Implementations
         // ── 1. Basic Revenue Reports ──
         public async Task<RevenueReportDto> GetRevenueReportAsync(DateTime from, DateTime to)
         {
-            var fromDate = from.Date;
-            var toDate = to.Date.AddDays(1).AddTicks(-1);
-            var days = Math.Max(1, (toDate.Date - fromDate).Days + 1);
-            return await BuildRevenueReportAsync("custom", fromDate, toDate, fromDate.AddDays(-days), fromDate.AddTicks(-1));
+            var range = NormalizeDateRange(from, to);
+            var payments = await _paymentRepo.GetAllAsync();
+            var tickets = await _ticketRepo.GetAllAsync();
+            var monthlyTickets = await _monthlyRepo.GetAllAsync();
+            var employees = await _employeeRepo.GetAllAsync();
+
+            return BuildRevenueReport(payments, tickets, monthlyTickets, employees, range.From, range.To);
         }
 
         public async Task<List<MonthlyTicketDto>> GetExpiringSoonAsync(int days = 7)
@@ -90,15 +94,15 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var monthlyTickets = (await _monthlyRepo.GetAllAsync()).ToList();
 
                 var todayRevenue = payments
-                    .Where(p => p.PaymentTime.Date == today && IsSuccessfulPaymentStatus(p.Status))
+                    .Where(p => p.PaymentTime.Date == today && PaymentStatuses.IsSuccessful(p.Status))
                     .Sum(p => p.Amount);
 
                 var thisMonthRevenue = payments
-                    .Where(p => p.PaymentTime >= monthStart && IsSuccessfulPaymentStatus(p.Status))
+                    .Where(p => p.PaymentTime >= monthStart && PaymentStatuses.IsSuccessful(p.Status))
                     .Sum(p => p.Amount);
 
                 var thisYearRevenue = payments
-                    .Where(p => p.PaymentTime >= yearStart && IsSuccessfulPaymentStatus(p.Status))
+                    .Where(p => p.PaymentTime >= yearStart && PaymentStatuses.IsSuccessful(p.Status))
                     .Sum(p => p.Amount);
 
                 var todayTickets = tickets.Count(t => t.CheckInTime.Date == today);
@@ -137,8 +141,20 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var range = ResolveRevenueReportRange(filter);
-                return await BuildRevenueReportAsync(range.Period, range.From, range.To, range.PreviousFrom, range.PreviousTo);
+                var tickets = (await _ticketRepo.GetAllAsync()).ToList();
+                var monthlyTickets = (await _monthlyRepo.GetAllAsync()).ToList();
+                var payments = (await _paymentRepo.GetAllAsync()).ToList();
+                var employees = (await _employeeRepo.GetAllAsync()).ToList();
+
+                var range = NormalizeDateRange(filter.FromDate, filter.ToDate, filter.Period);
+                return BuildRevenueReport(
+                    payments,
+                    tickets,
+                    monthlyTickets,
+                    employees,
+                    range.From,
+                    range.To,
+                    vehicleType: filter.VehicleType);
             }
             catch (Exception)
             {
@@ -290,30 +306,19 @@ namespace ParkingManagement.BLL.Services.Implementations
                 .ToList();
         }
 
-        private static List<RevenueBreakdownDto> BuildRevenueBreakdown(
+        private static Dictionary<string, decimal> BuildRevenueBreakdown(
             List<Payment> payments,
             Func<Payment, string> labelSelector)
         {
-            var total = payments.Sum(p => p.Amount);
             if (payments.Count == 0)
             {
-                return new List<RevenueBreakdownDto>
-                {
-                    new() { Label = "Chưa có dữ liệu", Amount = 0, Count = 0, Percentage = 0 }
-                };
+                return new Dictionary<string, decimal> { ["Chưa có dữ liệu"] = 0 };
             }
 
             return payments
                 .GroupBy(labelSelector)
                 .OrderByDescending(g => g.Sum(p => p.Amount))
-                .Select(g => new RevenueBreakdownDto
-                {
-                    Label = g.Key,
-                    Amount = g.Sum(p => p.Amount),
-                    Count = g.Count(),
-                    Percentage = RevenuePercentage(g.Sum(p => p.Amount), total)
-                })
-                .ToList();
+                .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount));
         }
 
         private static List<RevenueRankDto> BuildTopRevenueDays(
@@ -841,23 +846,27 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 var allTickets = (await _ticketRepo.GetAllAsync()).ToList();
                 var allPayments = (await _paymentRepo.GetAllAsync()).ToList();
+                var employeePayments = allPayments
+                    .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
+                    .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                    .ToList();
 
                 var today = DateTime.Now.Date;
                 var thisWeekStart = today.AddDays(-(int)today.DayOfWeek);
                 var thisMonthStart = new DateTime(today.Year, today.Month, 1);
 
-                var ticketsToday = allTickets.Count(t => t.CheckInTime.Date == today);
-                var revenueToday = allPayments
-                    .Where(p => p.PaymentTime.Date == today && IsSuccessfulPaymentStatus(p.Status))
+                var ticketsToday = employeePayments.Count(p => p.PaymentTime.Date == today);
+                var revenueToday = employeePayments
+                    .Where(p => p.PaymentTime.Date == today)
                     .Sum(p => p.Amount);
 
                 var workMinutesToday = allTickets
                     .Where(t => t.CheckInTime.Date == today && t.CheckOutTime.HasValue)
                     .Sum(t => (int)(t.CheckOutTime.Value - t.CheckInTime).TotalMinutes);
 
-                var ticketsThisWeek = allTickets.Count(t => t.CheckInTime.Date >= thisWeekStart && t.CheckInTime.Date <= today);
-                var revenueThisWeek = allPayments
-                    .Where(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today && IsSuccessfulPaymentStatus(p.Status))
+                var ticketsThisWeek = employeePayments.Count(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today);
+                var revenueThisWeek = employeePayments
+                    .Where(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today)
                     .Sum(p => p.Amount);
 
                 var workMinutesThisWeek = allTickets
@@ -870,9 +879,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .Distinct()
                     .Count();
 
-                var ticketsThisMonth = allTickets.Count(t => t.CheckInTime >= thisMonthStart && t.CheckInTime <= today);
-                var revenueThisMonth = allPayments
-                    .Where(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today && IsSuccessfulPaymentStatus(p.Status))
+                var ticketsThisMonth = employeePayments.Count(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today.AddDays(1).AddTicks(-1));
+                var revenueThisMonth = employeePayments
+                    .Where(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today.AddDays(1).AddTicks(-1))
                     .Sum(p => p.Amount);
 
                 var workMinutesThisMonth = allTickets
@@ -989,88 +998,69 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             try
             {
-                var today = DateTime.Now.Date;
-                DateTime from;
-
-                var normalizedPeriod = period?.Trim().ToLowerInvariant();
-
-                if (normalizedPeriod == "day" || normalizedPeriod == "today")
-                    from = today;
-                else if (normalizedPeriod == "week" || normalizedPeriod == "7days")
-                    from = today.AddDays(-6);
-                else if (normalizedPeriod == "30days")
-                    from = today.AddDays(-29);
-                else
-                    from = new DateTime(today.Year, today.Month, 1);
-
-                var to = today;
-
                 var allTickets = (await _ticketRepo.GetAllAsync()).ToList();
+                var allMonthlyTickets = (await _monthlyRepo.GetAllAsync()).ToList();
                 var allPayments = (await _paymentRepo.GetAllAsync()).ToList();
+                var employees = (await _employeeRepo.GetAllAsync()).ToList();
+                var range = NormalizeDateRange(null, null, period);
 
-                var ticketsInPeriod = allTickets
-                    .Where(t => t.CheckInTime.Date >= from && t.CheckInTime.Date <= to)
-                    .ToList();
+                var report = BuildRevenueReport(
+                    allPayments,
+                    allTickets,
+                    allMonthlyTickets,
+                    employees,
+                    range.From,
+                    range.To,
+                    employeeId);
 
                 var paymentsInPeriod = allPayments
-                    .Where(p => p.PaymentTime.Date >= from && p.PaymentTime.Date <= to && IsSuccessfulPaymentStatus(p.Status))
+                    .Where(p => p.PaymentTime >= range.From && p.PaymentTime <= range.To)
+                    .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                    .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
-                var totalRevenue = paymentsInPeriod.Sum(p => p.Amount);
-                var totalTickets = ticketsInPeriod.Count;
-                var avgRevenuePerTicket = totalTickets > 0 ? totalRevenue / totalTickets : 0;
-
-                var ticketsByVehicle = ticketsInPeriod
-                    .GroupBy(t => t.VehicleType)
-                    .ToDictionary(g => g.Key, g => g.Count());
-
-                var revenueByVehicle = new Dictionary<string, decimal>();
-                foreach (var vehicleType in ticketsByVehicle.Keys)
-                {
-                    var revenue = ticketsInPeriod
-                        .Where(t => t.VehicleType == vehicleType)
-                        .Sum(t => t.Fee);
-                    revenueByVehicle[vehicleType] = revenue;
-                }
-
-                var dailyBreakdown = ticketsInPeriod
-                    .GroupBy(t => t.CheckInTime.Date)
+                var dailyBreakdown = paymentsInPeriod
+                    .GroupBy(p => p.PaymentTime.Date)
                     .OrderBy(g => g.Key)
                     .Select(g => new DailyRevenueDetailDto
                     {
                         Date = g.Key,
                         TicketCount = g.Count(),
-                        TotalRevenue = g.Sum(t => t.Fee),
-                        AverageRevenuePerTicket = g.Count() > 0 ? g.Sum(t => t.Fee) / g.Count() : 0
+                        TotalRevenue = g.Sum(p => p.Amount),
+                        AverageRevenuePerTicket = g.Count() > 0 ? g.Sum(p => p.Amount) / g.Count() : 0
                     })
                     .ToList();
 
-                var currentDays = Math.Max(1, (to - from).Days + 1);
-                var prevFrom = normalizedPeriod == "day" || normalizedPeriod == "today"
-                    ? from.AddDays(-1)
-                    : normalizedPeriod == "week" || normalizedPeriod == "7days" || normalizedPeriod == "30days"
-                        ? from.AddDays(-currentDays)
-                        : new DateTime(from.Year, from.Month, 1).AddMonths(-1);
-                var prevTickets = allTickets.Where(t => t.CheckInTime.Date >= prevFrom && t.CheckInTime.Date < from).ToList();
+                var previousRange = period switch
+                {
+                    "day" => (From: range.From.AddDays(-1), To: range.From.AddTicks(-1)),
+                    "week" => (From: range.From.AddDays(-7), To: range.From.AddTicks(-1)),
+                    "year" => (From: range.From.AddYears(-1), To: range.From.AddTicks(-1)),
+                    _ => (From: range.From.AddMonths(-1), To: range.From.AddTicks(-1))
+                };
+
                 var prevPayments = allPayments
-                    .Where(p => p.PaymentTime.Date >= prevFrom && p.PaymentTime.Date < from && IsSuccessfulPaymentStatus(p.Status))
+                    .Where(p => p.PaymentTime >= previousRange.From && p.PaymentTime <= previousRange.To)
+                    .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                    .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
                     .ToList();
                 var prevRevenue = prevPayments.Sum(p => p.Amount);
 
-                var revenueChange = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
+                var revenueChange = prevRevenue > 0 ? ((report.TotalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
                 var trend = revenueChange > 5 ? "↑ Tăng" : revenueChange < -5 ? "↓ Giảm" : "→ Ổn định";
 
                 var topDays = dailyBreakdown.OrderByDescending(d => d.TotalRevenue).Take(5).ToList();
 
                 return new EmployeeRevenueReportDto
                 {
-                    PeriodStart = from,
-                    PeriodEnd = to,
-                    TotalRevenue = totalRevenue,
-                    TotalTickets = totalTickets,
-                    AverageRevenuePerTicket = avgRevenuePerTicket,
-                    TicketsByVehicleType = ticketsByVehicle,
-                    RevenueByVehicleType = revenueByVehicle,
+                    PeriodStart = report.From,
+                    PeriodEnd = report.To,
+                    TotalRevenue = report.TotalRevenue,
+                    TotalTickets = paymentsInPeriod.Count,
+                    AverageRevenuePerTicket = paymentsInPeriod.Count > 0 ? report.TotalRevenue / paymentsInPeriod.Count : 0,
+                    TicketsByVehicleType = BuildTicketCountsByVehicle(paymentsInPeriod, allTickets, allMonthlyTickets),
+                    RevenueByVehicleType = report.RevenueByVehicleType,
+                    RevenueByPaymentMethod = report.RevenueByPaymentMethod,
                     DailyBreakdown = dailyBreakdown,
                     PreviousPeriodRevenue = prevRevenue,
                     RevenueChangePercentage = (decimal)revenueChange,
@@ -1082,6 +1072,167 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 return new EmployeeRevenueReportDto();
             }
+        }
+
+        private static (DateTime From, DateTime To) NormalizeDateRange(DateTime? fromDate, DateTime? toDate, string period = "month")
+        {
+            var now = DateTime.Now;
+            DateTime from;
+            DateTime to;
+
+            if (fromDate.HasValue || toDate.HasValue)
+            {
+                from = fromDate?.Date ?? now.AddMonths(-1).Date;
+                to = toDate?.Date ?? now.Date;
+            }
+            else
+            {
+                to = now.Date;
+                from = period switch
+                {
+                    "day" => to,
+                    "week" => to.AddDays(-(int)to.DayOfWeek),
+                    "year" => new DateTime(to.Year, 1, 1),
+                    _ => new DateTime(to.Year, to.Month, 1)
+                };
+            }
+
+            if (to < from)
+                (from, to) = (to, from);
+
+            return (from, to.Date.AddDays(1).AddTicks(-1));
+        }
+
+        private static RevenueReportDto BuildRevenueReport(
+            IEnumerable<Payment> allPayments,
+            IEnumerable<Ticket> allTickets,
+            IEnumerable<MonthlyTicket> allMonthlyTickets,
+            IEnumerable<Employee> allEmployees,
+            DateTime from,
+            DateTime to,
+            string? employeeId = null,
+            string? vehicleType = null)
+        {
+            var ticketLookup = allTickets.ToDictionary(t => t.TicketId);
+            var monthlyLookup = allMonthlyTickets.ToDictionary(m => m.MonthlyTicketId);
+            var employeeLookup = allEmployees.ToDictionary(e => e.EmployeeId);
+
+            var payments = allPayments
+                .Where(p => p.PaymentTime >= from && p.PaymentTime <= to)
+                .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(employeeId))
+            {
+                payments = payments
+                    .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(vehicleType))
+            {
+                payments = payments
+                    .Where(p => string.Equals(GetVehicleType(p, ticketLookup, monthlyLookup), vehicleType, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            var singlePayments = payments.Where(p => p.TicketId != null).ToList();
+            var monthlyPayments = payments.Where(p => p.MonthlyTicketId != null).ToList();
+
+            return new RevenueReportDto
+            {
+                From = from.Date,
+                To = to.Date,
+                TotalRevenue = payments.Sum(p => p.Amount),
+                TotalTickets = singlePayments.Count,
+                TotalMonthlyTickets = monthlyPayments.Count,
+                RevenueFromSingleTickets = singlePayments.Sum(p => p.Amount),
+                RevenueFromMonthlyTickets = monthlyPayments.Sum(p => p.Amount),
+                DailyBreakdown = payments
+                    .GroupBy(p => p.PaymentTime.Date)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new DailyRevenueDto
+                    {
+                        Date = g.Key,
+                        Revenue = g.Sum(p => p.Amount),
+                        TicketCount = g.Count()
+                    })
+                    .ToList(),
+                RevenueByPaymentMethod = payments
+                    .GroupBy(p => PaymentMethods.Normalize(p.Method))
+                    .OrderByDescending(g => g.Sum(p => p.Amount))
+                    .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount)),
+                RevenueByVehicleType = payments
+                    .GroupBy(p => GetVehicleType(p, ticketLookup, monthlyLookup) ?? "Không xác định")
+                    .OrderByDescending(g => g.Sum(p => p.Amount))
+                    .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount)),
+                RevenueByArea = payments
+                    .Where(p => p.TicketId != null)
+                    .GroupBy(p => GetAreaName(p, ticketLookup))
+                    .OrderByDescending(g => g.Sum(p => p.Amount))
+                    .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount)),
+                TopEmployees = payments
+                    .Where(p => !string.IsNullOrWhiteSpace(p.CollectedByEmployeeId))
+                    .GroupBy(p => p.CollectedByEmployeeId!)
+                    .OrderByDescending(g => g.Sum(p => p.Amount))
+                    .Take(5)
+                    .Select(g => new EmployeeRevenueSummaryDto
+                    {
+                        EmployeeId = g.Key,
+                        EmployeeName = employeeLookup.TryGetValue(g.Key, out var employee)
+                            ? employee.FullName
+                            : $"Nhân viên {g.Key}",
+                        TotalRevenue = g.Sum(p => p.Amount),
+                        PaymentCount = g.Count()
+                    })
+                    .ToList()
+            };
+        }
+
+        private static string? GetVehicleType(
+            Payment payment,
+            IReadOnlyDictionary<string, Ticket> ticketLookup,
+            IReadOnlyDictionary<string, MonthlyTicket> monthlyLookup)
+        {
+            if (!string.IsNullOrWhiteSpace(payment.TicketId) &&
+                ticketLookup.TryGetValue(payment.TicketId, out var ticket))
+                return ticket.VehicleType;
+
+            if (!string.IsNullOrWhiteSpace(payment.MonthlyTicketId) &&
+                monthlyLookup.TryGetValue(payment.MonthlyTicketId, out var monthlyTicket))
+                return monthlyTicket.VehicleType;
+
+            return null;
+        }
+
+        private static Dictionary<string, int> BuildTicketCountsByVehicle(
+            IEnumerable<Payment> payments,
+            IEnumerable<Ticket> allTickets,
+            IEnumerable<MonthlyTicket> allMonthlyTickets)
+        {
+            var ticketLookup = allTickets.ToDictionary(t => t.TicketId);
+            var monthlyLookup = allMonthlyTickets.ToDictionary(m => m.MonthlyTicketId);
+
+            return payments
+                .GroupBy(p => GetVehicleType(p, ticketLookup, monthlyLookup) ?? "Không xác định")
+                .OrderByDescending(g => g.Count())
+                .ToDictionary(g => g.Key, g => g.Count());
+        }
+
+        private static string GetAreaName(Payment payment, IReadOnlyDictionary<string, Ticket> ticketLookup)
+        {
+            if (string.IsNullOrWhiteSpace(payment.TicketId) ||
+                !ticketLookup.TryGetValue(payment.TicketId, out var ticket) ||
+                string.IsNullOrWhiteSpace(ticket.SlotId))
+                return "Không xác định";
+
+            return char.ToUpperInvariant(ticket.SlotId[0]) switch
+            {
+                'A' => "Khu A",
+                'B' => "Khu B",
+                'C' => "Khu C",
+                _ => "Khu khác"
+            };
         }
     }
 }

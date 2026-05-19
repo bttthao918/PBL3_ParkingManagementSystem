@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
@@ -266,9 +267,10 @@ namespace ParkingManagement.Web.Controllers.Api
                     TicketId = null,
                     MonthlyTicketId = ticketId,
                     Amount = fee,
-                    Method = model.PaymentMethod ?? "Tiền mặt",
+                    Method = PaymentMethods.Normalize(model.PaymentMethod),
                     PaymentTime = DateTime.Now,
-                    Status = "Thành công"
+                    Status = PaymentStatuses.SUCCESS,
+                    CollectedByEmployeeId = GetEmployeeId()
                 };
                 _db.Payments.Add(payment);
 
@@ -335,9 +337,10 @@ namespace ParkingManagement.Web.Controllers.Api
                     TicketId = null,
                     MonthlyTicketId = id,
                     Amount = renewFee,
-                    Method = model.PaymentMethod ?? "Tiền mặt",
+                    Method = PaymentMethods.Normalize(model.PaymentMethod),
                     PaymentTime = DateTime.Now,
-                    Status = "Thành công"
+                    Status = PaymentStatuses.SUCCESS,
+                    CollectedByEmployeeId = GetEmployeeId()
                 };
                 _db.Payments.Add(payment);
 
@@ -494,6 +497,12 @@ namespace ParkingManagement.Web.Controllers.Api
         private static string GenerateId(string prefix)
         {
             return prefix + DateTime.Now.ToString("yyyyMMddHHmmss") + new Random().Next(100, 999);
+        }
+
+        private string? GetEmployeeId()
+        {
+            return User.FindFirst("employeeId")?.Value
+                ?? User.FindFirst("related_id")?.Value;
         }
     }
 

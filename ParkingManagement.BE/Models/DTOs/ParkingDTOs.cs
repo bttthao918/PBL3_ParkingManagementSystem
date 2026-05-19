@@ -30,9 +30,10 @@ namespace ParkingManagement.BLL.DTOs
         public decimal RevenueFromMonthlyTickets { get; set; }
         public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
         public List<DailyRevenueDto> PreviousDailyBreakdown { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByPaymentMethod { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByVehicleType { get; set; } = new();
-        public List<RevenueBreakdownDto> RevenueByArea { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
+        public Dictionary<string, decimal> RevenueByArea { get; set; } = new();
+        public List<EmployeeRevenueSummaryDto> TopEmployees { get; set; } = new();
         public List<RevenueRankDto> TopRevenueDays { get; set; } = new();
     }
 
@@ -44,12 +45,12 @@ namespace ParkingManagement.BLL.DTOs
         public int TicketCount { get; set; }
     }
 
-    public class RevenueBreakdownDto
+    public class EmployeeRevenueSummaryDto
     {
-        public string Label { get; set; } = "";
-        public decimal Amount { get; set; }
-        public int Count { get; set; }
-        public decimal Percentage { get; set; }
+        public string? EmployeeId { get; set; }
+        public string EmployeeName { get; set; } = "Chưa gán nhân viên";
+        public decimal TotalRevenue { get; set; }
+        public int PaymentCount { get; set; }
     }
 
     public class RevenueRankDto

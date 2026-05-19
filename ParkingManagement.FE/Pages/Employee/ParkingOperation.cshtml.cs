@@ -36,25 +36,15 @@ namespace ParkingManagement.FE.Pages.Employee
         [BindProperty(SupportsGet = true)]
         public string Tab { get; set; } = "checkin";
 
-        [BindProperty]
-        public string? VehiclePlate { get; set; }
-
-        [BindProperty]
-        public string? VehicleType { get; set; }
-
-        [BindProperty]
-        public string? VehiclePlateOrTicketId { get; set; }
-
-        // Check-in state
         public CheckInValidationResponse? CheckInValidation { get; set; }
         public CheckInResultResponse? CheckInResult { get; set; }
-        public List<AvailableSlotDto>? AllSlotsForMap { get; set; }
-
-        // Check-out state
         public CheckOutValidationResponse? CheckOutValidation { get; set; }
         public CheckOutResultResponse? CheckOutResult { get; set; }
 
-        // Danh sách xe đang trong bãi (cho tab check-out)
+        public string? VehiclePlate { get; set; }
+        public string VehicleType { get; set; } = "Xe máy";
+        public string? VehiclePlateOrTicketId { get; set; }
+        public List<AvailableSlotDto>? AllSlotsForMap { get; set; } = new();
         public List<EmployeeTicketListDto> ActiveTickets { get; set; } = new();
         public int ActiveCount { get; set; }
         public int TotalSlots { get; set; }
@@ -74,20 +64,14 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public async Task OnGetAsync()
         {
-            ViewData["Title"] = "Quản lý ra vào";
-            ViewData["Role"] = "Nhân viên";
-            ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
-
+            SetViewData();
             await LoadSummaryAsync();
             await LoadDashboardDataAsync();
 
             if (Tab == "checkout")
-            {
                 await LoadActiveTicketsAsync();
-            }
         }
 
-        // Bước 1 Check-in: Validate biển số
         public async Task<IActionResult> OnPostValidateCheckInAsync(string vehiclePlate, string vehicleType)
         {
             VehiclePlate = vehiclePlate;
@@ -113,7 +97,6 @@ namespace ParkingManagement.FE.Pages.Employee
             return Page();
         }
 
-        // Bước 2 Check-in: Xác nhận
         public async Task<IActionResult> OnPostConfirmCheckInAsync(string vehiclePlate, string vehicleType, string slotId, string? customerId)
         {
             SetViewData();
@@ -135,7 +118,6 @@ namespace ParkingManagement.FE.Pages.Employee
             return Page();
         }
 
-        // Bước 1 Check-out: Validate
         public async Task<IActionResult> OnPostValidateCheckOutAsync(string vehiclePlateOrTicketId)
         {
             VehiclePlateOrTicketId = vehiclePlateOrTicketId;
@@ -157,13 +139,22 @@ namespace ParkingManagement.FE.Pages.Employee
             return Page();
         }
 
-        // Bước 2 Check-out: Xác nhận
-        public async Task<IActionResult> OnPostConfirmCheckOutAsync(string ticketId, decimal fee, string? paymentMethod)
+        public async Task<IActionResult> OnPostConfirmCheckOutAsync(
+            string ticketId,
+            decimal fee,
+            string? paymentMethod,
+            bool paymentReceivedConfirmed,
+            string? bankTransferRef)
         {
             SetViewData();
             Tab = "checkout";
 
-            CheckOutResult = await _service.ConfirmCheckOutAsync(ticketId, fee, paymentMethod ?? "Tiền mặt");
+            CheckOutResult = await _service.ConfirmCheckOutAsync(
+                ticketId,
+                fee,
+                paymentMethod ?? "Cash",
+                paymentReceivedConfirmed,
+                bankTransferRef);
 
             if (CheckOutResult?.Success == true)
             {
@@ -195,6 +186,7 @@ namespace ParkingManagement.FE.Pages.Employee
             if (summary != null)
             {
                 ActiveCount = summary.ActiveTickets;
+
             }
         }
 
@@ -252,6 +244,9 @@ namespace ParkingManagement.FE.Pages.Employee
             if (shift?.HasShift == true && shift.Shift != null)
             {
                 ShiftLabel = $"{shift.Shift.StartTime} - {shift.Shift.EndTime}";
+
+                TotalSlots = summary.TotalTickets;
+
             }
         }
 
@@ -270,5 +265,6 @@ namespace ParkingManagement.FE.Pages.Employee
                 ActiveCount = result.TotalItems;
             }
         }
+        y
     }
 }

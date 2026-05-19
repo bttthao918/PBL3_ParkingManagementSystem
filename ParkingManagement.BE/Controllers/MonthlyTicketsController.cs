@@ -84,17 +84,19 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
                 var customerId = User.FindFirst("customerId")?.Value;
                 if (string.IsNullOrEmpty(customerId))
                     return Unauthorized(new { message = "Invalid token" });
 
+                dto.CustomerId = customerId;
+                ModelState.Remove(nameof(RegisterMonthlyTicketDto.CustomerId));
+
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
                 if (!IsValidPackage(dto.PackageType))
                     return BadRequest(new { message = "Invalid package type. Must be '1 tháng', '3 tháng', or '6 tháng'" });
 
-                dto.CustomerId = customerId;
                 var result = await _monthlyTicketService.RegisterAsync(dto);
                 if (!result.Success)
                     return BadRequest(result);
@@ -105,6 +107,10 @@ namespace ParkingManagement.Web.Controllers.Api
                     Success = true,
                     Message = result.Message ?? "Monthly ticket registered successfully.",
                     Fee = result.Data!.TotalFee,
+                    OrderCode = result.Data.PayOsOrderCode,
+                    PaymentLinkId = result.Data.PayOsPaymentLinkId,
+                    CheckoutUrl = result.Data.CheckoutUrl,
+                    QrCode = result.Data.QrCode,
                     Data = monthlyTicket
                 };
 
@@ -113,8 +119,8 @@ namespace ParkingManagement.Web.Controllers.Api
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Create error: {ex.Message}");
-                return StatusCode(500, new { message = "Internal server error" });
+                _logger.LogError(ex, "Create monthly ticket error");
+                return StatusCode(500, new { message = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -154,6 +160,43 @@ namespace ParkingManagement.Web.Controllers.Api
             {
                 _logger.LogError($"Renew error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        [HttpPost("{monthlyTicketId}/payment-link")]
+        [ProducesResponseType(typeof(RegisterMonthlyTicketResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreatePaymentLink(string monthlyTicketId)
+        {
+            try
+            {
+                var customerId = User.FindFirst("customerId")?.Value;
+                if (string.IsNullOrEmpty(customerId))
+                    return Unauthorized(new { message = "Invalid token" });
+
+                var result = await _monthlyTicketService.CreatePendingPayOsPaymentAsync(monthlyTicketId, customerId);
+                if (!result.Success)
+                    return BadRequest(result);
+
+                var monthlyTicket = ToDetailDto(result.Data!);
+                var response = new RegisterMonthlyTicketResponseDto
+                {
+                    Success = true,
+                    Message = result.Message ?? "Payment QR created successfully.",
+                    Fee = result.Data!.TotalFee,
+                    OrderCode = result.Data.PayOsOrderCode,
+                    PaymentLinkId = result.Data.PayOsPaymentLinkId,
+                    CheckoutUrl = result.Data.CheckoutUrl,
+                    QrCode = result.Data.QrCode,
+                    Data = monthlyTicket
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Create payment link error");
+                return StatusCode(500, new { message = ex.InnerException?.Message ?? ex.Message });
             }
         }
 

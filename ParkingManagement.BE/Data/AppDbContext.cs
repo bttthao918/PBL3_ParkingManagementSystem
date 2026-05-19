@@ -61,6 +61,13 @@ namespace ParkingManagement.DAL.Data
                 .WithOne(m => m.Account)
                 .HasForeignKey<Manager>(m => m.AccountId);
 
+            // ── Employee → Payment (1-N, optional) ────────────────────
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.CollectedByEmployee)
+                .WithMany()
+                .HasForeignKey(p => p.CollectedByEmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // ── Manager → Employee (1-N) ──────────────────────────────
             modelBuilder.Entity<Manager>()
                 .HasMany(m => m.Employees)
@@ -106,7 +113,7 @@ namespace ParkingManagement.DAL.Data
             modelBuilder.Entity<MonthlyTicket>()
                 .ToTable(tb => tb.HasCheckConstraint(
                     "CK_MonthlyTicket_Status",
-                    "Status IN (N'Hoạt động', N'Hết hạn', N'Đã hủy')"));
+                    "Status IN (N'Hoạt động', N'Hết hạn', N'Đã hủy', N'Chờ thanh toán')"));
 
             modelBuilder.Entity<Reservation>()
                 .ToTable(tb => tb.HasCheckConstraint(

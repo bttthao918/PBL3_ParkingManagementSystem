@@ -234,6 +234,7 @@
 
                 @if (Model.CheckOutValidation != null)
                 {
+<<<<<<< ours
                     var co = Model.CheckOutValidation;
                     @if (!co.Success)
                     {
@@ -280,6 +281,92 @@
                                         </div>
                                     }
                                 </div>
+=======
+                    <div class="alert-banner error" style="margin-top:16px;">
+                        <i class="fa-solid fa-circle-xmark"></i> <span>@co.Message</span>
+                    </div>
+                }
+                else
+                {
+                    var hasQrPay = !co.IsFreeTicket && !string.IsNullOrWhiteSpace(co.BankTransferQrUrl);
+                    <div class="checkout-detail">
+                        <div class="checkout-grid">
+                            <div class="co-card">
+                                <div class="co-card-header"><i class="fa-solid fa-car"></i> Thông tin</div>
+                                <div class="co-row"><span>Mã vé</span><strong>@co.TicketId</strong></div>
+                                <div class="co-row"><span>Biển số</span><strong>@co.VehiclePlate</strong></div>
+                                <div class="co-row"><span>Loại xe</span><strong>@co.VehicleType</strong></div>
+                                @if (!string.IsNullOrEmpty(co.CustomerName))
+                                {
+                                    <div class="co-row"><span>Khách hàng</span><strong>@co.CustomerName</strong></div>
+                                }
+                            </div>
+                            <div class="co-card">
+                                <div class="co-card-header"><i class="fa-solid fa-clock"></i> Thời gian</div>
+                                <div class="co-row"><span>Giờ vào</span><strong>@co.CheckInTime?.ToString("HH:mm — dd/MM")</strong></div>
+                                <div class="co-row"><span>Giờ ra</span><strong>@co.CurrentTime?.ToString("HH:mm — dd/MM")</strong></div>
+                                <div class="co-row highlight"><span>Thời gian gửi</span><strong>@FormatDuration(co.DurationMinutes)</strong></div>
+                            </div>
+                            <div class="co-card fee">
+                                <div class="co-card-header"><i class="fa-solid fa-receipt"></i> Phí</div>
+                                @if (co.IsFreeTicket)
+                                {
+                                    <div class="fee-big free">
+                                        <span>MIỄN PHÍ</span>
+                                        <strong>0 đ</strong>
+                                        <small>Vé tháng còn hạn</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="fee-big">
+                                        <span>Tổng phí</span>
+                                        <strong>@co.CalculatedFee.ToString("N0") đ</strong>
+                                        <small>@co.TicketType</small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <form method="post" asp-page-handler="ConfirmCheckOut">
+                            <input type="hidden" name="ticketId" value="@co.TicketId" />
+                            <input type="hidden" name="fee" value="@co.CalculatedFee" />
+                            @if (hasQrPay)
+                            {
+                                <div class="qr-pay-panel" data-qr-pay-panel>
+                                    <div class="qr-pay-card">
+                                        <div class="qr-image-wrap">
+                                            <img src="@co.BankTransferQrUrl" alt="QR Pay BIDV" />
+                                        </div>
+                                        <div class="qr-pay-info">
+                                            <h4><i class="fa-solid fa-qrcode"></i> QR Pay BIDV</h4>
+                                            <div class="co-row"><span>Ngân hàng</span><strong>@co.BankName</strong></div>
+                                            <div class="co-row"><span>Số tài khoản</span><strong>@co.BankAccount</strong></div>
+                                            <div class="co-row"><span>Chủ tài khoản</span><strong>@co.BankAccountHolder</strong></div>
+                                            <div class="co-row"><span>Nội dung</span><strong>@co.BankTransferContent</strong></div>
+                                            <div class="co-row highlight"><span>Số tiền</span><strong>@co.CalculatedFee.ToString("N0") đ</strong></div>
+                                            <label class="qr-confirm-check">
+                                                <input type="checkbox" name="paymentReceivedConfirmed" value="true" />
+                                                <span>Đã kiểm tra tài khoản BIDV và xác nhận đã nhận tiền</span>
+                                            </label>
+                                            <input class="qr-ref-input" type="text" name="bankTransferRef" placeholder="Mã giao dịch / ghi chú xác nhận (nếu có)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="confirm-bar">
+                                <div class="form-group" style="min-width:200px;">
+                                    <label>Thanh toán</label>
+                                    <select name="paymentMethod" data-payment-method onchange="toggleQrPayPanel(this)">
+                                        <option value="QR Pay" selected="@(hasQrPay ? "selected" : null)">QR Pay BIDV</option>
+                                        <option value="Cash" selected="@(!hasQrPay ? "selected" : null)">Tiền mặt</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="confirm-btn orange"
+                                        onclick="return confirmCheckoutSubmit(this.form, '@(co.CalculatedFee.ToString("N0"))đ')">
+                                    <i class="fa-solid fa-check-circle"></i> Xác nhận Check-out
+                                </button>
+>>>>>>> theirs
                             </div>
 
                             <form method="post" asp-page-handler="ConfirmCheckOut">
@@ -370,6 +457,41 @@
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        function toggleQrPayPanel(select) {
+            const form = select.closest('form');
+            const panel = form?.querySelector('[data-qr-pay-panel]');
+            if (!panel) return;
+
+            const isQrPay = select.value === 'QR Pay';
+            panel.hidden = !isQrPay;
+
+            if (!isQrPay) {
+                const checkbox = panel.querySelector('input[name="paymentReceivedConfirmed"]');
+                if (checkbox) checkbox.checked = false;
+            }
+        }
+
+        function confirmCheckoutSubmit(form, feeText) {
+            const method = form.querySelector('[data-payment-method]')?.value;
+            if (method === 'QR Pay') {
+                const confirmed = form.querySelector('input[name="paymentReceivedConfirmed"]')?.checked;
+                if (!confirmed) {
+                    alert('Vui lòng kiểm tra tài khoản BIDV và tick xác nhận đã nhận tiền trước khi check-out.');
+                    return false;
+                }
+            }
+
+            return confirmSubmit(form, 'Check-out', `Xác nhận check-out và thu phí ${feeText}?`, 'warning');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-payment-method]').forEach(toggleQrPayPanel);
+        });
+    </script>
+}
+
 @functions {
     string FormatDuration(int minutes)
     {
@@ -398,3 +520,4 @@
         return s.Contains("trống") || s.Contains("empty") || s.Contains("available");
     }
 }
+

@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     if (typeof Chart === "undefined") {
         console.error("Chart.js chưa được load");
         return;
@@ -32,12 +32,20 @@
     const lineCtx = document.getElementById("mainLineChart");
     const donutCtx = document.getElementById("mainDonutChart");
     const barCtx = document.getElementById("mainBarChart");
+    const formatCurrency = value => new Intl.NumberFormat("vi-VN").format(value || 0) + " đ";
+    const formatAxisValue = value => {
+        if (config.type !== "revenue") return value;
+        if (Math.abs(value) >= 1000000000) return (value / 1000000000).toFixed(1).replace(".0", "") + "B";
+        if (Math.abs(value) >= 1000000) return (value / 1000000).toFixed(1).replace(".0", "") + "M";
+        if (Math.abs(value) >= 1000) return (value / 1000).toFixed(0) + "K";
+        return value;
+    };
 
     if (lineCtx) {
         const datasets = [
             {
                 label: "Kỳ hiện tại",
-                data: lineCurrent,
+                data: config.line.labels.length ? config.line.current : [0],
                 borderColor: blue,
                 backgroundColor: "rgba(13, 139, 255, 0.14)",
                 fill: true,
@@ -47,10 +55,10 @@
             }
         ];
 
-        if (hasPreviousLine) {
+        if (config.line.previous && config.line.previous.length) {
             datasets.push({
                 label: "Kỳ trước",
-                data: linePrevious,
+                data: config.line.previous,
                 borderColor: lightBlue,
                 backgroundColor: "transparent",
                 borderDash: [6, 6],
@@ -63,7 +71,7 @@
         new Chart(lineCtx, {
             type: "line",
             data: {
-                labels: lineLabels,
+                labels: config.line.labels.length ? config.line.labels : ["Chưa có dữ liệu"],
                 datasets
             },
             options: {
@@ -104,7 +112,7 @@
                         ticks: {
                             color: "#334155",
                             font: { size: 13, weight: "600" },
-                            callback: value => config.type === "revenue" ? formatCurrency(value) : value
+                            callback: value => formatAxisValue(value)
                         },
                         grid: { color: "#e2e8f0" }
                     },
@@ -124,9 +132,9 @@
         new Chart(donutCtx, {
             type: "doughnut",
             data: {
-                labels: config.donut?.labels || [],
+                labels: config.donut.labels.length ? config.donut.labels : ["Chưa có dữ liệu"],
                 datasets: [{
-                    data: config.donut?.data || [],
+                    data: config.donut.data.length ? config.donut.data : [1],
                     backgroundColor: [blue, green, orange, purple],
                     borderWidth: 0,
                     cutout: "68%"
@@ -147,9 +155,9 @@
         new Chart(barCtx, {
             type: "bar",
             data: {
-                labels: config.bar?.labels || [],
+                labels: config.bar.labels.length ? config.bar.labels : ["Chưa có dữ liệu"],
                 datasets: [{
-                    data: config.bar?.data || [],
+                    data: config.bar.data.length ? config.bar.data : [0],
                     backgroundColor: [blue, green, purple, orange],
                     borderRadius: 8,
                     barThickness: 52
@@ -167,7 +175,7 @@
                         ticks: {
                             color: "#334155",
                             font: { size: 13, weight: "600" },
-                            callback: value => config.type === "revenue" ? formatCurrency(value) : value
+                            callback: value => formatAxisValue(value)
                         },
                         grid: { color: "#e2e8f0" }
                     },
