@@ -1,16 +1,11 @@
 @page
 @model ParkingManagement.FE.Pages.Employee.PersonalReportModel
 
-@{
-    // ViewData is set in code-behind (PersonalReport.cshtml.cs)
-}
-
 @section Styles {
-    <link rel="stylesheet" href="/css/employee/personal_report.css" />
+    <link rel="stylesheet" href="/css/employee/personal_report.css" asp-append-version="true" />
 }
 
 <div class="report-page">
-
     <div class="report-header">
         <div>
             <h1>Báo cáo cá nhân</h1>
@@ -30,51 +25,41 @@
     </div>
 
     <div class="report-layout">
-
         <section class="report-main">
-
             <div class="kpi-grid">
                 <a asp-page="/Employee/TicketManagement" class="kpi-card clickable">
-                    <div class="kpi-icon blue">
-                        <i class="fa-solid fa-ticket"></i>
-                    </div>
+                    <div class="kpi-icon blue"><i class="fa-solid fa-ticket"></i></div>
                     <div>
                         <span>Tổng vé xử lý</span>
                         <h3>@Model.TotalTickets.ToString("N0")</h3>
-                        <small>↑ 12.5% so với kỳ trước</small>
+                        <small>Theo thanh toán đã ghi nhận</small>
                     </div>
                 </a>
 
                 <a asp-page="/Employee/RevenueStatistics" class="kpi-card clickable">
-                    <div class="kpi-icon green">
-                        <i class="fa-solid fa-money-bill-wave"></i>
-                    </div>
+                    <div class="kpi-icon green"><i class="fa-solid fa-money-bill-wave"></i></div>
                     <div>
                         <span>Doanh thu</span>
                         <h3>@Model.TotalRevenue.ToString("N0") đ</h3>
-                        <small>↑ 15.3% so với kỳ trước</small>
+                        <small>Doanh thu bạn đã thu</small>
                     </div>
                 </a>
 
                 <a asp-page="/Employee/PersonalReport" class="kpi-card clickable">
-                    <div class="kpi-icon purple">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
+                    <div class="kpi-icon purple"><i class="fa-solid fa-clock"></i></div>
                     <div>
                         <span>Tổng giờ làm</span>
                         <h3>@Model.TotalWorkingHours</h3>
-                        <small>↑ 8.7% so với kỳ trước</small>
+                        <small>Từ lịch sử chấm công</small>
                     </div>
                 </a>
 
                 <a asp-page="/Employee/PersonalReport" class="kpi-card clickable">
-                    <div class="kpi-icon orange">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
+                    <div class="kpi-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
                     <div>
                         <span>Tổng ca làm</span>
                         <h3>@Model.TotalShifts ca</h3>
-                        <small>↑ 9.1% so với kỳ trước</small>
+                        <small>Ca đã bắt đầu trong kỳ</small>
                     </div>
                 </a>
             </div>
@@ -83,7 +68,7 @@
                 <div class="report-card chart-card">
                     <div class="card-title">
                         <h3>Doanh thu theo ngày</h3>
-                        <a>Xem chi tiết</a>
+                        <a asp-page="/Employee/RevenueStatistics" asp-route-period="@Model.Period">Xem chi tiết</a>
                     </div>
 
                     <div class="chart-box">
@@ -94,7 +79,7 @@
                 <div class="report-card chart-card">
                     <div class="card-title">
                         <h3>Số vé xử lý theo ngày</h3>
-                        <a>Xem chi tiết</a>
+                        <a asp-page="/Employee/TicketManagement">Xem chi tiết</a>
                     </div>
 
                     <div class="chart-box">
@@ -102,91 +87,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="report-card">
-                <div class="card-title">
-                    <h3>Danh sách ca làm</h3>
-                </div>
-
-                <table class="shift-table">
-                    <thead>
-                        <tr>
-                            <th>Ngày làm</th>
-                            <th>Ca làm</th>
-                            <th>Thời gian</th>
-                            <th>Tổng giờ</th>
-                            <th>Số vé xử lý</th>
-                            <th>Doanh thu</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach (var shift in Model.Shifts)
-                        {
-                            <tr>
-                                <td>
-                                    <strong>@shift.WorkDate</strong>
-                                    <span>@shift.DayName</span>
-                                </td>
-                                <td>@shift.ShiftName</td>
-                                <td><strong>@shift.StartTime</strong> - <strong>@shift.EndTime</strong></td>
-                                <td>@shift.TotalHours</td>
-                                <td>@shift.TicketCount vé</td>
-                                <td>@shift.Revenue.ToString("N0") đ</td>
-                                <td>
-                                    <span class="status-badge">
-                                        @shift.Status
-                                    </span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
         </section>
-
-        <aside class="report-side">
-
-            <div class="report-card summary-card">
-                <h3>Tổng kết</h3>
-
-                <div class="summary-row">
-                    <span>Tổng vé xử lý</span>
-                    <strong>@Model.TotalTickets.ToString("N0") vé</strong>
-                </div>
-
-                <div class="summary-row">
-                    <span>Doanh thu</span>
-                    <strong>@Model.TotalRevenue.ToString("N0") đ</strong>
-                </div>
-
-                <div class="summary-row">
-                    <span>Tổng giờ làm</span>
-                    <strong>@Model.TotalWorkingHours</strong>
-                </div>
-
-                <div class="summary-row">
-                    <span>Tổng ca làm</span>
-                    <strong>@Model.TotalShifts ca</strong>
-                </div>
-
-                <hr />
-
-                <div class="summary-row">
-                    <span>Trung bình/ca</span>
-                    <strong>@Model.AverageHoursPerShift giờ</strong>
-                </div>
-
-                <div class="summary-row">
-                    <span>Trung bình/giờ</span>
-                    <strong>@Model.AverageRevenuePerHour.ToString("N0") đ</strong>
-                </div>
-            </div>
-
-        </aside>
-
     </div>
 </div>
 
@@ -200,5 +101,5 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/personal_report.js"></script>
+    <script src="/js/personal_report.js" asp-append-version="true"></script>
 }

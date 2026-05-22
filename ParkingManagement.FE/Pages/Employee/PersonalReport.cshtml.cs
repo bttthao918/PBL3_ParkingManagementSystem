@@ -23,17 +23,16 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public int TotalTickets { get; set; }
         public decimal TotalRevenue { get; set; }
-        public string TotalWorkingHours { get; set; } = "0 giờ 0 phút";
+        public string TotalWorkingHours { get; set; } = "0 giờ";
         public int TotalShifts { get; set; }
         public double AverageHoursPerShift { get; set; }
         public decimal AverageRevenuePerHour { get; set; }
 
-        public List<string> ChartLabels { get; set; } = new List<string>();
-        public List<decimal> RevenueChartData { get; set; } = new List<decimal>();
-        public List<int> TicketChartData { get; set; } = new List<int>();
-
-        public List<ShiftReportVM> Shifts { get; set; } = new List<ShiftReportVM>();
-        public List<CalendarDayVM> CalendarDays { get; set; } = new List<CalendarDayVM>();
+        public List<string> ChartLabels { get; set; } = new();
+        public List<decimal> RevenueChartData { get; set; } = new();
+        public List<int> TicketChartData { get; set; } = new();
+        public List<ShiftReportVM> Shifts { get; set; } = new();
+        public List<CalendarDayVM> CalendarDays { get; set; } = new();
 
         public async Task OnGetAsync()
         {
@@ -41,75 +40,80 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["Role"] = "Nhân viên";
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
 
+            Period = NormalizePeriod(Period);
             var employeeId = User.FindFirst("related_id")?.Value;
-            if (!string.IsNullOrEmpty(employeeId))
+            if (!string.IsNullOrWhiteSpace(employeeId))
             {
-                Period = string.IsNullOrWhiteSpace(Period) ? "month" : Period.ToLower();
                 var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, Period);
-                
                 if (revenueReport != null)
                 {
-                    var attendanceReport = await _reportService.GetShiftAttendanceReportAsync(employeeId, revenueReport.PeriodStart, revenueReport.PeriodEnd);
+                    var attendanceReport = await _reportService.GetShiftAttendanceReportAsync(
+                        employeeId,
+                        revenueReport.PeriodStart,
+                        revenueReport.PeriodEnd);
 
                     FromDate = revenueReport.PeriodStart.ToString("dd/MM/yyyy");
                     ToDate = revenueReport.PeriodEnd.ToString("dd/MM/yyyy");
-                    
                     TotalTickets = revenueReport.TotalTickets;
                     TotalRevenue = revenueReport.TotalRevenue;
-                    
-                    if (revenueReport.DailyBreakdown != null)
+
+                    foreach (var day in revenueReport.DailyBreakdown.OrderBy(d => d.Date).TakeLast(10))
                     {
-                        foreach (var day in revenueReport.DailyBreakdown.OrderBy(d => d.Date).TakeLast(10))
-                        {
-                            ChartLabels.Add(day.Date.ToString("dd/MM"));
-                            RevenueChartData.Add(day.TotalRevenue);
-                            TicketChartData.Add(day.TicketCount);
-                        }
+                        ChartLabels.Add(day.Date.ToString("dd/MM"));
+                        RevenueChartData.Add(day.TotalRevenue);
+                        TicketChartData.Add(day.TicketCount);
                     }
 
                     if (attendanceReport != null)
                     {
                         TotalShifts = attendanceReport.TotalWorkDays;
-                    int hours = attendanceReport.TotalWorkMinutes / 60;
-                    int mins = attendanceReport.TotalWorkMinutes % 60;
-                    TotalWorkingHours = $"{hours} giờ {mins} phút";
-                    
-                    AverageHoursPerShift = attendanceReport.TotalWorkDays > 0 
-                        ? Math.Round(attendanceReport.TotalWorkMinutes / 60.0 / attendanceReport.TotalWorkDays, 1) 
-                        : 0;
+                        TotalWorkingHours = FormatDuration(attendanceReport.TotalWorkMinutes);
+                        AverageHoursPerShift = attendanceReport.TotalWorkDays > 0
+                            ? Math.Round(attendanceReport.TotalWorkMinutes / 60.0 / attendanceReport.TotalWorkDays, 1)
+                            : 0;
+                        AverageRevenuePerHour = attendanceReport.TotalWorkMinutes > 0
+                            ? TotalRevenue / (decimal)(attendanceReport.TotalWorkMinutes / 60.0)
+                            : 0;
 
-                    if (TotalTickets > 0 && attendanceReport.TotalWorkMinutes > 0)
-                    {
-                        AverageRevenuePerHour = TotalRevenue / (decimal)(attendanceReport.TotalWorkMinutes / 60.0);
-                    }
-
-                    if (attendanceReport.Details != null)
-                    {
-                        Shifts = attendanceReport.Details.OrderByDescending(d => d.Date).Select(d => new ShiftReportVM
-                        {
-                            WorkDate = d.Date.ToString("dd/MM/yyyy"),
-                            DayName = GetDayName(d.Date.DayOfWeek),
-                            ShiftName = "Ca " + d.Shift,
-                            StartTime = d.CheckInTime?.ToString("HH:mm") ?? "-",
-                            EndTime = d.CheckOutTime?.ToString("HH:mm") ?? "-",
-                            TotalHours = d.WorkMinutes.HasValue ? $"{d.WorkMinutes.Value / 60} giờ {d.WorkMinutes.Value % 60} phút" : "0 giờ",
-                            TicketCount = d.TicketsProcessed,
-                            Revenue = d.ShiftRevenue,
-                            Status = d.Status
-                        }).ToList();
+                        Shifts = attendanceReport.Details
+                            .OrderByDescending(d => d.Date)
+                            .ThenByDescending(d => d.CheckInTime)
+                            .Select(d => new ShiftReportVM
+                            {
+                                WorkDate = d.Date.ToString("dd/MM/yyyy"),
+                                DayName = GetDayName(d.Date.DayOfWeek),
+                                ShiftName = FormatShiftName(d.Shift),
+                                StartTime = d.CheckInTime?.ToString("HH:mm") ?? "-",
+                                EndTime = d.CheckOutTime?.ToString("HH:mm") ?? "Đang làm",
+                                TotalHours = FormatDuration(d.WorkMinutes ?? 0),
+                                TicketCount = d.TicketsProcessed,
+                                Revenue = d.ShiftRevenue,
+                                Status = d.Status
+                            })
+                            .ToList();
                     }
                 }
             }
-            }
 
-            // Calendar Days
             CalendarDays = Enumerable.Range(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
-                .Select(d => new CalendarDayVM
+                .Select(day => new CalendarDayVM
                 {
-                    Day = d,
-                    IsToday = d == DateTime.Now.Day,
-                    HasWorked = Shifts.Any(s => s.WorkDate.StartsWith($"{d:00}/"))
-                }).ToList();
+                    Day = day,
+                    IsToday = day == DateTime.Now.Day,
+                    HasWorked = Shifts.Any(shift => shift.WorkDate.StartsWith($"{day:00}/"))
+                })
+                .ToList();
+        }
+
+        private static string NormalizePeriod(string? period)
+        {
+            return period?.Trim().ToLowerInvariant() switch
+            {
+                "today" or "day" => "today",
+                "7days" or "week" => "7days",
+                "month" => "month",
+                _ => "month"
+            };
         }
 
         private static string GetDayName(DayOfWeek dayOfWeek)
@@ -125,6 +129,27 @@ namespace ParkingManagement.FE.Pages.Employee
                 DayOfWeek.Sunday => "Chủ nhật",
                 _ => ""
             };
+        }
+
+        private static string FormatShiftName(string? shift)
+        {
+            if (string.IsNullOrWhiteSpace(shift))
+            {
+                return "Ca không xác định";
+            }
+
+            var value = shift.Trim();
+            return value.StartsWith("Ca ", StringComparison.OrdinalIgnoreCase)
+                ? value
+                : $"Ca {value}";
+        }
+
+        private static string FormatDuration(int totalMinutes)
+        {
+            var safeMinutes = Math.Max(0, totalMinutes);
+            var hours = safeMinutes / 60;
+            var minutes = safeMinutes % 60;
+            return minutes == 0 ? $"{hours} giờ" : $"{hours} giờ {minutes} phút";
         }
     }
 

@@ -148,6 +148,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var employees = (await _employeeRepo.GetAllAsync()).ToList();
 
                 var range = NormalizeDateRange(filter.FromDate, filter.ToDate, filter.Period);
+                var previousRange = GetPreviousDateRange(range.From, range.To);
+                var reportPeriod = filter.FromDate.HasValue || filter.ToDate.HasValue
+                    ? "custom"
+                    : NormalizeReportPeriod(filter.Period);
+
                 return BuildRevenueReport(
                     payments,
                     tickets,
@@ -155,7 +160,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                     employees,
                     range.From,
                     range.To,
-                    vehicleType: filter.VehicleType);
+                    vehicleType: filter.VehicleType,
+                    period: reportPeriod,
+                    previousFrom: previousRange.From,
+                    previousTo: previousRange.To);
             }
             catch (Exception)
             {
@@ -1067,8 +1075,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .ThenBy(w => w.StartTime)
                     .ToListAsync();
 
-                var allTickets = await _db.Tickets
-                    .Where(t => t.CheckInTime.Date >= from && t.CheckInTime.Date <= to)
+                var successfulPayments = await _db.Payments
+                    .Where(p => p.PaymentTime.Date >= from && p.PaymentTime.Date <= to)
+                    .Where(p => p.CollectedByEmployeeId == employeeId)
                     .ToListAsync();
 
                 var details = new List<ShiftAttendanceDetailDto>();
@@ -1076,15 +1085,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                 foreach (var log in workLogs)
                 {
                     var shiftEnd = log.EndTime ?? DateTime.Now;
-                    
-                    var shiftTickets = allTickets.Where(t => 
-                        (t.CheckInTime >= log.StartTime && t.CheckInTime <= shiftEnd) ||
-                        (t.CheckOutTime.HasValue && t.CheckOutTime.Value >= log.StartTime && t.CheckOutTime.Value <= shiftEnd)
-                    ).ToList();
+                    var workMinutes = log.TotalMinutes ?? Math.Max(0, (int)(shiftEnd - log.StartTime).TotalMinutes);
 
-                    var shiftRevenue = shiftTickets
-                        .Where(t => t.CheckOutTime.HasValue && t.CheckOutTime.Value >= log.StartTime && t.CheckOutTime.Value <= shiftEnd)
-                        .Sum(t => t.Fee);
+                    var shiftPayments = successfulPayments
+                        .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                        .Where(p => p.PaymentTime >= log.StartTime && p.PaymentTime <= shiftEnd)
+                        .ToList();
 
                     string status = "Đúng giờ";
                     if (!log.EndTime.HasValue) status = "Đang làm";
@@ -1095,11 +1101,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                         Date = log.WorkDate,
                         Shift = log.ShiftSchedule?.ShiftType ?? "Ca không xác định",
                         CheckInTime = log.StartTime,
-                        CheckOutTime = log.EndTime ?? log.StartTime,
-                        WorkMinutes = log.TotalMinutes ?? (int)(DateTime.Now - log.StartTime).TotalMinutes,
+                        CheckOutTime = log.EndTime,
+                        WorkMinutes = workMinutes,
                         Status = status,
-                        TicketsProcessed = shiftTickets.Count,
-                        ShiftRevenue = shiftRevenue
+                        TicketsProcessed = shiftPayments.Count,
+                        ShiftRevenue = shiftPayments.Sum(p => p.Amount)
                     });
                 }
 
@@ -1134,7 +1140,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var allMonthlyTickets = (await _monthlyRepo.GetAllAsync()).ToList();
                 var allPayments = (await _paymentRepo.GetAllAsync()).ToList();
                 var employees = (await _employeeRepo.GetAllAsync()).ToList();
-                var range = NormalizeDateRange(null, null, period);
+                var normalizedPeriod = NormalizeReportPeriod(period);
+                var range = NormalizeDateRange(null, null, normalizedPeriod);
 
                 var report = BuildRevenueReport(
                     allPayments,
@@ -1143,7 +1150,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     employees,
                     range.From,
                     range.To,
-                    employeeId);
+                    employeeId: employeeId,
+                    period: normalizedPeriod);
 
                 var paymentsInPeriod = allPayments
                     .Where(p => p.PaymentTime >= range.From && p.PaymentTime <= range.To)
@@ -1151,25 +1159,17 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
-                var dailyBreakdown = paymentsInPeriod
-                    .GroupBy(p => p.PaymentTime.Date)
-                    .OrderBy(g => g.Key)
-                    .Select(g => new DailyRevenueDetailDto
+                var dailyBreakdown = BuildDailyRevenue(paymentsInPeriod, range.From, range.To)
+                    .Select(day => new DailyRevenueDetailDto
                     {
-                        Date = g.Key,
-                        TicketCount = g.Count(),
-                        TotalRevenue = g.Sum(p => p.Amount),
-                        AverageRevenuePerTicket = g.Count() > 0 ? g.Sum(p => p.Amount) / g.Count() : 0
+                        Date = day.Date,
+                        TicketCount = day.TicketCount,
+                        TotalRevenue = day.Revenue,
+                        AverageRevenuePerTicket = day.TicketCount > 0 ? day.Revenue / day.TicketCount : 0
                     })
                     .ToList();
 
-                var previousRange = period switch
-                {
-                    "day" => (From: range.From.AddDays(-1), To: range.From.AddTicks(-1)),
-                    "week" => (From: range.From.AddDays(-7), To: range.From.AddTicks(-1)),
-                    "year" => (From: range.From.AddYears(-1), To: range.From.AddTicks(-1)),
-                    _ => (From: range.From.AddMonths(-1), To: range.From.AddTicks(-1))
-                };
+                var previousRange = GetPreviousDateRange(range.From, range.To);
 
                 var prevPayments = allPayments
                     .Where(p => p.PaymentTime >= previousRange.From && p.PaymentTime <= previousRange.To)
@@ -1178,10 +1178,16 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .ToList();
                 var prevRevenue = prevPayments.Sum(p => p.Amount);
 
-                var revenueChange = prevRevenue > 0 ? ((report.TotalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
+                var revenueChange = prevRevenue > 0
+                    ? ((report.TotalRevenue - prevRevenue) / prevRevenue) * 100
+                    : report.TotalRevenue > 0 ? 100 : 0;
                 var trend = revenueChange > 5 ? "↑ Tăng" : revenueChange < -5 ? "↓ Giảm" : "→ Ổn định";
 
-                var topDays = dailyBreakdown.OrderByDescending(d => d.TotalRevenue).Take(5).ToList();
+                var topDays = dailyBreakdown
+                    .Where(d => d.TotalRevenue > 0 || d.TicketCount > 0)
+                    .OrderByDescending(d => d.TotalRevenue)
+                    .Take(5)
+                    .ToList();
 
                 return new EmployeeRevenueReportDto
                 {
@@ -1208,31 +1214,54 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         private static (DateTime From, DateTime To) NormalizeDateRange(DateTime? fromDate, DateTime? toDate, string period = "month")
         {
-            var now = DateTime.Now;
-            DateTime from;
-            DateTime to;
+            var today = DateTime.Now.Date;
 
             if (fromDate.HasValue || toDate.HasValue)
             {
-                from = fromDate?.Date ?? now.AddMonths(-1).Date;
-                to = toDate?.Date ?? now.Date;
-            }
-            else
-            {
-                to = now.Date;
-                from = period switch
+                var customFrom = fromDate?.Date ?? today.AddDays(-29);
+                var customTo = toDate?.Date ?? today;
+
+                if (customTo < customFrom)
                 {
-                    "day" => to,
-                    "week" => to.AddDays(-(int)to.DayOfWeek),
-                    "year" => new DateTime(to.Year, 1, 1),
-                    _ => new DateTime(to.Year, to.Month, 1)
-                };
+                    (customFrom, customTo) = (customTo, customFrom);
+                }
+
+                return (customFrom, customTo.Date.AddDays(1).AddTicks(-1));
             }
 
-            if (to < from)
-                (from, to) = (to, from);
+            var normalizedPeriod = NormalizeReportPeriod(period);
+            var from = normalizedPeriod switch
+            {
+                "today" => today,
+                "7days" => today.AddDays(-6),
+                "30days" => today.AddDays(-29),
+                "year" => new DateTime(today.Year, 1, 1),
+                _ => new DateTime(today.Year, today.Month, 1)
+            };
 
-            return (from, to.Date.AddDays(1).AddTicks(-1));
+            return (from, today.AddDays(1).AddTicks(-1));
+        }
+
+        private static string NormalizeReportPeriod(string? period)
+        {
+            return period?.Trim().ToLowerInvariant() switch
+            {
+                "today" or "day" => "today",
+                "7days" or "week" => "7days",
+                "30days" => "30days",
+                "year" => "year",
+                "month" => "month",
+                _ => "month"
+            };
+        }
+
+        private static (DateTime From, DateTime To) GetPreviousDateRange(DateTime from, DateTime to)
+        {
+            var start = from.Date;
+            var end = to.Date;
+            var days = Math.Max(1, (end - start).Days + 1);
+
+            return (start.AddDays(-days), start.AddTicks(-1));
         }
 
         private static RevenueReportDto BuildRevenueReport(
@@ -1243,36 +1272,53 @@ namespace ParkingManagement.BLL.Services.Implementations
             DateTime from,
             DateTime to,
             string? employeeId = null,
-            string? vehicleType = null)
+            string? vehicleType = null,
+            string? period = null,
+            DateTime? previousFrom = null,
+            DateTime? previousTo = null)
         {
             var ticketLookup = allTickets.ToDictionary(t => t.TicketId);
             var monthlyLookup = allMonthlyTickets.ToDictionary(m => m.MonthlyTicketId);
             var employeeLookup = allEmployees.ToDictionary(e => e.EmployeeId);
 
-            var payments = allPayments
-                .Where(p => p.PaymentTime >= from && p.PaymentTime <= to)
+            var reportPayments = allPayments
                 .Where(p => PaymentStatuses.IsSuccessful(p.Status))
                 .ToList();
 
             if (!string.IsNullOrWhiteSpace(employeeId))
             {
-                payments = payments
+                reportPayments = reportPayments
                     .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 
             if (!string.IsNullOrWhiteSpace(vehicleType))
             {
-                payments = payments
+                reportPayments = reportPayments
                     .Where(p => string.Equals(GetVehicleType(p, ticketLookup, monthlyLookup), vehicleType, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 
+            var payments = reportPayments
+                .Where(p => p.PaymentTime >= from && p.PaymentTime <= to)
+                .ToList();
+
+            var previousPayments = previousFrom.HasValue && previousTo.HasValue
+                ? reportPayments
+                    .Where(p => p.PaymentTime >= previousFrom.Value && p.PaymentTime <= previousTo.Value)
+                    .ToList()
+                : new List<Payment>();
+
             var singlePayments = payments.Where(p => p.TicketId != null).ToList();
             var monthlyPayments = payments.Where(p => p.MonthlyTicketId != null).ToList();
+            var dailyBreakdown = BuildDailyRevenue(payments, from, to);
+            var previousDailyBreakdown = previousFrom.HasValue && previousTo.HasValue
+                ? BuildDailyRevenue(previousPayments, previousFrom.Value, previousTo.Value)
+                : new List<DailyRevenueDto>();
 
             return new RevenueReportDto
             {
+                Period = period ?? "custom",
                 From = from.Date,
                 To = to.Date,
                 TotalRevenue = payments.Sum(p => p.Amount),
@@ -1280,16 +1326,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                 TotalMonthlyTickets = monthlyPayments.Count,
                 RevenueFromSingleTickets = singlePayments.Sum(p => p.Amount),
                 RevenueFromMonthlyTickets = monthlyPayments.Sum(p => p.Amount),
-                DailyBreakdown = payments
-                    .GroupBy(p => p.PaymentTime.Date)
-                    .OrderBy(g => g.Key)
-                    .Select(g => new DailyRevenueDto
-                    {
-                        Date = g.Key,
-                        Revenue = g.Sum(p => p.Amount),
-                        TicketCount = g.Count()
-                    })
-                    .ToList(),
+                DailyBreakdown = dailyBreakdown,
+                PreviousDailyBreakdown = previousDailyBreakdown,
                 RevenueByPaymentMethod = payments
                     .GroupBy(p => PaymentMethods.Normalize(p.Method))
                     .OrderByDescending(g => g.Sum(p => p.Amount))
@@ -1299,7 +1337,6 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .OrderByDescending(g => g.Sum(p => p.Amount))
                     .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount)),
                 RevenueByArea = payments
-                    .Where(p => p.TicketId != null)
                     .GroupBy(p => GetAreaName(p, ticketLookup))
                     .OrderByDescending(g => g.Sum(p => p.Amount))
                     .ToDictionary(g => g.Key, g => g.Sum(p => p.Amount)),
@@ -1317,7 +1354,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                         TotalRevenue = g.Sum(p => p.Amount),
                         PaymentCount = g.Count()
                     })
-                    .ToList()
+                    .ToList(),
+                TopRevenueDays = BuildTopRevenueDays(dailyBreakdown, previousDailyBreakdown)
             };
         }
 
@@ -1353,6 +1391,9 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         private static string GetAreaName(Payment payment, IReadOnlyDictionary<string, Ticket> ticketLookup)
         {
+            if (!string.IsNullOrWhiteSpace(payment.MonthlyTicketId))
+                return "Vé tháng";
+
             if (string.IsNullOrWhiteSpace(payment.TicketId) ||
                 !ticketLookup.TryGetValue(payment.TicketId, out var ticket) ||
                 string.IsNullOrWhiteSpace(ticket.SlotId))

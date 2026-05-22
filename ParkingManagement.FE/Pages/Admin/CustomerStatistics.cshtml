@@ -54,7 +54,7 @@
     <div class="stat-bottom-grid">
         <div class="card stat-chart-card">
             <div class="stat-card-title">
-                <h3>Phân bố khách hàng theo khu vực</h3>
+                <h3>Phân bổ khách hàng theo khu vực</h3>
                 <span>Số lượt gửi xe</span>
             </div>
             <canvas id="mainBarChart"></canvas>
@@ -102,15 +102,6 @@
                 </div>
             }
         </div>
-    </div>
-
-    <div class="card stat-table-card">
-        <div class="stat-card-title">
-            <h3>Chi tiết khách hàng mới</h3>
-            <span>@Model.Header.DateRangeText</span>
-        </div>
-
-        <partial name="/Pages/Shared/Statistics/_StatisticsTable.cshtml" model="Model.Table" />
     </div>
 </div>
 

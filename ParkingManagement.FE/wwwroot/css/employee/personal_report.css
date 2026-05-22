@@ -56,7 +56,7 @@
 
 .report-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-columns: 1fr;
     gap: 18px;
     align-items: start;
 }
@@ -121,7 +121,7 @@
 }
 
 .kpi-card small {
-    color: #16a34a;
+    color: #64748b;
     font-weight: 700;
 }
 
@@ -168,6 +168,7 @@
         color: #1479ff;
         font-weight: 700;
         font-size: 13px;
+        text-decoration: none;
     }
 
 .chart-box {
@@ -193,91 +194,6 @@
     .chart-tooltip.green::before {
         background: #16a34a;
     }
-
-.shift-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-    .shift-table th {
-        text-align: left;
-        color: #40516d;
-        background: #f8fbff;
-        font-size: 12px;
-        padding: 14px;
-        text-transform: uppercase;
-    }
-
-    .shift-table td {
-        padding: 14px;
-        border-top: 1px solid #e3ebf6;
-        color: #10233f;
-    }
-
-        .shift-table td span {
-            display: block;
-            margin-top: 4px;
-            font-size: 12px;
-            color: #71809a;
-        }
-
-.status-badge {
-    display: inline-flex;
-    border-radius: 999px;
-    padding: 7px 11px;
-    background: #eaf8ef;
-    color: #16a34a;
-    font-weight: 800;
-    font-size: 12px;
-}
-
-.report-side {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.summary-card h3,
-.calendar-card h3 {
-    margin-top: 0;
-    font-size: 15px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 14px;
-    margin: 18px 0;
-    color: #71809a;
-}
-
-    .summary-row strong {
-        color: #10233f;
-    }
-
-    .summary-row .blue {
-        color: #1479ff;
-    }
-
-    .summary-row .green {
-        color: #16a34a;
-    }
-
-    .summary-row .purple {
-        color: #7c3aed;
-    }
-
-    .summary-row .orange {
-        color: #f59e0b;
-    }
-
-.summary-card hr {
-    border: 0;
-    border-top: 1px solid #e3ebf6;
-    margin: 16px 0;
-}
 
 .calendar-card {
     padding: 20px;
