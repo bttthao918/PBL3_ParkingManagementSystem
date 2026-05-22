@@ -333,10 +333,40 @@
         border: 1px solid #fedc91;
     }
 
+    .vip-badge.gold i {
+        color: #d97706;
+    }
+
+    .vip-badge.vàng {
+        background: #fff3d7;
+        color: #d97706;
+        border: 1px solid #fedc91;
+    }
+
+    .vip-badge.vàng i {
+        color: #d97706;
+    }
+
     .vip-badge.silver {
-        background: #eef2f7;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 45%, #ffffff 56%, #cbd5e1 100%);
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(71, 85, 105, .10);
+    }
+
+    .vip-badge.silver i {
         color: #64748b;
-        border: 1px solid #d7dee8;
+    }
+
+    .vip-badge.bạc {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 45%, #ffffff 56%, #cbd5e1 100%);
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(71, 85, 105, .10);
+    }
+
+    .vip-badge.bạc i {
+        color: #64748b;
     }
 
     .vip-badge.platinum {
@@ -345,12 +375,75 @@
         border: 1px solid #dcc5ff;
     }
 
-    .vip-badge.thường,
-    .vip-badge.normal {
-        background: #eef2f7;
-        color: #53627a;
-        border: 1px solid #d7dee8;
+    .vip-badge.diamond {
+        background: #eef2ff;
+        color: #5b21b6;
+        border: 1px solid #c7d2fe;
     }
+
+    .vip-badge.diamond i {
+        color: #7c3aed;
+    }
+
+    .vip-badge.kim,
+    .vip-badge.cương {
+        background: #eef2ff;
+        color: #5b21b6;
+        border: 1px solid #c7d2fe;
+    }
+
+    .vip-badge.kim i,
+    .vip-badge.cương i {
+        color: #7c3aed;
+    }
+
+    .vip-badge.thường,
+    .vip-badge.thành,
+    .vip-badge.viên,
+    .vip-badge.member,
+    .vip-badge.normal {
+        background: #e8f4ff;
+        color: #1479ff;
+        border: 1px solid #bfdbfe;
+    }
+
+    .vip-badge.thành i,
+    .vip-badge.viên i,
+    .vip-badge.member i,
+    .vip-badge.normal i {
+        color: #1479ff;
+    }
+
+    .vip-badge.member .fa-crown::before,
+    .vip-badge.normal .fa-crown::before,
+    .vip-badge.thành .fa-crown::before,
+    .vip-badge.viên .fa-crown::before,
+    .vip-badge.thường .fa-crown::before {
+        content: "\f007";
+    }
+
+    .vip-badge.silver .fa-crown::before,
+    .vip-badge.bạc .fa-crown::before {
+        content: "\f5a2";
+    }
+
+    .vip-badge.diamond .fa-crown::before,
+    .vip-badge.kim .fa-crown::before,
+    .vip-badge.cương .fa-crown::before {
+        content: "\f3a5";
+    }
+
+.vip-cell {
+    display: grid;
+    gap: 5px;
+    justify-items: start;
+}
+
+.vip-cell small {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+}
 
     .status-badge i {
         font-size: 7px;
@@ -636,6 +729,288 @@
     color: #16a34a;
 }
 
+.vip-detail-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.vip-detail-card .detail-card-title {
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.vip-detail-heading {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    min-width: 0;
+}
+
+.vip-detail-heading > span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.vip-level-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    width: max-content;
+    max-width: 100%;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1479ff;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.vip-level-chip.member,
+.vip-level-chip.normal {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1479ff;
+}
+
+.vip-level-chip.silver {
+    border-color: #cbd5e1;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #475569;
+}
+
+.vip-level-chip.gold {
+    border-color: #fed7aa;
+    background: #fff7ed;
+    color: #d97706;
+}
+
+.vip-level-chip.diamond {
+    border-color: #c4b5fd;
+    background: linear-gradient(135deg, #eef6ff, #f5f0ff);
+    color: #7c3aed;
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) {
+    position: relative;
+    overflow: hidden;
+}
+
+.vip-detail-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: #0d8bff;
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: #1479ff;
+}
+
+.vip-detail-card.member::before,
+.vip-detail-card.normal::before {
+    background: linear-gradient(90deg, #1479ff, #38bdf8);
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.member) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.normal) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.thành) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.viên) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before {
+    background: linear-gradient(90deg, #1479ff, #38bdf8);
+}
+
+.vip-detail-card.member .detail-card-title i,
+.vip-detail-card.normal .detail-card-title i {
+    color: #1479ff;
+}
+
+.vip-detail-card.silver::before {
+    background: linear-gradient(90deg, #64748b, #cbd5e1, #f8fafc, #94a3b8);
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.silver) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.bạc) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before {
+    background: linear-gradient(90deg, #64748b, #cbd5e1, #f8fafc, #94a3b8);
+}
+
+.vip-detail-card.silver .detail-card-title i {
+    color: #64748b;
+}
+
+.vip-detail-card.gold::before {
+    background: linear-gradient(90deg, #f59e0b, #16a34a);
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.gold) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.vàng) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before {
+    background: linear-gradient(90deg, #f59e0b, #16a34a);
+}
+
+.vip-detail-card.gold .detail-card-title i {
+    color: #d97706;
+}
+
+.vip-detail-card.diamond::before {
+    background: linear-gradient(90deg, #0ea5ff, #8b5cf6);
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown)::before {
+    background: linear-gradient(90deg, #0ea5ff, #8b5cf6);
+}
+
+.vip-detail-card.diamond .detail-card-title i {
+    color: #7c3aed;
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4 {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0;
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4 i {
+    font-size: 14px;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.member) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.normal) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.thành) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.viên) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before {
+    content: "\f007";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.silver) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.bạc) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before {
+    content: "\f5a2";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card) .detail-card-title h4 i.fa-crown::before {
+    content: "\f3a5";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.member) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.normal) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.thành) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.viên) .detail-card:not(.vip-detail-card) .detail-card-title h4 i {
+    color: #1479ff;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.silver) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.bạc) .detail-card:not(.vip-detail-card) .detail-card-title h4 i {
+    color: #64748b;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.gold) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.vàng) .detail-card:not(.vip-detail-card) .detail-card-title h4 i {
+    color: #d97706;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card) .detail-card-title h4 i,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card) .detail-card-title h4 i {
+    color: #7c3aed;
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after {
+    font-size: 13px;
+    font-weight: 800;
+    color: #10233f;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.member) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.normal) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.thành) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.viên) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after {
+    content: "Hạng khách hàng: Thành viên";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.silver) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.bạc) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after {
+    content: "Hạng khách hàng: Bạc";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.gold) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.vàng) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after {
+    content: "Hạng khách hàng: Vàng";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .detail-card-title h4::after {
+    content: "Hạng khách hàng: Kim Cương";
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .progress-title span:first-child {
+    font-size: 0;
+}
+
+.customer-detail-panel .detail-card:not(.vip-detail-card):has(.detail-card-title h4 i.fa-crown) .progress-title span:first-child::after {
+    font-size: 12px;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.member) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.normal) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.thành) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.viên) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after {
+    content: "Tiến độ lên Bạc";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.silver) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.bạc) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after {
+    content: "Tiến độ lên Vàng";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.gold) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.vàng) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after {
+    content: "Tiến độ lên Kim Cương";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card) .progress-title span:first-child::after {
+    content: "Đã đạt hạng cao nhất";
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card) .progress-title span:last-child,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card) .progress-title span:last-child,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card) .progress-title span:last-child {
+    font-size: 0;
+}
+
+.customer-detail-panel:has(.detail-profile .vip-badge.diamond) .detail-card:not(.vip-detail-card) .progress-title span:last-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.kim) .detail-card:not(.vip-detail-card) .progress-title span:last-child::after,
+.customer-detail-panel:has(.detail-profile .vip-badge.cương) .detail-card:not(.vip-detail-card) .progress-title span:last-child::after {
+    content: "Đang hưởng ưu đãi cao nhất";
+    font-size: 12px;
+}
+
+.vip-benefit-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eaf8ef;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
 .progress-title {
     display: flex;
     justify-content: space-between;
@@ -662,6 +1037,95 @@
         line-height: 18px;
         border-radius: 999px;
     }
+
+.vip-tier-track {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.vip-tier-chip {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.vip-tier-chip.current {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    box-shadow: inset 3px 0 0 #1479ff;
+}
+
+.vip-tier-chip.member.current {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    box-shadow: inset 3px 0 0 #1479ff;
+}
+
+.vip-tier-chip.silver.current {
+    border-color: #cbd5e1;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 42%, #eef2f7 100%);
+    box-shadow: inset 3px 0 0 #64748b, 0 1px 2px rgba(71, 85, 105, .08);
+}
+
+.vip-tier-chip.reached:not(.current) {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.vip-tier-chip.locked {
+    opacity: .66;
+}
+
+.vip-tier-chip i {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: #e8f4ff;
+    color: #1479ff;
+}
+
+.vip-tier-chip.member i {
+    background: #e8f4ff;
+    color: #1479ff;
+}
+
+.vip-tier-chip.silver i {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #64748b;
+    border: 1px solid #d7dee8;
+}
+
+.vip-tier-chip.gold i {
+    color: #d97706;
+}
+
+.vip-tier-chip.diamond i {
+    color: #7c3aed;
+}
+
+.vip-tier-chip strong,
+.vip-tier-chip span {
+    display: block;
+}
+
+.vip-tier-chip strong {
+    color: #10233f;
+    font-size: 13px;
+}
+
+.vip-tier-chip span {
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 12px;
+}
 
 .vehicle-list {
     margin-top: 4px;

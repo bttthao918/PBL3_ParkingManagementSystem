@@ -19,11 +19,13 @@ namespace ParkingManagement.Web.Extensions
         {
             // 1. DbContext
             services.AddDbContext<AppDbContext>(options =>
+            {
                 options.UseSqlServer(
                     configuration.GetConnectionString("DefaultConnection"),
                     sql => sql.MigrationsAssembly("BackendAPI")
-                )
-            );
+                );
+                options.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+            });
             services.Configure<PayOsOptions>(configuration.GetSection("PayOS"));
 
             // 2. Repositories (DAL)

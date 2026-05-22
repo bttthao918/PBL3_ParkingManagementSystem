@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Constants;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Interfaces;
@@ -468,41 +469,26 @@ namespace ParkingManagement.BLL.Services.Implementations
                     ticketsById,
                     monthlyTicketsById);
 
-                var vipCustomerIds = periodTicketCounts
-                    .Where(x => x.Value > 20 || activeMonthlyCustomerIds.Contains(x.Key))
-                    .Select(x => x.Key)
+                var lifetimeSpendingByCustomer = BuildLifetimeSpendingByCustomer(
+                    payments.Where(p => IsSuccessfulPaymentStatus(p.Status)).ToList(),
+                    tickets,
+                    monthlyTickets,
+                    ticketsById,
+                    monthlyTicketsById);
+
+                var accountCustomerIds = periodTicketCounts.Keys
                     .Concat(activeMonthlyCustomerIds)
                     .Where(customersById.ContainsKey)
                     .Distinct()
-                    .ToHashSet();
+                    .ToList();
 
-                var regularCustomers = periodTicketCounts.Count(x => x.Value >= 2 && !vipCustomerIds.Contains(x.Key));
-                var oneTimeCustomers = periodTicketCounts.Count(x => x.Value == 1 && !vipCustomerIds.Contains(x.Key));
                 var walkInTickets = periodTickets.Count(t => string.IsNullOrWhiteSpace(t.CustomerId));
                 var returningCustomers = periodTicketCounts.Count(x => x.Value >= 2);
-                var groupTotal = Math.Max(0, walkInTickets + oneTimeCustomers + regularCustomers + vipCustomerIds.Count);
+                var vipTierCounts = BuildVipTierCounts(accountCustomerIds, customersById, lifetimeSpendingByCustomer);
 
-                var groupBreakdown = new List<CustomerBreakdownDto>
-                {
-                    new()
-                    {
-                        Label = "Khách vãng lai",
-                        Count = walkInTickets + oneTimeCustomers,
-                        Percentage = Percentage(walkInTickets + oneTimeCustomers, groupTotal)
-                    },
-                    new()
-                    {
-                        Label = "Khách thân thiết",
-                        Count = regularCustomers,
-                        Percentage = Percentage(regularCustomers, groupTotal)
-                    },
-                    new()
-                    {
-                        Label = "Khách VIP",
-                        Count = vipCustomerIds.Count,
-                        Percentage = Percentage(vipCustomerIds.Count, groupTotal)
-                    }
-                };
+                var regularCustomers = vipTierCounts.GetValueOrDefault(VipHelper.MEMBER);
+                var vipCustomers = accountCustomerIds.Count - regularCustomers;
+                var groupBreakdown = BuildCustomerGroupBreakdown(walkInTickets, vipTierCounts);
 
                 var topCustomers = periodTicketCounts
                     .Where(x => customersById.ContainsKey(x.Key))
@@ -577,8 +563,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     ActiveMonthlyTickets = activeMonthlyTickets.Count,
                     ExpiredMonthlyTickets = expiredMonthlyTickets.Count,
                     RegularCustomers = regularCustomers,
-                    VIPCustomers = vipCustomerIds.Count,
-                    OneTimeCustomers = oneTimeCustomers + walkInTickets,
+                    VIPCustomers = vipCustomers,
+                    OneTimeCustomers = walkInTickets,
                     WalkInTickets = walkInTickets,
                     ReturningCustomers = returningCustomers,
                     NewCustomerTrend = currentTrend,
@@ -700,6 +686,120 @@ namespace ParkingManagement.BLL.Services.Implementations
             return spendingByCustomer;
         }
 
+        private static Dictionary<string, decimal> BuildLifetimeSpendingByCustomer(
+            List<Payment> successfulPayments,
+            List<Ticket> tickets,
+            List<MonthlyTicket> monthlyTickets,
+            Dictionary<string, Ticket> ticketsById,
+            Dictionary<string, MonthlyTicket> monthlyTicketsById)
+        {
+            var spendingByCustomer = new Dictionary<string, decimal>();
+            var paidTicketIds = new HashSet<string>();
+            var paidMonthlyTicketIds = new HashSet<string>();
+
+            foreach (var payment in successfulPayments)
+            {
+                string? customerId = null;
+
+                if (!string.IsNullOrWhiteSpace(payment.TicketId)
+                    && ticketsById.TryGetValue(payment.TicketId, out var ticket))
+                {
+                    customerId = ticket.CustomerId;
+                    paidTicketIds.Add(payment.TicketId);
+                }
+                else if (!string.IsNullOrWhiteSpace(payment.MonthlyTicketId)
+                    && monthlyTicketsById.TryGetValue(payment.MonthlyTicketId, out var monthlyTicket))
+                {
+                    customerId = monthlyTicket.CustomerId;
+                    paidMonthlyTicketIds.Add(payment.MonthlyTicketId);
+                }
+
+                if (!string.IsNullOrWhiteSpace(customerId))
+                {
+                    spendingByCustomer[customerId] = spendingByCustomer.GetValueOrDefault(customerId) + payment.Amount;
+                }
+            }
+
+            foreach (var ticket in tickets)
+            {
+                if (string.IsNullOrWhiteSpace(ticket.CustomerId)
+                    || paidTicketIds.Contains(ticket.TicketId)
+                    || !IsPaidSingleTicketForVip(ticket))
+                {
+                    continue;
+                }
+
+                spendingByCustomer[ticket.CustomerId] = spendingByCustomer.GetValueOrDefault(ticket.CustomerId) + ticket.Fee;
+            }
+
+            foreach (var monthlyTicket in monthlyTickets)
+            {
+                if (string.IsNullOrWhiteSpace(monthlyTicket.CustomerId)
+                    || paidMonthlyTicketIds.Contains(monthlyTicket.MonthlyTicketId)
+                    || !IsPaidMonthlyTicketForVip(monthlyTicket))
+                {
+                    continue;
+                }
+
+                spendingByCustomer[monthlyTicket.CustomerId] =
+                    spendingByCustomer.GetValueOrDefault(monthlyTicket.CustomerId) + monthlyTicket.TotalFee;
+            }
+
+            return spendingByCustomer;
+        }
+
+        private static Dictionary<string, int> BuildVipTierCounts(
+            IEnumerable<string> customerIds,
+            Dictionary<string, Customer> customersById,
+            Dictionary<string, decimal> lifetimeSpendingByCustomer)
+        {
+            var tierCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+            {
+                [VipHelper.MEMBER] = 0,
+                [VipHelper.SILVER] = 0,
+                [VipHelper.GOLD] = 0,
+                [VipHelper.PLATINUM] = 0
+            };
+
+            foreach (var customerId in customerIds)
+            {
+                if (!customersById.TryGetValue(customerId, out var customer))
+                {
+                    continue;
+                }
+
+                var actualSpent = Math.Max(customer.TotalSpent, lifetimeSpendingByCustomer.GetValueOrDefault(customer.CustomerId));
+                var vipLevel = VipHelper.DetermineVipLevel(actualSpent);
+                tierCounts[vipLevel] = tierCounts.GetValueOrDefault(vipLevel) + 1;
+            }
+
+            return tierCounts;
+        }
+
+        private static List<CustomerBreakdownDto> BuildCustomerGroupBreakdown(
+            int walkInTickets,
+            Dictionary<string, int> vipTierCounts)
+        {
+            var total = walkInTickets + vipTierCounts.Values.Sum();
+            var breakdown = new List<(string Label, int Count)>
+            {
+                ("Khách vãng lai", walkInTickets),
+                (VipHelper.MEMBER, vipTierCounts.GetValueOrDefault(VipHelper.MEMBER)),
+                (VipHelper.SILVER, vipTierCounts.GetValueOrDefault(VipHelper.SILVER)),
+                (VipHelper.GOLD, vipTierCounts.GetValueOrDefault(VipHelper.GOLD)),
+                (VipHelper.PLATINUM, vipTierCounts.GetValueOrDefault(VipHelper.PLATINUM))
+            };
+
+            return breakdown
+                .Select(x => new CustomerBreakdownDto
+                {
+                    Label = x.Label,
+                    Count = x.Count,
+                    Percentage = Percentage(x.Count, total)
+                })
+                .ToList();
+        }
+
         private static List<CustomerBreakdownDto> BuildAreaBreakdown(
             List<Ticket> periodTickets,
             Dictionary<string, string> slotAreaById)
@@ -768,6 +868,25 @@ namespace ParkingManagement.BLL.Services.Implementations
                 .ToList();
         }
 
+        private static bool IsPaidSingleTicketForVip(Ticket ticket)
+        {
+            if (ticket.Fee <= 0)
+            {
+                return false;
+            }
+
+            var status = ticket.Status?.Trim();
+            return string.Equals(status, "Đã ra", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, "Completed", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, "Paid", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsPaidMonthlyTicketForVip(MonthlyTicket monthlyTicket)
+        {
+            return monthlyTicket.TotalFee > 0
+                && !IsPendingMonthlyTicketStatus(monthlyTicket.Status);
+        }
+
         private static bool IsActiveMonthlyTicket(MonthlyTicket monthlyTicket, DateTime today)
         {
             return monthlyTicket.EndDate.Date >= today
@@ -805,6 +924,19 @@ namespace ParkingManagement.BLL.Services.Implementations
                 || normalized.Contains("huỷ")
                 || normalized.Contains("huy")
                 || normalized.Contains("cancel");
+        }
+
+        private static bool IsPendingMonthlyTicketStatus(string? status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+            {
+                return false;
+            }
+
+            var normalized = status.Trim().ToLowerInvariant();
+            return normalized.Contains("chờ")
+                || normalized.Contains("cho")
+                || normalized.Contains("pending");
         }
 
         private static decimal CalculateChangePercentage(int current, int previous)

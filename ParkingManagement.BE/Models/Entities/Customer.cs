@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ParkingManagement.DAL.Models
@@ -26,6 +26,15 @@ namespace ParkingManagement.DAL.Models
 
         public bool IsDeleted { get; set; } = false;
 
+        [MaxLength(20)]
+        public string VipLevel { get; set; } = "Thành viên";
+
+        [Column(TypeName = "decimal(18,0)")]
+        public decimal TotalSpent { get; set; } = 0;
+
+        public int TotalTickets { get; set; } = 0;
+
+        public DateTime MemberSince { get; set; } = DateTime.Now;
         // Navigation
         [ForeignKey("AccountId")]
         public Account Account { get; set; } = null!;

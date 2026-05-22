@@ -8,6 +8,12 @@ namespace ParkingManagement.FE.Models
         public string? PhoneNumber { get; set; }
         public string? Gender { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? VipLevel { get; set; }
+        public int? DiscountPercent { get; set; }
+        public int? VipProgress { get; set; }
+        public decimal? AmountToNextLevel { get; set; }
+        public decimal TotalSpent { get; set; }
+        public int TotalTickets { get; set; }
     }
 
     public class EmployeeCustomerSearchFilterDto
@@ -34,6 +40,7 @@ namespace ParkingManagement.FE.Models
         public string? MainVehicleType { get; set; }
         public int VehicleCount { get; set; }
         public string? VipLevel { get; set; }
+        public bool IsParking { get; set; }
     }
 
     public class ListEmployeeCustomerSearchDto
@@ -43,6 +50,9 @@ namespace ParkingManagement.FE.Models
         public int PageSize { get; set; }
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
+        public int ActiveCustomers { get; set; }
+        public int VipCustomers { get; set; }
+        public int NewCustomers { get; set; }
     }
 
     public class EmployeeCustomerDetailDto

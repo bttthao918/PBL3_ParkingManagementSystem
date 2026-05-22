@@ -48,6 +48,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                 await TrySyncPayOsPaymentAsync(ticket);
             }
 
+            var customer = await _customerRepo.GetByIdAsync(customerId);
+            if (customer != null)
+            {
+                await ReconcileCustomerVipFromMonthlyTicketsAsync(customer, list);
+            }
+
             return list.Select(MapToDto).ToList();
         }
 
@@ -83,7 +89,9 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (customer == null)
                 return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy khách hàng.");
 
-            var fee = await CalculateFeeAsync(vehicleType, dto.PackageType);
+            await ReconcileCustomerVipFromMonthlyTicketsAsync(customer);
+
+            var fee = await CalculateFeeAsync(vehicleType, dto.PackageType, customerId);
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
@@ -146,7 +154,9 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             if (!paymentLink.Success || paymentLink.Data == null)
             {
-                return ServiceResult<MonthlyTicketDto>.Fail(paymentLink.Message ?? "Không tạo được QR thanh toán payOS.");
+                return ServiceResult<MonthlyTicketDto>.Fail(
+                    paymentLink.Message
+                    ?? "Không tạo được QR thanh toán PayOS. Vui lòng cấu hình PayOS để thanh toán online.");
             }
 
             try
@@ -220,7 +230,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (string.IsNullOrWhiteSpace(dto.PackageType))
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không được để trống.");
 
-            var fee = await CalculateFeeAsync(ticket.VehicleType, dto.PackageType);
+            var fee = await CalculateFeeAsync(ticket.VehicleType, dto.PackageType, ticket.CustomerId);
             if (fee == 0)
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không hợp lệ.");
 
@@ -235,6 +245,19 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             await _repo.UpdateAsync(ticket);
             await AddPaymentAsync(ticket.MonthlyTicketId, fee, dto.PaymentMethod);
+
+            // Update VIP progress
+            if (ticket.CustomerId != null)
+            {
+                var customer = await _customerRepo.GetByIdAsync(ticket.CustomerId);
+                if (customer != null)
+                {
+                    customer.TotalSpent += fee;
+                    customer.TotalTickets += 1;
+                    customer.VipLevel = ParkingManagement.BLL.Helpers.VipHelper.DetermineVipLevel(customer.TotalSpent);
+                    await _customerRepo.UpdateAsync(customer);
+                }
+            }
 
             return ServiceResult<MonthlyTicketDto>.Ok(MapToDto(ticket), "Gia hạn vé tháng thành công!");
         }
@@ -282,6 +305,19 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             await _repo.UpdateAsync(ticket);
             await _paymentRepo.UpdateAsync(payment);
+
+            // Update VIP progress
+            if (ticket.CustomerId != null)
+            {
+                var customer = await _customerRepo.GetByIdAsync(ticket.CustomerId);
+                if (customer != null)
+                {
+                    customer.TotalSpent += payment.Amount;
+                    customer.TotalTickets += 1; // Assuming buying a monthly ticket counts as a ticket interaction
+                    customer.VipLevel = ParkingManagement.BLL.Helpers.VipHelper.DetermineVipLevel(customer.TotalSpent);
+                    await _customerRepo.UpdateAsync(customer);
+                }
+            }
 
             return ServiceResult<string>.Ok(ticket.MonthlyTicketId, "Đã kích hoạt vé tháng sau khi payOS xác nhận thanh toán.");
         }
@@ -401,7 +437,9 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             if (!paymentLink.Success || paymentLink.Data == null)
             {
-                return ServiceResult<MonthlyTicketDto>.Fail(paymentLink.Message ?? "Không tạo lại được QR thanh toán payOS.");
+                return ServiceResult<MonthlyTicketDto>.Fail(
+                    paymentLink.Message
+                    ?? "Không tạo lại được QR thanh toán PayOS. Vui lòng cấu hình PayOS để thanh toán online.");
             }
 
             await AddPendingPaymentAsync(ticket.MonthlyTicketId, ticket.TotalFee, PaymentMethods.BANK_TRANSFER, orderCode);
@@ -421,12 +459,77 @@ namespace ParkingManagement.BLL.Services.Implementations
             return list.Select(MapToDto).ToList();
         }
 
-        public async Task<decimal> CalculateFeeAsync(string vehicleType, string packageType)
+        public async Task<decimal> CalculateFeeAsync(string vehicleType, string packageType, string? customerId = null)
         {
             var months = GetPackageMonths(packageType);
-            return months == 0
+            var totalFee = months == 0
                 ? 0m
                 : await _pricingService.GetMonthlyTicketPriceAsync(vehicleType, months);
+
+            if (customerId != null && totalFee > 0)
+            {
+                var customer = await _customerRepo.GetByIdAsync(customerId);
+                if (customer != null)
+                {
+                    await ReconcileCustomerVipFromMonthlyTicketsAsync(customer);
+                }
+
+                if (customer != null && customer.VipLevel != ParkingManagement.BLL.Helpers.VipHelper.MEMBER)
+                {
+                    var discountPercent = ParkingManagement.BLL.Helpers.VipHelper.GetVipDiscountPercent(customer.VipLevel);
+                    if (discountPercent > 0)
+                    {
+                        totalFee = totalFee - (totalFee * discountPercent / 100);
+                    }
+                }
+            }
+
+            return totalFee;
+        }
+
+        private async Task ReconcileCustomerVipFromMonthlyTicketsAsync(Customer customer)
+        {
+            var monthlyTickets = await _repo.GetByCustomerIdAsync(customer.CustomerId);
+            await ReconcileCustomerVipFromMonthlyTicketsAsync(customer, monthlyTickets);
+        }
+
+        private async Task ReconcileCustomerVipFromMonthlyTicketsAsync(Customer customer, IEnumerable<MonthlyTicket> monthlyTickets)
+        {
+            var paidMonthlyTickets = monthlyTickets
+                .Where(IsPaidMonthlyTicketForVip)
+                .ToList();
+            var actualSpent = Math.Max(customer.TotalSpent, paidMonthlyTickets.Sum(ticket => ticket.TotalFee));
+            var actualTickets = Math.Max(customer.TotalTickets, paidMonthlyTickets.Count);
+            var actualVipLevel = ParkingManagement.BLL.Helpers.VipHelper.DetermineVipLevel(actualSpent);
+
+            if (customer.TotalSpent == actualSpent &&
+                customer.TotalTickets == actualTickets &&
+                string.Equals(customer.VipLevel, actualVipLevel, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            customer.TotalSpent = actualSpent;
+            customer.TotalTickets = actualTickets;
+            customer.VipLevel = actualVipLevel;
+
+            await _customerRepo.UpdateAsync(customer);
+        }
+
+        private static bool IsPaidMonthlyTicketForVip(MonthlyTicket ticket)
+        {
+            if (ticket.TotalFee <= 0)
+            {
+                return false;
+            }
+
+            var status = ticket.Status?.Trim();
+            return MonthlyTicketStatuses.IsActive(status)
+                || string.Equals(status, MonthlyTicketStatuses.EXPIRED, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, MonthlyTicketStatuses.CANCELLED, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, "Expired", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, "Canceled", StringComparison.OrdinalIgnoreCase);
         }
 
         private async Task AddPaymentAsync(string monthlyTicketId, decimal fee, string? paymentMethod)

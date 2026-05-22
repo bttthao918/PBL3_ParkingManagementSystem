@@ -132,10 +132,54 @@
     <p>Đăng ký, gia hạn hoặc hủy vé tháng một cách dễ dàng và nhanh chóng.</p>
 </div>
 
+<section class="card monthly-vip-card">
+    <div class="monthly-vip-main">
+        <div class="monthly-vip-icon">
+            <i class="fa-solid fa-gem"></i>
+        </div>
+        <div>
+            <span>Hạng khách hàng</span>
+            <h3>@Model.VipLevel</h3>
+            <p>Tổng tích lũy @Model.TotalSpent.ToString("N0") đ từ vé tháng và các thanh toán đã ghi nhận.</p>
+        </div>
+    </div>
+
+    <div class="monthly-vip-stats">
+        <div>
+            <span>Ưu đãi vé tháng</span>
+            <strong>@Model.DiscountPercent%</strong>
+        </div>
+        <div>
+            <span>Tiến độ hạng</span>
+            <strong>@Model.VipProgress%</strong>
+        </div>
+        <div>
+            <span>Còn thiếu</span>
+            <strong>@(Model.AmountToNextLevel.HasValue ? $"{Model.AmountToNextLevel.Value:N0} đ" : "Tối đa")</strong>
+        </div>
+    </div>
+</section>
+
 <div class="monthly-grid">
     <div class="card monthly-plan-section">
-        <div class="monthly-pricing-table" data-pricing-table>
-            <h3>1. Chọn gói vé phù hợp</h3>
+        <div class="monthly-pricing-table pricing-card-table" data-pricing-table>
+            <div class="customer-pricing-heading">
+                <div class="pricing-heading-copy">
+                    <div class="pricing-heading-icon">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <div>
+                        <span>1. Bảng giá vé tháng</span>
+                        <h3>Chọn gói vé phù hợp</h3>
+                        <p>Giá lấy trực tiếp từ bảng giá quản trị, đã áp dụng ưu đãi theo hạng khách hàng.</p>
+                    </div>
+                </div>
+
+                <div class="pricing-rank-pill">
+                    <i class="fa-solid fa-gem"></i>
+                    @Model.VipLevel - giảm @Model.DiscountPercent%
+                </div>
+            </div>
 
             <div class="duration-tabs" role="tablist" aria-label="Thời hạn vé tháng">
                 <button type="button" class="duration-tab active" data-duration-tab="1">1 tháng</button>
@@ -151,8 +195,12 @@
                         var monthlyPrice = duration > 0 ? Math.Round(plan.Price / duration) : plan.Price;
                         var monthlySaving = Math.Max(0, plan.OneMonthPrice - monthlyPrice);
 
-                        <article class="pricing-plan-card @(plan.IsSelected ? "selected" : "")" onclick="selectPricingCard(this)">
-                            <div class="popular-badge @(plan.IsSelected ? "" : "hidden")">Phổ biến</div>
+                        <article class="pricing-plan-card @plan.IconClass @(plan.IsSelected ? "selected" : "")" onclick="selectPricingCard(this)">
+                            <div class="popular-badge @(plan.IsSelected ? "" : "hidden")">
+                                <i class="fa-solid fa-star"></i>
+                                Phổ biến
+                            </div>
+
                             <div class="pricing-plan-header">
                                 <div class="pricing-icon @plan.IconClass">
                                     <i class="@plan.Icon"></i>
@@ -164,12 +212,23 @@
                             </div>
 
                             <div class="pricing-price-row">
+                                @if (plan.VipDiscountAmount > 0)
+                                {
+                                    <div class="pricing-vip-discount">
+                                        <i class="fa-solid fa-gem"></i>
+                                        Ưu đãi @Model.VipLevel giảm @plan.VipDiscountAmount.ToString("N0") đ
+                                    </div>
+                                    <div class="pricing-original-price">@plan.OriginalPrice.ToString("N0") đ</div>
+                                }
+
                                 <div class="pricing-main-price">@monthlyPrice.ToString("N0") đ</div>
-                                <div class="pricing-unit">/ tháng@(duration > 1 ? $" × {duration} tháng" : "")</div>
+                                <div class="pricing-unit">/ tháng@(duration > 1 ? $" x {duration} tháng" : "")</div>
+
                                 @if (duration > 1 && monthlySaving > 0)
                                 {
                                     <div class="pricing-monthly-saving">Tiết kiệm @monthlySaving.ToString("N0") đ/tháng so với mua lẻ</div>
                                 }
+
                                 @if (duration > 1)
                                 {
                                     <div class="pricing-total">Tổng thanh toán: <strong>@plan.Price.ToString("N0") đ</strong></div>
@@ -187,6 +246,7 @@
                             <button type="button"
                                     class="pricing-register-btn @(plan.IsSelected ? "primary" : "outline")"
                                     onclick="event.stopPropagation(); openRegisterModal('@plan.VehicleType', '@plan.PackageType')">
+                                <i class="fa-solid fa-qrcode"></i>
                                 Đăng ký ngay
                             </button>
                         </article>
@@ -209,6 +269,78 @@
                     </p>
                 }
             }
+
+            <div class="note-box pricing-data-note">
+                <i class="fa-solid fa-circle-info"></i>
+                Giá trên lấy trực tiếp từ bảng giá quản trị và đã bao gồm VAT
+            </div>
+        </div>
+
+        <div class="monthly-pricing-table pricing-vehicle-summary" aria-hidden="true">
+            <div class="pricing-overview-header">
+                <div>
+                    <span>1. Bảng giá vé tháng</span>
+                    <h3>Chọn loại xe và thời hạn</h3>
+                    <p>Giá lấy từ bảng giá quản trị, đã áp dụng ưu đãi theo hạng khách hàng.</p>
+                </div>
+
+                <strong>@Model.VipLevel - giảm @Model.DiscountPercent%</strong>
+            </div>
+
+            <div class="pricing-vehicle-grid">
+                @foreach (var group in Model.Plans.GroupBy(plan => plan.VehicleType))
+                {
+                    var firstPlan = group.OrderBy(plan => plan.Months).First();
+                    var oneMonthPlan = group.FirstOrDefault(plan => plan.Months == 1) ?? firstPlan;
+
+                    <article class="pricing-vehicle-card @firstPlan.IconClass">
+                        <div class="pricing-vehicle-header">
+                            <div class="pricing-vehicle-icon @firstPlan.IconClass">
+                                <i class="@firstPlan.Icon"></i>
+                            </div>
+                            <div>
+                                <h4>@firstPlan.Name</h4>
+                                <p>@firstPlan.SubTitle</p>
+                            </div>
+                        </div>
+
+                        <div class="pricing-vehicle-price">
+                            <span>Từ</span>
+                            <strong>@oneMonthPlan.Price.ToString("N0") đ</strong>
+                            <small>/ tháng</small>
+                        </div>
+
+                        <div class="pricing-package-list">
+                            @foreach (var plan in group.OrderBy(plan => plan.Months))
+                            {
+                                var monthlyPrice = plan.Months > 0 ? Math.Round(plan.Price / plan.Months) : plan.Price;
+                                var saving = Math.Max(0, (plan.OneMonthPrice * plan.Months) - plan.Price);
+
+                                <div class="pricing-package-row">
+                                    <div class="pricing-package-copy">
+                                        <b>@plan.PackageType</b>
+                                        <span>@monthlyPrice.ToString("N0") đ/tháng</span>
+                                        @if (plan.VipDiscountAmount > 0)
+                                        {
+                                            <em>VIP giảm @plan.VipDiscountAmount.ToString("N0") đ</em>
+                                        }
+                                        else if (saving > 0)
+                                        {
+                                            <em>Tiết kiệm @saving.ToString("N0") đ</em>
+                                        }
+                                    </div>
+                                    <div class="pricing-package-action">
+                                        <strong>@plan.Price.ToString("N0") đ</strong>
+                                        <button type="button" onclick="openRegisterModal('@plan.VehicleType', '@plan.PackageType')">
+                                            Đăng ký
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
 
             <div class="note-box pricing-data-note">
                 <i class="fa-solid fa-circle-info"></i>

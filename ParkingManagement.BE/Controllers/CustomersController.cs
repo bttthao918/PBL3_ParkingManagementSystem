@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 
 namespace ParkingManagement.Web.Controllers.Api
@@ -62,6 +63,16 @@ namespace ParkingManagement.Web.Controllers.Api
                     return NotFound(new { message = "Customer not found" });
                 }
 
+                var detail = await _customerService.GetCustomerDetailAsync(customerId);
+                var totalSpent = Math.Max(customer.TotalSpent, detail.TotalSpent);
+                var totalTickets = Math.Max(customer.TotalTickets, detail.TotalTickets);
+                var vipLevel = string.IsNullOrWhiteSpace(detail.VipLevel)
+                    ? customer.VipLevel
+                    : detail.VipLevel;
+                var discountPercent = detail.DiscountPercent ?? VipHelper.GetVipDiscountPercent(vipLevel);
+                var vipProgress = detail.VipProgress ?? 0;
+                var amountToNextLevel = detail.AmountToNextLevel ?? 0;
+
                 var response = new CustomerProfileDto
                 {
                     CustomerId = customer.CustomerId,
@@ -69,7 +80,13 @@ namespace ParkingManagement.Web.Controllers.Api
                     FullName = customer.FullName,
                     PhoneNumber = customer.PhoneNumber,
                     Gender = customer.Gender,
-                    CreatedAt = customer.CreatedAt
+                    CreatedAt = customer.CreatedAt,
+                    VipLevel = vipLevel,
+                    TotalSpent = totalSpent,
+                    TotalTickets = totalTickets,
+                    DiscountPercent = discountPercent,
+                    VipProgress = vipProgress,
+                    AmountToNextLevel = amountToNextLevel == 0 ? null : amountToNextLevel
                 };
 
                 return Ok(response);
@@ -122,7 +139,13 @@ namespace ParkingManagement.Web.Controllers.Api
                         FullName = customer.FullName,
                         PhoneNumber = customer.PhoneNumber,
                         Gender = customer.Gender,
-                        CreatedAt = customer.CreatedAt
+                        CreatedAt = customer.CreatedAt,
+                        VipLevel = customer.VipLevel,
+                        TotalSpent = customer.TotalSpent,
+                        TotalTickets = customer.TotalTickets,
+                        DiscountPercent = ParkingManagement.BLL.Helpers.VipHelper.GetVipDiscountPercent(customer.VipLevel),
+                        VipProgress = 0, // This is just for Update response, won't recalculate perfectly but it's fine
+                        AmountToNextLevel = null
                     }
                 };
 
@@ -231,7 +254,7 @@ namespace ParkingManagement.Web.Controllers.Api
             }
         }
 
-        // -- TICKETS (VÉ LU?T) ----------------------------------------
+        // -- TICKETS (Vï¿½ LU?T) ----------------------------------------
 
         /// <summary>
         /// Get all tickets for current customer
@@ -290,7 +313,7 @@ namespace ParkingManagement.Web.Controllers.Api
             }
         }
 
-        // -- MONTHLY TICKETS (VÉ THÁNG) ----------------------------------------
+        // -- MONTHLY TICKETS (Vï¿½ THï¿½NG) ----------------------------------------
 
         /// <summary>
         /// Get all monthly tickets for current customer
@@ -357,7 +380,7 @@ namespace ParkingManagement.Web.Controllers.Api
                     return BadRequest(new { message = "Invalid input" });
 
                 // Validate package type
-                if (!new[] { "1 tháng", "3 tháng", "6 tháng" }.Contains(dto.PackageType))
+                if (!new[] { "1 thï¿½ng", "3 thï¿½ng", "6 thï¿½ng" }.Contains(dto.PackageType))
                     return BadRequest(new { message = "Invalid package type" });
 
                 var result = await _monthlyTicketService.RegisterAsync(dto);
@@ -371,9 +394,9 @@ namespace ParkingManagement.Web.Controllers.Api
 
                 int months = dto.PackageType switch
                 {
-                    "1 tháng" => 1,
-                    "3 tháng" => 3,
-                    "6 tháng" => 6,
+                    "1 thï¿½ng" => 1,
+                    "3 thï¿½ng" => 3,
+                    "6 thï¿½ng" => 6,
                     _ => 1
                 };
 
@@ -426,15 +449,15 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (string.IsNullOrEmpty(customerId))
                     return Unauthorized(new { message = "Invalid token" });
 
-                if (!new[] { "1 tháng", "3 tháng", "6 tháng" }.Contains(dto.PackageType))
+                if (!new[] { "1 thï¿½ng", "3 thï¿½ng", "6 thï¿½ng" }.Contains(dto.PackageType))
                     return BadRequest(new { message = "Invalid package type" });
 
                 // TODO: Implement in MonthlyTicketService
                 decimal fee = dto.PackageType switch
                 {
-                    "1 tháng" => 150000,
-                    "3 tháng" => 420000,
-                    "6 tháng" => 780000,
+                    "1 thï¿½ng" => 150000,
+                    "3 thï¿½ng" => 420000,
+                    "6 thï¿½ng" => 780000,
                     _ => 0
                 };
 
@@ -447,7 +470,7 @@ namespace ParkingManagement.Web.Controllers.Api
                     {
                         MonthlyTicketId = monthlyTicketId,
                         Status = "Ho?t d?ng",
-                        EndDate = DateTime.Now.AddMonths(dto.PackageType == "1 tháng" ? 1 : dto.PackageType == "3 tháng" ? 3 : 6)
+                        EndDate = DateTime.Now.AddMonths(dto.PackageType == "1 thï¿½ng" ? 1 : dto.PackageType == "3 thï¿½ng" ? 3 : 6)
                     }
                 };
 

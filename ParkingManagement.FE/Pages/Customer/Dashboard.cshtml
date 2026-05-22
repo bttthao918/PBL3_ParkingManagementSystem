@@ -6,6 +6,131 @@
     ViewData["Role"] = "Khách hàng";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="/css/customer/dashboard.css" asp-append-version="true" />
+}
+
+@functions {
+    private const decimal SilverThreshold = 2_000_000m;
+    private const decimal GoldThreshold = 5_000_000m;
+    private const decimal DiamondThreshold = 10_000_000m;
+
+    private static readonly IReadOnlyList<VipTierItem> VipTiers = new List<VipTierItem>
+    {
+        new VipTierItem("Thành viên", "member", "fa-user", 0m, "Từ 0 đ", 0),
+        new VipTierItem("Bạc", "silver", "fa-medal", SilverThreshold, "Từ 2.000.000 đ", 5),
+        new VipTierItem("Vàng", "gold", "fa-crown", GoldThreshold, "Từ 5.000.000 đ", 10),
+        new VipTierItem("Kim Cương", "diamond", "fa-gem", DiamondThreshold, "Từ 10.000.000 đ", 15)
+    };
+
+    private static string NormalizeVipLevel(string? vipLevel)
+    {
+        if (string.IsNullOrWhiteSpace(vipLevel))
+        {
+            return "Thành viên";
+        }
+
+        return vipLevel.Trim().ToLowerInvariant() switch
+        {
+            "member" or "normal" or "thanh vien" or "thành viên" => "Thành viên",
+            "silver" or "bac" or "bạc" => "Bạc",
+            "gold" or "vang" or "vàng" => "Vàng",
+            "platinum" or "diamond" or "kim cuong" or "kim cương" => "Kim Cương",
+            _ => vipLevel.Trim()
+        };
+    }
+
+    private static string GetVipCssClass(string? vipLevel)
+        => NormalizeVipLevel(vipLevel) switch
+        {
+            "Bạc" => "silver",
+            "Vàng" => "gold",
+            "Kim Cương" => "diamond",
+            _ => "member"
+        };
+
+    private static string GetVipIcon(string? vipLevel)
+        => NormalizeVipLevel(vipLevel) switch
+        {
+            "Bạc" => "fa-medal",
+            "Vàng" => "fa-crown",
+            "Kim Cương" => "fa-gem",
+            _ => "fa-user"
+        };
+
+    private static string GetVipProgressTitle(string? vipLevel)
+    {
+        return NormalizeVipLevel(vipLevel) switch
+        {
+            "Thành viên" => "Tiến độ lên Bạc",
+            "Bạc" => "Tiến độ lên Vàng",
+            "Vàng" => "Tiến độ lên Kim Cương",
+            _ => "Đã đạt hạng cao nhất"
+        };
+    }
+
+    private static string GetVipProgressCaption(decimal? amountToNextLevel)
+    {
+        if (amountToNextLevel.HasValue && amountToNextLevel.Value > 0)
+        {
+            return $"Còn {amountToNextLevel.Value:N0} đ";
+        }
+
+        return "Đang hưởng ưu đãi cao nhất";
+    }
+
+    private static string GetVipTierState(VipTierItem tier, string? vipLevel, decimal totalSpent)
+    {
+        var currentRank = GetVipRank(vipLevel);
+        var tierRank = GetVipRank(tier.Name);
+
+        if (currentRank == tierRank)
+        {
+            return "current";
+        }
+
+        if (currentRank > tierRank || totalSpent >= tier.Threshold)
+        {
+            return "reached";
+        }
+
+        return "locked";
+    }
+
+    private static int GetVipRank(string? vipLevel)
+    {
+        return NormalizeVipLevel(vipLevel) switch
+        {
+            "Bạc" => 1,
+            "Vàng" => 2,
+            "Kim Cương" => 3,
+            _ => 0
+        };
+    }
+
+    private sealed class VipTierItem
+    {
+        public VipTierItem(string name, string cssClass, string icon, decimal threshold, string thresholdLabel, int discountPercent)
+        {
+            Name = name;
+            CssClass = cssClass;
+            Icon = icon;
+            Threshold = threshold;
+            ThresholdLabel = thresholdLabel;
+            DiscountPercent = discountPercent;
+        }
+
+        public string Name { get; }
+        public string CssClass { get; }
+        public string Icon { get; }
+        public decimal Threshold { get; }
+        public string ThresholdLabel { get; }
+        public int DiscountPercent { get; }
+    }
+}
+
+<div class="customer-dashboard">
+
 @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
 {
     <div class="card" style="margin-bottom:16px;border:1px solid #fca5a5;color:#991b1b;background:#fef2f2;">
@@ -13,10 +138,72 @@
     </div>
 }
 
-<div class="card" style="margin-bottom:22px;background:linear-gradient(135deg,#0ea5ff,#005eff);color:white;">
+<div class="card dashboard-welcome-card">
     <h2>Xin chào, @Model.Dashboard.UserName</h2>
     <p style="margin-top:8px;">Dưới đây là tổng quan hoạt động gửi xe của bạn.</p>
 </div>
+
+<section class="vip-dashboard-grid">
+    <div class="card vip-status-card @GetVipCssClass(Model.Dashboard.VipLevel)">
+        <div class="vip-card-header">
+            <div>
+                <span class="vip-eyebrow">Hạng khách hàng</span>
+                <h3>@Model.Dashboard.VipLevel</h3>
+            </div>
+            <span class="vip-badge @GetVipCssClass(Model.Dashboard.VipLevel)">
+                <i class="fa-solid @GetVipIcon(Model.Dashboard.VipLevel)"></i>
+                @Model.Dashboard.VipLevel
+            </span>
+        </div>
+
+        <div class="vip-meter-row">
+            <div>
+                <span>Tổng tích lũy</span>
+                <strong>@Model.Dashboard.TotalSpending.ToString("N0") đ</strong>
+            </div>
+            <div>
+                <span>Ưu đãi phí</span>
+                <strong>@Model.Dashboard.DiscountPercent%</strong>
+            </div>
+            <div>
+                <span>Lượt gửi xe</span>
+                <strong>@Model.Dashboard.TicketTotal</strong>
+            </div>
+        </div>
+
+        <div class="vip-progress-copy">
+            <span>@GetVipProgressTitle(Model.Dashboard.VipLevel)</span>
+            <strong>@GetVipProgressCaption(Model.Dashboard.AmountToNextLevel)</strong>
+        </div>
+        <div class="vip-progress-bar" aria-label="Tiến độ hạng VIP">
+            <div style="width:@Model.Dashboard.VipProgress%"></div>
+        </div>
+    </div>
+
+    <div class="card vip-tier-card">
+        <div class="vip-tier-header">
+            <h3>Quyền lợi theo hạng</h3>
+            <span>@Model.Dashboard.DiscountPercent% hiện tại</span>
+        </div>
+
+        <div class="vip-tier-list">
+            @foreach (var tier in VipTiers)
+            {
+                var tierState = GetVipTierState(tier, Model.Dashboard.VipLevel, Model.Dashboard.TotalSpending);
+                <div class="vip-tier-item @tier.CssClass @tierState">
+                    <div class="vip-tier-icon">
+                        <i class="fa-solid @tier.Icon"></i>
+                    </div>
+                    <div>
+                        <strong>@tier.Name</strong>
+                        <span>@tier.ThresholdLabel</span>
+                    </div>
+                    <b>@tier.DiscountPercent%</b>
+                </div>
+            }
+        </div>
+    </div>
+</section>
 
 <div class="kpi-grid">
     <div class="card kpi-card">
@@ -164,4 +351,6 @@
             </a>
         }
     </div>
+</div>
+
 </div>

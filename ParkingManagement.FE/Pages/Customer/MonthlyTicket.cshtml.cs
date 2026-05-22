@@ -12,6 +12,10 @@ namespace ParkingManagement.FE.Pages.Customer;
 [Authorize(Roles = "Customer")]
 public class MonthlyTicketModel : PageModel
 {
+    private const decimal SilverThreshold = 2_000_000m;
+    private const decimal GoldThreshold = 5_000_000m;
+    private const decimal DiamondThreshold = 10_000_000m;
+
     private readonly ICustomerApiService _customerApiService;
     private readonly IPricingService _pricingService;
     private readonly ILogger<MonthlyTicketModel> _logger;
@@ -29,6 +33,11 @@ public class MonthlyTicketModel : PageModel
     public string UserName { get; set; } = "Customer";
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
+    public string VipLevel { get; set; } = "Thành viên";
+    public int DiscountPercent { get; set; }
+    public int VipProgress { get; set; }
+    public decimal TotalSpent { get; set; }
+    public decimal? AmountToNextLevel { get; set; }
     public MonthlyTicketPaymentVm? PendingPayment { get; set; }
     public List<MonthlyPlanVm> Plans { get; set; } = new();
     public CustomerMonthlyTicketDto? CurrentTicket { get; set; }
@@ -246,19 +255,21 @@ public class MonthlyTicketModel : PageModel
             UserName = string.IsNullOrWhiteSpace(profile?.FullName) ? fallbackName : profile.FullName;
             ViewData["UserName"] = UserName;
 
-            Plans = BuildPlans(pricing);
             TicketHistories = tickets.Items
                 .OrderByDescending(IsActive)
                 .ThenByDescending(x => x.EndDate)
                 .ToList();
             CurrentTicket = TicketHistories.FirstOrDefault(IsActive);
+
+            ApplyVipSnapshot(profile, TicketHistories);
+            Plans = BuildPlans(pricing, DiscountPercent);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Could not load monthly ticket page data");
             ErrorMessage ??= "Chưa tải được dữ liệu vé tháng từ BE. Kiểm tra BE đang chạy và tài khoản còn phiên đăng nhập.";
             ViewData["UserName"] = fallbackName;
-            Plans = BuildPlans(PricingDisplayDefaults.CreateDefaultPricing());
+            Plans = BuildPlans(PricingDisplayDefaults.CreateDefaultPricing(), DiscountPercent);
         }
     }
 
@@ -275,7 +286,7 @@ public class MonthlyTicketModel : PageModel
         }
     }
 
-    private static List<MonthlyPlanVm> BuildPlans(PricingDto pricing)
+    private static List<MonthlyPlanVm> BuildPlans(PricingDto pricing, int vipDiscountPercent)
     {
         var vehiclePlans = new[]
         {
@@ -311,20 +322,152 @@ public class MonthlyTicketModel : PageModel
         var durations = new[] { 1, 3, 6 };
 
         return vehiclePlans
-            .SelectMany(plan => durations.Select(months => new MonthlyPlanVm
+            .SelectMany(plan => durations.Select(months =>
             {
-                VehicleType = plan.VehicleType,
-                PackageType = $"{months} tháng",
-                Months = months,
-                Name = plan.Name,
-                SubTitle = plan.SubTitle,
-                Price = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, plan.VehicleType, months),
-                OneMonthPrice = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, plan.VehicleType, 1),
-                Icon = plan.Icon,
-                IconClass = plan.IconClass,
-                IsSelected = plan.IsSelected
+                var originalPrice = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, plan.VehicleType, months);
+                var originalOneMonthPrice = PricingDisplayDefaults.GetMonthlyTicketPrice(pricing, plan.VehicleType, 1);
+
+                return new MonthlyPlanVm
+                {
+                    VehicleType = plan.VehicleType,
+                    PackageType = $"{months} tháng",
+                    Months = months,
+                    Name = plan.Name,
+                    SubTitle = plan.SubTitle,
+                    OriginalPrice = originalPrice,
+                    Price = ApplyVipDiscount(originalPrice, vipDiscountPercent),
+                    OneMonthPrice = ApplyVipDiscount(originalOneMonthPrice, vipDiscountPercent),
+                    VipDiscountPercent = vipDiscountPercent,
+                    Icon = plan.Icon,
+                    IconClass = plan.IconClass,
+                    IsSelected = plan.IsSelected
+                };
             }))
             .ToList();
+    }
+
+    private void ApplyVipSnapshot(CustomerProfileDto? profile, List<CustomerMonthlyTicketDto> monthlyTickets)
+    {
+        var paidMonthlyTotal = monthlyTickets
+            .Where(IsPaidMonthlyTicketForVip)
+            .Sum(ticket => ticket.TotalFee);
+        TotalSpent = Math.Max(profile?.TotalSpent ?? 0, paidMonthlyTotal);
+        VipLevel = NormalizeVipLevel(profile?.VipLevel ?? DetermineVipLevel(TotalSpent));
+        DiscountPercent = profile?.DiscountPercent ?? GetDiscountPercent(VipLevel);
+        VipProgress = Math.Clamp(profile?.VipProgress ?? CalculateVipProgress(TotalSpent), 0, 100);
+        AmountToNextLevel = profile?.AmountToNextLevel ?? CalculateAmountToNextLevel(TotalSpent);
+
+        if (profile == null || TotalSpent > profile.TotalSpent)
+        {
+            VipLevel = DetermineVipLevel(TotalSpent);
+            DiscountPercent = GetDiscountPercent(VipLevel);
+            VipProgress = CalculateVipProgress(TotalSpent);
+            AmountToNextLevel = CalculateAmountToNextLevel(TotalSpent);
+        }
+    }
+
+    private static decimal ApplyVipDiscount(decimal amount, int discountPercent)
+    {
+        if (amount <= 0 || discountPercent <= 0)
+        {
+            return amount;
+        }
+
+        return amount - (amount * discountPercent / 100);
+    }
+
+    private static bool IsPaidMonthlyTicketForVip(CustomerMonthlyTicketDto ticket)
+    {
+        if (ticket.TotalFee <= 0)
+        {
+            return false;
+        }
+
+        var status = NormalizeStatus(ticket.Status);
+        return status.Contains("hoat dong")
+            || status.Contains("active")
+            || status.Contains("het han")
+            || status.Contains("expired")
+            || status.Contains("da huy")
+            || status.Contains("cancel");
+    }
+
+    private static string NormalizeVipLevel(string? vipLevel)
+    {
+        if (string.IsNullOrWhiteSpace(vipLevel))
+        {
+            return "Thành viên";
+        }
+
+        return vipLevel.Trim().ToLowerInvariant() switch
+        {
+            "member" or "normal" or "thanh vien" or "thành viên" => "Thành viên",
+            "silver" or "bac" or "bạc" => "Bạc",
+            "gold" or "vang" or "vàng" => "Vàng",
+            "platinum" or "diamond" or "kim cuong" or "kim cương" => "Kim Cương",
+            _ => vipLevel.Trim()
+        };
+    }
+
+    private static string DetermineVipLevel(decimal totalSpent)
+    {
+        if (totalSpent >= DiamondThreshold)
+        {
+            return "Kim Cương";
+        }
+
+        if (totalSpent >= GoldThreshold)
+        {
+            return "Vàng";
+        }
+
+        return totalSpent >= SilverThreshold ? "Bạc" : "Thành viên";
+    }
+
+    private static int GetDiscountPercent(string vipLevel)
+    {
+        return NormalizeVipLevel(vipLevel) switch
+        {
+            "Bạc" => 5,
+            "Vàng" => 10,
+            "Kim Cương" => 15,
+            _ => 0
+        };
+    }
+
+    private static int CalculateVipProgress(decimal totalSpent)
+    {
+        var (start, target) = totalSpent switch
+        {
+            < SilverThreshold => (0m, SilverThreshold),
+            < GoldThreshold => (SilverThreshold, GoldThreshold),
+            < DiamondThreshold => (GoldThreshold, DiamondThreshold),
+            _ => (DiamondThreshold, DiamondThreshold)
+        };
+
+        return target <= start
+            ? 100
+            : Math.Clamp((int)Math.Round((totalSpent - start) / (target - start) * 100), 0, 100);
+    }
+
+    private static decimal? CalculateAmountToNextLevel(decimal totalSpent)
+    {
+        if (totalSpent < SilverThreshold)
+        {
+            return SilverThreshold - totalSpent;
+        }
+
+        if (totalSpent < GoldThreshold)
+        {
+            return GoldThreshold - totalSpent;
+        }
+
+        if (totalSpent < DiamondThreshold)
+        {
+            return DiamondThreshold - totalSpent;
+        }
+
+        return null;
     }
 
     private static string NormalizeStatus(string? status)
@@ -419,8 +562,11 @@ public class MonthlyPlanVm
     public int Months { get; set; } = 1;
     public string Name { get; set; } = "";
     public string SubTitle { get; set; } = "";
+    public decimal OriginalPrice { get; set; }
     public decimal Price { get; set; }
     public decimal OneMonthPrice { get; set; }
+    public int VipDiscountPercent { get; set; }
+    public decimal VipDiscountAmount => Math.Max(0, OriginalPrice - Price);
     public string? Discount { get; set; }
     public string Icon { get; set; } = "";
     public string IconClass { get; set; } = "";

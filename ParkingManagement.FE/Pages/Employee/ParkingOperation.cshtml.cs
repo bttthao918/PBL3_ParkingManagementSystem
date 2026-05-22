@@ -244,9 +244,6 @@ namespace ParkingManagement.FE.Pages.Employee
             if (shift?.HasShift == true && shift.Shift != null)
             {
                 ShiftLabel = $"{shift.Shift.StartTime} - {shift.Shift.EndTime}";
-
-                TotalSlots = summary.TotalTickets;
-
             }
         }
 
@@ -265,6 +262,5 @@ namespace ParkingManagement.FE.Pages.Employee
                 ActiveCount = result.TotalItems;
             }
         }
-        y
     }
 }
