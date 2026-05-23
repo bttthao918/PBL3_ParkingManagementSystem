@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
+using ParkingManagement.DAL.Data;
+using ParkingManagement.DAL.Models;
 
 namespace ParkingManagement.Web.Controllers.Api
 {
@@ -17,15 +21,18 @@ namespace ParkingManagement.Web.Controllers.Api
     {
         private readonly ITicketService _ticketService;
         private readonly IPlateRecognitionService _plateRecognitionService;
+        private readonly AppDbContext _db;
         private readonly ILogger<TicketsController> _logger;
 
         public TicketsController(
             ITicketService ticketService,
             IPlateRecognitionService plateRecognitionService,
+            AppDbContext db,
             ILogger<TicketsController> logger)
         {
             _ticketService = ticketService;
             _plateRecognitionService = plateRecognitionService;
+            _db = db;
             _logger = logger;
         }
 
@@ -231,6 +238,16 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
+                var shiftCheck = await ValidateEmployeeCanCheckInNowAsync();
+                if (!shiftCheck.CanCheckIn)
+                {
+                    return BadRequest(new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = shiftCheck.Message
+                    });
+                }
+
                 var result = await _ticketService.ConfirmCheckInAsync(input);
                 if (!result.Success)
                     return BadRequest(result);
@@ -257,6 +274,17 @@ namespace ParkingManagement.Web.Controllers.Api
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                var shiftCheck = await ValidateEmployeeCanCheckInNowAsync();
+                if (!shiftCheck.CanCheckIn)
+                {
+                    return Ok(new CheckInValidationDto
+                    {
+                        VehiclePlate = input.VehiclePlate,
+                        OriginalVehiclePlate = input.VehiclePlate,
+                        Message = shiftCheck.Message
+                    });
+                }
 
                 var result = await _ticketService.ValidateAndPrepareCheckInAsync(input);
                 return Ok(result);
@@ -374,6 +402,46 @@ namespace ParkingManagement.Web.Controllers.Api
                 _logger.LogError($"Search error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
             }
+        }
+
+        private async Task<(bool CanCheckIn, string Message)> ValidateEmployeeCanCheckInNowAsync()
+        {
+            var employeeId = GetEmployeeId();
+            if (string.IsNullOrWhiteSpace(employeeId))
+                return (false, "Không xác định được nhân viên đang đăng nhập.");
+
+            var now = DateTime.Now;
+            var schedules = await _db.ShiftSchedules
+                .Where(s => s.EmployeeId == employeeId && s.WorkDate == now.Date)
+                .OrderBy(s => s.StartTime)
+                .ToListAsync();
+
+            if (!schedules.Any())
+                return (false, "Hôm nay bạn chưa được phân ca nên không thể check-in xe.");
+
+            foreach (var schedule in schedules.Where(s => !BlocksCheckInStatus(s.Status)))
+            {
+                var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
+                if (ShiftConstants.IsWithinShift(now.TimeOfDay, window.Start, window.End))
+                    return (true, string.Empty);
+            }
+
+            var shiftText = string.Join(", ", schedules.Select(schedule =>
+            {
+                var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
+                return $"{schedule.ShiftType} {ShiftConstants.FormatWindow(window.Start, window.End)} ({schedule.Status})";
+            }));
+
+            if (schedules.All(s => BlocksCheckInStatus(s.Status)))
+                return (false, $"Ca hôm nay của bạn đã hoàn thành hoặc không còn hoạt động: {shiftText}.");
+
+            return (false, $"Hiện tại {now:HH:mm} không nằm trong ca được phân công. Bạn chỉ có thể check-in trong đúng ca làm: Sáng 07:00-12:00, Chiều 12:00-17:00, Tối 17:00-22:00. Ca hôm nay: {shiftText}.");
+        }
+
+        private static bool BlocksCheckInStatus(string? status)
+        {
+            return string.Equals(status, ShiftConstants.CompletedStatus, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, ShiftConstants.AbsentStatus, StringComparison.OrdinalIgnoreCase);
         }
 
         private string? GetEmployeeId()

@@ -73,6 +73,12 @@ namespace ParkingManagement.BLL.DTOs
         public string? PhoneNumber { get; set; }
         public string? Gender { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? VipLevel { get; set; }
+        public int? DiscountPercent { get; set; }
+        public int? VipProgress { get; set; }
+        public decimal? AmountToNextLevel { get; set; }
+        public decimal TotalSpent { get; set; }
+        public int TotalTickets { get; set; }
     }
 
     // ════════════════════════════════════════════════════════════
@@ -165,6 +171,9 @@ namespace ParkingManagement.BLL.DTOs
         public string? Gender { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsDeleted { get; set; }
+        public string? VipLevel { get; set; }
+        public decimal TotalSpent { get; set; }
+        public int TotalTickets { get; set; }
         public List<string> VehiclePlates { get; set; } = new();
     }
 }

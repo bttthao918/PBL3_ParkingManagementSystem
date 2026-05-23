@@ -222,7 +222,7 @@
                                 <th>Ca làm</th>
                                 <th>SĐT</th>
                                 <th>Tổng vé</th>
-                                <th>Vé xử lý</th>
+                                <th>Gi&#7901; l&#224;m</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -259,7 +259,7 @@
                                         <td>@emp.Department</td>
                                         <td>@emp.Phone</td>
                                         <td>@emp.TotalTickets</td>
-                                        <td>@emp.ProcessedTickets</td>
+                                        <td>@emp.TotalWorkDuration</td>
                                         <td>
                                             <span class="emp-status @emp.StatusClass">
                                                 @emp.Status
@@ -448,8 +448,8 @@
                         </div>
                         <div>
                             <i class="fa-solid fa-clock"></i>
-                            <strong>@detail.WorkDaysCount.ToString("N0")</strong>
-                            <span>Ngày làm</span>
+                            <strong>@EmployeeManagementModel.FormatDuration(detail.TotalWorkMinutes)</strong>
+                            <span>Gi&#7901; l&#224;m</span>
                         </div>
                     </div>
 
@@ -506,6 +506,10 @@
                                                         <div>
                                                             <strong>@schedule.ShiftType</strong>
                                                             <span>@schedule.StartTime - @schedule.EndTime</span>
+                                                            @if (schedule.WorkMinutes > 0)
+                                                            {
+                                                                <span>Đã làm @EmployeeManagementModel.FormatDuration(schedule.WorkMinutes)</span>
+                                                            }
                                                         </div>
                                                         <span class="emp-shift-state @statusClass">@schedule.Status</span>
                                                         @if (EmployeeManagementModel.CanDeleteSchedule(schedule.Status))

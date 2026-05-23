@@ -21,77 +21,12 @@
         </div>
 
         <div class="toolbar-actions">
-            <a href="#createReservationForm" class="primary-btn">
-                <i class="fa-solid fa-plus"></i>
-                Đặt chỗ mới
-            </a>
-
             <a asp-page="./ParkingOperation" class="secondary-btn">
                 <i class="fa-solid fa-right-to-bracket"></i>
                 Mở check-in
             </a>
         </div>
     </div>
-
-    <section id="createReservationForm" class="reservation-create-card">
-        <div class="create-card-head">
-            <div>
-                <h2>Đặt chỗ mới</h2>
-                <p>Nhân viên tạo đơn đặt chỗ hộ khách hàng đã có tài khoản.</p>
-            </div>
-        </div>
-
-        <form method="post" asp-page-handler="Create" class="reservation-create-form">
-            <input type="hidden" name="Search" value="@Model.Search" />
-            <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
-            <input type="hidden" name="VehicleFilter" value="@Model.VehicleFilter" />
-            <input type="hidden" name="ExpectedDate" value="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))" />
-            <input type="hidden" name="PageNumber" value="@Model.PageNumber" />
-            <input type="hidden" name="PageSize" value="@Model.PageSize" />
-
-            <label>
-                <span>Mã khách hàng</span>
-                <input asp-for="NewReservation.CustomerId" placeholder="VD: CUS001" />
-            </label>
-
-            <label>
-                <span>Biển số xe</span>
-                <input asp-for="NewReservation.VehiclePlate" placeholder="VD: 43A-123.45" />
-            </label>
-
-            <label>
-                <span>Loại xe</span>
-                <select asp-for="NewReservation.VehicleType">
-                    <option value="Xe máy">Xe máy</option>
-                    <option value="Ô tô nhỏ">Ô tô nhỏ</option>
-                    <option value="Ô tô lớn">Ô tô lớn</option>
-                </select>
-            </label>
-
-            <label>
-                <span>Thời gian đến</span>
-                <input asp-for="NewReservation.ExpectedTime"
-                       type="datetime-local"
-                       min="@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
-            </label>
-
-            <label>
-                <span>Chỗ đỗ</span>
-                <select asp-for="NewReservation.PreferredSlotId">
-                    <option value="">Tự động chọn chỗ trống</option>
-                    @foreach (var slot in Model.AvailableSlots)
-                    {
-                        <option value="@slot.SlotId">@slot.SlotId - @slot.Location (@slot.VehicleType)</option>
-                    }
-                </select>
-            </label>
-
-            <button type="submit" class="primary-btn">
-                <i class="fa-solid fa-check"></i>
-                Tạo đặt chỗ
-            </button>
-        </form>
-    </section>
 
     <div class="kpi-grid">
         <div class="kpi-card">

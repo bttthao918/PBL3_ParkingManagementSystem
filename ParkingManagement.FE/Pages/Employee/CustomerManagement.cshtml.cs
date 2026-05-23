@@ -9,6 +9,17 @@ namespace ParkingManagement.FE.Pages.Employee
     public class CustomerManagementModel : PageModel
     {
         private static readonly int[] AllowedPageSizes = { 5, 10, 20 };
+        private const decimal SilverThreshold = 2_000_000m;
+        private const decimal GoldThreshold = 5_000_000m;
+        private const decimal DiamondThreshold = 10_000_000m;
+
+        private static readonly IReadOnlyList<VipTierVM> VipTierCatalog = new List<VipTierVM>
+        {
+            new("Thành viên", "member", "fa-user", 0m, "0 đ", 0),
+            new("Bạc", "silver", "fa-medal", SilverThreshold, "2.000.000 đ", 5),
+            new("Vàng", "gold", "fa-crown", GoldThreshold, "5.000.000 đ", 10),
+            new("Kim Cương", "diamond", "fa-gem", DiamondThreshold, "10.000.000 đ", 15)
+        };
 
         private readonly Services.ICustomerApiService _customerService;
 
@@ -52,6 +63,7 @@ namespace ParkingManagement.FE.Pages.Employee
         public int PageSize { get; set; } = 10;
 
         public List<CustomerItemVM> Customers { get; set; } = new();
+        public IReadOnlyList<VipTierVM> VipTiers => VipTierCatalog;
 
         public CustomerDetailVM? SelectedCustomer { get; set; }
 
@@ -124,15 +136,18 @@ namespace ParkingManagement.FE.Pages.Employee
                     Phone = string.IsNullOrWhiteSpace(c.PhoneNumber) ? "-" : c.PhoneNumber,
                     Email = string.IsNullOrWhiteSpace(c.Email) ? "-" : c.Email,
                     VipLevel = vipLevel,
-                    StatusText = c.LastVisit.HasValue ? c.LastVisit.Value.ToString("dd/MM/yyyy") : "Chưa gửi",
-                    StatusClass = c.LastVisit.HasValue ? "parking" : "left",
+                    VipClass = GetVipCssClass(vipLevel),
+                    VipIcon = GetVipIcon(vipLevel),
+                    DiscountPercent = GetDiscountPercent(vipLevel),
+                    StatusText = c.IsParking ? "Đang gửi xe" : (c.LastVisit.HasValue ? c.LastVisit.Value.ToString("dd/MM/yyyy") : "Chưa gửi"),
+                    StatusClass = c.IsParking ? "parking" : "left",
                     TotalTickets = c.TotalTickets
                 };
             }).ToList();
 
-            ActiveCustomers = Customers.Count(c => c.StatusClass == "parking");
-            VipCustomers = Customers.Count(c => !IsNormalVip(c.VipLevel));
-            NewCustomers = Customers.Count(c => c.TotalTickets == 0);
+            ActiveCustomers = result.ActiveCustomers;
+            VipCustomers = result.VipCustomers;
+            NewCustomers = result.NewCustomers;
 
             if (!string.IsNullOrWhiteSpace(VipFilter))
             {
@@ -165,6 +180,7 @@ namespace ParkingManagement.FE.Pages.Employee
             var discountPercent = detail?.DiscountPercent ?? GetDiscountPercent(vipLevel);
             var vipProgress = detail?.VipProgress ?? CalculateVipProgress(totalSpent, vipLevel);
             var amountToNextLevel = detail?.AmountToNextLevel ?? CalculateAmountToNextLevel(totalSpent, vipLevel);
+            var nextVipLevel = GetNextVipLevel(totalSpent);
 
             var histories = detail?.RecentTickets.Select(t => new CustomerParkingHistoryVM
             {
@@ -184,11 +200,15 @@ namespace ParkingManagement.FE.Pages.Employee
                 Gender = detail?.Gender switch { "Male" => "Nam", "Female" => "Nữ", _ => "Chưa cập nhật" },
                 RegisterDate = detail?.CreatedAt.ToString("dd/MM/yyyy") ?? "-",
                 VipLevel = vipLevel,
+                VipClass = GetVipCssClass(vipLevel),
+                VipIcon = GetVipIcon(vipLevel),
                 TotalSpent = totalSpent,
                 TotalTickets = totalTickets,
                 DiscountPercent = discountPercent,
                 VipProgress = vipProgress,
                 AmountToNextLevel = amountToNextLevel,
+                NextVipLevel = nextVipLevel ?? "Kim Cương",
+                IsMaxVipLevel = nextVipLevel == null,
                 Histories = histories
             };
         }
@@ -227,6 +247,21 @@ namespace ParkingManagement.FE.Pages.Employee
             ErrorMessage = message;
         }
 
+        public string GetVipTierState(VipTierVM tier)
+        {
+            if (SelectedCustomer == null)
+            {
+                return "locked";
+            }
+
+            if (string.Equals(SelectedCustomer.VipLevel, tier.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return "current";
+            }
+
+            return SelectedCustomer.TotalSpent >= tier.Threshold ? "reached" : "locked";
+        }
+
         private static string ResolveVipLevel(string? apiVipLevel, int totalTickets, bool hasActiveMonthlyTicket)
         {
             if (!string.IsNullOrWhiteSpace(apiVipLevel))
@@ -236,30 +271,30 @@ namespace ParkingManagement.FE.Pages.Employee
 
             if (totalTickets >= 80)
             {
-                return "Platinum";
+                return "Kim Cương";
             }
 
             if (totalTickets >= 40)
             {
-                return "Gold";
+                return "Vàng";
             }
 
             if (totalTickets >= 15 || hasActiveMonthlyTicket)
             {
-                return "Silver";
+                return "Bạc";
             }
 
-            return "Thường";
+            return "Thành viên";
         }
 
         private static string NormalizeVipLevel(string vipLevel)
         {
             return vipLevel.Trim().ToLowerInvariant() switch
             {
-                "normal" or "thuong" or "thường" => "Thường",
-                "silver" => "Silver",
-                "gold" => "Gold",
-                "platinum" => "Platinum",
+                "normal" or "member" or "thuong" or "thường" or "thanh vien" or "thành viên" => "Thành viên",
+                "silver" or "bac" or "bạc" => "Bạc",
+                "gold" or "vang" or "vàng" => "Vàng",
+                "platinum" or "diamond" or "kim cuong" or "kim cương" => "Kim Cương",
                 _ => vipLevel.Trim()
             };
         }
@@ -272,50 +307,91 @@ namespace ParkingManagement.FE.Pages.Employee
 
         private static bool IsNormalVip(string vipLevel)
         {
-            return string.Equals(vipLevel, "Thường", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(vipLevel, "Normal", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(NormalizeVipLevel(vipLevel), "Thành viên", StringComparison.OrdinalIgnoreCase);
         }
 
         private static int GetDiscountPercent(string vipLevel)
         {
-            return vipLevel switch
+            return NormalizeVipLevel(vipLevel) switch
             {
-                "Silver" => 3,
-                "Gold" => 5,
-                "Platinum" => 10,
+                "Bạc" => 5,
+                "Vàng" => 10,
+                "Kim Cương" => 15,
                 _ => 0
             };
         }
 
         private static int CalculateVipProgress(decimal totalSpent, string vipLevel)
         {
-            var nextTarget = vipLevel switch
-            {
-                "Thường" => 1_000_000m,
-                "Silver" => 3_000_000m,
-                "Gold" => 6_000_000m,
-                _ => totalSpent
-            };
+            var (start, nextTarget) = GetProgressRange(totalSpent, vipLevel);
 
-            if (nextTarget <= 0)
+            if (nextTarget <= start)
             {
                 return 100;
             }
 
-            return Math.Clamp((int)Math.Round(totalSpent / nextTarget * 100), 0, 100);
+            return Math.Clamp((int)Math.Round((totalSpent - start) / (nextTarget - start) * 100), 0, 100);
         }
 
         private static decimal CalculateAmountToNextLevel(decimal totalSpent, string vipLevel)
         {
-            var nextTarget = vipLevel switch
-            {
-                "Thường" => 1_000_000m,
-                "Silver" => 3_000_000m,
-                "Gold" => 6_000_000m,
-                _ => totalSpent
-            };
+            var (_, nextTarget) = GetProgressRange(totalSpent, vipLevel);
 
             return Math.Max(0, nextTarget - totalSpent);
+        }
+
+        private static (decimal Start, decimal Target) GetProgressRange(decimal totalSpent, string vipLevel)
+        {
+            var normalizedLevel = NormalizeVipLevel(vipLevel);
+            return normalizedLevel switch
+            {
+                "Thành viên" => (0m, SilverThreshold),
+                "Bạc" => (SilverThreshold, GoldThreshold),
+                "Vàng" => (GoldThreshold, DiamondThreshold),
+                _ => (totalSpent, totalSpent)
+            };
+        }
+
+        private static string? GetNextVipLevel(decimal totalSpent)
+        {
+            if (totalSpent < SilverThreshold)
+            {
+                return "Bạc";
+            }
+
+            if (totalSpent < GoldThreshold)
+            {
+                return "Vàng";
+            }
+
+            if (totalSpent < DiamondThreshold)
+            {
+                return "Kim Cương";
+            }
+
+            return null;
+        }
+
+        private static string GetVipCssClass(string vipLevel)
+        {
+            return NormalizeVipLevel(vipLevel) switch
+            {
+                "Bạc" => "silver",
+                "Vàng" => "gold",
+                "Kim Cương" => "diamond",
+                _ => "member"
+            };
+        }
+
+        private static string GetVipIcon(string vipLevel)
+        {
+            return NormalizeVipLevel(vipLevel) switch
+            {
+                "Bạc" => "fa-medal",
+                "Vàng" => "fa-crown",
+                "Kim Cương" => "fa-gem",
+                _ => "fa-user"
+            };
         }
     }
 
@@ -326,7 +402,10 @@ namespace ParkingManagement.FE.Pages.Employee
         public string CustomerCode { get; set; } = "";
         public string Phone { get; set; } = "";
         public string Email { get; set; } = "";
-        public string VipLevel { get; set; } = "Thường";
+        public string VipLevel { get; set; } = "Thành viên";
+        public string VipClass { get; set; } = "member";
+        public string VipIcon { get; set; } = "fa-user";
+        public int DiscountPercent { get; set; }
         public string StatusText { get; set; } = "";
         public string StatusClass { get; set; } = "";
         public int TotalTickets { get; set; }
@@ -341,12 +420,16 @@ namespace ParkingManagement.FE.Pages.Employee
         public string Email { get; set; } = "";
         public string? Gender { get; set; }
         public string RegisterDate { get; set; } = "";
-        public string VipLevel { get; set; } = "Thường";
+        public string VipLevel { get; set; } = "Thành viên";
+        public string VipClass { get; set; } = "member";
+        public string VipIcon { get; set; } = "fa-user";
         public decimal TotalSpent { get; set; }
         public int TotalTickets { get; set; }
         public int DiscountPercent { get; set; }
         public int VipProgress { get; set; }
         public decimal AmountToNextLevel { get; set; }
+        public string NextVipLevel { get; set; } = "Bạc";
+        public bool IsMaxVipLevel { get; set; }
 
         public List<CustomerParkingHistoryVM> Histories { get; set; } = new();
     }
@@ -357,5 +440,25 @@ namespace ParkingManagement.FE.Pages.Employee
         public string CheckIn { get; set; } = "";
         public string CheckOut { get; set; } = "";
         public decimal Fee { get; set; }
+    }
+
+    public class VipTierVM
+    {
+        public VipTierVM(string name, string cssClass, string icon, decimal threshold, string thresholdLabel, int discountPercent)
+        {
+            Name = name;
+            CssClass = cssClass;
+            Icon = icon;
+            Threshold = threshold;
+            ThresholdLabel = thresholdLabel;
+            DiscountPercent = discountPercent;
+        }
+
+        public string Name { get; }
+        public string CssClass { get; }
+        public string Icon { get; }
+        public decimal Threshold { get; }
+        public string ThresholdLabel { get; }
+        public int DiscountPercent { get; }
     }
 }

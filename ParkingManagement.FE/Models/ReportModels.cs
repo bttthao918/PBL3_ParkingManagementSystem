@@ -104,10 +104,12 @@ namespace ParkingManagement.FE.Models
         public decimal RevenueFromSingleTickets { get; set; }
         public decimal RevenueFromMonthlyTickets { get; set; }
         public List<DailyRevenueDto> DailyBreakdown { get; set; } = new();
+        public List<DailyRevenueDto> PreviousDailyBreakdown { get; set; } = new();
         public Dictionary<string, decimal> RevenueByPaymentMethod { get; set; } = new();
         public Dictionary<string, decimal> RevenueByVehicleType { get; set; } = new();
         public Dictionary<string, decimal> RevenueByArea { get; set; } = new();
         public List<EmployeeRevenueSummaryDto> TopEmployees { get; set; } = new();
+        public List<RevenueRankDto> TopRevenueDays { get; set; } = new();
     }
 
     public class DailyRevenueDto
@@ -124,6 +126,14 @@ namespace ParkingManagement.FE.Models
         public string EmployeeName { get; set; } = "";
         public decimal TotalRevenue { get; set; }
         public int PaymentCount { get; set; }
+    }
+
+    public class RevenueRankDto
+    {
+        public string Label { get; set; } = "";
+        public decimal Amount { get; set; }
+        public int Count { get; set; }
+        public decimal ChangePercentage { get; set; }
     }
 
     public class CustomerReportDto

@@ -314,6 +314,7 @@ namespace ParkingManagement.FE.Pages.Admin
                 e.PhoneNumber,
                 0,
                 0,
+                e.TotalWorkMinutes,
                 e.Status,
                 GetStatusClass(e.Status),
                 "/images/avatar-demo.jpg",
@@ -454,6 +455,16 @@ namespace ParkingManagement.FE.Pages.Admin
             return statusClass != "working" && statusClass != "done";
         }
 
+        public static string FormatDuration(int totalMinutes)
+        {
+            if (totalMinutes <= 0)
+                return "0h";
+
+            var hours = totalMinutes / 60;
+            var minutes = totalMinutes % 60;
+            return minutes == 0 ? $"{hours}h" : $"{hours}h {minutes}p";
+        }
+
         private static DateTime GetMondayOfWeek(DateTime date)
         {
             var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
@@ -512,6 +523,8 @@ namespace ParkingManagement.FE.Pages.Admin
         public string Phone { get; set; }
         public int TotalTickets { get; set; }
         public int ProcessedTickets { get; set; }
+        public int TotalWorkMinutes { get; set; }
+        public string TotalWorkDuration => EmployeeManagementModel.FormatDuration(TotalWorkMinutes);
         public string Status { get; set; }
         public string StatusClass { get; set; }
         public string Avatar { get; set; }
@@ -528,6 +541,7 @@ namespace ParkingManagement.FE.Pages.Admin
             string phone,
             int totalTickets,
             int processedTickets,
+            int totalWorkMinutes,
             string status,
             string statusClass,
             string avatar,
@@ -542,6 +556,7 @@ namespace ParkingManagement.FE.Pages.Admin
             Phone = phone;
             TotalTickets = totalTickets;
             ProcessedTickets = processedTickets;
+            TotalWorkMinutes = totalWorkMinutes;
             Status = status;
             StatusClass = statusClass;
             Avatar = avatar;

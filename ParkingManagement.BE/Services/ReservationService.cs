@@ -158,14 +158,16 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 var preferred = await _slotRepo.GetByIdAsync(slotId);
                 if (preferred == null ||
-                    preferred.Status != "Trống" ||
-                    !string.Equals(preferred.VehicleType, vehicleType, StringComparison.OrdinalIgnoreCase))
+                    !IsAvailableStatus(preferred.Status) ||
+                    !MatchesSlotVehicleType(preferred, vehicleType))
+                {
                     slotId = null;
+                }
             }
 
             if (string.IsNullOrEmpty(slotId))
             {
-                var available = await _slotRepo.GetAvailableAsync(vehicleType);
+                var available = await GetAvailableSlotsForVehicleTypeAsync(vehicleType);
                 if (!available.Any())
                     return ServiceResult<ReservationDto>.Fail("Không còn chỗ trống cho loại xe này.");
                 slotId = available.First().SlotId;
@@ -415,6 +417,67 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (!string.IsNullOrEmpty(reservation.SlotId))
                     await _slotRepo.UpdateStatusAsync(reservation.SlotId, "Trống");
             }
+        }
+
+        private async Task<List<ParkingSlot>> GetAvailableSlotsForVehicleTypeAsync(string vehicleType)
+        {
+            var available = await _slotRepo.GetAvailableAsync(vehicleType);
+            if (available.Any())
+            {
+                return available.OrderBy(slot => slot.SlotId).ToList();
+            }
+
+            var allSlots = await _slotRepo.GetAllAsync();
+            return allSlots
+                .Where(slot => IsAvailableStatus(slot.Status))
+                .Where(slot => MatchesSlotVehicleType(slot, vehicleType))
+                .OrderBy(slot => slot.SlotId)
+                .ToList();
+        }
+
+        private static bool MatchesSlotVehicleType(ParkingSlot slot, string vehicleType)
+        {
+            var requested = NormalizeText(vehicleType);
+            var actual = NormalizeText(slot.VehicleType);
+
+            if (actual == requested)
+                return true;
+
+            return requested switch
+            {
+                "xe may" => slot.SlotId.StartsWith("A", StringComparison.OrdinalIgnoreCase),
+                "o to nho" => slot.SlotId.StartsWith("B", StringComparison.OrdinalIgnoreCase),
+                "o to lon" => slot.SlotId.StartsWith("C", StringComparison.OrdinalIgnoreCase),
+                _ => false
+            };
+        }
+
+        private static bool IsAvailableStatus(string? status)
+        {
+            var normalized = NormalizeText(status);
+            return normalized is "trong" or "empty" or "available"
+                || normalized.Contains("tr") && normalized.Contains("ng") && !normalized.Contains("dang");
+        }
+
+        private static string NormalizeText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+
+            var text = value.Trim()
+                .Replace("Xe m\u00c3\u00a1y", "Xe m\u00e1y")
+                .Replace("Tr\u00e1\u00bb\u2018ng", "Tr\u1ed1ng")
+                .Replace("Tr\u00e1\u00bb\u0091ng", "Tr\u1ed1ng");
+
+            var withoutDiacritics = string.Concat(text
+                .Normalize(System.Text.NormalizationForm.FormD)
+                .Where(ch => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch) != System.Globalization.UnicodeCategory.NonSpacingMark));
+
+            return withoutDiacritics
+                .Replace("\u0111", "d")
+                .Replace("\u0110", "D")
+                .ToLowerInvariant()
+                .Trim();
         }
 
         private static void NormalizePaging(FilterReservationDto filter)

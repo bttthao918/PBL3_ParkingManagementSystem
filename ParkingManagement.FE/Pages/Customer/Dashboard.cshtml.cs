@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models;
@@ -10,6 +10,9 @@ namespace ParkingManagement.FE.Pages.Customer
     public class DashboardModel : PageModel
     {
         private const int CustomerSnapshotPageSize = 1000;
+        private const decimal SilverThreshold = 2_000_000m;
+        private const decimal GoldThreshold = 5_000_000m;
+        private const decimal DiamondThreshold = 10_000_000m;
 
         private readonly ICustomerApiService _customerApiService;
         private readonly ILogger<DashboardModel> _logger;
@@ -46,8 +49,26 @@ namespace ParkingManagement.FE.Pages.Customer
                 var tickets = await ticketsTask ?? new ListCustomerTicketDto();
                 var monthlyTickets = await monthlyTicketsTask ?? new ListCustomerMonthlyTicketDto();
                 var payments = await paymentsTask ?? new ListCustomerPaymentDto();
+                var monthlyTicketSpent = monthlyTickets.Items
+                    .Where(IsPaidMonthlyTicketForVip)
+                    .Sum(x => x.TotalFee);
 
                 Dashboard.UserName = string.IsNullOrWhiteSpace(profile?.FullName) ? fallbackName : profile.FullName;
+                if (profile != null)
+                {
+                    Dashboard.VipLevel = profile.VipLevel ?? "Thành viên";
+                    Dashboard.VipProgress = profile.VipProgress ?? 0;
+                    Dashboard.DiscountPercent = profile.DiscountPercent ?? 0;
+                    Dashboard.AmountToNextLevel = profile.AmountToNextLevel;
+                    Dashboard.TotalSpending = Math.Max(profile.TotalSpent, monthlyTicketSpent);
+                    if (Dashboard.TotalSpending > profile.TotalSpent)
+                    {
+                        Dashboard.VipLevel = DetermineVipLevel(Dashboard.TotalSpending);
+                        Dashboard.DiscountPercent = GetDiscountPercent(Dashboard.VipLevel);
+                        Dashboard.VipProgress = CalculateVipProgress(Dashboard.TotalSpending);
+                        Dashboard.AmountToNextLevel = CalculateAmountToNextLevel(Dashboard.TotalSpending);
+                    }
+                }
                 Dashboard.ReservationTotal = reservations.TotalItems > 0 ? reservations.TotalItems : reservations.Items.Count;
                 Dashboard.ActiveReservationCount = reservations.Items.Count(IsActiveReservation);
                 Dashboard.TicketTotal = tickets.TotalItems > 0 ? tickets.TotalItems : tickets.Items.Count;
@@ -59,9 +80,17 @@ namespace ParkingManagement.FE.Pages.Customer
                     .ThenBy(x => x.DaysRemaining < 0)
                     .ThenBy(x => x.DaysRemaining)
                     .FirstOrDefault();
-                Dashboard.TotalSpending = payments.Items
-                    .Where(IsSuccessfulPayment)
-                    .Sum(x => x.Amount);
+                if (profile == null)
+                {
+                    var paymentSpent = payments.Items
+                        .Where(IsSuccessfulPayment)
+                        .Sum(x => x.Amount);
+                    Dashboard.TotalSpending = Math.Max(paymentSpent, monthlyTicketSpent);
+                    Dashboard.VipLevel = DetermineVipLevel(Dashboard.TotalSpending);
+                    Dashboard.DiscountPercent = GetDiscountPercent(Dashboard.VipLevel);
+                    Dashboard.VipProgress = CalculateVipProgress(Dashboard.TotalSpending);
+                    Dashboard.AmountToNextLevel = CalculateAmountToNextLevel(Dashboard.TotalSpending);
+                }
                 Dashboard.RecentReservations = reservations.Items
                     .OrderByDescending(x => x.CreatedAt)
                     .Take(3)
@@ -127,6 +156,22 @@ namespace ParkingManagement.FE.Pages.Customer
             return monthlyTicket.DaysRemaining >= 0 && (status.Contains("hoat") || status.Contains("active"));
         }
 
+        private static bool IsPaidMonthlyTicketForVip(CustomerMonthlyTicketDto monthlyTicket)
+        {
+            if (monthlyTicket.TotalFee <= 0)
+            {
+                return false;
+            }
+
+            var status = NormalizeStatus(monthlyTicket.Status);
+            return status.Contains("hoat")
+                || status.Contains("active")
+                || status.Contains("het han")
+                || status.Contains("expired")
+                || status.Contains("huy")
+                || status.Contains("cancel");
+        }
+
         private static bool IsSuccessfulPayment(CustomerPaymentDto payment)
         {
             var status = NormalizeStatus(payment.Status);
@@ -153,75 +198,20 @@ namespace ParkingManagement.FE.Pages.Customer
                 return "";
             }
 
-            var normalized = status.Trim().ToLowerInvariant();
-            return normalized
+            return status.Trim().ToLowerInvariant()
                 .Replace("đ", "d")
-                .Replace("á", "a")
-                .Replace("à", "a")
-                .Replace("ả", "a")
-                .Replace("ã", "a")
-                .Replace("ạ", "a")
-                .Replace("ă", "a")
-                .Replace("ắ", "a")
-                .Replace("ằ", "a")
-                .Replace("ẳ", "a")
-                .Replace("ẵ", "a")
-                .Replace("ặ", "a")
-                .Replace("â", "a")
-                .Replace("ấ", "a")
-                .Replace("ầ", "a")
-                .Replace("ẩ", "a")
-                .Replace("ẫ", "a")
-                .Replace("ậ", "a")
-                .Replace("é", "e")
-                .Replace("è", "e")
-                .Replace("ẻ", "e")
-                .Replace("ẽ", "e")
-                .Replace("ẹ", "e")
-                .Replace("ê", "e")
-                .Replace("ế", "e")
-                .Replace("ề", "e")
-                .Replace("ể", "e")
-                .Replace("ễ", "e")
-                .Replace("ệ", "e")
-                .Replace("í", "i")
-                .Replace("ì", "i")
-                .Replace("ỉ", "i")
-                .Replace("ĩ", "i")
-                .Replace("ị", "i")
-                .Replace("ó", "o")
-                .Replace("ò", "o")
-                .Replace("ỏ", "o")
-                .Replace("õ", "o")
-                .Replace("ọ", "o")
-                .Replace("ô", "o")
-                .Replace("ố", "o")
-                .Replace("ồ", "o")
-                .Replace("ổ", "o")
-                .Replace("ỗ", "o")
-                .Replace("ộ", "o")
-                .Replace("ơ", "o")
-                .Replace("ớ", "o")
-                .Replace("ờ", "o")
-                .Replace("ở", "o")
-                .Replace("ỡ", "o")
-                .Replace("ợ", "o")
-                .Replace("ú", "u")
-                .Replace("ù", "u")
-                .Replace("ủ", "u")
-                .Replace("ũ", "u")
-                .Replace("ụ", "u")
-                .Replace("ư", "u")
-                .Replace("ứ", "u")
-                .Replace("ừ", "u")
-                .Replace("ử", "u")
-                .Replace("ữ", "u")
-                .Replace("ự", "u")
-                .Replace("ý", "y")
-                .Replace("ỳ", "y")
-                .Replace("ỷ", "y")
-                .Replace("ỹ", "y")
-                .Replace("ỵ", "y");
+                .Replace("á", "a").Replace("à", "a").Replace("ả", "a").Replace("ã", "a").Replace("ạ", "a")
+                .Replace("ă", "a").Replace("ắ", "a").Replace("ằ", "a").Replace("ẳ", "a").Replace("ẵ", "a").Replace("ặ", "a")
+                .Replace("â", "a").Replace("ấ", "a").Replace("ầ", "a").Replace("ẩ", "a").Replace("ẫ", "a").Replace("ậ", "a")
+                .Replace("é", "e").Replace("è", "e").Replace("ẻ", "e").Replace("ẽ", "e").Replace("ẹ", "e")
+                .Replace("ê", "e").Replace("ế", "e").Replace("ề", "e").Replace("ể", "e").Replace("ễ", "e").Replace("ệ", "e")
+                .Replace("í", "i").Replace("ì", "i").Replace("ỉ", "i").Replace("ĩ", "i").Replace("ị", "i")
+                .Replace("ó", "o").Replace("ò", "o").Replace("ỏ", "o").Replace("õ", "o").Replace("ọ", "o")
+                .Replace("ô", "o").Replace("ố", "o").Replace("ồ", "o").Replace("ổ", "o").Replace("ỗ", "o").Replace("ộ", "o")
+                .Replace("ơ", "o").Replace("ớ", "o").Replace("ờ", "o").Replace("ở", "o").Replace("ỡ", "o").Replace("ợ", "o")
+                .Replace("ú", "u").Replace("ù", "u").Replace("ủ", "u").Replace("ũ", "u").Replace("ụ", "u")
+                .Replace("ư", "u").Replace("ứ", "u").Replace("ừ", "u").Replace("ử", "u").Replace("ữ", "u").Replace("ự", "u")
+                .Replace("ý", "y").Replace("ỳ", "y").Replace("ỷ", "y").Replace("ỹ", "y").Replace("ỵ", "y");
         }
 
         private static string BuildPaymentChartPoints(List<CustomerPaymentDto> payments)
@@ -253,11 +243,67 @@ namespace ParkingManagement.FE.Pages.Customer
 
             return string.Join(" ", points);
         }
+
+        private static string DetermineVipLevel(decimal totalSpent)
+        {
+            if (totalSpent >= DiamondThreshold)
+            {
+                return "Kim Cương";
+            }
+
+            if (totalSpent >= GoldThreshold)
+            {
+                return "Vàng";
+            }
+
+            return totalSpent >= SilverThreshold ? "Bạc" : "Thành viên";
+        }
+
+        private static int GetDiscountPercent(string vipLevel)
+        {
+            return vipLevel switch
+            {
+                "Bạc" => 5,
+                "Vàng" => 10,
+                "Kim Cương" => 15,
+                _ => 0
+            };
+        }
+
+        private static int CalculateVipProgress(decimal totalSpent)
+        {
+            var (start, target) = totalSpent switch
+            {
+                < SilverThreshold => (0m, SilverThreshold),
+                < GoldThreshold => (SilverThreshold, GoldThreshold),
+                < DiamondThreshold => (GoldThreshold, DiamondThreshold),
+                _ => (DiamondThreshold, DiamondThreshold)
+            };
+
+            return target <= start
+                ? 100
+                : Math.Clamp((int)Math.Round((totalSpent - start) / (target - start) * 100), 0, 100);
+        }
+
+        private static decimal? CalculateAmountToNextLevel(decimal totalSpent)
+        {
+            if (totalSpent < SilverThreshold)
+            {
+                return SilverThreshold - totalSpent;
+            }
+
+            if (totalSpent < GoldThreshold)
+            {
+                return GoldThreshold - totalSpent;
+            }
+
+            return totalSpent < DiamondThreshold ? DiamondThreshold - totalSpent : null;
+        }
     }
 
     public class CustomerDashboardViewModel
     {
-        public string UserName { get; set; } = "Customer";
+        public string UserName { get; set; } = "Customer"; public string VipLevel { get; set; } = "Thành viên"; public int VipProgress { get; set; } = 0; public int DiscountPercent { get; set; } = 0; public decimal? AmountToNextLevel { get; set; }
         public int ReservationTotal { get; set; }
         public int ActiveReservationCount { get; set; }
         public int TicketTotal { get; set; }
@@ -269,3 +315,4 @@ namespace ParkingManagement.FE.Pages.Customer
         public List<CustomerTicketDto> RecentTickets { get; set; } = new();
     }
 }
+

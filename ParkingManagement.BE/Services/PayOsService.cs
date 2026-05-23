@@ -83,7 +83,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 {
                     OrderCode = payOsResponse.Data.OrderCode,
                     PaymentLinkId = payOsResponse.Data.PaymentLinkId ?? string.Empty,
-                    CheckoutUrl = payOsResponse.Data.CheckoutUrl ?? string.Empty,
+                    CheckoutUrl = ResolveCheckoutUrl(payOsResponse.Data.CheckoutUrl, payOsResponse.Data.PaymentLinkId),
                     QrCode = payOsResponse.Data.QrCode ?? string.Empty,
                     Status = payOsResponse.Data.Status ?? string.Empty,
                     Amount = payOsResponse.Data.Amount
@@ -123,14 +123,17 @@ namespace ParkingManagement.BLL.Services.Implementations
                     return ServiceResult<PayOsPaymentLinkInfoDto>.Fail(payOsResponse?.Desc ?? "Không lấy được thông tin thanh toán payOS.");
                 }
 
+                var paymentLinkId = payOsResponse.Data.Id ?? payOsResponse.Data.PaymentLinkId ?? string.Empty;
                 return ServiceResult<PayOsPaymentLinkInfoDto>.Ok(new PayOsPaymentLinkInfoDto
                 {
-                    PaymentLinkId = payOsResponse.Data.Id ?? string.Empty,
+                    PaymentLinkId = paymentLinkId,
                     OrderCode = payOsResponse.Data.OrderCode,
                     Amount = payOsResponse.Data.Amount,
                     AmountPaid = payOsResponse.Data.AmountPaid,
                     AmountRemaining = payOsResponse.Data.AmountRemaining,
-                    Status = payOsResponse.Data.Status ?? string.Empty
+                    Status = payOsResponse.Data.Status ?? string.Empty,
+                    CheckoutUrl = ResolveCheckoutUrl(payOsResponse.Data.CheckoutUrl, paymentLinkId),
+                    QrCode = payOsResponse.Data.QrCode ?? string.Empty
                 });
             }
             catch (Exception ex)
@@ -174,6 +177,18 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             var separator = url.Contains('?') ? '&' : '?';
             return $"{url}{separator}orderCode={orderCode}";
+        }
+
+        private static string ResolveCheckoutUrl(string? checkoutUrl, string? paymentLinkId)
+        {
+            if (!string.IsNullOrWhiteSpace(checkoutUrl))
+            {
+                return checkoutUrl;
+            }
+
+            return string.IsNullOrWhiteSpace(paymentLinkId)
+                ? string.Empty
+                : $"https://pay.payos.vn/web/{Uri.EscapeDataString(paymentLinkId)}";
         }
 
         private static string BuildSortedData(JsonElement element)
@@ -232,11 +247,14 @@ namespace ParkingManagement.BLL.Services.Implementations
         private sealed class PayOsGetPaymentData
         {
             public string? Id { get; set; }
+            public string? PaymentLinkId { get; set; }
             public long OrderCode { get; set; }
             public int Amount { get; set; }
             public int AmountPaid { get; set; }
             public int AmountRemaining { get; set; }
             public string? Status { get; set; }
+            public string? CheckoutUrl { get; set; }
+            public string? QrCode { get; set; }
         }
     }
 }

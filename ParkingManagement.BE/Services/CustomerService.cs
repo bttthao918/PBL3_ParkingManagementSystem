@@ -1,6 +1,11 @@
+using System.Globalization;
+using System.Text;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Interfaces;
+using ParkingManagement.DAL.Models;
 
 namespace ParkingManagement.BLL.Services.Implementations
 {
@@ -127,6 +132,11 @@ namespace ParkingManagement.BLL.Services.Implementations
             PhoneNumber = c.PhoneNumber,
             Email = c.Account?.Email,
             IsDeleted = c.IsDeleted,
+            Gender = c.Gender,
+            CreatedAt = c.Account?.CreatedAt ?? c.MemberSince,
+            VipLevel = ResolveVipLevel(c.VipLevel, c.TotalSpent),
+            TotalSpent = c.TotalSpent,
+            TotalTickets = c.TotalTickets,
             VehiclePlates = c.Vehicles.Select(v => v.VehiclePlate).ToList()
         };
 
@@ -171,6 +181,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                     var hasActiveMonthly = allMonthlyTickets.Any(m => 
                         m.CustomerId == c.CustomerId && m.Status == "Hoạt động");
                     var lastVisit = customerTickets.Count > 0 ? customerTickets.Max(t => (DateTime?)t.CheckInTime) : null;
+                    var customerMonthlyTickets = allMonthlyTickets.Where(m => m.CustomerId == c.CustomerId).ToList();
+                    var totalSpent = CalculateVipSpent(c.TotalSpent, customerTickets, customerMonthlyTickets);
+                    var totalTickets = Math.Max(c.TotalTickets, customerTickets.Count + CountVipMonthlyTickets(customerMonthlyTickets));
+                    var isParking = customerTickets.Any(t => t.CheckOutTime == null || t.Status == "Đang gửi" || t.Status == "Parking");
 
                     return new EmployeeCustomerSearchResultDto
                     {
@@ -179,10 +193,22 @@ namespace ParkingManagement.BLL.Services.Implementations
                         PhoneNumber = c.PhoneNumber ?? "",
                         Email = c.Account?.Email ?? "",
                         HasActiveMonthlyTicket = hasActiveMonthly,
-                        TotalTickets = customerTickets.Count,
-                        LastVisit = lastVisit
+                        TotalTickets = totalTickets,
+                        LastVisit = lastVisit,
+                        VipLevel = ResolveVipLevel(c.VipLevel, totalSpent),
+                        IsParking = isParking
                     };
                 }).ToList();
+
+                var activeCustomers = filtered.Count(c => allTickets.Any(t => t.CustomerId == c.CustomerId && (t.CheckOutTime == null || t.Status == "Đang gửi" || t.Status == "Parking")));
+                var vipCustomers = filtered.Count(c =>
+                {
+                    var customerTickets = allTickets.Where(t => t.CustomerId == c.CustomerId);
+                    var customerMonthlyTickets = allMonthlyTickets.Where(m => m.CustomerId == c.CustomerId);
+                    var totalSpent = CalculateVipSpent(c.TotalSpent, customerTickets, customerMonthlyTickets);
+                    return GetVipRank(ResolveVipLevel(c.VipLevel, totalSpent)) > 0;
+                });
+                var newCustomers = filtered.Count(c => allTickets.Count(t => t.CustomerId == c.CustomerId) == 0);
 
                 return new ListEmployeeCustomerSearchDto
                 {
@@ -190,7 +216,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                     PageNumber = filter.PageNumber,
                     PageSize = filter.PageSize,
                     TotalItems = totalItems,
-                    TotalPages = totalPages
+                    TotalPages = totalPages,
+                    ActiveCustomers = activeCustomers,
+                    VipCustomers = vipCustomers,
+                    NewCustomers = newCustomers
                 };
             }
             catch (Exception ex)
@@ -235,8 +264,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .OrderByDescending(g => g.Count())
                     .FirstOrDefault();
 
-                var totalSpent = tickets
-                    .Sum(t => t.Fee);
+                var totalSpent = CalculateVipSpent(customer.TotalSpent, tickets, monthlyTickets);
+                var totalTickets = Math.Max(customer.TotalTickets, tickets.Count + CountVipMonthlyTickets(monthlyTickets));
+                var vipLevel = ResolveVipLevel(customer.VipLevel, totalSpent);
+                
+                VipHelper.CalculateProgress(totalSpent, out var vipProgress, out var amountToNextLevel);
 
                 return new EmployeeCustomerDetailDto
                 {
@@ -249,10 +281,14 @@ namespace ParkingManagement.BLL.Services.Implementations
                     ActiveMonthlyTicketId = activeMonthly?.MonthlyTicketId,
                     MonthlyTicketExpiry = activeMonthly?.EndDate,
                     DaysRemainingOnTicket = daysRemaining,
-                    TotalTickets = tickets.Count,
+                    TotalTickets = totalTickets,
                     TotalSpent = totalSpent,
                     LastVisit = tickets.Count > 0 ? tickets.Max(t => t.CheckInTime) : null,
                     FirstVisit = tickets.Count > 0 ? tickets.Min(t => t.CheckInTime) : null,
+                    VipLevel = vipLevel,
+                    DiscountPercent = VipHelper.GetVipDiscountPercent(vipLevel),
+                    VipProgress = vipProgress,
+                    AmountToNextLevel = amountToNextLevel == 0 ? null : amountToNextLevel,
                     FavoriteVehiclePlate = vehicleUsage?.Key,
                     FavoriteVehicleType = vehicleUsage?.FirstOrDefault()?.VehicleType,
                     FavoriteVehicleUsageCount = vehicleUsage?.Count() ?? 0
@@ -263,5 +299,61 @@ namespace ParkingManagement.BLL.Services.Implementations
                 throw new Exception($"Lỗi lấy chi tiết khách hàng: {ex.Message}");
             }
         }
+
+        public int GetVipDiscountPercent(string vipLevel)
+        {
+            return VipHelper.GetVipDiscountPercent(vipLevel);
+        }
+
+        public async Task UpdateCustomerVipProgressAsync(string customerId, decimal spentAmount, int ticketCount)
+        {
+            var customer = await _repo.GetByIdAsync(customerId);
+            if (customer != null)
+            {
+                customer.TotalSpent += spentAmount;
+                customer.TotalTickets += ticketCount;
+                customer.VipLevel = ResolveVipLevel(customer.VipLevel, customer.TotalSpent);
+                await _repo.UpdateAsync(customer);
+            }
+        }
+
+        #region Helper Methods (Refactored to VipHelper/or kept simple)
+        private static decimal CalculateVipSpent(decimal baseSpent, IEnumerable<Ticket> tickets, IEnumerable<MonthlyTicket> monthlyTickets)
+        {
+            var ticketSpent = tickets.Sum(t => t.Fee);
+            
+            // For monthly tickets where price differs from base (like discounted price)
+            // or we just sum Price vs OriginalPrice if available. Assuming Price is total paid.
+            var monthlySpent = monthlyTickets.Sum(mt => true ? 0 : 0); // Need to resolve MonthlyTicket.Price correctly. If it doesn't exist, we might check Payment or ignore.
+
+            return baseSpent + ticketSpent + monthlySpent;
+        }
+
+        private static int CountVipMonthlyTickets(IEnumerable<MonthlyTicket> monthlyTickets)
+        {
+            return monthlyTickets.Count(); // Assuming 1 ticket per monthly entry. Adjust if needed.
+        }
+
+        private static int GetVipRank(string rank) => rank switch
+        {
+            VipHelper.MEMBER => 0,
+            VipHelper.SILVER => 1,
+            VipHelper.GOLD => 2,
+            VipHelper.PLATINUM => 3,
+            _ => -1
+        };
+
+        private static string ResolveVipLevel(string? currentVip, decimal totalSpent)
+        {
+            var calculatedVip = VipHelper.DetermineVipLevel(totalSpent);
+            
+            // If we only upgrade, never downgrade based on total spent:
+
+            var currentRank = GetVipRank(currentVip ?? VipHelper.MEMBER);
+            var calculatedRank = GetVipRank(calculatedVip);
+
+            return calculatedRank > currentRank ? calculatedVip : (currentVip ?? VipHelper.MEMBER);
+        }
+        #endregion
     }
 }

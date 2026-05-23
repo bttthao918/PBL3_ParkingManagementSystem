@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.DAL.Models;
 using ParkingManagement.DAL.Data;
 
@@ -142,11 +143,24 @@ namespace ParkingManagement.Web.Controllers.Admin
                     employee.Account.PasswordHash = HashPassword(model.Password);
                 }
 
-                employee.Shift = model.Shift;
+                if (!ShiftConstants.TryGetShiftWindow(model.Shift, out var normalizedShift, out var startTime, out var endTime))
+                {
+                    return Json(new { success = false, message = "Ca làm không hợp lệ. Chọn: Sáng, Chiều, Tối" });
+                }
+
+                var shiftChanged = !string.Equals(employee.Shift, normalizedShift, StringComparison.OrdinalIgnoreCase);
+                employee.Shift = normalizedShift;
+
+                var syncedSchedules = shiftChanged
+                    ? await SyncUpcomingScheduledShiftsAsync(employee.EmployeeId, normalizedShift, startTime, endTime)
+                    : 0;
 
                 await _db.SaveChangesAsync();
 
-                return Json(new { success = true, message = "Cập nhật thành công!" });
+                var syncMessage = syncedSchedules > 0
+                    ? $" Đã đồng bộ {syncedSchedules} ca hôm nay/tương lai chưa bắt đầu."
+                    : "";
+                return Json(new { success = true, message = $"Cập nhật thành công!{syncMessage}" });
             }
             catch (Exception ex)
             {
@@ -270,6 +284,32 @@ namespace ParkingManagement.Web.Controllers.Admin
         private string HashPassword(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private async Task<int> SyncUpcomingScheduledShiftsAsync(
+            string employeeId,
+            string shiftType,
+            TimeSpan startTime,
+            TimeSpan endTime)
+        {
+            var today = DateTime.Today;
+            var schedules = await _db.ShiftSchedules
+                .Where(s => s.EmployeeId == employeeId &&
+                            s.WorkDate >= today &&
+                            s.Status == ShiftConstants.ScheduledStatus)
+                .ToListAsync();
+
+            foreach (var schedule in schedules)
+            {
+                schedule.ShiftType = shiftType;
+                schedule.StartTime = startTime;
+                schedule.EndTime = endTime;
+                schedule.Note = string.IsNullOrWhiteSpace(schedule.Note)
+                    ? "Đồng bộ từ ca mặc định của nhân viên"
+                    : schedule.Note;
+            }
+
+            return schedules.Count;
         }
     }
 

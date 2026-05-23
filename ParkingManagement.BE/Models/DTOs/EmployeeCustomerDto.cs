@@ -26,6 +26,8 @@ namespace ParkingManagement.BLL.DTOs
         public bool HasActiveMonthlyTicket { get; set; }
         public int TotalTickets { get; set; }
         public DateTime? LastVisit { get; set; }
+        public string? VipLevel { get; set; }
+        public bool IsParking { get; set; }
     }
 
     /// <summary>
@@ -38,6 +40,10 @@ namespace ParkingManagement.BLL.DTOs
         public int PageSize { get; set; }
         public int TotalItems { get; set; }
         public int TotalPages { get; set; }
+        
+        public int ActiveCustomers { get; set; }
+        public int VipCustomers { get; set; }
+        public int NewCustomers { get; set; }
     }
 
     /// <summary>
@@ -62,6 +68,12 @@ namespace ParkingManagement.BLL.DTOs
         public decimal TotalSpent { get; set; }
         public DateTime? LastVisit { get; set; }
         public DateTime? FirstVisit { get; set; }
+
+        // VIP Info
+        public string? VipLevel { get; set; }
+        public int? DiscountPercent { get; set; }
+        public int? VipProgress { get; set; }
+        public decimal? AmountToNextLevel { get; set; }
 
         // Favorite Vehicle
         public string? FavoriteVehiclePlate { get; set; }

@@ -23,6 +23,60 @@ body.modal-open {
         color: #64748b;
     }
 
+.booking-welcome-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    min-height: 98px;
+    padding: 24px 28px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #075be8 0%, #0ea5ff 58%, #16a34a 100%);
+    color: white;
+    box-shadow: 0 18px 42px rgb(13 110 253 / 18%);
+}
+
+.booking-welcome-card::after {
+    content: "";
+    position: absolute;
+    right: -48px;
+    top: -58px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 16%);
+}
+
+.booking-welcome-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.booking-welcome-card h2 {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.15;
+}
+
+.booking-welcome-card p {
+    max-width: 680px;
+    margin: 8px 0 0;
+    color: rgb(255 255 255 / 88%);
+}
+
+.booking-welcome-card .main-create-btn {
+    flex: 0 0 auto;
+    border: 1px solid rgb(255 255 255 / 38%);
+    background: rgb(255 255 255 / 16%);
+    box-shadow: 0 12px 26px rgb(15 23 42 / 14%);
+}
+
+.booking-welcome-card .main-create-btn:hover {
+    background: rgb(255 255 255 / 24%);
+}
+
 .main-create-btn,
 .primary-btn {
     border: none;
@@ -963,6 +1017,15 @@ body.modal-open {
     .filter-bar,
     .new-vehicle-grid {
         grid-template-columns: 1fr;
+    }
+
+    .booking-welcome-card {
+        display: grid;
+        padding: 22px;
+    }
+
+    .booking-welcome-card .main-create-btn {
+        width: fit-content;
     }
 
     .parking-map {

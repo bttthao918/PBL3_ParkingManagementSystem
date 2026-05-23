@@ -59,15 +59,7 @@ namespace ParkingManagement.FE.Pages.Employee
         [BindProperty(SupportsGet = true)]
         public int PageSize { get; set; } = 10;
 
-        [BindProperty]
-        public CreateReservationDto NewReservation { get; set; } = new()
-        {
-            VehicleType = "Xe máy",
-            ExpectedTime = DateTime.Now.AddMinutes(30)
-        };
-
         public List<ReservationItemVM> Reservations { get; set; } = new();
-        public List<AvailableSlotDto> AvailableSlots { get; set; } = new();
         public ReservationDetailVM? SelectedReservation { get; set; }
 
         [TempData]
@@ -82,7 +74,6 @@ namespace ParkingManagement.FE.Pages.Employee
             NormalizePaging();
 
             await LoadSummaryAsync();
-            await LoadAvailableSlotsAsync();
 
             var result = await SearchReservationsAsync();
             if (result != null && result.TotalPages > 0 && PageNumber > result.TotalPages)
@@ -93,40 +84,6 @@ namespace ParkingManagement.FE.Pages.Employee
 
             ApplyResult(result);
             LoadSelectedReservation();
-        }
-
-        public async Task<IActionResult> OnPostCreateAsync()
-        {
-            NormalizePaging();
-
-            if (string.IsNullOrWhiteSpace(NewReservation.CustomerId) ||
-                string.IsNullOrWhiteSpace(NewReservation.VehiclePlate) ||
-                string.IsNullOrWhiteSpace(NewReservation.VehicleType))
-            {
-                ActionSuccess = false;
-                ActionMessage = "Vui lòng nhập đầy đủ khách hàng, biển số và loại xe.";
-                return RedirectToCurrentPage();
-            }
-
-            if (NewReservation.ExpectedTime <= DateTime.Now)
-            {
-                ActionSuccess = false;
-                ActionMessage = "Thời gian đặt chỗ phải ở tương lai.";
-                return RedirectToCurrentPage();
-            }
-
-            NewReservation.CustomerId = NewReservation.CustomerId.Trim();
-            NewReservation.VehiclePlate = NewReservation.VehiclePlate.Trim().ToUpperInvariant();
-            NewReservation.PreferredSlotId = string.IsNullOrWhiteSpace(NewReservation.PreferredSlotId)
-                ? null
-                : NewReservation.PreferredSlotId.Trim();
-
-            var result = await _reservationService.CreateForEmployeeAsync(NewReservation);
-            ActionSuccess = result?.Success == true;
-            ActionMessage = result?.Message ?? "Không thể đặt chỗ. Vui lòng thử lại.";
-
-            SelectedId = null;
-            return RedirectToCurrentPage();
         }
 
         public async Task<IActionResult> OnPostCancelAsync(string reservationId)
@@ -155,11 +112,6 @@ namespace ParkingManagement.FE.Pages.Employee
                 ExpectedDate?.Date,
                 PageNumber,
                 PageSize);
-        }
-
-        private async Task LoadAvailableSlotsAsync()
-        {
-            AvailableSlots = await _reservationService.GetAvailableSlotsAsync() ?? new List<AvailableSlotDto>();
         }
 
         private IActionResult RedirectToCurrentPage(int? selectedId = null)

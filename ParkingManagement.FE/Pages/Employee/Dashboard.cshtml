@@ -94,10 +94,19 @@
             </div>
             <form method="post" asp-page-handler="StartShift">
                 <input type="hidden" name="scheduleId" value="@Model.TodayShift?.Shift?.ScheduleId" />
+                @if (Model.CanStartShift)
+                {
                 <button type="submit" class="shift-btn start"
                         onclick="return confirmSubmit(this.form, 'Bắt đầu ca', 'Xác nhận bắt đầu ca làm việc?', 'success')">
                     <i class="fa-solid fa-play"></i> Bắt đầu ca
                 </button>
+                }
+                else
+                {
+                    <button type="button" class="shift-btn start" disabled>
+                        <i class="fa-solid fa-play"></i> B&#7855;t &#273;&#7847;u ca
+                    </button>
+                }
             </form>
         }
     </div>

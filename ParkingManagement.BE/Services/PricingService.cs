@@ -11,6 +11,16 @@ namespace ParkingManagement.BLL.Services.Implementations
     public class PricingService : IPricingService
     {
         private readonly IPricingRepository _pricingRepository;
+        private static readonly string[] VehicleTypes = { "Xe máy", "Ô tô nhỏ", "Ô tô lớn" };
+        private static readonly Dictionary<string, string> VehicleTypeAliases = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Xe máy"] = "Xe máy",
+            ["Xe mÃ¡y"] = "Xe máy",
+            ["Ô tô nhỏ"] = "Ô tô nhỏ",
+            ["Ã” tÃ´ nhá»"] = "Ô tô nhỏ",
+            ["Ô tô lớn"] = "Ô tô lớn",
+            ["Ã” tÃ´ lá»›n"] = "Ô tô lớn"
+        };
 
         public PricingService(IPricingRepository pricingRepository)
         {
@@ -49,6 +59,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                         Message = "Vui lòng cập nhật ít nhất một loại giá"
                     };
                 }
+
+                updateDto.HourlyRate = NormalizeDecimalPricing(updateDto.HourlyRate);
+                updateDto.MaxDailyFee = NormalizeDecimalPricing(updateDto.MaxDailyFee);
+                updateDto.MonthlyTicketPrice = NormalizeMonthlyPricing(updateDto.MonthlyTicketPrice);
 
                 var currentPricing = await GetCurrentPricingAsync();
                 updateDto.HourlyRate = MergeDecimalPricing(currentPricing.HourlyRate, updateDto.HourlyRate);
@@ -94,12 +108,10 @@ namespace ParkingManagement.BLL.Services.Implementations
                 // Xóa tất cả giá cũ
                 await _pricingRepository.DeleteAllPricingAsync();
 
-                var vehicleTypes = new[] { "Xe máy", "Ô tô nhỏ", "Ô tô lớn" };
-
                 // Cập nhật hourly rate
                 if (updateDto.HourlyRate != null)
                 {
-                    foreach (var vType in vehicleTypes)
+                    foreach (var vType in VehicleTypes)
                     {
                         if (updateDto.HourlyRate.TryGetValue(vType, out var rate))
                         {
@@ -119,7 +131,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 // Cập nhật max daily fee
                 if (updateDto.MaxDailyFee != null)
                 {
-                    foreach (var vType in vehicleTypes)
+                    foreach (var vType in VehicleTypes)
                     {
                         if (updateDto.MaxDailyFee.TryGetValue(vType, out var maxFee))
                         {
@@ -139,7 +151,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 // Cập nhật monthly ticket pricing
                 if (updateDto.MonthlyTicketPrice != null)
                 {
-                    foreach (var vType in vehicleTypes)
+                    foreach (var vType in VehicleTypes)
                     {
                         if (updateDto.MonthlyTicketPrice.TryGetValue(vType, out var monthlyPrice))
                         {
@@ -208,6 +220,7 @@ namespace ParkingManagement.BLL.Services.Implementations
         public async Task<decimal> GetMonthlyTicketPriceAsync(string vehicleType, int months)
         {
             var pricing = await GetCurrentPricingAsync();
+            vehicleType = NormalizeVehicleType(vehicleType);
             if (!pricing.MonthlyTicketPrice.TryGetValue(vehicleType, out var monthlyPrice))
             {
                 var matchingPrice = pricing.MonthlyTicketPrice
@@ -245,6 +258,41 @@ namespace ParkingManagement.BLL.Services.Implementations
             }
 
             return mergedPricing;
+        }
+
+        private static Dictionary<string, decimal>? NormalizeDecimalPricing(Dictionary<string, decimal>? pricing)
+        {
+            if (pricing == null)
+                return null;
+
+            var normalized = new Dictionary<string, decimal>();
+            foreach (var item in pricing)
+            {
+                normalized[NormalizeVehicleType(item.Key)] = item.Value;
+            }
+
+            return normalized;
+        }
+
+        private static Dictionary<string, UpdateMonthlyPricingDto>? NormalizeMonthlyPricing(
+            Dictionary<string, UpdateMonthlyPricingDto>? pricing)
+        {
+            if (pricing == null)
+                return null;
+
+            var normalized = new Dictionary<string, UpdateMonthlyPricingDto>();
+            foreach (var item in pricing)
+            {
+                normalized[NormalizeVehicleType(item.Key)] = item.Value;
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizeVehicleType(string vehicleType)
+        {
+            var trimmed = vehicleType.Trim();
+            return VehicleTypeAliases.TryGetValue(trimmed, out var normalized) ? normalized : trimmed;
         }
 
         private static Dictionary<string, UpdateMonthlyPricingDto> MergeMonthlyPricing(
@@ -301,24 +349,22 @@ namespace ParkingManagement.BLL.Services.Implementations
                     SixMonth = item.Value.SixMonth
                 });
 
-            var vehicleTypes = new[] { "Xe máy", "Ô tô nhỏ", "Ô tô lớn" };
-
-            foreach (var vType in vehicleTypes)
+            foreach (var vType in VehicleTypes)
             {
                 // Hourly rate
-                var hourlyConfig = configs.FirstOrDefault(p => p.VehicleType == vType && p.RateType == "HourlyRate");
+                var hourlyConfig = configs.FirstOrDefault(p => NormalizeVehicleType(p.VehicleType) == vType && p.RateType == "HourlyRate");
                 if (hourlyConfig != null)
                     hourlyRate[vType] = hourlyConfig.Amount;
 
                 // Max daily fee
-                var maxDailyConfig = configs.FirstOrDefault(p => p.VehicleType == vType && p.RateType == "MaxDailyFee");
+                var maxDailyConfig = configs.FirstOrDefault(p => NormalizeVehicleType(p.VehicleType) == vType && p.RateType == "MaxDailyFee");
                 if (maxDailyConfig != null)
                     maxDailyFee[vType] = maxDailyConfig.Amount;
 
                 // Monthly pricing
-                var monthly1M = configs.FirstOrDefault(p => p.VehicleType == vType && p.RateType == "Monthly1M");
-                var monthly3M = configs.FirstOrDefault(p => p.VehicleType == vType && p.RateType == "Monthly3M");
-                var monthly6M = configs.FirstOrDefault(p => p.VehicleType == vType && p.RateType == "Monthly6M");
+                var monthly1M = configs.FirstOrDefault(p => NormalizeVehicleType(p.VehicleType) == vType && p.RateType == "Monthly1M");
+                var monthly3M = configs.FirstOrDefault(p => NormalizeVehicleType(p.VehicleType) == vType && p.RateType == "Monthly3M");
+                var monthly6M = configs.FirstOrDefault(p => NormalizeVehicleType(p.VehicleType) == vType && p.RateType == "Monthly6M");
 
                 if (monthly1M != null || monthly3M != null || monthly6M != null)
                 {

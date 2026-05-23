@@ -30,7 +30,7 @@
         </div>
 
         <div class="card stat-chart-card">
-            <h3>Cơ cấu khách hàng theo nhóm</h3>
+            <h3>Cơ cấu khách hàng theo nhóm/hạng</h3>
 
             <div class="stat-donut-layout">
                 <canvas id="mainDonutChart"></canvas>
@@ -54,14 +54,14 @@
     <div class="stat-bottom-grid">
         <div class="card stat-chart-card">
             <div class="stat-card-title">
-                <h3>Phân bố khách hàng theo khu vực</h3>
+                <h3>Phân bổ khách hàng theo khu vực</h3>
                 <span>Số lượt gửi xe</span>
             </div>
             <canvas id="mainBarChart"></canvas>
         </div>
 
         <div class="card stat-list-card">
-            <h3>Top 5 khách hàng thân thiết</h3>
+            <h3>Top 5 khách hàng theo lượt gửi</h3>
             <div class="stat-rank-list">
                 @if (Model.Report.TopCustomers.Count == 0)
                 {
@@ -102,15 +102,6 @@
                 </div>
             }
         </div>
-    </div>
-
-    <div class="card stat-table-card">
-        <div class="stat-card-title">
-            <h3>Chi tiết khách hàng mới</h3>
-            <span>@Model.Header.DateRangeText</span>
-        </div>
-
-        <partial name="/Pages/Shared/Statistics/_StatisticsTable.cshtml" model="Model.Table" />
     </div>
 </div>
 

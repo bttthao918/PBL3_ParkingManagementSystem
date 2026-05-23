@@ -102,7 +102,8 @@ namespace ParkingManagement.FE.Pages.Admin
                 Line = new RevenueLineChartConfig
                 {
                     Labels = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Date.ToString("dd/MM")).ToList(),
-                    Current = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Revenue).ToList()
+                    Current = data.DailyBreakdown.OrderBy(x => x.Date).Select(x => x.Revenue).ToList(),
+                    Previous = data.PreviousDailyBreakdown.OrderBy(x => x.Date).Select(x => x.Revenue).ToList()
                 },
                 Donut = new RevenueSeriesChartConfig
                 {

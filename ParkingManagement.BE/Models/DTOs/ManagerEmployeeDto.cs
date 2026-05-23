@@ -33,6 +33,7 @@ namespace ParkingManagement.BLL.DTOs
         public string Status { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
+        public int TotalWorkMinutes { get; set; }
     }
 
     /// <summary>
@@ -71,6 +72,7 @@ namespace ParkingManagement.BLL.DTOs
         public int TicketsProcessedThisMonth { get; set; }  // Vé xử lý tháng này
         public DateTime? FirstWorkDay { get; set; }  // Ngày đầu làm việc
         public int WorkDaysCount { get; set; }      // Tổng ngày làm việc
+        public int TotalWorkMinutes { get; set; }
     }
 
     /// <summary>

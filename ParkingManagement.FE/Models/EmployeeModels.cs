@@ -20,6 +20,7 @@ namespace ParkingManagement.FE.Models
         public string Status { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
+        public int TotalWorkMinutes { get; set; }
     }
 
     public class ListManagerEmployeeDto
@@ -101,6 +102,7 @@ namespace ParkingManagement.FE.Models
         public int TicketsProcessedThisMonth { get; set; }
         public DateTime? FirstWorkDay { get; set; }
         public int WorkDaysCount { get; set; }
+        public int TotalWorkMinutes { get; set; }
     }
 
     public class UpdateEmployeeByManagerDto

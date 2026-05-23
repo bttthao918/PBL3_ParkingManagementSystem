@@ -336,7 +336,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalPages = totalPages
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ListEmployeeTicketDto
                 {
@@ -393,7 +393,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalPages = totalPages
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ListCustomerTicketDto
                 {
@@ -502,7 +502,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalPages = totalPages
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ListCustomerPaymentDto
                 {
@@ -863,7 +863,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             decimal calculatedFee = 0;
             if (!isFreeTicket)
-                calculatedFee = await CalculateFeeAsync(durationMinutes, ticket.VehicleType);
+                calculatedFee = await CalculateFeeAsync(durationMinutes, ticket.VehicleType, ticket.CustomerId);
 
             string? customerName = null;
             if (ticket.CustomerId != null)
@@ -954,6 +954,19 @@ namespace ParkingManagement.BLL.Services.Implementations
                 };
                 await _paymentRepo.AddAsync(payment);
                 paymentId = payment.PaymentId;
+
+                // Cập nhật tiến trình VIP cho khách hàng
+                if (ticket.CustomerId != null)
+                {
+                    var customer = await _customerRepository.GetByIdAsync(ticket.CustomerId);
+                    if (customer != null)
+                    {
+                        customer.TotalSpent += finalFee;
+                        customer.TotalTickets += 1;
+                        customer.VipLevel = ParkingManagement.BLL.Helpers.VipHelper.DetermineVipLevel(customer.TotalSpent);
+                        await _customerRepository.UpdateAsync(customer);
+                    }
+                }
             }
 
             int durationMinutes = (int)(currentTime - ticket.CheckInTime).TotalMinutes;
@@ -994,9 +1007,9 @@ namespace ParkingManagement.BLL.Services.Implementations
         }
 
         /// <summary>
-        /// Tinh phi gui xe theo bang gia hien tai, co gioi han toi da theo ngay.
+        /// Tinh phi gui xe theo bang gia hien tai, co gioi han toi da theo ngay, ap dung giam gia VIP.
         /// </summary>
-        private async Task<decimal> CalculateFeeAsync(int durationMinutes, string vehicleType)
+        private async Task<decimal> CalculateFeeAsync(int durationMinutes, string vehicleType, string? customerId)
         {
             if (durationMinutes < MIN_CHARGE_MINUTES)
                 durationMinutes = MIN_CHARGE_MINUTES;
@@ -1013,6 +1026,20 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 var remainingHours = Math.Ceiling(remainingMinutes / 60.0);
                 totalFee += Math.Min((decimal)remainingHours * hourlyRate, maxDailyFee);
+            }
+
+            // Apply VIP discount if applicable
+            if (customerId != null && totalFee > 0)
+            {
+                var customer = await _customerRepository.GetByIdAsync(customerId);
+                if (customer != null && customer.VipLevel != ParkingManagement.BLL.Helpers.VipHelper.MEMBER)
+                {
+                    var discountPercent = ParkingManagement.BLL.Helpers.VipHelper.GetVipDiscountPercent(customer.VipLevel);
+                    if (discountPercent > 0)
+                    {
+                        totalFee = totalFee - (totalFee * discountPercent / 100);
+                    }
+                }
             }
 
             return totalFee;

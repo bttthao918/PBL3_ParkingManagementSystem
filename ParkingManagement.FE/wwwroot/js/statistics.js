@@ -1,77 +1,95 @@
 document.addEventListener("DOMContentLoaded", function () {
     if (typeof Chart === "undefined") {
-        console.error("Chart.js chưa được load");
+        console.error("Chart.js chua duoc load");
         return;
     }
 
-    if (!window.statisticsConfig) {
-        console.error("Thiếu statisticsConfig");
-        return;
-    }
+    const config = window.statisticsConfig || {};
 
     Chart.defaults.font.family = "'Segoe UI', sans-serif";
     Chart.defaults.font.size = 13;
     Chart.defaults.color = "#334155";
 
-    const blue = "#0d8bff";
-    const lightBlue = "rgba(13, 139, 255, 0.35)";
-    const green = "#22c55e";
-    const purple = "#6d28d9";
-    const orange = "#ff7a00";
-
-    const config = window.statisticsConfig;
-    const formatCurrency = value => {
-        const number = Number(value || 0);
-        return number.toLocaleString("vi-VN") + " đ";
+    const colors = {
+        blue: "#0d8bff",
+        lightBlue: "rgba(13, 139, 255, 0.35)",
+        green: "#22c55e",
+        purple: "#6d28d9",
+        orange: "#ff7a00",
+        cyan: "#06b6d4",
+        empty: "#cbd5e1"
     };
-    const lineLabels = config.line?.labels || [];
-    const lineCurrent = config.line?.current || [];
-    const linePrevious = config.line?.previous || [];
-    const hasPreviousLine = linePrevious.length > 0;
+
+    const palette = [colors.blue, colors.green, colors.orange, colors.purple, colors.cyan];
+    const numberFormatter = new Intl.NumberFormat("vi-VN");
+    const toArray = value => Array.isArray(value) ? value : [];
+    const toNumbers = values => toArray(values).map(value => Number(value || 0));
+    const hasPositiveValue = values => values.some(value => Number(value) > 0);
+    const formatCurrency = value => numberFormatter.format(Number(value || 0)) + " đ";
+    const formatPlainNumber = value => numberFormatter.format(Number(value || 0));
+    const formatMetric = value => config.type === "revenue"
+        ? formatCurrency(value)
+        : formatPlainNumber(value);
+    const formatAxisValue = value => {
+        const number = Number(value || 0);
+        if (config.type !== "revenue") {
+            return numberFormatter.format(number);
+        }
+
+        if (Math.abs(number) >= 1000000000) return (number / 1000000000).toFixed(1).replace(".0", "") + "B";
+        if (Math.abs(number) >= 1000000) return (number / 1000000).toFixed(1).replace(".0", "") + "M";
+        if (Math.abs(number) >= 1000) return (number / 1000).toFixed(0) + "K";
+        return numberFormatter.format(number);
+    };
+
+    const lineLabels = toArray(config.line?.labels).map(String);
+    const lineCurrent = toNumbers(config.line?.current);
+    const linePrevious = toNumbers(config.line?.previous);
+    const hasLineData = lineLabels.length > 0 && lineCurrent.length > 0;
+    const displayLineLabels = hasLineData ? lineLabels : ["Chưa có dữ liệu"];
+    const displayLineCurrent = hasLineData
+        ? lineLabels.map((_, index) => lineCurrent[index] ?? 0)
+        : [0];
 
     const lineCtx = document.getElementById("mainLineChart");
     const donutCtx = document.getElementById("mainDonutChart");
     const barCtx = document.getElementById("mainBarChart");
-    const formatCurrency = value => new Intl.NumberFormat("vi-VN").format(value || 0) + " đ";
-    const formatAxisValue = value => {
-        if (config.type !== "revenue") return value;
-        if (Math.abs(value) >= 1000000000) return (value / 1000000000).toFixed(1).replace(".0", "") + "B";
-        if (Math.abs(value) >= 1000000) return (value / 1000000).toFixed(1).replace(".0", "") + "M";
-        if (Math.abs(value) >= 1000) return (value / 1000).toFixed(0) + "K";
-        return value;
-    };
 
     if (lineCtx) {
         const datasets = [
             {
                 label: "Kỳ hiện tại",
-                data: config.line.labels.length ? config.line.current : [0],
-                borderColor: blue,
+                data: displayLineCurrent,
+                borderColor: colors.blue,
                 backgroundColor: "rgba(13, 139, 255, 0.14)",
                 fill: true,
-                tension: 0.45,
-                pointRadius: 5,
-                pointHoverRadius: 7
+                tension: 0.42,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: colors.blue,
+                pointBorderColor: "#ffffff",
+                pointBorderWidth: 2
             }
         ];
 
-        if (config.line.previous && config.line.previous.length) {
+        if (hasLineData && linePrevious.length > 0) {
             datasets.push({
                 label: "Kỳ trước",
-                data: config.line.previous,
-                borderColor: lightBlue,
+                data: lineLabels.map((_, index) => linePrevious[index] ?? 0),
+                borderColor: colors.lightBlue,
                 backgroundColor: "transparent",
                 borderDash: [6, 6],
                 fill: false,
-                tension: 0.45,
-                pointRadius: 4
+                tension: 0.42,
+                pointRadius: 3,
+                pointHoverRadius: 5
             });
         }
 
         new Chart(lineCtx, {
             type: "line",
             data: {
-                labels: config.line.labels.length ? config.line.labels : ["Chưa có dữ liệu"],
+                labels: displayLineLabels,
                 datasets
             },
             options: {
@@ -95,14 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         borderWidth: 1,
                         padding: 14,
                         callbacks: {
-                            title: context => context[0].label,
-                            label: context => {
-                                if (config.type === "revenue") {
-                                    return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
-                                }
-
-                                return `${context.dataset.label}: ${context.raw} khách`;
-                            }
+                            title: context => context[0]?.label || "",
+                            label: context => `${context.dataset.label}: ${formatMetric(context.raw)}`
                         }
                     }
                 },
@@ -129,13 +141,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (donutCtx) {
+        const donutLabels = toArray(config.donut?.labels).map(String);
+        const donutData = toNumbers(config.donut?.data);
+        const hasDonutData = donutLabels.length > 0 && hasPositiveValue(donutData);
+
         new Chart(donutCtx, {
             type: "doughnut",
             data: {
-                labels: config.donut.labels.length ? config.donut.labels : ["Chưa có dữ liệu"],
+                labels: hasDonutData ? donutLabels : ["Chưa có dữ liệu"],
                 datasets: [{
-                    data: config.donut.data.length ? config.donut.data : [1],
-                    backgroundColor: [blue, green, orange, purple],
+                    data: hasDonutData ? donutData : [1],
+                    backgroundColor: hasDonutData ? palette : [colors.empty],
                     borderWidth: 0,
                     cutout: "68%"
                 }]
@@ -145,29 +161,45 @@ document.addEventListener("DOMContentLoaded", function () {
                 maintainAspectRatio: true,
                 aspectRatio: 1,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: context => hasDonutData
+                                ? `${context.label}: ${formatMetric(context.raw)}`
+                                : "Chưa có dữ liệu"
+                        }
+                    }
                 }
             }
         });
     }
 
     if (barCtx) {
+        const barLabels = toArray(config.bar?.labels).map(String);
+        const barData = toNumbers(config.bar?.data);
+        const hasBarData = barLabels.length > 0 && barData.length > 0;
+
         new Chart(barCtx, {
             type: "bar",
             data: {
-                labels: config.bar.labels.length ? config.bar.labels : ["Chưa có dữ liệu"],
+                labels: hasBarData ? barLabels : ["Chưa có dữ liệu"],
                 datasets: [{
-                    data: config.bar.data.length ? config.bar.data : [0],
-                    backgroundColor: [blue, green, purple, orange],
+                    data: hasBarData ? barData : [0],
+                    backgroundColor: hasBarData ? palette : [colors.empty],
                     borderRadius: 8,
-                    barThickness: 52
+                    maxBarThickness: 52
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: context => formatMetric(context.raw)
+                        }
+                    }
                 },
                 scales: {
                     y: {

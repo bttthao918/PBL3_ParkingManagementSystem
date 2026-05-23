@@ -39,6 +39,8 @@ namespace ParkingManagement.BLL.DTOs
         public int AmountPaid { get; set; }
         public int AmountRemaining { get; set; }
         public string Status { get; set; } = string.Empty;
+        public string CheckoutUrl { get; set; } = string.Empty;
+        public string QrCode { get; set; } = string.Empty;
     }
 
     public class PayOsWebhookDto

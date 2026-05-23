@@ -1,6 +1,9 @@
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
+using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
 using ParkingManagement.DAL.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +20,7 @@ namespace ParkingManagement.BLL.Services.Implementations
         private readonly IParkingSlotAuditLogRepository _auditLogRepo;
         private readonly ITicketRepository _ticketRepo;
         private readonly IEmailService _emailService;
+        private readonly AppDbContext _db;
         private readonly ILogger<EmployeeService> _logger;
         private readonly IConfiguration _configuration;
         private const string ActiveStatus = "Hoạt động";
@@ -30,6 +34,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             IParkingSlotAuditLogRepository auditLogRepo,
             ITicketRepository ticketRepo,
             IEmailService emailService,
+            AppDbContext db,
             ILogger<EmployeeService> logger,
             IConfiguration configuration)
         {
@@ -39,6 +44,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             _auditLogRepo = auditLogRepo;
             _ticketRepo = ticketRepo;
             _emailService = emailService;
+            _db = db;
             _logger = logger;
             _configuration = configuration;
         }
@@ -208,6 +214,17 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .Take(filter.PageSize)
                     .ToList();
 
+                var itemEmployeeIds = items.Select(e => e.EmployeeId).ToList();
+                var workMinutesByEmployee = await _db.WorkLogs
+                    .Where(w => itemEmployeeIds.Contains(w.EmployeeId) && w.TotalMinutes.HasValue)
+                    .GroupBy(w => w.EmployeeId)
+                    .Select(g => new
+                    {
+                        EmployeeId = g.Key,
+                        TotalWorkMinutes = g.Sum(w => w.TotalMinutes ?? 0)
+                    })
+                    .ToDictionaryAsync(x => x.EmployeeId, x => x.TotalWorkMinutes);
+
                 var employeeDtos = items.Select(e => new ManagerEmployeeListDto
                 {
                     EmployeeId = e.EmployeeId,
@@ -218,7 +235,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Shift = e.Shift,
                     Status = GetManagerStatus(e),
                     CreatedAt = e.Account?.CreatedAt ?? DateTime.Now,
-                    LastLoginAt = null
+                    LastLoginAt = null,
+                    TotalWorkMinutes = workMinutesByEmployee.GetValueOrDefault(e.EmployeeId)
                 }).ToList();
 
                 return new ListManagerEmployeeDto
@@ -259,6 +277,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                     throw new Exception("Nhân viên không tồn tại");
 
                 var allTickets = (await _ticketRepo.GetAllAsync()).ToList();
+                var completedWorkLogs = await _db.WorkLogs
+                    .Where(w => w.EmployeeId == employeeId && w.TotalMinutes.HasValue)
+                    .ToListAsync();
 
                 var totalTickets = allTickets.Count();
                 var todayTickets = allTickets.Count(t => t.CheckInTime.Date == DateTime.Now.Date);
@@ -266,12 +287,15 @@ namespace ParkingManagement.BLL.Services.Implementations
                     t.CheckInTime.Year == DateTime.Now.Year && 
                     t.CheckInTime.Month == DateTime.Now.Month);
 
-                var firstWorkDay = employee.Account?.CreatedAt;
+                var firstWorkDay = completedWorkLogs.Count > 0
+                    ? completedWorkLogs.Min(w => w.WorkDate)
+                    : employee.Account?.CreatedAt;
 
-                var uniqueWorkDays = allTickets
-                    .Select(t => t.CheckInTime.Date)
+                var uniqueWorkDays = completedWorkLogs
+                    .Select(w => w.WorkDate.Date)
                     .Distinct()
                     .Count();
+                var totalWorkMinutes = completedWorkLogs.Sum(w => w.TotalMinutes ?? 0);
 
                 return new ManagerEmployeeDetailDto
                 {
@@ -288,7 +312,8 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TicketsProcessedToday = todayTickets,
                     TicketsProcessedThisMonth = thisMonthTickets,
                     FirstWorkDay = firstWorkDay,
-                    WorkDaysCount = uniqueWorkDays
+                    WorkDaysCount = uniqueWorkDays,
+                    TotalWorkMinutes = totalWorkMinutes
                 };
             }
             catch (Exception ex)
@@ -610,8 +635,20 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
                     employee.PhoneNumber = request.PhoneNumber.Trim();
 
-                if (!string.IsNullOrEmpty(request.Shift))
-                    employee.Shift = request.Shift;
+                var shiftChanged = false;
+                string? normalizedShift = null;
+                TimeSpan shiftStart = default;
+                TimeSpan shiftEnd = default;
+                if (!string.IsNullOrWhiteSpace(request.Shift))
+                {
+                    if (!ShiftConstants.TryGetShiftWindow(request.Shift, out normalizedShift, out shiftStart, out shiftEnd))
+                    {
+                        return new UpdateEmployeeResultDto { Success = false, Message = "Ca làm không hợp lệ. Chọn: Sáng, Chiều, Tối" };
+                    }
+
+                    shiftChanged = !string.Equals(employee.Shift, normalizedShift, StringComparison.OrdinalIgnoreCase);
+                    employee.Shift = normalizedShift;
+                }
 
                 if (!string.IsNullOrEmpty(request.Status))
                 {
@@ -634,12 +671,50 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 await _repo.UpdateAsync(employee);
 
-                return new UpdateEmployeeResultDto { Success = true, Message = "Cập nhật thông tin nhân viên thành công" };
+                var syncedSchedules = shiftChanged && normalizedShift != null
+                    ? await SyncUpcomingScheduledShiftsAsync(employee.EmployeeId, normalizedShift, shiftStart, shiftEnd)
+                    : 0;
+
+                var syncMessage = syncedSchedules > 0
+                    ? $" Đã đồng bộ {syncedSchedules} ca hôm nay/tương lai chưa bắt đầu."
+                    : "";
+                return new UpdateEmployeeResultDto { Success = true, Message = $"Cập nhật thông tin nhân viên thành công.{syncMessage}" };
             }
             catch (Exception ex)
             {
                 return new UpdateEmployeeResultDto { Success = false, Message = $"Lỗi cập nhật nhân viên: {ex.Message}" };
             }
+        }
+
+        private async Task<int> SyncUpcomingScheduledShiftsAsync(
+            string employeeId,
+            string shiftType,
+            TimeSpan startTime,
+            TimeSpan endTime)
+        {
+            var today = DateTime.Today;
+            var schedules = await _db.ShiftSchedules
+                .Where(s => s.EmployeeId == employeeId &&
+                            s.WorkDate >= today &&
+                            s.Status == ShiftConstants.ScheduledStatus)
+                .ToListAsync();
+
+            foreach (var schedule in schedules)
+            {
+                schedule.ShiftType = shiftType;
+                schedule.StartTime = startTime;
+                schedule.EndTime = endTime;
+                schedule.Note = string.IsNullOrWhiteSpace(schedule.Note)
+                    ? "Đồng bộ từ ca mặc định của nhân viên"
+                    : schedule.Note;
+            }
+
+            if (schedules.Count > 0)
+            {
+                await _db.SaveChangesAsync();
+            }
+
+            return schedules.Count;
         }
 
         public async Task<DeleteEmployeeResultDto> DeleteEmployeeAsync(DeleteEmployeeDto request)

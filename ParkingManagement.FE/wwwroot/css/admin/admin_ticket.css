@@ -702,6 +702,10 @@
         grid-template-columns: 1fr;
     }
 
+    .price-grid {
+        grid-template-columns: 1fr;
+    }
+
     .ticket-pricing-actions {
         align-items: stretch;
         flex-direction: column;
@@ -833,6 +837,16 @@
         color: #0f172a;
     }
 
+    .price-lines .price-section-title {
+        display: block;
+        padding-top: 12px;
+        border-top: 1px solid #e2e8f0;
+        color: #173b68;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
 
 .price-lines input {
     border: 1px solid #dbe4f0;
@@ -841,7 +855,8 @@
     outline: none;
     font-weight: 700;
     text-align: right;
-    width: 100px;
+    width: 124px;
+    max-width: 50%;
 }
 .price-lines input:focus {
     border-color: #0d6efd;

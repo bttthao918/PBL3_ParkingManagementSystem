@@ -1,0 +1,276 @@
+.customer-dashboard .dashboard-welcome-card {
+    margin-bottom: 22px;
+    border: 0;
+    background: linear-gradient(135deg, #075be8 0%, #0ea5ff 58%, #16a34a 100%);
+    color: white;
+    box-shadow: 0 18px 42px rgb(13 110 253 / 18%);
+}
+
+.vip-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, .85fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.vip-status-card,
+.vip-tier-card {
+    min-width: 0;
+}
+
+.vip-status-card {
+    position: relative;
+    overflow: hidden;
+    border-color: #dbeafe;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.vip-status-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 5px;
+    background: #0d8bff;
+}
+
+.vip-status-card.silver::before {
+    background: linear-gradient(90deg, #94a3b8, #38bdf8);
+}
+
+.vip-status-card.gold::before {
+    background: linear-gradient(90deg, #f59e0b, #22c55e);
+}
+
+.vip-status-card.diamond::before {
+    background: linear-gradient(90deg, #0ea5ff, #8b5cf6);
+}
+
+.vip-card-header,
+.vip-tier-header,
+.vip-progress-copy {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.vip-eyebrow {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.vip-card-header h3,
+.vip-tier-header h3 {
+    margin: 6px 0 0;
+    color: #0f172a;
+    font-size: 22px;
+}
+
+.vip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.vip-badge.member {
+    background: #eef2f7;
+    color: #475569;
+}
+
+.vip-badge.silver {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.vip-badge.gold {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.vip-badge.diamond {
+    background: #eef2ff;
+    color: #5b21b6;
+    border: 1px solid #c7d2fe;
+}
+
+.vip-meter-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0 18px;
+}
+
+.vip-meter-row div {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: white;
+}
+
+.vip-meter-row span,
+.vip-tier-header span,
+.vip-progress-copy span {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.vip-meter-row strong {
+    display: block;
+    margin-top: 7px;
+    color: #0f172a;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+}
+
+.vip-progress-copy {
+    margin-bottom: 9px;
+}
+
+.vip-progress-copy strong {
+    color: #0f172a;
+    font-size: 13px;
+}
+
+.vip-progress-bar {
+    height: 18px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e2e8f0;
+}
+
+.vip-progress-bar div {
+    height: 100%;
+    min-width: 18px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0ea5ff, #16a34a);
+}
+
+.vip-status-card.gold .vip-progress-bar div {
+    background: linear-gradient(90deg, #f59e0b, #16a34a);
+}
+
+.vip-status-card.diamond .vip-progress-bar div {
+    background: linear-gradient(90deg, #0ea5ff, #8b5cf6);
+}
+
+.vip-tier-card {
+    display: grid;
+    align-content: start;
+}
+
+.vip-tier-header {
+    margin-bottom: 14px;
+}
+
+.vip-tier-header span {
+    min-height: 30px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #eef6ff;
+    color: #0d6efd;
+    font-weight: 800;
+}
+
+.vip-tier-list {
+    display: grid;
+    gap: 10px;
+}
+
+.vip-tier-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.vip-tier-item.current {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    box-shadow: inset 3px 0 0 #0d8bff;
+}
+
+.vip-tier-item.reached:not(.current) {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.vip-tier-item.locked {
+    opacity: .68;
+}
+
+.vip-tier-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: white;
+    color: #0d8bff;
+}
+
+.vip-tier-item.silver .vip-tier-icon {
+    color: #64748b;
+}
+
+.vip-tier-item.gold .vip-tier-icon {
+    color: #d97706;
+}
+
+.vip-tier-item.diamond .vip-tier-icon {
+    color: #7c3aed;
+}
+
+.vip-tier-item strong,
+.vip-tier-item span {
+    display: block;
+}
+
+.vip-tier-item strong {
+    color: #0f172a;
+}
+
+.vip-tier-item span {
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.vip-tier-item b {
+    color: #0f172a;
+    font-size: 16px;
+}
+
+@media (max-width: 1100px) {
+    .vip-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 680px) {
+    .vip-card-header,
+    .vip-progress-copy {
+        display: grid;
+    }
+
+    .vip-meter-row {
+        grid-template-columns: 1fr;
+    }
+}

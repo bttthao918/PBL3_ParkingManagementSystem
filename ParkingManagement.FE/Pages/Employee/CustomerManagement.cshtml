@@ -97,11 +97,11 @@
                     </select>
 
                     <select asp-for="VipFilter">
-                        <option value="">VIP Level: Tất cả</option>
-                        <option value="Normal">Thường</option>
-                        <option value="Silver">Silver</option>
-                        <option value="Gold">Gold</option>
-                        <option value="Platinum">Platinum</option>
+                        <option value="">Hạng khách hàng: Tất cả</option>
+                        <option value="member">Thành viên</option>
+                        <option value="silver">Bạc</option>
+                        <option value="gold">Vàng</option>
+                        <option value="diamond">Kim Cương</option>
                     </select>
 
                     <input asp-for="RegisterDate" type="date" class="date-input" />
@@ -123,7 +123,7 @@
                             </th>
                             <th>Khách hàng</th>
                             <th>SĐT</th>
-                            <th>VIP Level</th>
+                            <th>Hạng khách hàng</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
@@ -153,11 +153,8 @@
                                 <td>@item.Phone</td>
 
                                 <td>
-                                    <span class="vip-badge @item.VipLevel.ToLower()">
-                                        @if (item.VipLevel != "Thường")
-                                        {
-                                            <i class="fa-solid fa-crown"></i>
-                                        }
+                                    <span class="vip-badge @item.VipClass">
+                                        <i class="fa-solid @item.VipIcon"></i>
                                         @item.VipLevel
                                     </span>
                                 </td>
@@ -287,11 +284,8 @@
                         <h2>
                             @Model.SelectedCustomer.FullName
 
-                            <span class="vip-badge @Model.SelectedCustomer.VipLevel.ToLower()">
-                                @if (Model.SelectedCustomer.VipLevel != "Thường")
-                                {
-                                    <i class="fa-solid fa-crown"></i>
-                                }
+                            <span class="vip-badge @Model.SelectedCustomer.VipClass">
+                                <i class="fa-solid @Model.SelectedCustomer.VipIcon"></i>
                                 @Model.SelectedCustomer.VipLevel
                             </span>
                         </h2>
@@ -346,11 +340,14 @@
                     </div>
                 </div>
 
-                <div class="detail-card">
+                <div class="detail-card vip-detail-card @Model.SelectedCustomer.VipClass">
                     <div class="detail-card-title">
-                        <h4>
-                            <i class="fa-solid fa-crown"></i>
-                            VIP Level: @Model.SelectedCustomer.VipLevel
+                        <h4 class="vip-detail-heading">
+                            <span>Hạng khách hàng</span>
+                            <strong class="vip-level-chip @Model.SelectedCustomer.VipClass">
+                                <i class="fa-solid @Model.SelectedCustomer.VipIcon"></i>
+                                @Model.SelectedCustomer.VipLevel
+                            </strong>
                         </h4>
 
                         <a asp-page="./CustomerManagement" asp-route-selectedId="@Model.SelectedCustomer.Id">Xem quyền lợi</a>
@@ -374,8 +371,16 @@
                     </div>
 
                     <div class="progress-title">
-                        <span>Tiến độ lên PLATINUM</span>
-                        <span>Còn @Model.SelectedCustomer.AmountToNextLevel.ToString("N0") đ</span>
+                        @if (Model.SelectedCustomer.IsMaxVipLevel)
+                        {
+                            <span>Đã đạt hạng cao nhất</span>
+                            <span>Đang hưởng ưu đãi cao nhất</span>
+                        }
+                        else
+                        {
+                            <span>Tiến độ lên @Model.SelectedCustomer.NextVipLevel</span>
+                            <span>Còn @Model.SelectedCustomer.AmountToNextLevel.ToString("N0") đ</span>
+                        }
                     </div>
 
                     <div class="progress-bar">

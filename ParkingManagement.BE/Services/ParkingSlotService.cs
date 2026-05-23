@@ -345,7 +345,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     TotalMaintenance = totalMaintenance
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ListParkingSlotDto();
             }
@@ -497,7 +497,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     LeastUsedSlots = leastUsed
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ParkingSlotReportDto();
             }
@@ -610,7 +610,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     UtilizationRate = utilization
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ListEmployeeSlotDto
                 {

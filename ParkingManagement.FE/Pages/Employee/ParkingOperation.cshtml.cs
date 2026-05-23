@@ -13,12 +13,24 @@ namespace ParkingManagement.FE.Pages.Employee
         private readonly IParkingOperationService _service;
         private readonly ITicketService _ticketService;
         private readonly ICustomerApiService _customerApiService;
+        private readonly IParkingSlotService _parkingSlotService;
+        private readonly IEmployeeMonthlyTicketService _monthlyTicketService;
+        private readonly IShiftScheduleService _shiftScheduleService;
 
-        public ParkingOperationModel(IParkingOperationService service, ITicketService ticketService, ICustomerApiService customerApiService)
+        public ParkingOperationModel(
+            IParkingOperationService service,
+            ITicketService ticketService,
+            ICustomerApiService customerApiService,
+            IParkingSlotService parkingSlotService,
+            IEmployeeMonthlyTicketService monthlyTicketService,
+            IShiftScheduleService shiftScheduleService)
         {
             _service = service;
             _ticketService = ticketService;
             _customerApiService = customerApiService;
+            _parkingSlotService = parkingSlotService;
+            _monthlyTicketService = monthlyTicketService;
+            _shiftScheduleService = shiftScheduleService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -37,6 +49,12 @@ namespace ParkingManagement.FE.Pages.Employee
         public int ActiveCount { get; set; }
         public int TotalSlots { get; set; }
         public int AvailableSlots { get; set; }
+        public int CheckInToday { get; set; }
+        public int CheckOutToday { get; set; }
+        public int MonthlyTicketActive { get; set; }
+        public int MonthlyTicketExpiringSoon { get; set; }
+        public string ShiftLabel { get; set; } = "Chưa có ca";
+        public List<EmployeeTicketListDto> RecentTickets { get; set; } = new();
 
         [TempData]
         public string? ActionMessage { get; set; }
@@ -48,6 +66,7 @@ namespace ParkingManagement.FE.Pages.Employee
         {
             SetViewData();
             await LoadSummaryAsync();
+            await LoadDashboardDataAsync();
 
             if (Tab == "checkout")
                 await LoadActiveTicketsAsync();
@@ -61,6 +80,7 @@ namespace ParkingManagement.FE.Pages.Employee
             SetViewData();
             Tab = "checkin";
             await LoadSummaryAsync();
+            await LoadDashboardDataAsync();
 
             if (string.IsNullOrWhiteSpace(vehiclePlate))
             {
@@ -94,6 +114,7 @@ namespace ParkingManagement.FE.Pages.Employee
             ActionMessage = CheckInResult?.Message ?? "Check-in thất bại.";
             ActionSuccess = false;
             await LoadSummaryAsync();
+            await LoadDashboardDataAsync();
             return Page();
         }
 
@@ -105,6 +126,7 @@ namespace ParkingManagement.FE.Pages.Employee
             Tab = "checkout";
             await LoadActiveTicketsAsync();
             await LoadSummaryAsync();
+            await LoadDashboardDataAsync();
 
             if (string.IsNullOrWhiteSpace(vehiclePlateOrTicketId))
             {
@@ -147,6 +169,7 @@ namespace ParkingManagement.FE.Pages.Employee
             ActionSuccess = false;
             await LoadActiveTicketsAsync();
             await LoadSummaryAsync();
+            await LoadDashboardDataAsync();
             return Page();
         }
 
@@ -163,7 +186,64 @@ namespace ParkingManagement.FE.Pages.Employee
             if (summary != null)
             {
                 ActiveCount = summary.ActiveTickets;
-                TotalSlots = summary.TotalTickets;
+
+            }
+        }
+
+        private async Task LoadDashboardDataAsync()
+        {
+            var today = DateTime.Today;
+
+            var recentResult = await _ticketService.SearchTicketsAsync(new EmployeeTicketSearchDto
+            {
+                PageNumber = 1,
+                PageSize = 8
+            });
+
+            if (recentResult?.Items != null)
+            {
+                RecentTickets = recentResult.Items;
+                CheckInToday = recentResult.Items.Count(t => t.CheckInTime.Date == today);
+                CheckOutToday = recentResult.Items.Count(t => t.CheckOutTime?.Date == today);
+            }
+
+            var todayResult = await _ticketService.SearchTicketsAsync(new EmployeeTicketSearchDto
+            {
+                FromDate = today,
+                ToDate = today,
+                PageNumber = 1,
+                PageSize = 500
+            });
+
+            if (todayResult?.Items != null)
+            {
+                CheckInToday = todayResult.Items.Count(t => t.CheckInTime.Date == today);
+                CheckOutToday = todayResult.Items.Count(t => t.CheckOutTime?.Date == today);
+            }
+
+            var slots = await _parkingSlotService.GetEmployeeSlotsAsync(new EmployeeSlotFilterDto
+            {
+                PageNumber = 1,
+                PageSize = 500
+            });
+
+            if (slots != null)
+            {
+                TotalSlots = slots.TotalItems;
+                AvailableSlots = slots.TotalEmpty;
+            }
+
+            var monthly = await _monthlyTicketService.GetAllAsync(null, null, null, 1, 1);
+            if (monthly != null)
+            {
+                MonthlyTicketActive = monthly.Summary.Active;
+                MonthlyTicketExpiringSoon = monthly.Summary.ExpiringSoon;
+            }
+
+            var shift = await _shiftScheduleService.GetMyTodayShiftAsync();
+            if (shift?.HasShift == true && shift.Shift != null)
+            {
+                ShiftLabel = $"{shift.Shift.StartTime} - {shift.Shift.EndTime}";
             }
         }
 

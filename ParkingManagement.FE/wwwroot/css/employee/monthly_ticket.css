@@ -559,6 +559,7 @@
 /* Responsive */
 @media (max-width: 1024px) {
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing-card-grid { grid-template-columns: 1fr; }
     .detail-panel { width: 100%; }
 }
 
@@ -585,6 +586,172 @@
     border-radius: 16px;
     padding: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.duration-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.duration-tab {
+    min-height: 34px;
+    padding: 7px 20px;
+    border-radius: 7px;
+    border: 1px solid #dbe4f0;
+    background: white;
+    color: #475569;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.duration-tab.active {
+    background: #1479ff;
+    border-color: #1479ff;
+    color: white;
+}
+
+.pricing-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.pricing-card-grid.hidden,
+.savings-note.hidden {
+    display: none;
+}
+
+.pricing-plan-card {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid #dbe4f0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: border-color .16s ease, box-shadow .16s ease;
+}
+
+.pricing-plan-card:hover {
+    border-color: #8bbcff;
+}
+
+.pricing-plan-card.selected {
+    border: 2px solid #1479ff;
+}
+
+.popular-badge {
+    display: inline-flex;
+    min-height: 22px;
+    align-items: center;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    background: #e8f1ff;
+    color: #1479ff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.popular-badge.hidden {
+    visibility: hidden;
+}
+
+.pricing-plan-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.pricing-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+}
+
+.pricing-icon.blue { background: #e8f1ff; color: #1479ff; }
+.pricing-icon.green { background: #dcfce7; color: #16a34a; }
+.pricing-icon.purple { background: #f1e9ff; color: #7c3aed; }
+
+.pricing-plan-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #10233f;
+}
+
+.pricing-plan-header p {
+    margin: 3px 0 0;
+    color: #71809a;
+    font-size: 12px;
+}
+
+.pricing-price-row {
+    margin: 14px 0 16px;
+}
+
+.pricing-main-price {
+    color: #10233f;
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.pricing-unit,
+.pricing-total {
+    margin-top: 4px;
+    color: #71809a;
+    font-size: 13px;
+}
+
+.pricing-monthly-saving {
+    margin-top: 6px;
+    color: #1479ff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pricing-plan-card hr {
+    border: 0;
+    border-top: 1px solid #edf2f7;
+    margin: 0 0 14px;
+}
+
+.pricing-features {
+    display: grid;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    color: #475569;
+    font-size: 13px;
+}
+
+.pricing-features li {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pricing-features i {
+    color: #1479ff;
+    font-size: 14px;
+}
+
+.savings-note {
+    margin: 16px 0 0;
+    text-align: center;
+    color: #71809a;
+    font-size: 13px;
+}
+
+.savings-note span {
+    color: #1479ff;
+    font-weight: 800;
 }
 
 .pricing-section-header {

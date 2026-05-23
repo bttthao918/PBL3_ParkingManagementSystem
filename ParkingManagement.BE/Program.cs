@@ -220,7 +220,12 @@ using (var scope = app.Services.CreateScope())
         db.Database.ExecuteSqlRaw("""
             IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
             BEGIN
-                IF OBJECT_ID(N'[dbo].[CK_MonthlyTicket_Status]', N'C') IS NOT NULL
+                IF EXISTS (
+                    SELECT 1
+                    FROM sys.check_constraints
+                    WHERE [name] = N'CK_MonthlyTicket_Status'
+                      AND parent_object_id = OBJECT_ID(N'[dbo].[MonthlyTickets]')
+                )
                     ALTER TABLE [dbo].[MonthlyTickets] DROP CONSTRAINT [CK_MonthlyTicket_Status];
 
                 ALTER TABLE [dbo].[MonthlyTickets] WITH CHECK ADD CONSTRAINT [CK_MonthlyTicket_Status]

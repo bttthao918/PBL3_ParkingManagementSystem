@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ParkingManagement.BLL.Constants;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
 
@@ -122,7 +123,7 @@ namespace ParkingManagement.Web.Controllers.Api
             }
 
             var now = DateTime.Now;
-            var schedule = await FindStartableScheduleAsync(employeeId, dto?.ScheduleId, now.Date);
+            var schedule = await FindStartableScheduleAsync(employeeId, dto?.ScheduleId, now);
             if (schedule == null)
             {
                 return BadRequest(new
@@ -156,6 +157,16 @@ namespace ParkingManagement.Web.Controllers.Api
                 {
                     success = false,
                     message = $"Ca này đang ở trạng thái {schedule.Status}, không thể bắt đầu."
+                });
+            }
+
+            var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
+            if (!ShiftConstants.IsWithinShift(now.TimeOfDay, window.Start, window.End))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = $"Hiện tại không nằm trong ca {schedule.ShiftType} ({ShiftConstants.FormatWindow(window.Start, window.End)}). Không thể bắt đầu ca lệch giờ; bạn chỉ có thể bắt đầu trong đúng khung giờ được phân công."
                 });
             }
 
@@ -330,22 +341,73 @@ namespace ParkingManagement.Web.Controllers.Api
             });
         }
 
-        private async Task<ShiftSchedule?> FindStartableScheduleAsync(string employeeId, string? scheduleId, DateTime today)
+        private async Task<ShiftSchedule?> FindStartableScheduleAsync(string employeeId, string? scheduleId, DateTime now)
         {
             var query = _db.ShiftSchedules
                 .Where(s => s.EmployeeId == employeeId);
 
             if (!string.IsNullOrWhiteSpace(scheduleId))
             {
-                return await query.FirstOrDefaultAsync(s => s.ScheduleId == scheduleId && s.WorkDate == today);
+                var schedule = await query.FirstOrDefaultAsync(s => s.ScheduleId == scheduleId && s.WorkDate == now.Date);
+                return schedule;
             }
 
-            return await query
-                .Where(s => s.WorkDate == today && s.Status == ScheduledStatus)
-                .OrderBy(s => s.Status == WorkingStatus ? 0 : 1)
-                .ThenBy(s => s.StartTime)
-                .FirstOrDefaultAsync();
+            var schedules = await query
+                .Where(s => s.WorkDate == now.Date)
+                .ToListAsync();
+
+            var startableSchedule = schedules
+                .Where(s => s.Status == ScheduledStatus)
+                .Select(s =>
+                {
+                    var window = ShiftConstants.GetEffectiveWindow(s.ShiftType, s.StartTime, s.EndTime);
+                    var isCurrentShift = ShiftConstants.IsWithinShift(now.TimeOfDay, window.Start, window.End);
+                    return new { Schedule = s, Window = window, IsCurrentShift = isCurrentShift };
+                })
+                .OrderByDescending(x => x.IsCurrentShift)
+                .ThenBy(x => x.Window.Start)
+                .FirstOrDefault()
+                ?.Schedule;
+
+            if (startableSchedule != null || schedules.Any())
+            {
+                return startableSchedule;
+            }
+
+            return await CreateDefaultScheduleFromEmployeeShiftAsync(employeeId, now.Date);
         }
+
+        private async Task<ShiftSchedule?> CreateDefaultScheduleFromEmployeeShiftAsync(string employeeId, DateTime workDate)
+        {
+            var employee = await _db.Employees
+                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId && !e.IsDeleted);
+            if (employee == null ||
+                !ShiftConstants.TryGetShiftWindow(employee.Shift, out var shiftType, out var startTime, out var endTime))
+            {
+                return null;
+            }
+
+            var schedule = new ShiftSchedule
+            {
+                ScheduleId = GenerateScheduleId(),
+                EmployeeId = employeeId,
+                WorkDate = workDate.Date,
+                ShiftType = shiftType,
+                StartTime = startTime,
+                EndTime = endTime,
+                Status = ScheduledStatus,
+                Note = "Tự tạo từ ca mặc định của nhân viên",
+                CreatedBy = employee.ManagerId ?? "SYSTEM",
+                CreatedAt = DateTime.Now
+            };
+
+            _db.ShiftSchedules.Add(schedule);
+            await _db.SaveChangesAsync();
+            return schedule;
+        }
+
+        private static string GenerateScheduleId() =>
+            "SCH" + DateTime.Now.ToString("yyyyMMddHHmmss") + Random.Shared.Next(100, 999);
 
         private static string AppendNote(string? current, string note)
         {

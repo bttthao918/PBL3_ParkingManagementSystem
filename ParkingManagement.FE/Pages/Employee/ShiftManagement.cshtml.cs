@@ -54,7 +54,10 @@ namespace ParkingManagement.FE.Pages.Employee
             }
         }
 
-        public bool CanStartShift => TodayShift?.HasShift == true && WorkStatus?.IsWorking != true && CurrentShiftStatusClass == "planned";
+        public bool CanStartShift =>
+            TodayShift?.HasShift == true &&
+            WorkStatus?.IsWorking != true &&
+            CurrentShiftStatusClass == "planned";
         public bool CanEndShift => WorkStatus?.IsWorking == true;
 
         [TempData]
@@ -143,6 +146,22 @@ namespace ParkingManagement.FE.Pages.Employee
             return !string.IsNullOrWhiteSpace(status) &&
                    (status.Contains("Hoàn", StringComparison.OrdinalIgnoreCase) ||
                     status.Contains("HoÃ", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private bool IsNowInShiftWindow()
+        {
+            var shift = TodayShift?.Shift;
+            if (shift == null ||
+                !TimeSpan.TryParse(shift.StartTime, CultureInfo.InvariantCulture, out var start) ||
+                !TimeSpan.TryParse(shift.EndTime, CultureInfo.InvariantCulture, out var end))
+            {
+                return false;
+            }
+
+            var now = DateTime.Now.TimeOfDay;
+            return start <= end
+                ? now >= start && now < end
+                : now >= start || now < end;
         }
 
         private static List<EmployeeShiftDayView> BuildWeekDays(List<Services.ShiftMyWeekItem> shifts)

@@ -385,9 +385,23 @@ namespace BackendAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("MemberSince")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<decimal>("TotalSpent")
+                        .HasColumnType("decimal(18,0)");
+
+                    b.Property<int>("TotalTickets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VipLevel")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("CustomerId");
 
@@ -404,7 +418,11 @@ namespace BackendAPI.Migrations
                             FullName = "Nguyễn Minh Anh",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0905123456"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 413, DateTimeKind.Local).AddTicks(9344),
+                            PhoneNumber = "0905123456",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -413,7 +431,11 @@ namespace BackendAPI.Migrations
                             FullName = "Trần Quốc Bảo",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0916234578"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3378),
+                            PhoneNumber = "0916234578",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -422,7 +444,11 @@ namespace BackendAPI.Migrations
                             FullName = "Lê Hoàng Nam",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0935129087"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3402),
+                            PhoneNumber = "0935129087",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -431,7 +457,11 @@ namespace BackendAPI.Migrations
                             FullName = "Phạm Thu Hà",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0974306125"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3403),
+                            PhoneNumber = "0974306125",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -440,7 +470,11 @@ namespace BackendAPI.Migrations
                             FullName = "Võ Thanh Tùng",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0982187345"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3404),
+                            PhoneNumber = "0982187345",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -449,7 +483,11 @@ namespace BackendAPI.Migrations
                             FullName = "Đặng Ngọc Mai",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0946025178"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3405),
+                            PhoneNumber = "0946025178",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -458,7 +496,11 @@ namespace BackendAPI.Migrations
                             FullName = "Hoàng Gia Huy",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0967852143"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3406),
+                            PhoneNumber = "0967852143",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -467,7 +509,11 @@ namespace BackendAPI.Migrations
                             FullName = "Bùi Khánh Linh",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0926017845"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3406),
+                            PhoneNumber = "0926017845",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -476,7 +522,11 @@ namespace BackendAPI.Migrations
                             FullName = "Nguyễn Đức Long",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0907485126"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3407),
+                            PhoneNumber = "0907485126",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -485,7 +535,11 @@ namespace BackendAPI.Migrations
                             FullName = "Trương Mỹ Duyên",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0938741206"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3408),
+                            PhoneNumber = "0938741206",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -494,7 +548,11 @@ namespace BackendAPI.Migrations
                             FullName = "Phan Anh Khoa",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0919082746"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3409),
+                            PhoneNumber = "0919082746",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -503,7 +561,11 @@ namespace BackendAPI.Migrations
                             FullName = "Lâm Quỳnh Chi",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0976012498"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3409),
+                            PhoneNumber = "0976012498",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -512,7 +574,11 @@ namespace BackendAPI.Migrations
                             FullName = "Đỗ Nhật Minh",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0948127603"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3410),
+                            PhoneNumber = "0948127603",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -521,7 +587,11 @@ namespace BackendAPI.Migrations
                             FullName = "Huỳnh Thảo Vy",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0965425006"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3411),
+                            PhoneNumber = "0965425006",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -530,7 +600,11 @@ namespace BackendAPI.Migrations
                             FullName = "Vũ Công Thành",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0906712485"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3412),
+                            PhoneNumber = "0906712485",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -539,7 +613,11 @@ namespace BackendAPI.Migrations
                             FullName = "Mai Hồng Phúc",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0928174506"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3412),
+                            PhoneNumber = "0928174506",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -548,7 +626,11 @@ namespace BackendAPI.Migrations
                             FullName = "Cao Minh Đức",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0986401725"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3413),
+                            PhoneNumber = "0986401725",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -557,7 +639,11 @@ namespace BackendAPI.Migrations
                             FullName = "Nguyễn Phương Nhi",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0937084512"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3501),
+                            PhoneNumber = "0937084512",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -566,7 +652,11 @@ namespace BackendAPI.Migrations
                             FullName = "Đinh Gia Bảo",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0975306184"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3502),
+                            PhoneNumber = "0975306184",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -575,7 +665,11 @@ namespace BackendAPI.Migrations
                             FullName = "Hà Tuấn Kiệt",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0962748031"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3503),
+                            PhoneNumber = "0962748031",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -584,7 +678,11 @@ namespace BackendAPI.Migrations
                             FullName = "Lý Bảo Ngọc",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0914057826"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3504),
+                            PhoneNumber = "0914057826",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -593,7 +691,11 @@ namespace BackendAPI.Migrations
                             FullName = "Tạ Minh Châu",
                             Gender = "Female",
                             IsDeleted = false,
-                            PhoneNumber = "0947081625"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3504),
+                            PhoneNumber = "0947081625",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -602,7 +704,11 @@ namespace BackendAPI.Migrations
                             FullName = "Hồ Việt Anh",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0902476813"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3505),
+                            PhoneNumber = "0902476813",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         },
                         new
                         {
@@ -611,7 +717,11 @@ namespace BackendAPI.Migrations
                             FullName = "Nguyễn Quang Hưng",
                             Gender = "Male",
                             IsDeleted = false,
-                            PhoneNumber = "0981276405"
+                            MemberSince = new DateTime(2026, 5, 21, 21, 54, 39, 416, DateTimeKind.Local).AddTicks(3506),
+                            PhoneNumber = "0981276405",
+                            TotalSpent = 0m,
+                            TotalTickets = 0,
+                            VipLevel = "Thành viên"
                         });
                 });
 
@@ -4203,11 +4313,6 @@ namespace BackendAPI.Migrations
                     b.Navigation("Employees");
                 });
 
-            modelBuilder.Entity("ParkingManagement.DAL.Models.ShiftSchedule", b =>
-                {
-                    b.Navigation("WorkLogs");
-                });
-
             modelBuilder.Entity("ParkingManagement.DAL.Models.MonthlyTicket", b =>
                 {
                     b.Navigation("Payment");
@@ -4218,6 +4323,11 @@ namespace BackendAPI.Migrations
                     b.Navigation("Reservations");
 
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("ParkingManagement.DAL.Models.ShiftSchedule", b =>
+                {
+                    b.Navigation("WorkLogs");
                 });
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.Ticket", b =>

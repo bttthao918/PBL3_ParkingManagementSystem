@@ -5,6 +5,7 @@
     const beApiUrl = 'http://localhost:5188';
 
     let currentZone = "A";
+    let currentSlot = null;
 
     function getStatusClass(status) {
         switch (status) {
@@ -39,6 +40,7 @@
 
             const item = document.createElement("button");
             item.className = `parking-slot ${statusClass}`;
+            item.dataset.slotId = slot.slotId;
             item.onclick = () => showDetail(slot);
 
             item.innerHTML = `
@@ -49,11 +51,22 @@
 
             grid.appendChild(item);
         });
+
+        if (filteredSlots.length === 0) {
+            showEmptyDetail();
+            return;
+        }
+
+        const visibleSelectedSlot = currentSlot
+            ? filteredSlots.find(slot => slot.slotId === currentSlot.slotId)
+            : null;
+
+        showDetail(visibleSelectedSlot || filteredSlots[0]);
     }
 
     function changeZone(zone) {
         currentZone = zone;
-
+        currentSlot = null;
         document.getElementById("zoneFilter").value = zone;
 
         document.querySelectorAll(".parking-zone-tabs button").forEach(btn => {
@@ -65,11 +78,10 @@
         renderSlots();
     }
 
-    let currentSlot = null;
-
     function showDetail(slot) {
         currentSlot = slot;
         document.getElementById('detailPanel').style.display = 'block';
+        highlightSelectedSlot(slot.slotId);
 
         const statusClass = getStatusClass(slot.status);
         const zoneName = slot.slotId.startsWith("A") ? "Khu A" : slot.slotId.startsWith("B") ? "Khu B" : "Khu C";
@@ -107,6 +119,31 @@
         } else {
             btnUpdate.style.display = "inline-flex";
         }
+    }
+
+    function highlightSelectedSlot(slotId) {
+        document.querySelectorAll(".parking-slot").forEach(item => {
+            item.classList.toggle("selected", item.dataset.slotId === slotId);
+        });
+    }
+
+    function showEmptyDetail() {
+        currentSlot = null;
+        document.getElementById('detailPanel').style.display = 'block';
+        document.getElementById("detailSlotIcon").textContent = "-";
+        document.getElementById("detailSlotIcon").className = "detail-slot-icon maintenance";
+        document.getElementById("detailTitle").textContent = "Không có chỗ đỗ";
+        document.getElementById("detailStatus").textContent = "Không có dữ liệu";
+        document.getElementById("detailStatus").className = "parking-status maintenance";
+        document.getElementById("detailZone").textContent = currentZone === "A" ? "Khu A" : currentZone === "B" ? "Khu B" : "Khu C";
+        document.getElementById("detailVehicleType").textContent = "-";
+        document.getElementById("detailLocation").textContent = "Không có ô phù hợp bộ lọc";
+        document.getElementById("detailUpdated").textContent = "-";
+        document.getElementById("occupantSection").style.display = "none";
+        document.getElementById("updateStatusForm").style.display = "none";
+        document.getElementById("slotHistorySection").style.display = "none";
+        document.getElementById("btnUpdateStatus").style.display = "none";
+        highlightSelectedSlot("");
     }
 
     function updateSlotStatus() {
@@ -180,6 +217,7 @@
     function resetParkingFilter() {
         document.getElementById("statusFilter").value = "";
         document.getElementById("slotSearch").value = "";
+        currentSlot = null;
         renderSlots();
     }
 

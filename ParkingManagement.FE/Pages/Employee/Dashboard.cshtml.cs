@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -34,6 +35,10 @@ namespace ParkingManagement.FE.Pages.Employee
         public Services.WorkLogMonthlySummaryResponse? MonthlySummary { get; set; }
         public Services.ShiftTodayResponse? TodayShift { get; set; }
         public List<Services.ShiftMyWeekItem> MyWeekShifts { get; set; } = new();
+        public bool CanStartShift =>
+            TodayShift?.HasShift == true &&
+            WorkStatus?.IsWorking != true &&
+            !IsCompleted(TodayShift.Shift?.Status);
 
         [TempData]
         public string? ShiftMessage { get; set; }
@@ -127,6 +132,29 @@ namespace ParkingManagement.FE.Pages.Employee
                 var y = max <= 0 ? 210 : 220 - (double)(value / max) * 150;
                 return $"{x},{Math.Round(y)}";
             }));
+        }
+
+        private bool IsNowInShiftWindow()
+        {
+            var shift = TodayShift?.Shift;
+            if (shift == null ||
+                !TimeSpan.TryParse(shift.StartTime, CultureInfo.InvariantCulture, out var start) ||
+                !TimeSpan.TryParse(shift.EndTime, CultureInfo.InvariantCulture, out var end))
+            {
+                return false;
+            }
+
+            var now = DateTime.Now.TimeOfDay;
+            return start <= end
+                ? now >= start && now < end
+                : now >= start || now < end;
+        }
+
+        private static bool IsCompleted(string? status)
+        {
+            return !string.IsNullOrWhiteSpace(status) &&
+                   (status.Contains("Hoàn", StringComparison.OrdinalIgnoreCase) ||
+                    status.Contains("HoÃ", StringComparison.OrdinalIgnoreCase));
         }
     }
 }

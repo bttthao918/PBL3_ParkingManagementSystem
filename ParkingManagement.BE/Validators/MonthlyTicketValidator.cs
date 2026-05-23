@@ -1,4 +1,5 @@
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Constants;
 using System.Text.RegularExpressions;
 
 namespace ParkingManagement.BLL.Validators
@@ -36,9 +37,9 @@ namespace ParkingManagement.BLL.Validators
             if (string.IsNullOrWhiteSpace(dto.PaymentMethod))
                 return (false, "Phương thức thanh toán không được để trống.");
 
-            var validMethods = new[] { "Chuyển khoản", "Ví điện tử" };
-            if (!validMethods.Contains(dto.PaymentMethod))
-                return (false, "Vé tháng chỉ hỗ trợ: Chuyển khoản, Ví điện tử. Không hỗ trợ thanh toán tiền mặt.");
+            var paymentMethod = PaymentMethods.Normalize(dto.PaymentMethod);
+            if (paymentMethod != PaymentMethods.BANK_TRANSFER && paymentMethod != PaymentMethods.E_WALLET)
+                return (false, "Vé tháng chỉ hỗ trợ thanh toán online: Chuyển khoản hoặc Ví điện tử.");
 
             return (true, null);
         }

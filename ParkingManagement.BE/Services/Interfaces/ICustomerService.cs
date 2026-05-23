@@ -16,5 +16,9 @@ namespace ParkingManagement.BLL.Services.Interfaces
         // Advanced Features (Previously in EmployeeCustomerService)
         Task<ListEmployeeCustomerSearchDto> SearchCustomersAsync(EmployeeCustomerSearchFilterDto filter);
         Task<EmployeeCustomerDetailDto> GetCustomerDetailAsync(string customerId);
+
+        // VIP Features
+        Task UpdateCustomerVipProgressAsync(string customerId, decimal spentAmount, int ticketCount);
+        int GetVipDiscountPercent(string vipLevel);
     }
 }
