@@ -4173,7 +4173,7 @@ namespace BackendAPI.Migrations
                     b.HasOne("ParkingManagement.DAL.Models.ShiftSchedule", "ShiftSchedule")
                         .WithMany("WorkLogs")
                         .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Employee");
 

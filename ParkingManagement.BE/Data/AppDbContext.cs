@@ -83,7 +83,7 @@ namespace ParkingManagement.DAL.Data
                 .HasOne(w => w.ShiftSchedule)
                 .WithMany(s => s.WorkLogs)
                 .HasForeignKey(w => w.ScheduleId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         private static void ConfigureConstraints(ModelBuilder modelBuilder)

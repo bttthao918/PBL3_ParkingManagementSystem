@@ -48,8 +48,8 @@ namespace ParkingManagement.BLL.Validators
             "Ô tô lớn"
         };
 
-        // Regex cho biển số xe Việt Nam: XX-XXX.XX (vd: 43A-123.45)
-        private const string VehiclePlatePattern = @"^\d{2}[A-Z]-\d{3}\.\d{2}$";
+        // Chấp nhận cả seri có số như 38C1-123.04 và seri không số như 43A-123.45.
+        private const string VehiclePlatePattern = @"^\d{2}[A-Z]\d?-\d{3}\.\d{2}$";
 
         public ValidationResult ValidateInput(CheckInInputDto input)
         {
@@ -77,9 +77,9 @@ namespace ParkingManagement.BLL.Validators
 
             var plate = vehiclePlate.Trim().ToUpper();
 
-            // Kiểm tra format biển số (VD: 43A-123.45)
+            // Kiểm tra format biển số (VD: 43A-123.45 hoặc 38C1-123.04)
             if (!System.Text.RegularExpressions.Regex.IsMatch(plate, VehiclePlatePattern))
-                return ValidationResult.Fail("Biển số xe không hợp lệ. Định dạng: XX-XXX.XX (vd: 43A-123.45)");
+                return ValidationResult.Fail("Biển số xe không hợp lệ. Ví dụ đúng: 43A-123.45 hoặc 38C1-123.04.");
 
             return ValidationResult.Success();
         }

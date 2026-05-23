@@ -10,6 +10,8 @@ namespace ParkingManagement.FE.Services
         Task<ListManagerEmployeeDto?> GetEmployeesAsync(ManagerEmployeeFilterDto filter);
         Task<ManagerEmployeeDetailDto?> GetEmployeeDetailAsync(string employeeId);
         Task<CreateEmployeeInviteResultDto?> CreateEmployeeInviteAsync(CreateEmployeeInviteByManagerDto dto);
+        Task<EmployeeInviteApiResultDto?> GetEmployeeInviteAsync(string token);
+        Task<ConfirmEmployeeInviteResultDto?> ConfirmEmployeeInviteAsync(ConfirmEmployeeInviteDto dto);
         Task<UpdateEmployeeResultDto?> UpdateEmployeeAsync(string employeeId, UpdateEmployeeByManagerDto dto);
         Task<DeleteEmployeeResultDto?> DeleteEmployeeAsync(DeleteEmployeeDto dto);
         Task<UpdateEmployeeResultDto?> RestoreEmployeeAsync(string employeeId);
@@ -153,6 +155,104 @@ namespace ParkingManagement.FE.Services
             {
                 _logger.LogError(ex, "Error calling GetEmployeeDetailAsync");
                 return null;
+            }
+        }
+
+        public async Task<EmployeeInviteApiResultDto?> GetEmployeeInviteAsync(string token)
+        {
+            try
+            {
+                LastRequestUnauthorized = false;
+                AttachBearerToken();
+
+                var response = await _httpClient.GetAsync($"api/employees/invite/{Uri.EscapeDataString(token)}");
+                EmployeeInviteApiResultDto? result = null;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<EmployeeInviteApiResultDto>();
+                }
+                catch
+                {
+                    // Fallback when API returns non-JSON body.
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return result;
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("GetEmployeeInviteAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+                return result ?? new EmployeeInviteApiResultDto
+                {
+                    Success = false,
+                    Message = "Link mời không hợp lệ hoặc đã hết hạn."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling GetEmployeeInviteAsync");
+                return new EmployeeInviteApiResultDto
+                {
+                    Success = false,
+                    Message = "Lỗi kết nối đến máy chủ."
+                };
+            }
+        }
+
+        public async Task<ConfirmEmployeeInviteResultDto?> ConfirmEmployeeInviteAsync(ConfirmEmployeeInviteDto dto)
+        {
+            try
+            {
+                LastRequestUnauthorized = false;
+                AttachBearerToken();
+
+                var response = await _httpClient.PostAsJsonAsync("api/employees/invite/confirm", dto);
+                ConfirmEmployeeInviteResultDto? result = null;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<ConfirmEmployeeInviteResultDto>();
+                }
+                catch
+                {
+                    // Fallback when API returns non-JSON body.
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return result ?? new ConfirmEmployeeInviteResultDto
+                    {
+                        Success = true,
+                        Message = "Hoàn tất tài khoản thành công."
+                    };
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    LastRequestUnauthorized = true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("ConfirmEmployeeInviteAsync failed: {StatusCode} {Body}", response.StatusCode, errorContent);
+                return result ?? new ConfirmEmployeeInviteResultDto
+                {
+                    Success = false,
+                    Message = "Không thể hoàn tất tài khoản."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calling ConfirmEmployeeInviteAsync");
+                return new ConfirmEmployeeInviteResultDto
+                {
+                    Success = false,
+                    Message = "Lỗi kết nối đến máy chủ."
+                };
             }
         }
 

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Services.Interfaces;
 
@@ -15,10 +16,12 @@ namespace ParkingManagement.Web.Controllers.Api
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IConfiguration _configuration;
 
-        public EmployeesController(IEmployeeService employeeService)
+        public EmployeesController(IEmployeeService employeeService, IConfiguration configuration)
         {
             _employeeService = employeeService;
+            _configuration = configuration;
         }
 
         // ── 1. Basic Employee Operations ──
@@ -241,19 +244,20 @@ namespace ParkingManagement.Web.Controllers.Api
 
         [HttpGet("invite/confirm")]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmInviteByLink([FromQuery] string token)
+        public IActionResult ConfirmInviteByLink([FromQuery] string token)
         {
-            var result = await _employeeService.ConfirmInviteAsync(new ConfirmEmployeeInviteDto
+            if (string.IsNullOrWhiteSpace(token))
             {
-                InviteToken = token
-            });
-
-            if (!result.Success)
-            {
-                return Content($"Xác nhận thất bại: {result.Message}", "text/plain; charset=utf-8");
+                return BadRequest(new { message = "Thiếu token xác nhận." });
             }
 
-            return Content("Xác minh Gmail thành công. Tài khoản đã được kích hoạt và nhân viên đã được thêm vào hệ thống. Bạn có thể đăng nhập ngay.", "text/plain; charset=utf-8");
+            var frontendBaseUrl = _configuration["FrontendBaseUrl"]?.TrimEnd('/');
+            if (string.IsNullOrWhiteSpace(frontendBaseUrl))
+            {
+                frontendBaseUrl = "https://localhost:63501";
+            }
+
+            return Redirect($"{frontendBaseUrl}/Auth/EmployeeInvite?token={Uri.EscapeDataString(token)}");
         }
     }
 }

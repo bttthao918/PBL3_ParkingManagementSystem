@@ -16,13 +16,16 @@ namespace ParkingManagement.Web.Controllers.Api
     public class TicketsController : ControllerBase
     {
         private readonly ITicketService _ticketService;
+        private readonly IPlateRecognitionService _plateRecognitionService;
         private readonly ILogger<TicketsController> _logger;
 
         public TicketsController(
             ITicketService ticketService,
+            IPlateRecognitionService plateRecognitionService,
             ILogger<TicketsController> logger)
         {
             _ticketService = ticketService;
+            _plateRecognitionService = plateRecognitionService;
             _logger = logger;
         }
 
@@ -191,7 +194,7 @@ namespace ParkingManagement.Web.Controllers.Api
 
                 var result = await _ticketService.ConfirmCheckInAsync(new ConfirmCheckInDto
                 {
-                    VehiclePlate = input.VehiclePlate,
+                    VehiclePlate = validation.VehiclePlate ?? input.VehiclePlate,
                     VehicleType = input.VehicleType,
                     SlotId = slotId,
                     CustomerId = validation.CustomerId ?? input.CustomerId
@@ -262,6 +265,44 @@ namespace ParkingManagement.Web.Controllers.Api
             {
                 _logger.LogError($"ValidateCheckIn error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        [HttpGet("plate-candidates")]
+        [Authorize(Roles = "Employee")]
+        [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPlateCandidates()
+        {
+            try
+            {
+                var plates = await _ticketService.GetKnownVehiclePlatesAsync();
+                return Ok(plates);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"GetPlateCandidates error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        [HttpPost("plate-recognition")]
+        [Authorize(Roles = "Employee")]
+        [ProducesResponseType(typeof(PlateRecognitionResponseDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RecognizePlate([FromBody] PlateRecognitionRequestDto request)
+        {
+            try
+            {
+                var result = await _plateRecognitionService.RecognizeAsync(request, HttpContext.RequestAborted);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"RecognizePlate error: {ex.Message}");
+                return StatusCode(500, new PlateRecognitionResponseDto
+                {
+                    Success = false,
+                    Message = "Internal server error"
+                });
             }
         }
 

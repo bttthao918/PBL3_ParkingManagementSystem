@@ -161,6 +161,20 @@ using (var scope = app.Services.CreateScope())
 
             IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
             BEGIN
+                UPDATE [dbo].[Payments]
+                SET [TicketId] = NULL
+                WHERE [TicketId] IS NOT NULL
+                  AND LTRIM(RTRIM([TicketId])) = N''
+                  AND [MonthlyTicketId] IS NOT NULL
+                  AND LTRIM(RTRIM([MonthlyTicketId])) <> N'';
+
+                UPDATE [dbo].[Payments]
+                SET [MonthlyTicketId] = NULL
+                WHERE [MonthlyTicketId] IS NOT NULL
+                  AND LTRIM(RTRIM([MonthlyTicketId])) = N''
+                  AND [TicketId] IS NOT NULL
+                  AND LTRIM(RTRIM([TicketId])) <> N'';
+
                 IF COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NULL
                     ALTER TABLE [dbo].[Payments] ADD [CollectedByEmployeeId] nvarchar(20) NULL;
 
@@ -261,6 +275,18 @@ using (var scope = app.Services.CreateScope())
 
             IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
                AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+               AND EXISTS (
+                    SELECT 1
+                    FROM sys.foreign_keys
+                    WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+                      AND delete_referential_action_desc <> N'NO_ACTION'
+               )
+            BEGIN
+                ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId];
+            END
+
+            IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
                AND NOT EXISTS (
                     SELECT 1
                     FROM sys.foreign_keys
@@ -269,7 +295,7 @@ using (var scope = app.Services.CreateScope())
             BEGIN
                 ALTER TABLE [dbo].[WorkLogs]
                 ADD CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId]
-                    FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE SET NULL;
+                    FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE NO ACTION;
             END
             """);
     }
@@ -305,6 +331,19 @@ using (var scope = app.Services.CreateScope())
             IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
                AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
                AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
+               AND EXISTS (
+                    SELECT 1
+                    FROM sys.foreign_keys
+                    WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+                      AND delete_referential_action_desc <> N'NO_ACTION'
+               )
+            BEGIN
+                ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId];
+            END
+
+            IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+               AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
                AND NOT EXISTS (
                     SELECT 1
                     FROM sys.foreign_keys
@@ -313,7 +352,7 @@ using (var scope = app.Services.CreateScope())
             BEGIN
                 ALTER TABLE [dbo].[WorkLogs]
                 ADD CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId]
-                    FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE SET NULL;
+                    FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE NO ACTION;
             END
             """);
     }

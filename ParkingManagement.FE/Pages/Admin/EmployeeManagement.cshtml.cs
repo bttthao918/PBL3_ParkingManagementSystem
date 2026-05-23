@@ -96,10 +96,7 @@ namespace ParkingManagement.FE.Pages.Admin
             {
                 FullName = CreateEmployeeInput.FullName.Trim(),
                 Email = CreateEmployeeInput.Email.Trim(),
-                PhoneNumber = CreateEmployeeInput.PhoneNumber.Trim(),
-                Password = CreateEmployeeInput.Password,
-                ConfirmPassword = CreateEmployeeInput.ConfirmPassword,
-                SendInvitationEmail = CreateEmployeeInput.SendInvitationEmail
+                SendInvitationEmail = true
             };
 
             var result = await _employeeService.CreateEmployeeInviteAsync(request);
@@ -502,20 +499,6 @@ namespace ParkingManagement.FE.Pages.Admin
         [EmailAddress(ErrorMessage = "Email không đúng định dạng.")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
-        [RegularExpression(@"^\d{10,15}$", ErrorMessage = "Số điện thoại phải từ 10-15 chữ số.")]
-        public string PhoneNumber { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"",.<>?/\\|`~]).{8,}$",
-            ErrorMessage = "Mật khẩu tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.")]
-        public string Password { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Xác nhận mật khẩu là bắt buộc.")]
-        [Compare(nameof(Password), ErrorMessage = "Mật khẩu xác nhận không khớp.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-
-        public bool SendInvitationEmail { get; set; } = true;
     }
 
     public class EmployeeViewModel

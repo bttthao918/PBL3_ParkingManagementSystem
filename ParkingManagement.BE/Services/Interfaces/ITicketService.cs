@@ -20,6 +20,7 @@ namespace ParkingManagement.BLL.Services.Interfaces
         // ── Check-in ──
         Task<CheckInValidationDto> ValidateAndPrepareCheckInAsync(CheckInInputDto input);
         Task<CheckInResultDto> ConfirmCheckInAsync(ConfirmCheckInDto input);
+        Task<List<string>> GetKnownVehiclePlatesAsync();
 
         // ── Check-out ──
         Task<CheckOutValidationDto> ValidateAndPrepareCheckOutAsync(CheckOutInputDto input);

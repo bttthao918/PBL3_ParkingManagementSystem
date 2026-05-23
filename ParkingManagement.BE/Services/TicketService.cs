@@ -518,18 +518,36 @@ namespace ParkingManagement.BLL.Services.Implementations
         // ── 3. Check-in ──
         public async Task<CheckInValidationDto> ValidateAndPrepareCheckInAsync(CheckInInputDto input)
         {
+            input.VehiclePlate = NormalizeVehiclePlate(input.VehiclePlate);
             var validationResult = _validator.ValidateInput(input);
             if (!validationResult.IsValid)
             {
-                return new CheckInValidationDto { HasVehicleRecord = false, Message = validationResult.ErrorMessage };
+                return new CheckInValidationDto
+                {
+                    VehiclePlate = input.VehiclePlate,
+                    OriginalVehiclePlate = input.VehiclePlate,
+                    HasVehicleRecord = false,
+                    Message = validationResult.ErrorMessage
+                };
             }
 
-            var vehiclePlate = input.VehiclePlate.Trim().ToUpper();
+            var originalVehiclePlate = input.VehiclePlate;
+            var correctedVehiclePlate = await ResolveLikelyVehiclePlateAsync(originalVehiclePlate);
+            var vehiclePlate = correctedVehiclePlate ?? originalVehiclePlate;
+            var wasPlateAutoCorrected = !string.Equals(originalVehiclePlate, vehiclePlate, StringComparison.OrdinalIgnoreCase);
 
             var activeTicket = await _ticketRepository.GetActiveByPlateAsync(vehiclePlate);
             if (activeTicket != null)
             {
-                return new CheckInValidationDto { HasVehicleRecord = true, Message = "Xe này đang trong bãi rồi. Không thể check-in lại." };
+                return new CheckInValidationDto
+                {
+                    VehiclePlate = vehiclePlate,
+                    OriginalVehiclePlate = originalVehiclePlate,
+                    WasPlateAutoCorrected = wasPlateAutoCorrected,
+                    HasVehicleRecord = true,
+                    Message = BuildPlateCorrectionPrefix(wasPlateAutoCorrected, originalVehiclePlate, vehiclePlate)
+                        + "Xe này đang trong bãi rồi. Không thể check-in lại."
+                };
             }
 
             var vehicle = await _vehicleRepo.GetByPlateAsync(vehiclePlate);
@@ -574,6 +592,9 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 return new CheckInValidationDto
                 {
+                    VehiclePlate = vehiclePlate,
+                    OriginalVehiclePlate = originalVehiclePlate,
+                    WasPlateAutoCorrected = wasPlateAutoCorrected,
                     HasVehicleRecord = vehicle != null,
                     CustomerId = foundCustomerId,
                     CustomerName = foundCustomerName,
@@ -583,14 +604,19 @@ namespace ParkingManagement.BLL.Services.Implementations
                     HasReservation = hasReservation,
                     ReservationId = reservation?.ReservationId,
                     PreferredSlotId = reservation?.SlotId,
-                    Message = "Bãi xe hiện đã hết chỗ trống cho loại xe này."
+                    Message = BuildPlateCorrectionPrefix(wasPlateAutoCorrected, originalVehiclePlate, vehiclePlate)
+                        + "Bãi xe hiện đã hết chỗ trống cho loại xe này."
                 };
             }
 
-            var message = BuildCheckInMessage(hasMonthlyTicket, hasReservation, foundCustomerName);
+            var message = BuildPlateCorrectionPrefix(wasPlateAutoCorrected, originalVehiclePlate, vehiclePlate)
+                + BuildCheckInMessage(hasMonthlyTicket, hasReservation, foundCustomerName);
 
             return new CheckInValidationDto
             {
+                VehiclePlate = vehiclePlate,
+                OriginalVehiclePlate = originalVehiclePlate,
+                WasPlateAutoCorrected = wasPlateAutoCorrected,
                 HasVehicleRecord = vehicle != null,
                 CustomerId = foundCustomerId ?? input.CustomerId,
                 CustomerName = foundCustomerName,
@@ -612,7 +638,8 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (!validationResult.IsValid)
                 return new CheckInResultDto { Success = false, Message = validationResult.ErrorMessage };
 
-            var vehiclePlate = input.VehiclePlate.Trim().ToUpper();
+            var originalVehiclePlate = NormalizeVehiclePlate(input.VehiclePlate);
+            var vehiclePlate = await ResolveLikelyVehiclePlateAsync(originalVehiclePlate) ?? originalVehiclePlate;
 
             var activeTicket = await _ticketRepository.GetActiveByPlateAsync(vehiclePlate);
             if (activeTicket != null)
@@ -666,6 +693,133 @@ namespace ParkingManagement.BLL.Services.Implementations
                 SlotId = input.SlotId,
                 CheckInTime = ticket.CheckInTime
             };
+        }
+
+        public async Task<List<string>> GetKnownVehiclePlatesAsync()
+        {
+            var plates = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var vehicle in await _vehicleRepo.GetAllAsync())
+                AddKnownPlate(plates, vehicle.VehiclePlate);
+
+            foreach (var monthlyTicket in await _monthlyTicketRepository.GetAllAsync())
+                AddKnownPlate(plates, monthlyTicket.VehiclePlate);
+
+            foreach (var reservation in await _reservationRepository.GetAllAsync())
+                AddKnownPlate(plates, reservation.VehiclePlate);
+
+            foreach (var ticket in await _ticketRepository.GetActiveTicketsAsync())
+                AddKnownPlate(plates, ticket.VehiclePlate);
+
+            return plates.OrderBy(x => x).ToList();
+        }
+
+        private async Task<string?> ResolveLikelyVehiclePlateAsync(string vehiclePlate)
+        {
+            var normalizedPlate = NormalizeVehiclePlate(vehiclePlate);
+            if (string.IsNullOrWhiteSpace(normalizedPlate))
+                return null;
+
+            var knownPlates = await GetKnownVehiclePlatesAsync();
+            if (knownPlates.Any(x => string.Equals(x, normalizedPlate, StringComparison.OrdinalIgnoreCase)))
+                return normalizedPlate;
+
+            var matches = knownPlates
+                .Select(knownPlate => new
+                {
+                    Plate = knownPlate,
+                    Score = GetPlateCorrectionScore(normalizedPlate, knownPlate)
+                })
+                .Where(x => x.Score <= 1.0)
+                .OrderBy(x => x.Score)
+                .ThenBy(x => x.Plate)
+                .Take(2)
+                .ToList();
+
+            if (matches.Count == 0)
+                return null;
+
+            if (matches.Count > 1 && Math.Abs(matches[0].Score - matches[1].Score) < 0.001)
+                return null;
+
+            return matches[0].Plate;
+        }
+
+        private static void AddKnownPlate(HashSet<string> plates, string? vehiclePlate)
+        {
+            var normalizedPlate = NormalizeVehiclePlate(vehiclePlate);
+            if (!string.IsNullOrWhiteSpace(normalizedPlate))
+                plates.Add(normalizedPlate);
+        }
+
+        private static string NormalizeVehiclePlate(string? vehiclePlate)
+        {
+            return string.IsNullOrWhiteSpace(vehiclePlate)
+                ? string.Empty
+                : vehiclePlate.Trim().ToUpperInvariant();
+        }
+
+        private static string CompactVehiclePlate(string? vehiclePlate)
+        {
+            return new string(NormalizeVehiclePlate(vehiclePlate)
+                .Where(char.IsLetterOrDigit)
+                .ToArray());
+        }
+
+        private static double GetPlateCorrectionScore(string detectedPlate, string knownPlate)
+        {
+            var detectedCompact = CompactVehiclePlate(detectedPlate);
+            var knownCompact = CompactVehiclePlate(knownPlate);
+
+            if (detectedCompact.Length < 6 || knownCompact.Length < 6)
+                return double.MaxValue;
+
+            var detectedTail = detectedCompact[^5..];
+            var knownTail = knownCompact[^5..];
+            if (!string.Equals(detectedTail, knownTail, StringComparison.Ordinal))
+                return double.MaxValue;
+
+            var distance = GetWeightedPlateDistance(detectedCompact, knownCompact);
+            return distance <= 1.0 ? distance : double.MaxValue;
+        }
+
+        private static double GetWeightedPlateDistance(string a, string b)
+        {
+            var costs = new double[a.Length + 1, b.Length + 1];
+            for (var i = 0; i <= a.Length; i++) costs[i, 0] = i;
+            for (var j = 0; j <= b.Length; j++) costs[0, j] = j;
+
+            for (var i = 1; i <= a.Length; i++)
+            {
+                for (var j = 1; j <= b.Length; j++)
+                {
+                    var substitution = costs[i - 1, j - 1] + GetPlateCharCost(a[i - 1], b[j - 1]);
+                    var deletion = costs[i - 1, j] + 1;
+                    var insertion = costs[i, j - 1] + 1;
+                    costs[i, j] = Math.Min(substitution, Math.Min(deletion, insertion));
+                }
+            }
+
+            return costs[a.Length, b.Length];
+        }
+
+        private static double GetPlateCharCost(char a, char b)
+        {
+            if (a == b) return 0;
+            return AreAmbiguousPlateChars(a, b) ? 0.25 : 1;
+        }
+
+        private static bool AreAmbiguousPlateChars(char a, char b)
+        {
+            var groups = new[] { "EF", "0OQD", "1ILT", "2Z", "5S", "6G", "8B" };
+            return groups.Any(group => group.Contains(a) && group.Contains(b));
+        }
+
+        private static string BuildPlateCorrectionPrefix(bool wasCorrected, string originalPlate, string correctedPlate)
+        {
+            return wasCorrected
+                ? $"Đã tự sửa biển OCR từ {originalPlate} thành {correctedPlate}. "
+                : string.Empty;
         }
 
         private string BuildCheckInMessage(bool hasMonthlyTicket, bool hasReservation, string? customerName)

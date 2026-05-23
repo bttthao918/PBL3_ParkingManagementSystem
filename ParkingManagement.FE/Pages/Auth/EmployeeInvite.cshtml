@@ -1,0 +1,314 @@
+@page
+@model ParkingManagement.FE.Pages.Auth.EmployeeInviteModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Hoàn tất tài khoản nhân viên";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - ParkSmart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #0f172a;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 34rem),
+                linear-gradient(135deg, #eef6ff 0%, #f8fbff 48%, #edfdf8 100%);
+        }
+
+        .invite-shell {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 32px 16px;
+        }
+
+        .invite-card {
+            width: min(100%, 520px);
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid #dbeafe;
+            border-radius: 18px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.14);
+            overflow: hidden;
+        }
+
+        .invite-head {
+            padding: 28px 30px 22px;
+            background: linear-gradient(135deg, #0f766e, #2563eb);
+            color: #ffffff;
+        }
+
+        .invite-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        .invite-brand span {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, .2);
+        }
+
+        h1 {
+            margin: 18px 0 8px;
+            font-size: 28px;
+            line-height: 1.18;
+        }
+
+        .invite-head p {
+            margin: 0;
+            color: rgba(255, 255, 255, .84);
+            line-height: 1.55;
+        }
+
+        .invite-body {
+            padding: 28px 30px 30px;
+        }
+
+        .invite-alert {
+            margin-bottom: 18px;
+            padding: 13px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+
+        .invite-alert.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .invite-alert.success {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .invite-summary {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 22px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #f8fafc;
+        }
+
+        .invite-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .invite-row span {
+            color: #64748b;
+        }
+
+        .invite-row strong {
+            text-align: right;
+        }
+
+        .invite-form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .invite-field {
+            display: grid;
+            gap: 7px;
+        }
+
+        .invite-field label {
+            font-size: 13px;
+            font-weight: 800;
+            color: #334155;
+        }
+
+        .invite-field input {
+            width: 100%;
+            min-height: 46px;
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #0f172a;
+            outline: none;
+            transition: border-color .16s ease, box-shadow .16s ease;
+        }
+
+        .invite-field input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .14);
+        }
+
+        .invite-validation {
+            color: #b91c1c;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .invite-help {
+            margin: -2px 0 0;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .invite-actions {
+            display: grid;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .invite-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            border: 0;
+            border-radius: 13px;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 14px 26px rgba(37, 99, 235, .24);
+        }
+
+        .invite-btn.secondary {
+            background: #ffffff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            box-shadow: none;
+        }
+
+        @@media (max-width: 560px) {
+            .invite-head,
+            .invite-body {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .invite-row {
+                display: grid;
+                gap: 4px;
+            }
+
+            .invite-row strong {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="invite-shell">
+        <section class="invite-card">
+            <div class="invite-head">
+                <div class="invite-brand"><span>P</span> ParkSmart</div>
+                <h1>Hoàn tất tài khoản nhân viên</h1>
+                <p>Nhập số điện thoại và đặt mật khẩu để kích hoạt tài khoản làm việc.</p>
+            </div>
+
+            <div class="invite-body">
+                @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+                {
+                    <div class="invite-alert error">@Model.ErrorMessage</div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+                {
+                    <div class="invite-alert success">@Model.SuccessMessage</div>
+                }
+
+                @if (Model.Completed)
+                {
+                    <div class="invite-actions">
+                        <a class="invite-btn" asp-page="/Auth/Authenticate">Đăng nhập ngay</a>
+                    </div>
+                }
+                else if (Model.Invite != null)
+                {
+                    <div class="invite-summary">
+                        <div class="invite-row">
+                            <span>Họ và tên</span>
+                            <strong>@Model.Invite.FullName</strong>
+                        </div>
+                        <div class="invite-row">
+                            <span>Email</span>
+                            <strong>@Model.Invite.Email</strong>
+                        </div>
+                        <div class="invite-row">
+                            <span>Mã nhân viên</span>
+                            <strong>@Model.Invite.EmployeeCode</strong>
+                        </div>
+                        <div class="invite-row">
+                            <span>Hạn xác nhận</span>
+                            <strong>@Model.Invite.InviteExpiry.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong>
+                        </div>
+                    </div>
+
+                    <form method="post" class="invite-form">
+                        <input asp-for="Input.InviteToken" type="hidden" />
+
+                        <div class="invite-field">
+                            <label asp-for="Input.PhoneNumber">Số điện thoại</label>
+                            <input asp-for="Input.PhoneNumber" inputmode="numeric" autocomplete="tel" placeholder="Ví dụ: 0912345678" />
+                            <span asp-validation-for="Input.PhoneNumber" class="invite-validation"></span>
+                        </div>
+
+                        <div class="invite-field">
+                            <label asp-for="Input.Password">Mật khẩu</label>
+                            <input asp-for="Input.Password" type="password" autocomplete="new-password" placeholder="Nhập mật khẩu mới" />
+                            <span asp-validation-for="Input.Password" class="invite-validation"></span>
+                        </div>
+
+                        <div class="invite-field">
+                            <label asp-for="Input.ConfirmPassword">Nhập lại mật khẩu</label>
+                            <input asp-for="Input.ConfirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="invite-validation"></span>
+                        </div>
+
+                        <p class="invite-help">Mật khẩu cần ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.</p>
+
+                        <div class="invite-actions">
+                            <button class="invite-btn" type="submit">Hoàn tất tài khoản</button>
+                            <a class="invite-btn secondary" asp-page="/Auth/Authenticate">Quay lại đăng nhập</a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="invite-actions">
+                        <a class="invite-btn secondary" asp-page="/Auth/Authenticate">Quay lại đăng nhập</a>
+                    </div>
+                }
+            </div>
+        </section>
+    </main>
+</body>
+</html>

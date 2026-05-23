@@ -38,9 +38,9 @@ namespace ParkingManagement.FE.Models
     {
         public string Email { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string ConfirmPassword { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
+        public string? Password { get; set; }
+        public string? ConfirmPassword { get; set; }
         public bool SendInvitationEmail { get; set; } = true;
     }
 
@@ -49,7 +49,40 @@ namespace ParkingManagement.FE.Models
         public bool Success { get; set; }
         public string? Message { get; set; }
         public string? EmployeeCode { get; set; }
+        public string? InviteToken { get; set; }
         public DateTime? InviteExpiry { get; set; }
+    }
+
+    public class EmployeeInviteDto
+    {
+        public string EmployeeCode { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string FullName { get; set; } = "";
+        public string InviteToken { get; set; } = "";
+        public DateTime InviteExpiry { get; set; }
+    }
+
+    public class EmployeeInviteApiResultDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = "";
+        public EmployeeInviteDto? Data { get; set; }
+    }
+
+    public class ConfirmEmployeeInviteDto
+    {
+        public string InviteToken { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
+        public string Password { get; set; } = "";
+        public string ConfirmPassword { get; set; } = "";
+    }
+
+    public class ConfirmEmployeeInviteResultDto
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public string? EmployeeId { get; set; }
+        public string? EmployeeCode { get; set; }
     }
 
     public class ManagerEmployeeDetailDto

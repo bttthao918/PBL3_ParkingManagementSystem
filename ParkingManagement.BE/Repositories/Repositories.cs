@@ -399,6 +399,7 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task AddAsync(Payment payment)
         {
+            NormalizePaymentReferences(payment);
             _db.Payments.Add(payment);
             await _db.SaveChangesAsync();
         }
@@ -408,8 +409,15 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task UpdateAsync(Payment payment)
         {
+            NormalizePaymentReferences(payment);
             _db.Payments.Update(payment);
             await _db.SaveChangesAsync();
+        }
+
+        private static void NormalizePaymentReferences(Payment payment)
+        {
+            payment.TicketId = string.IsNullOrWhiteSpace(payment.TicketId) ? null : payment.TicketId.Trim();
+            payment.MonthlyTicketId = string.IsNullOrWhiteSpace(payment.MonthlyTicketId) ? null : payment.MonthlyTicketId.Trim();
         }
     }
 

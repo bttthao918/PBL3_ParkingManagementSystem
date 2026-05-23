@@ -27,7 +27,7 @@ namespace BackendAPI.Migrations
                 column: "ScheduleId",
                 principalTable: "ShiftSchedules",
                 principalColumn: "ScheduleId",
-                onDelete: ReferentialAction.SetNull);
+                onDelete: ReferentialAction.NoAction);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

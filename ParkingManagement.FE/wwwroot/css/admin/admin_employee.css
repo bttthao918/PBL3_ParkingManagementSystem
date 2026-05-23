@@ -1028,6 +1028,25 @@
     margin-bottom: 16px;
 }
 
+.emp-form-note {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.emp-validation {
+    display: block;
+    margin-top: -8px;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
 .emp-modal-form .emp-checkbox {
     display: flex;
     align-items: center;

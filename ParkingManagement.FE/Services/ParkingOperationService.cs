@@ -8,6 +8,8 @@ namespace ParkingManagement.FE.Services
     {
         Task<CheckInValidationResponse?> ValidateCheckInAsync(string vehiclePlate, string vehicleType, string? customerId = null);
         Task<CheckInResultResponse?> ConfirmCheckInAsync(string vehiclePlate, string vehicleType, string slotId, string? customerId = null);
+        Task<List<string>> GetKnownVehiclePlatesAsync();
+        Task<PlateRecognitionResponse?> RecognizePlateAsync(string imageBase64);
         Task<CheckOutValidationResponse?> ValidateCheckOutAsync(string vehiclePlateOrTicketId);
         Task<CheckOutResultResponse?> ConfirmCheckOutAsync(
             string ticketId,
@@ -85,6 +87,39 @@ namespace ParkingManagement.FE.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "ConfirmCheckIn error");
+                return null;
+            }
+        }
+
+        public async Task<List<string>> GetKnownVehiclePlatesAsync()
+        {
+            try
+            {
+                AddAuth();
+                return await _httpClient.GetFromJsonAsync<List<string>>("api/tickets/plate-candidates") ?? new List<string>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetKnownVehiclePlates error");
+                return new List<string>();
+            }
+        }
+
+        public async Task<PlateRecognitionResponse?> RecognizePlateAsync(string imageBase64)
+        {
+            try
+            {
+                AddAuth();
+                var response = await _httpClient.PostAsJsonAsync("api/tickets/plate-recognition", new
+                {
+                    imageBase64
+                });
+
+                return await response.Content.ReadFromJsonAsync<PlateRecognitionResponse>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RecognizePlate error");
                 return null;
             }
         }

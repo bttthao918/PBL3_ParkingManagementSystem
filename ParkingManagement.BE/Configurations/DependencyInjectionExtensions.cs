@@ -25,6 +25,7 @@ namespace ParkingManagement.Web.Extensions
                 )
             );
             services.Configure<PayOsOptions>(configuration.GetSection("PayOS"));
+            services.Configure<PlateRecognitionOptions>(configuration.GetSection("PlateRecognition"));
 
             // 2. Repositories (DAL)
             services.AddScoped<IAccountRepository, AccountRepository>();
@@ -66,6 +67,7 @@ namespace ParkingManagement.Web.Extensions
             services.AddScoped<IReportService, ReportService>();
             services.AddSingleton<IVnPayService, VnPayService>();
             services.AddHttpClient<IPayOsService, PayOsService>();
+            services.AddHttpClient<IPlateRecognitionService, PlateRecognitionService>();
 
             return services;
         }

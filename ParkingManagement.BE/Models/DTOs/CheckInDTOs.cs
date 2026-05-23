@@ -20,6 +20,9 @@ namespace ParkingManagement.BLL.DTOs
     /// </summary>
     public class CheckInValidationDto
     {
+        public string? VehiclePlate { get; set; }               // Biển số dùng sau khi chuẩn hóa/sửa OCR
+        public string? OriginalVehiclePlate { get; set; }       // Biển số OCR/nhân viên nhập ban đầu
+        public bool WasPlateAutoCorrected { get; set; }         // Có tự sửa theo dữ liệu hệ thống?
         public bool HasVehicleRecord { get; set; }              // Xe đã được ghi nhận trước đó?
         public string? CustomerId { get; set; }                 // ID khách nếu tìm được
         public string? CustomerName { get; set; }               // Tên khách

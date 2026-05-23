@@ -633,19 +633,17 @@
 
         <form method="post" asp-page-handler="CreateEmployee" class="emp-modal-form">
             <input asp-for="CreateEmployeeInput.FullName" placeholder="Họ và tên" />
+            <span asp-validation-for="CreateEmployeeInput.FullName" class="emp-validation"></span>
             <input asp-for="CreateEmployeeInput.Email" placeholder="Email" />
-            <input asp-for="CreateEmployeeInput.PhoneNumber" placeholder="Số điện thoại" />
-            <input asp-for="CreateEmployeeInput.Password" type="password" placeholder="Mật khẩu cấp tài khoản" />
-            <input asp-for="CreateEmployeeInput.ConfirmPassword" type="password" placeholder="Xác nhận mật khẩu" />
+            <span asp-validation-for="CreateEmployeeInput.Email" class="emp-validation"></span>
 
-            <label class="emp-checkbox">
-                <input asp-for="CreateEmployeeInput.SendInvitationEmail" />
-                Gửi email cấp tài khoản cho nhân viên
-            </label>
+            <p class="emp-form-note">
+                Hệ thống sẽ gửi link đến email này. Nhân viên sẽ tự nhập số điện thoại và đặt mật khẩu trong form xác nhận.
+            </p>
 
             <div class="emp-modal-actions">
                 <button type="button" class="emp-btn-outline" onclick="closeCreateModal()">Hủy</button>
-                <button type="submit" class="emp-btn-primary">Tạo nhân viên</button>
+                <button type="submit" class="emp-btn-primary">Gửi lời mời</button>
             </div>
         </form>
     </div>

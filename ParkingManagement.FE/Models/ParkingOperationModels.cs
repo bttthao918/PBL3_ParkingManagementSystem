@@ -3,6 +3,9 @@ namespace ParkingManagement.FE.Models
     // ── Check-in Validation Response ──
     public class CheckInValidationResponse
     {
+        public string? VehiclePlate { get; set; }
+        public string? OriginalVehiclePlate { get; set; }
+        public bool WasPlateAutoCorrected { get; set; }
         public bool HasVehicleRecord { get; set; }
         public string? CustomerId { get; set; }
         public string? CustomerName { get; set; }
@@ -34,6 +37,16 @@ namespace ParkingManagement.FE.Models
     }
 
     // ── Check-out Validation Response ──
+    public class PlateRecognitionResponse
+    {
+        public bool Success { get; set; }
+        public string? Plate { get; set; }
+        public double? Score { get; set; }
+        public string Provider { get; set; } = "";
+        public string? Message { get; set; }
+        public List<string> Candidates { get; set; } = new();
+    }
+
     public class CheckOutValidationResponse
     {
         public bool Success { get; set; }
