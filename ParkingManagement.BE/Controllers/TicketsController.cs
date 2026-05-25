@@ -238,8 +238,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var shiftCheck = await ValidateEmployeeCanCheckInNowAsync();
-                if (!shiftCheck.CanCheckIn)
+                var shiftCheck = await ValidateEmployeeCanOperateNowAsync("check-in");
+                if (!shiftCheck.CanOperate)
                 {
                     return BadRequest(new CheckInResultDto
                     {
@@ -275,8 +275,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var shiftCheck = await ValidateEmployeeCanCheckInNowAsync();
-                if (!shiftCheck.CanCheckIn)
+                var shiftCheck = await ValidateEmployeeCanOperateNowAsync("check-in");
+                if (!shiftCheck.CanOperate)
                 {
                     return Ok(new CheckInValidationDto
                     {
@@ -345,6 +345,16 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
+                var shiftCheck = await ValidateEmployeeCanOperateNowAsync("check-out");
+                if (!shiftCheck.CanOperate)
+                {
+                    return BadRequest(new CheckOutResultDto
+                    {
+                        Success = false,
+                        Message = shiftCheck.Message
+                    });
+                }
+
                 input.TicketId = ticketId;
                 input.CollectedByEmployeeId = GetEmployeeId();
                 var result = await _ticketService.ConfirmCheckOutAsync(input);
@@ -373,6 +383,16 @@ namespace ParkingManagement.Web.Controllers.Api
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                var shiftCheck = await ValidateEmployeeCanOperateNowAsync("check-out");
+                if (!shiftCheck.CanOperate)
+                {
+                    return Ok(new CheckOutValidationDto
+                    {
+                        Success = false,
+                        Message = shiftCheck.Message
+                    });
+                }
 
                 var result = await _ticketService.ValidateAndPrepareCheckOutAsync(input);
                 return Ok(result);
@@ -404,44 +424,38 @@ namespace ParkingManagement.Web.Controllers.Api
             }
         }
 
-        private async Task<(bool CanCheckIn, string Message)> ValidateEmployeeCanCheckInNowAsync()
+        private async Task<(bool CanOperate, string Message)> ValidateEmployeeCanOperateNowAsync(string actionName)
         {
             var employeeId = GetEmployeeId();
             if (string.IsNullOrWhiteSpace(employeeId))
                 return (false, "Không xác định được nhân viên đang đăng nhập.");
 
             var now = DateTime.Now;
-            var schedules = await _db.ShiftSchedules
-                .Where(s => s.EmployeeId == employeeId && s.WorkDate == now.Date)
-                .OrderBy(s => s.StartTime)
-                .ToListAsync();
+            var activeLog = await _db.WorkLogs
+                .Include(w => w.ShiftSchedule)
+                .Where(w => w.EmployeeId == employeeId && w.Status == ShiftConstants.WorkingStatus)
+                .OrderByDescending(w => w.StartTime)
+                .FirstOrDefaultAsync();
 
-            if (!schedules.Any())
-                return (false, "Hôm nay bạn chưa được phân ca nên không thể check-in xe.");
+            if (activeLog == null)
+                return (false, $"Bạn cần bắt đầu ca làm trước khi {actionName} xe.");
 
-            foreach (var schedule in schedules.Where(s => !BlocksCheckInStatus(s.Status)))
-            {
-                var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
-                if (ShiftConstants.IsWithinShift(now.TimeOfDay, window.Start, window.End))
-                    return (true, string.Empty);
-            }
+            if (activeLog.WorkDate.Date != now.Date || activeLog.StartTime.Date != now.Date)
+                return (false, $"Ca làm đang mở không thuộc ngày hôm nay. Vui lòng kết thúc ca cũ và bắt đầu ca hôm nay trước khi {actionName} xe.");
 
-            var shiftText = string.Join(", ", schedules.Select(schedule =>
-            {
-                var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
-                return $"{schedule.ShiftType} {ShiftConstants.FormatWindow(window.Start, window.End)} ({schedule.Status})";
-            }));
+            if ((now - activeLog.StartTime).TotalHours > 12)
+                return (false, $"Ca làm đang mở đã quá hạn. Vui lòng kết thúc ca cũ và bắt đầu ca mới trước khi {actionName} xe.");
 
-            if (schedules.All(s => BlocksCheckInStatus(s.Status)))
-                return (false, $"Ca hôm nay của bạn đã hoàn thành hoặc không còn hoạt động: {shiftText}.");
+            var schedule = activeLog.ShiftSchedule;
+            if (schedule == null)
+                return (true, string.Empty);
 
-            return (false, $"Hiện tại {now:HH:mm} không nằm trong ca được phân công. Bạn chỉ có thể check-in trong đúng ca làm: Sáng 07:00-12:00, Chiều 12:00-17:00, Tối 17:00-22:00. Ca hôm nay: {shiftText}.");
-        }
+            var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
+            if (ShiftConstants.IsWithinShift(now.TimeOfDay, window.Start, window.End))
+                return (true, string.Empty);
 
-        private static bool BlocksCheckInStatus(string? status)
-        {
-            return string.Equals(status, ShiftConstants.CompletedStatus, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(status, ShiftConstants.AbsentStatus, StringComparison.OrdinalIgnoreCase);
+            var shiftText = $"{schedule.ShiftType} {ShiftConstants.FormatWindow(window.Start, window.End)}";
+            return (false, $"Hiện tại {now:HH:mm} không nằm trong ca đang làm ({shiftText}). Bạn chỉ có thể {actionName} xe trong ca làm hiện tại.");
         }
 
         private string? GetEmployeeId()

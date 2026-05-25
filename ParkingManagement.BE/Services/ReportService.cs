@@ -984,38 +984,57 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (employee == null)
                     throw new Exception("Nhân viên không tồn tại");
 
-                var allTickets = (await _ticketRepo.GetAllAsync()).ToList();
                 var allPayments = (await _paymentRepo.GetAllAsync()).ToList();
                 var employeePayments = allPayments
                     .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
                     .Where(p => PaymentStatuses.IsSuccessful(p.Status))
                     .ToList();
 
-                var today = DateTime.Now.Date;
+                var now = DateTime.Now;
+                var today = now.Date;
                 var thisWeekStart = today.AddDays(-(int)today.DayOfWeek);
                 var thisMonthStart = new DateTime(today.Year, today.Month, 1);
+                var workLogFrom = thisWeekStart < thisMonthStart ? thisWeekStart : thisMonthStart;
+
+                var employeeWorkLogs = await _db.WorkLogs
+                    .Where(w => w.EmployeeId == employeeId && w.WorkDate >= workLogFrom && w.WorkDate <= today)
+                    .ToListAsync();
+
+                var todaySchedules = await _db.ShiftSchedules
+                    .Where(s => s.EmployeeId == employeeId && s.WorkDate == today)
+                    .ToListAsync();
+
+                var currentShift = todaySchedules
+                    .OrderBy(s => string.Equals(s.Status, ShiftConstants.WorkingStatus, StringComparison.OrdinalIgnoreCase) ? 0
+                        : string.Equals(s.Status, ShiftConstants.ScheduledStatus, StringComparison.OrdinalIgnoreCase) ? 1
+                        : 2)
+                    .ThenBy(s => s.StartTime)
+                    .FirstOrDefault()
+                    ?.ShiftType ?? "Chưa phân ca";
 
                 var ticketsToday = employeePayments.Count(p => p.PaymentTime.Date == today);
                 var revenueToday = employeePayments
                     .Where(p => p.PaymentTime.Date == today)
                     .Sum(p => p.Amount);
 
-                var workMinutesToday = allTickets
-                    .Where(t => t.CheckInTime.Date == today && t.CheckOutTime.HasValue)
-                    .Sum(t => (int)(t.CheckOutTime.Value - t.CheckInTime).TotalMinutes);
+                var workMinutesToday = employeeWorkLogs
+                    .Where(w => w.WorkDate.Date == today)
+                    .Sum(w => GetWorkedMinutes(w, now));
 
                 var ticketsThisWeek = employeePayments.Count(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today);
                 var revenueThisWeek = employeePayments
                     .Where(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today)
                     .Sum(p => p.Amount);
 
-                var workMinutesThisWeek = allTickets
-                    .Where(t => t.CheckInTime.Date >= thisWeekStart && t.CheckInTime.Date <= today && t.CheckOutTime.HasValue)
-                    .Sum(t => (int)(t.CheckOutTime.Value - t.CheckInTime).TotalMinutes);
+                var workLogsThisWeek = employeeWorkLogs
+                    .Where(w => w.WorkDate.Date >= thisWeekStart && w.WorkDate.Date <= today)
+                    .ToList();
 
-                var workDaysThisWeek = allTickets
-                    .Where(t => t.CheckInTime.Date >= thisWeekStart && t.CheckInTime.Date <= today)
-                    .Select(t => t.CheckInTime.Date)
+                var workMinutesThisWeek = workLogsThisWeek.Sum(w => GetWorkedMinutes(w, now));
+
+                var workDaysThisWeek = workLogsThisWeek
+                    .Where(w => GetWorkedMinutes(w, now) > 0)
+                    .Select(w => w.WorkDate.Date)
                     .Distinct()
                     .Count();
 
@@ -1024,13 +1043,15 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .Where(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today.AddDays(1).AddTicks(-1))
                     .Sum(p => p.Amount);
 
-                var workMinutesThisMonth = allTickets
-                    .Where(t => t.CheckInTime >= thisMonthStart && t.CheckInTime <= today && t.CheckOutTime.HasValue)
-                    .Sum(t => (int)(t.CheckOutTime.Value - t.CheckInTime).TotalMinutes);
+                var workLogsThisMonth = employeeWorkLogs
+                    .Where(w => w.WorkDate.Date >= thisMonthStart && w.WorkDate.Date <= today)
+                    .ToList();
 
-                var workDaysThisMonth = allTickets
-                    .Where(t => t.CheckInTime >= thisMonthStart && t.CheckInTime <= today)
-                    .Select(t => t.CheckInTime.Date)
+                var workMinutesThisMonth = workLogsThisMonth.Sum(w => GetWorkedMinutes(w, now));
+
+                var workDaysThisMonth = workLogsThisMonth
+                    .Where(w => GetWorkedMinutes(w, now) > 0)
+                    .Select(w => w.WorkDate.Date)
                     .Distinct()
                     .Count();
 
@@ -1052,13 +1073,23 @@ namespace ParkingManagement.BLL.Services.Implementations
                     WorkDaysThisMonth = workDaysThisMonth,
                     AverageRevenuePerTicket = avgRevenuePerTicket,
                     AverageTicketsPerDay = avgTicketsPerDay,
-                    CurrentShift = employee.Shift ?? "Không xác định"
+                    CurrentShift = currentShift
                 };
             }
             catch (Exception)
             {
                 return new EmployeeDashboardDto();
             }
+        }
+
+        private static int GetWorkedMinutes(WorkLog log, DateTime now)
+        {
+            if (log.TotalMinutes.HasValue)
+                return Math.Clamp(log.TotalMinutes.Value, 0, 12 * 60);
+
+            var endTime = log.EndTime ?? now;
+            var minutes = (int)(endTime - log.StartTime).TotalMinutes;
+            return Math.Clamp(minutes, 0, 12 * 60);
         }
 
         public async Task<ShiftAttendanceReportDto> GetShiftAttendanceReportAsync(string employeeId, DateTime? fromDate = null, DateTime? toDate = null)

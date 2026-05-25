@@ -369,45 +369,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 .FirstOrDefault()
                 ?.Schedule;
 
-            if (startableSchedule != null || schedules.Any())
-            {
-                return startableSchedule;
-            }
-
-            return await CreateDefaultScheduleFromEmployeeShiftAsync(employeeId, now.Date);
+            return startableSchedule;
         }
-
-        private async Task<ShiftSchedule?> CreateDefaultScheduleFromEmployeeShiftAsync(string employeeId, DateTime workDate)
-        {
-            var employee = await _db.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId && !e.IsDeleted);
-            if (employee == null ||
-                !ShiftConstants.TryGetShiftWindow(employee.Shift, out var shiftType, out var startTime, out var endTime))
-            {
-                return null;
-            }
-
-            var schedule = new ShiftSchedule
-            {
-                ScheduleId = GenerateScheduleId(),
-                EmployeeId = employeeId,
-                WorkDate = workDate.Date,
-                ShiftType = shiftType,
-                StartTime = startTime,
-                EndTime = endTime,
-                Status = ScheduledStatus,
-                Note = "Tự tạo từ ca mặc định của nhân viên",
-                CreatedBy = employee.ManagerId ?? "SYSTEM",
-                CreatedAt = DateTime.Now
-            };
-
-            _db.ShiftSchedules.Add(schedule);
-            await _db.SaveChangesAsync();
-            return schedule;
-        }
-
-        private static string GenerateScheduleId() =>
-            "SCH" + DateTime.Now.ToString("yyyyMMddHHmmss") + Random.Shared.Next(100, 999);
 
         private static string AppendNote(string? current, string note)
         {

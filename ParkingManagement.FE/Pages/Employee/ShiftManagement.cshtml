@@ -121,13 +121,9 @@
             {
                 <span>Bắt đầu lúc <strong>@Model.WorkStatus.StartTime?.ToString("HH:mm")</strong> · Đã làm <strong>@(Model.WorkStatus.DurationMinutes / 60)h @(Model.WorkStatus.DurationMinutes % 60)p</strong></span>
             }
-            else if (todayShift != null)
-            {
-                <span>Ca này chỉ được tính hoạt động sau khi bạn bấm <strong>Bắt đầu ca</strong>.</span>
-            }
             else
             {
-                <span>Hôm nay bạn chưa được phân ca.</span>
+                <span>@Model.StartShiftHint</span>
             }
         </div>
     </section>

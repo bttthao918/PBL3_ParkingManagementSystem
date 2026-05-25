@@ -112,7 +112,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 ShiftType = normalizedShiftType,
                 StartTime = startTime,
                 EndTime = endTime,
-                Status = "Đã lên lịch",
+                Status = ShiftConstants.ScheduledStatus,
                 Note = dto.Note,
                 CreatedBy = User.FindFirst("accountId")?.Value ?? "MGR001",
                 CreatedAt = DateTime.Now
@@ -137,7 +137,7 @@ namespace ParkingManagement.Web.Controllers.Api
             if (schedule == null)
                 return NotFound(new { success = false, message = "Không tìm thấy lịch ca" });
 
-            if (schedule.Status == "Đang làm" || schedule.Status == "Hoàn thành")
+            if (schedule.Status == ShiftConstants.WorkingStatus || schedule.Status == ShiftConstants.CompletedStatus)
                 return BadRequest(new { success = false, message = "Không thể xóa ca đang làm hoặc đã hoàn thành" });
 
             _db.ShiftSchedules.Remove(schedule);
@@ -181,7 +181,7 @@ namespace ParkingManagement.Web.Controllers.Api
                     ShiftType = normalizedShiftType,
                     StartTime = startTime,
                     EndTime = endTime,
-                    Status = "Đã lên lịch",
+                    Status = ShiftConstants.ScheduledStatus,
                     Note = assignment.Note,
                     CreatedBy = User.FindFirst("accountId")?.Value ?? "MGR001",
                     CreatedAt = DateTime.Now
@@ -211,19 +211,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 .ToListAsync();
 
             if (!todayShiftEntities.Any())
-            {
-                var defaultShift = await CreateDefaultScheduleFromEmployeeShiftAsync(employeeId, today);
-                if (defaultShift == null)
-                    return Ok(new { hasShift = false, message = "Hôm nay bạn không có ca" });
-
-                todayShiftEntities.Add(defaultShift);
-            }
-            else if (todayShiftEntities.All(s => IsInactiveStatus(s.Status)))
-            {
-                var defaultShift = await CreateDefaultScheduleFromEmployeeShiftIfMissingAsync(employeeId, today, todayShiftEntities);
-                if (defaultShift != null)
-                    todayShiftEntities.Add(defaultShift);
-            }
+                return Ok(new { hasShift = false, message = "Hôm nay bạn chưa được phân ca" });
 
             var todayShiftEntity = todayShiftEntities
                 .Select(s =>
@@ -304,75 +292,6 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             return string.Equals(status, ShiftConstants.CompletedStatus, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(status, ShiftConstants.AbsentStatus, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private async Task<ShiftSchedule?> CreateDefaultScheduleFromEmployeeShiftAsync(string employeeId, DateTime workDate)
-        {
-            var employee = await _db.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId && !e.IsDeleted);
-            if (employee == null ||
-                !ShiftConstants.TryGetShiftWindow(employee.Shift, out var shiftType, out var startTime, out var endTime))
-            {
-                return null;
-            }
-
-            var schedule = new ShiftSchedule
-            {
-                ScheduleId = "SCH" + DateTime.Now.ToString("yyyyMMddHHmmss") + Random.Shared.Next(100, 999),
-                EmployeeId = employeeId,
-                WorkDate = workDate.Date,
-                ShiftType = shiftType,
-                StartTime = startTime,
-                EndTime = endTime,
-                Status = ShiftConstants.ScheduledStatus,
-                Note = "Tự tạo từ ca mặc định của nhân viên",
-                CreatedBy = employee.ManagerId ?? "SYSTEM",
-                CreatedAt = DateTime.Now
-            };
-
-            _db.ShiftSchedules.Add(schedule);
-            await _db.SaveChangesAsync();
-            return schedule;
-        }
-
-        private async Task<ShiftSchedule?> CreateDefaultScheduleFromEmployeeShiftIfMissingAsync(
-            string employeeId,
-            DateTime workDate,
-            IEnumerable<ShiftSchedule> existingSchedules)
-        {
-            var employee = await _db.Employees
-                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId && !e.IsDeleted);
-            if (employee == null ||
-                !ShiftConstants.TryGetShiftWindow(employee.Shift, out var shiftType, out var startTime, out var endTime))
-            {
-                return null;
-            }
-
-            if (existingSchedules.Any(s =>
-                    string.Equals(s.ShiftType, shiftType, StringComparison.OrdinalIgnoreCase)
-                    && s.StartTime == startTime
-                    && s.EndTime == endTime))
-            {
-                return null;
-            }
-
-            var schedule = new ShiftSchedule
-            {
-                ScheduleId = "SCH" + DateTime.Now.ToString("yyyyMMddHHmmss") + Random.Shared.Next(100, 999),
-                EmployeeId = employeeId,
-                WorkDate = workDate.Date,
-                ShiftType = shiftType,
-                StartTime = startTime,
-                EndTime = endTime,
-                Status = ShiftConstants.ScheduledStatus,
-                Note = "Tự tạo từ ca mặc định của nhân viên",
-                CreatedBy = employee.ManagerId ?? "SYSTEM",
-                CreatedAt = DateTime.Now
-            };
-
-            _db.ShiftSchedules.Add(schedule);
-            await _db.SaveChangesAsync();
-            return schedule;
         }
 
     }

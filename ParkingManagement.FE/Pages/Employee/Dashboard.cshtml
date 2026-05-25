@@ -96,7 +96,7 @@
                 <div class="shift-indicator"></div>
                 <div>
                     <strong>Chưa bắt đầu ca</strong>
-                    <span>Bấm nút bên dưới để bắt đầu ca làm việc</span>
+                    <span>@Model.StartShiftHint</span>
                 </div>
             </div>
             <form method="post" asp-page-handler="StartShift">
@@ -111,7 +111,7 @@
                 else
                 {
                     <button type="button" class="shift-btn start" disabled>
-                        <i class="fa-solid fa-play"></i> B&#7855;t &#273;&#7847;u ca
+                        <i class="fa-solid fa-play"></i> Bắt đầu ca
                     </button>
                 }
             </form>

@@ -57,8 +57,29 @@ namespace ParkingManagement.FE.Pages.Employee
         public bool CanStartShift =>
             TodayShift?.HasShift == true &&
             WorkStatus?.IsWorking != true &&
-            CurrentShiftStatusClass == "planned";
+            CurrentShiftStatusClass == "planned" &&
+            IsNowInShiftWindow();
         public bool CanEndShift => WorkStatus?.IsWorking == true;
+
+        public string StartShiftHint
+        {
+            get
+            {
+                if (WorkStatus?.IsWorking == true)
+                    return "Bạn đang trong ca làm việc.";
+
+                if (TodayShift?.HasShift != true)
+                    return "Hôm nay bạn chưa được phân ca.";
+
+                if (CurrentShiftStatusClass == "done")
+                    return "Ca hôm nay đã hoàn thành.";
+
+                if (!IsNowInShiftWindow())
+                    return $"Chỉ có thể bắt đầu trong khung giờ {CurrentShiftTime}.";
+
+                return "Ca này chỉ được tính hoạt động sau khi bạn bấm Bắt đầu ca.";
+            }
+        }
 
         [TempData]
         public string? ShiftMessage { get; set; }
