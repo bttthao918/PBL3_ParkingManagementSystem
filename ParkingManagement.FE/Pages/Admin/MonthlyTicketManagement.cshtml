@@ -4,14 +4,24 @@
 @section Styles {
     <link rel="stylesheet" href="/css/employee/monthly_ticket.css" asp-append-version="true" />
     <style>
-        .pricing-input-group {
-            display: flex;
+        .monthly-page .price-lines label {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 16px;
+        }
+        .monthly-page .price-lines label > span:first-child {
+            min-width: 0;
+            line-height: 1.35;
+        }
+        .monthly-page .pricing-input-group {
+            display: grid;
+            grid-template-columns: 120px 24px;
             align-items: center;
             gap: 8px;
-            width: 100%;
             justify-content: flex-end;
         }
-        .pricing-input-group input {
+        .monthly-page .pricing-input-group input {
             width: 120px;
             padding: 6px 12px;
             border: 1px solid #e5e7eb;
@@ -21,10 +31,15 @@
             font-size: 14px;
             transition: all 0.2s ease;
         }
-        .pricing-input-group input:focus {
+        .monthly-page .pricing-input-group input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .monthly-page .pricing-unit {
+            color: #0f172a;
+            font-weight: 700;
+            text-align: right;
         }
         .pricing-detail-row {
             align-items: center;
@@ -54,7 +69,9 @@
         }
         .pricing-actions-container {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
             padding: 16px;
             border-top: 1px solid #f3f4f6;
             background: #f9fafb;
@@ -71,6 +88,24 @@
         .pricing-vehicle-card:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             border-color: #cbd5e1;
+        }
+        .pricing-updated-time {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        @@media (max-width: 640px) {
+            .monthly-page .price-lines label {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .monthly-page .pricing-input-group {
+                grid-template-columns: minmax(0, 1fr) 24px;
+                justify-content: stretch;
+            }
+            .monthly-page .pricing-input-group input {
+                width: 100%;
+            }
         }
     </style>
 }
@@ -95,8 +130,13 @@
     </div>
 
     <!-- Bảng giá vé tháng -->
-    <div class="pricing-collapse" id="monthlyPricingPanel">
-        <form method="post" asp-page-handler="UpdatePricing" class="pricing-section">
+    <div class="pricing-collapse @(Model.ShowPricingPanel ? "open" : "")" id="monthlyPricingPanel">
+        <form method="post"
+              asp-page-handler="UpdatePricing"
+              class="pricing-section"
+              data-confirm-title="Cập nhật bảng giá vé tháng"
+              data-confirm-message="Bạn có chắc muốn lưu thay đổi bảng giá vé tháng?"
+              data-confirm-type="warning">
             <div class="pricing-section-header">
                 <div>
                     <h3>Cập nhật bảng giá vé tháng</h3>
@@ -122,19 +162,22 @@
                         <label>
                             <span>1 tháng</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.MotorcycleMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.MotorcycleMonthlyOneMonth" type="number" min="1000" step="1000" />
+                                <span class="pricing-unit">đ</span>
                             </div>
                         </label>
                         <label>
-                            <span>3 tháng</span>
+                            <span>Giảm gói 3 tháng (@Model.PricingInput.MotorcycleMonthlyThreeMonth.ToString("N0") đ)</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.MotorcycleMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.MotorcycleMonthlyThreeMonthDiscountPercent" type="number" min="0" max="99.99" step="0.01" />
+                                <span class="pricing-unit">%</span>
                             </div>
                         </label>
                         <label>
-                            <span>6 tháng</span>
+                            <span>Giảm gói 6 tháng (@Model.PricingInput.MotorcycleMonthlySixMonth.ToString("N0") đ)</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.MotorcycleMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.MotorcycleMonthlySixMonthDiscountPercent" type="number" min="0" max="99.99" step="0.01" />
+                                <span class="pricing-unit">%</span>
                             </div>
                         </label>
                     </div>
@@ -154,19 +197,22 @@
                         <label>
                             <span>1 tháng</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.SmallCarMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.SmallCarMonthlyOneMonth" type="number" min="1000" step="1000" />
+                                <span class="pricing-unit">đ</span>
                             </div>
                         </label>
                         <label>
-                            <span>3 tháng</span>
+                            <span>Giảm gói 3 tháng (@Model.PricingInput.SmallCarMonthlyThreeMonth.ToString("N0") đ)</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.SmallCarMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.SmallCarMonthlyThreeMonthDiscountPercent" type="number" min="0" max="99.99" step="0.01" />
+                                <span class="pricing-unit">%</span>
                             </div>
                         </label>
                         <label>
-                            <span>6 tháng</span>
+                            <span>Giảm gói 6 tháng (@Model.PricingInput.SmallCarMonthlySixMonth.ToString("N0") đ)</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.SmallCarMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.SmallCarMonthlySixMonthDiscountPercent" type="number" min="0" max="99.99" step="0.01" />
+                                <span class="pricing-unit">%</span>
                             </div>
                         </label>
                     </div>
@@ -186,19 +232,22 @@
                         <label>
                             <span>1 tháng</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.LargeCarMonthlyOneMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.LargeCarMonthlyOneMonth" type="number" min="1000" step="1000" />
+                                <span class="pricing-unit">đ</span>
                             </div>
                         </label>
                         <label>
-                            <span>3 tháng</span>
+                            <span>Giảm gói 3 tháng (@Model.PricingInput.LargeCarMonthlyThreeMonth.ToString("N0") đ)</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.LargeCarMonthlyThreeMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.LargeCarMonthlyThreeMonthDiscountPercent" type="number" min="0" max="99.99" step="0.01" />
+                                <span class="pricing-unit">%</span>
                             </div>
                         </label>
                         <label>
-                            <span>6 tháng</span>
+                            <span>Giảm gói 6 tháng (@Model.PricingInput.LargeCarMonthlySixMonth.ToString("N0") đ)</span>
                             <div class="pricing-input-group">
-                                <input asp-for="PricingInput.LargeCarMonthlySixMonth" type="number" min="1000" step="1000" /> đ
+                                <input asp-for="PricingInput.LargeCarMonthlySixMonthDiscountPercent" type="number" min="0" max="99.99" step="0.01" />
+                                <span class="pricing-unit">%</span>
                             </div>
                         </label>
                     </div>
@@ -206,6 +255,12 @@
             </div>
 
             <div class="pricing-actions-container">
+                <span class="pricing-updated-time">
+                    Cập nhật gần nhất:
+                    @(Model.PricingLastUpdatedAt.HasValue
+                        ? Model.PricingLastUpdatedAt.Value.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                        : "Chưa có dữ liệu")
+                </span>
                 <button type="submit" class="pricing-save-btn">
                     <i class="fa-solid fa-floppy-disk"></i> Lưu bảng giá
                 </button>
@@ -550,12 +605,5 @@
                 }
             });
         });
-        
-        function confirmSubmit(form, title, message, type) {
-            if (confirm(message)) {
-                return true;
-            }
-            return false;
-        }
     </script>
 }

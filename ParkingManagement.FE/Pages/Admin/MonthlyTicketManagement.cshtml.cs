@@ -54,8 +54,12 @@ namespace ParkingManagement.FE.Pages.Admin
         [BindProperty(SupportsGet = true)]
         public string? SelectedId { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public bool ShowPricingPanel { get; set; }
+
         // Pricing
         public List<EmployeeMonthlyTicketPricingItem> Pricing { get; set; } = new();
+        public DateTime? PricingLastUpdatedAt { get; set; }
 
         [BindProperty]
         public PricingInputModel PricingInput { get; set; } = new();
@@ -93,6 +97,9 @@ namespace ParkingManagement.FE.Pages.Admin
                 SelectedTicket = await _service.GetDetailAsync(SelectedId);
             }
 
+            var currentPricing = await _pricingService.GetCurrentPricingAsync();
+            PricingLastUpdatedAt = currentPricing?.LastUpdatedAt;
+
             // Load pricing
             var pricing = await _service.GetPricingAsync();
             if (pricing != null && pricing.Any())
@@ -114,12 +121,18 @@ namespace ParkingManagement.FE.Pages.Admin
                 MotorcycleMonthlyOneMonth = GetMonthlyPrice(MotorcycleType, 1),
                 MotorcycleMonthlyThreeMonth = GetMonthlyPrice(MotorcycleType, 3),
                 MotorcycleMonthlySixMonth = GetMonthlyPrice(MotorcycleType, 6),
+                MotorcycleMonthlyThreeMonthDiscountPercent = GetMonthlyDiscountPercent(MotorcycleType, 3),
+                MotorcycleMonthlySixMonthDiscountPercent = GetMonthlyDiscountPercent(MotorcycleType, 6),
                 SmallCarMonthlyOneMonth = GetMonthlyPrice(SmallCarType, 1),
                 SmallCarMonthlyThreeMonth = GetMonthlyPrice(SmallCarType, 3),
                 SmallCarMonthlySixMonth = GetMonthlyPrice(SmallCarType, 6),
+                SmallCarMonthlyThreeMonthDiscountPercent = GetMonthlyDiscountPercent(SmallCarType, 3),
+                SmallCarMonthlySixMonthDiscountPercent = GetMonthlyDiscountPercent(SmallCarType, 6),
                 LargeCarMonthlyOneMonth = GetMonthlyPrice(LargeCarType, 1),
                 LargeCarMonthlyThreeMonth = GetMonthlyPrice(LargeCarType, 3),
-                LargeCarMonthlySixMonth = GetMonthlyPrice(LargeCarType, 6)
+                LargeCarMonthlySixMonth = GetMonthlyPrice(LargeCarType, 6),
+                LargeCarMonthlyThreeMonthDiscountPercent = GetMonthlyDiscountPercent(LargeCarType, 3),
+                LargeCarMonthlySixMonthDiscountPercent = GetMonthlyDiscountPercent(LargeCarType, 6)
             };
         }
 
@@ -153,6 +166,25 @@ namespace ParkingManagement.FE.Pages.Admin
             return saving > 0 ? saving : 0m;
         }
 
+        public decimal GetMonthlyDiscountPercent(string vehicleType, int months)
+        {
+            if (months <= 1)
+                return 0m;
+
+            var oneMonthPrice = GetMonthlyPrice(vehicleType, 1);
+            var packagePrice = GetMonthlyPrice(vehicleType, months);
+            var fullPrice = oneMonthPrice * months;
+
+            if (oneMonthPrice <= 0 || packagePrice <= 0 || fullPrice <= 0)
+                return 0m;
+
+            var discount = (1m - packagePrice / fullPrice) * 100m;
+            return Math.Round(Math.Max(0m, discount), 2, MidpointRounding.AwayFromZero);
+        }
+
+        private static bool HasInvalidDiscount(decimal discountPercent)
+            => discountPercent < 0 || discountPercent >= 100;
+
         private static List<EmployeeMonthlyTicketPricingItem> CreateDefaultPricing()
         {
             var defaultPricing = PricingDisplayDefaults.CreateDefaultPricing();
@@ -177,18 +209,24 @@ namespace ParkingManagement.FE.Pages.Admin
             try
             {
                 if (PricingInput.MotorcycleMonthlyOneMonth <= 0 ||
-                    PricingInput.MotorcycleMonthlyThreeMonth <= 0 ||
-                    PricingInput.MotorcycleMonthlySixMonth <= 0 ||
                     PricingInput.SmallCarMonthlyOneMonth <= 0 ||
-                    PricingInput.SmallCarMonthlyThreeMonth <= 0 ||
-                    PricingInput.SmallCarMonthlySixMonth <= 0 ||
-                    PricingInput.LargeCarMonthlyOneMonth <= 0 ||
-                    PricingInput.LargeCarMonthlyThreeMonth <= 0 ||
-                    PricingInput.LargeCarMonthlySixMonth <= 0)
+                    PricingInput.LargeCarMonthlyOneMonth <= 0)
                 {
                     ActionSuccess = false;
-                    ActionMessage = "Giá vé tháng phải lớn hơn 0.";
-                    return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
+                    ActionMessage = "Giá vé 1 tháng phải lớn hơn 0.";
+                    return RedirectToPage(BuildRouteValues(showPricingPanel: true));
+                }
+
+                if (HasInvalidDiscount(PricingInput.MotorcycleMonthlyThreeMonthDiscountPercent) ||
+                    HasInvalidDiscount(PricingInput.MotorcycleMonthlySixMonthDiscountPercent) ||
+                    HasInvalidDiscount(PricingInput.SmallCarMonthlyThreeMonthDiscountPercent) ||
+                    HasInvalidDiscount(PricingInput.SmallCarMonthlySixMonthDiscountPercent) ||
+                    HasInvalidDiscount(PricingInput.LargeCarMonthlyThreeMonthDiscountPercent) ||
+                    HasInvalidDiscount(PricingInput.LargeCarMonthlySixMonthDiscountPercent))
+                {
+                    ActionSuccess = false;
+                    ActionMessage = "Phần trăm giảm phải từ 0 đến dưới 100.";
+                    return RedirectToPage(BuildRouteValues(showPricingPanel: true));
                 }
 
                 var currentPricing = await _pricingService.GetCurrentPricingAsync();
@@ -202,20 +240,20 @@ namespace ParkingManagement.FE.Pages.Admin
                         [MotorcycleType] = new()
                         {
                             OneMonth = PricingInput.MotorcycleMonthlyOneMonth,
-                            ThreeMonth = PricingInput.MotorcycleMonthlyThreeMonth,
-                            SixMonth = PricingInput.MotorcycleMonthlySixMonth
+                            ThreeMonthDiscountPercent = PricingInput.MotorcycleMonthlyThreeMonthDiscountPercent,
+                            SixMonthDiscountPercent = PricingInput.MotorcycleMonthlySixMonthDiscountPercent
                         },
                         [SmallCarType] = new()
                         {
                             OneMonth = PricingInput.SmallCarMonthlyOneMonth,
-                            ThreeMonth = PricingInput.SmallCarMonthlyThreeMonth,
-                            SixMonth = PricingInput.SmallCarMonthlySixMonth
+                            ThreeMonthDiscountPercent = PricingInput.SmallCarMonthlyThreeMonthDiscountPercent,
+                            SixMonthDiscountPercent = PricingInput.SmallCarMonthlySixMonthDiscountPercent
                         },
                         [LargeCarType] = new()
                         {
                             OneMonth = PricingInput.LargeCarMonthlyOneMonth,
-                            ThreeMonth = PricingInput.LargeCarMonthlyThreeMonth,
-                            SixMonth = PricingInput.LargeCarMonthlySixMonth
+                            ThreeMonthDiscountPercent = PricingInput.LargeCarMonthlyThreeMonthDiscountPercent,
+                            SixMonthDiscountPercent = PricingInput.LargeCarMonthlySixMonthDiscountPercent
                         }
                     }
                 };
@@ -232,7 +270,20 @@ namespace ParkingManagement.FE.Pages.Admin
                 ActionMessage = $"Lỗi: {ex.Message}";
             }
 
-            return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
+            return RedirectToPage(BuildRouteValues(showPricingPanel: true));
+        }
+
+        private object BuildRouteValues(bool showPricingPanel = false)
+        {
+            return new
+            {
+                Search,
+                StatusFilter,
+                VehicleTypeFilter,
+                PageNumber,
+                PageSize,
+                ShowPricingPanel = showPricingPanel
+            };
         }
     }
 }

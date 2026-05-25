@@ -30,9 +30,9 @@ namespace ParkingManagement.FE.Services
                 MaxDailyFee = new Dictionary<string, decimal>(DefaultMaxDailyFee),
                 MonthlyTicketPrice = new Dictionary<string, MonthlyPricingDto>
                 {
-                    [Motorcycle] = new() { OneMonth = 150000m, ThreeMonth = 400000m, SixMonth = 750000m },
-                    [SmallCar] = new() { OneMonth = 300000m, ThreeMonth = 800000m, SixMonth = 1500000m },
-                    [LargeCar] = new() { OneMonth = 500000m, ThreeMonth = 1300000m, SixMonth = 2500000m }
+                    [Motorcycle] = new() { OneMonth = 400000m, ThreeMonth = 1100000m, SixMonth = 2000000m },
+                    [SmallCar] = new() { OneMonth = 1200000m, ThreeMonth = 3200000m, SixMonth = 6000000m },
+                    [LargeCar] = new() { OneMonth = 2000000m, ThreeMonth = 5500000m, SixMonth = 10000000m }
                 },
                 LastUpdatedAt = DateTime.UtcNow
             };

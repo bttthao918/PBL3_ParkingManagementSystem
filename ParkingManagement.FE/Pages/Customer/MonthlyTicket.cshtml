@@ -462,7 +462,11 @@
                         </button>
                     </form>
 
-                    <form method="post" asp-page-handler="Cancel">
+                    <form method="post"
+                          asp-page-handler="Cancel"
+                          data-confirm-title="Hủy vé tháng"
+                          data-confirm-message="Bạn có chắc muốn hủy vé tháng @Model.CurrentTicket.MonthlyTicketId? Hành động này không thể hoàn tác."
+                          data-confirm-type="danger">
                         <input type="hidden" name="ticketId" value="@Model.CurrentTicket.MonthlyTicketId" />
 
                         <button type="submit" class="danger-btn">
@@ -546,7 +550,11 @@
                                 </button>
                             </form>
 
-                                <form method="post" asp-page-handler="Cancel">
+                                <form method="post"
+                                      asp-page-handler="Cancel"
+                                      data-confirm-title="Hủy vé tháng"
+                                      data-confirm-message="Bạn có chắc muốn hủy vé tháng @ticket.MonthlyTicketId? Hành động này không thể hoàn tác."
+                                      data-confirm-type="danger">
                                     <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
 
                                     <button type="submit" class="icon-btn red" title="Hủy vé">

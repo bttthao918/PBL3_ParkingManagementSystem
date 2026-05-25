@@ -157,18 +157,21 @@ namespace ParkingManagement.DAL.Data
                 new() { PricingId = "PRICE-XM-NIGHT", VehicleType = Motorcycle, RateType = "Overnight", Amount = 10000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-XM-M1", VehicleType = Motorcycle, RateType = "Monthly1M", Amount = 400000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-XM-M3", VehicleType = Motorcycle, RateType = "Monthly3M", Amount = 1100000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
+                new() { PricingId = "PRICE-XM-M6", VehicleType = Motorcycle, RateType = "Monthly6M", Amount = 2000000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 // Ô tô nhỏ: giờ đầu 15k, từ giờ 2: 5k/h, qua đêm 40k. Vé tháng 1.2tr/3.2tr
                 new() { PricingId = "PRICE-OTON-FIRST", VehicleType = SmallCar, RateType = "FirstHour", Amount = 15000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTON-NEXT", VehicleType = SmallCar, RateType = "PerHourAfter", Amount = 5000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTON-NIGHT", VehicleType = SmallCar, RateType = "Overnight", Amount = 40000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTON-M1", VehicleType = SmallCar, RateType = "Monthly1M", Amount = 1200000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTON-M3", VehicleType = SmallCar, RateType = "Monthly3M", Amount = 3200000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
+                new() { PricingId = "PRICE-OTON-M6", VehicleType = SmallCar, RateType = "Monthly6M", Amount = 6000000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 // Ô tô lớn: giờ đầu 25k, từ giờ 2: 8k/h, qua đêm 60k. Vé tháng 2tr/5.5tr
                 new() { PricingId = "PRICE-OTOL-FIRST", VehicleType = LargeCar, RateType = "FirstHour", Amount = 25000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTOL-NEXT", VehicleType = LargeCar, RateType = "PerHourAfter", Amount = 8000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTOL-NIGHT", VehicleType = LargeCar, RateType = "Overnight", Amount = 60000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
                 new() { PricingId = "PRICE-OTOL-M1", VehicleType = LargeCar, RateType = "Monthly1M", Amount = 2000000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
-                new() { PricingId = "PRICE-OTOL-M3", VehicleType = LargeCar, RateType = "Monthly3M", Amount = 5500000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" }
+                new() { PricingId = "PRICE-OTOL-M3", VehicleType = LargeCar, RateType = "Monthly3M", Amount = 5500000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" },
+                new() { PricingId = "PRICE-OTOL-M6", VehicleType = LargeCar, RateType = "Monthly6M", Amount = 10000000, UpdatedAt = new DateTime(2026, 5, 1, 8, 0, 0), UpdatedBy = "MGR001" }
             };
 
             var monthlyTickets = new List<MonthlyTicket>();

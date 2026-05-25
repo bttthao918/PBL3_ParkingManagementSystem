@@ -59,26 +59,61 @@
 
     okBtn.addEventListener('click', () => {
         modal.classList.remove('open');
-        if (resolveCallback) resolveCallback(true);
+        runCallback(true);
     });
 
     cancelBtn.addEventListener('click', () => {
         modal.classList.remove('open');
-        if (resolveCallback) resolveCallback(false);
+        runCallback(false);
     });
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('open');
-            if (resolveCallback) resolveCallback(false);
+            runCallback(false);
         }
     });
+
+    function runCallback(ok) {
+        const callback = resolveCallback;
+        resolveCallback = null;
+        if (callback) callback(ok);
+    }
+
+    function submitConfirmedForm(form) {
+        form.dataset.confirmed = 'true';
+        if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+            window.setTimeout(() => {
+                if (form.dataset.confirmed === 'true') form.dataset.confirmed = '';
+            }, 0);
+            return;
+        }
+
+        form.submit();
+    }
+
+    function getOptions(element) {
+        return {
+            title: element.dataset.confirmTitle || 'Xác nhận',
+            message: element.dataset.confirmMessage || 'Bạn có chắc muốn thực hiện hành động này?',
+            type: element.dataset.confirmType || 'warning'
+        };
+    }
 
     // Global function
     window.confirmAction = function (title, message, callback, type) {
         showConfirm(title, message, type || 'info').then(ok => {
             if (ok && callback) callback();
         });
+    };
+
+    window.confirmNavigation = function (event, link, title, message, type) {
+        event.preventDefault();
+        showConfirm(title, message, type || 'warning').then(ok => {
+            if (ok) window.location.href = link.href;
+        });
+        return false;
     };
 
     // For forms — gắn vào onsubmit
@@ -90,11 +125,37 @@
 
         showConfirm(title, message, type || 'warning').then(ok => {
             if (ok) {
-                form.dataset.confirmed = 'true';
-                form.submit();
+                submitConfirmedForm(form);
             }
         });
 
         return false;
     };
+
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('a[data-confirm-title], a[data-confirm-message]');
+        if (!link || link.dataset.confirmManual === 'true') return;
+
+        event.preventDefault();
+        const options = getOptions(link);
+        showConfirm(options.title, options.message, options.type).then(ok => {
+            if (ok) window.location.href = link.href;
+        });
+    });
+
+    document.addEventListener('submit', (event) => {
+        const form = event.target;
+        if (!form.matches('form[data-confirm-title], form[data-confirm-message]')) return;
+
+        if (form.dataset.confirmed === 'true') {
+            form.dataset.confirmed = '';
+            return;
+        }
+
+        event.preventDefault();
+        const options = getOptions(form);
+        showConfirm(options.title, options.message, options.type).then(ok => {
+            if (ok) submitConfirmedForm(form);
+        });
+    });
 })();

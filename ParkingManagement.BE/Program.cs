@@ -157,6 +157,66 @@ using (var scope = app.Services.CreateScope())
     try
     {
         db.Database.ExecuteSqlRaw("""
+            IF OBJECT_ID(N'[dbo].[PricingConfigurations]', N'U') IS NOT NULL
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM [dbo].[PricingConfigurations]
+                    WHERE [VehicleType] = N'Xe máy' AND [RateType] = N'Monthly6M'
+                )
+                    INSERT INTO [dbo].[PricingConfigurations] ([PricingId], [VehicleType], [RateType], [Amount], [UpdatedAt], [UpdatedBy])
+                    VALUES (N'PRICE-XM-M6', N'Xe máy', N'Monthly6M', 2000000, SYSUTCDATETIME(), N'SYSTEM');
+                ELSE
+                    UPDATE [dbo].[PricingConfigurations]
+                    SET [Amount] = 2000000, [UpdatedAt] = SYSUTCDATETIME(), [UpdatedBy] = N'SYSTEM'
+                    WHERE [VehicleType] = N'Xe máy'
+                      AND [RateType] = N'Monthly6M'
+                      AND [Amount] <= ISNULL((
+                          SELECT TOP 1 [Amount] FROM [dbo].[PricingConfigurations]
+                          WHERE [VehicleType] = N'Xe máy' AND [RateType] = N'Monthly3M'
+                      ), 0);
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM [dbo].[PricingConfigurations]
+                    WHERE [VehicleType] = N'Ô tô nhỏ' AND [RateType] = N'Monthly6M'
+                )
+                    INSERT INTO [dbo].[PricingConfigurations] ([PricingId], [VehicleType], [RateType], [Amount], [UpdatedAt], [UpdatedBy])
+                    VALUES (N'PRICE-OTON-M6', N'Ô tô nhỏ', N'Monthly6M', 6000000, SYSUTCDATETIME(), N'SYSTEM');
+                ELSE
+                    UPDATE [dbo].[PricingConfigurations]
+                    SET [Amount] = 6000000, [UpdatedAt] = SYSUTCDATETIME(), [UpdatedBy] = N'SYSTEM'
+                    WHERE [VehicleType] = N'Ô tô nhỏ'
+                      AND [RateType] = N'Monthly6M'
+                      AND [Amount] <= ISNULL((
+                          SELECT TOP 1 [Amount] FROM [dbo].[PricingConfigurations]
+                          WHERE [VehicleType] = N'Ô tô nhỏ' AND [RateType] = N'Monthly3M'
+                      ), 0);
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM [dbo].[PricingConfigurations]
+                    WHERE [VehicleType] = N'Ô tô lớn' AND [RateType] = N'Monthly6M'
+                )
+                    INSERT INTO [dbo].[PricingConfigurations] ([PricingId], [VehicleType], [RateType], [Amount], [UpdatedAt], [UpdatedBy])
+                    VALUES (N'PRICE-OTOL-M6', N'Ô tô lớn', N'Monthly6M', 10000000, SYSUTCDATETIME(), N'SYSTEM');
+                ELSE
+                    UPDATE [dbo].[PricingConfigurations]
+                    SET [Amount] = 10000000, [UpdatedAt] = SYSUTCDATETIME(), [UpdatedBy] = N'SYSTEM'
+                    WHERE [VehicleType] = N'Ô tô lớn'
+                      AND [RateType] = N'Monthly6M'
+                      AND [Amount] <= ISNULL((
+                          SELECT TOP 1 [Amount] FROM [dbo].[PricingConfigurations]
+                          WHERE [VehicleType] = N'Ô tô lớn' AND [RateType] = N'Monthly3M'
+                      ), 0);
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Monthly pricing repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
             SET QUOTED_IDENTIFIER ON;
 
             IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL

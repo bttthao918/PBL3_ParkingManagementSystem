@@ -64,6 +64,17 @@ namespace ParkingManagement.BLL.Services.Implementations
                 updateDto.MaxDailyFee = NormalizeDecimalPricing(updateDto.MaxDailyFee);
                 updateDto.MonthlyTicketPrice = NormalizeMonthlyPricing(updateDto.MonthlyTicketPrice);
 
+                if (updateDto.MonthlyTicketPrice?.Values.Any(monthlyPrice =>
+                        (monthlyPrice.ThreeMonthDiscountPercent.HasValue &&
+                         (monthlyPrice.ThreeMonthDiscountPercent < 0 || monthlyPrice.ThreeMonthDiscountPercent >= 100)) ||
+                        (monthlyPrice.SixMonthDiscountPercent.HasValue &&
+                         (monthlyPrice.SixMonthDiscountPercent < 0 || monthlyPrice.SixMonthDiscountPercent >= 100))) == true)
+                    return new ServiceResult<PricingDto>
+                    {
+                        Success = false,
+                        Message = "Phần trăm giảm giá vé tháng phải từ 0 đến dưới 100"
+                    };
+
                 var currentPricing = await GetCurrentPricingAsync();
                 updateDto.HourlyRate = MergeDecimalPricing(currentPricing.HourlyRate, updateDto.HourlyRate);
                 updateDto.MaxDailyFee = MergeDecimalPricing(currentPricing.MaxDailyFee, updateDto.MaxDailyFee);
@@ -94,6 +105,20 @@ namespace ParkingManagement.BLL.Services.Implementations
                 {
                     foreach (var monthlyPrice in updateDto.MonthlyTicketPrice.Values)
                     {
+                        if (monthlyPrice.OneMonth.HasValue &&
+                            monthlyPrice.ThreeMonth.HasValue &&
+                            monthlyPrice.SixMonth.HasValue &&
+                            monthlyPrice.OneMonth > 0 &&
+                            monthlyPrice.ThreeMonth > 0 &&
+                            monthlyPrice.SixMonth > 0 &&
+                            (monthlyPrice.ThreeMonth <= monthlyPrice.OneMonth ||
+                             monthlyPrice.SixMonth <= monthlyPrice.ThreeMonth))
+                            return new ServiceResult<PricingDto>
+                            {
+                                Success = false,
+                                Message = "Giá vé tháng phải tăng theo thời hạn: 1 tháng < 3 tháng < 6 tháng"
+                            };
+
                         if ((monthlyPrice.OneMonth.HasValue && monthlyPrice.OneMonth <= 0) ||
                             (monthlyPrice.ThreeMonth.HasValue && monthlyPrice.ThreeMonth <= 0) ||
                             (monthlyPrice.SixMonth.HasValue && monthlyPrice.SixMonth <= 0))
@@ -322,14 +347,30 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (item.Value.OneMonth.HasValue)
                     monthlyPricing.OneMonth = item.Value.OneMonth;
 
-                if (item.Value.ThreeMonth.HasValue)
+                if (item.Value.ThreeMonthDiscountPercent.HasValue && monthlyPricing.OneMonth.HasValue)
+                    monthlyPricing.ThreeMonth = CalculateMonthlyPackagePrice(
+                        monthlyPricing.OneMonth.Value,
+                        3,
+                        item.Value.ThreeMonthDiscountPercent.Value);
+                else if (item.Value.ThreeMonth.HasValue)
                     monthlyPricing.ThreeMonth = item.Value.ThreeMonth;
 
-                if (item.Value.SixMonth.HasValue)
+                if (item.Value.SixMonthDiscountPercent.HasValue && monthlyPricing.OneMonth.HasValue)
+                    monthlyPricing.SixMonth = CalculateMonthlyPackagePrice(
+                        monthlyPricing.OneMonth.Value,
+                        6,
+                        item.Value.SixMonthDiscountPercent.Value);
+                else if (item.Value.SixMonth.HasValue)
                     monthlyPricing.SixMonth = item.Value.SixMonth;
             }
 
             return mergedPricing;
+        }
+
+        private static decimal CalculateMonthlyPackagePrice(decimal oneMonthPrice, int months, decimal discountPercent)
+        {
+            var rawPrice = oneMonthPrice * months * (100m - discountPercent) / 100m;
+            return Math.Round(rawPrice / 1000m, 0, MidpointRounding.AwayFromZero) * 1000m;
         }
 
         /// <summary>
@@ -416,27 +457,27 @@ namespace ParkingManagement.BLL.Services.Implementations
                         "Xe máy",
                         new MonthlyPricingDto
                         {
-                            OneMonth = 150000m,
-                            ThreeMonth = 400000m,
-                            SixMonth = 750000m
+                            OneMonth = 400000m,
+                            ThreeMonth = 1100000m,
+                            SixMonth = 2000000m
                         }
                     },
                     {
                         "Ô tô nhỏ",
                         new MonthlyPricingDto
                         {
-                            OneMonth = 300000m,
-                            ThreeMonth = 800000m,
-                            SixMonth = 1500000m
+                            OneMonth = 1200000m,
+                            ThreeMonth = 3200000m,
+                            SixMonth = 6000000m
                         }
                     },
                     {
                         "Ô tô lớn",
                         new MonthlyPricingDto
                         {
-                            OneMonth = 500000m,
-                            ThreeMonth = 1300000m,
-                            SixMonth = 2500000m
+                            OneMonth = 2000000m,
+                            ThreeMonth = 5500000m,
+                            SixMonth = 10000000m
                         }
                     }
                 },

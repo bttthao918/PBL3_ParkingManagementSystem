@@ -216,8 +216,11 @@
 
                                                         @if (item.CanCancel)
                                                         {
-                                                            <form method="post" asp-page-handler="Cancel"
-                                                                  onsubmit="return confirm('Hủy đơn đặt chỗ @item.ReservationId?');">
+                                                            <form method="post"
+                                                                  asp-page-handler="Cancel"
+                                                                  data-confirm-title="Hủy đơn đặt chỗ"
+                                                                  data-confirm-message="Bạn có chắc muốn hủy đơn đặt chỗ @item.ReservationId? Hành động này không thể hoàn tác."
+                                                                  data-confirm-type="danger">
                                                                 <input type="hidden" name="reservationId" value="@item.ReservationId" />
                                                                 <input type="hidden" name="Search" value="@Model.Search" />
                                                                 <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />
@@ -356,8 +359,11 @@
 
                     @if (Model.SelectedReservation.CanCancel)
                     {
-                        <form method="post" asp-page-handler="Cancel"
-                              onsubmit="return confirm('Hủy đơn đặt chỗ @Model.SelectedReservation.ReservationId?');">
+                        <form method="post"
+                              asp-page-handler="Cancel"
+                              data-confirm-title="Hủy đơn đặt chỗ"
+                              data-confirm-message="Bạn có chắc muốn hủy đơn đặt chỗ @Model.SelectedReservation.ReservationId? Hành động này không thể hoàn tác."
+                              data-confirm-type="danger">
                             <input type="hidden" name="reservationId" value="@Model.SelectedReservation.ReservationId" />
                             <input type="hidden" name="Search" value="@Model.Search" />
                             <input type="hidden" name="StatusFilter" value="@Model.StatusFilter" />

@@ -78,7 +78,7 @@
     </svg>
 </div>
 
-<div class="bottom-grid">
+<div class="bottom-grid admin-dashboard-bottom-grid">
     <div class="card">
         <h3>Nhân viên trong hệ thống</h3>
 
@@ -135,13 +135,5 @@
                 }
             }
         </table>
-    </div>
-
-    <div class="card">
-        <h3>Trạng thái chỗ đỗ</h3>
-
-        <p>Đang trống: <strong>@Model.GetSlotEmptyCount()</strong></p>
-        <p>Đang sử dụng: <strong>@Model.Summary.OccupiedSlots.ToString("N0")</strong></p>
-        <p>Tổng chỗ: <strong>@Model.Summary.TotalSlots.ToString("N0")</strong></p>
     </div>
 </div>

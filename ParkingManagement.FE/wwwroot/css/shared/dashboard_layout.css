@@ -450,6 +450,10 @@ small {
     gap: 18px;
 }
 
+.admin-dashboard-bottom-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .tabs {
     margin-top: 22px;
 }
@@ -811,6 +815,106 @@ body .dashboard-content .stat-header .stat-date-filter {
 
 body .dashboard-content .stat-header .stat-date-range {
     border-right: 0;
+}
+
+body .dashboard-content .dashboard-title-card:has(> p),
+body .dashboard-content .dashboard-welcome-card:has(> p),
+body .dashboard-content .ticket-hero:has(> p),
+body .dashboard-content .banner-card:has(> p),
+body .dashboard-content .account-page > .page-heading:has(> p),
+body .dashboard-content .password-page > .page-heading:has(> p),
+body .dashboard-content .parking-header:has(> p),
+body .dashboard-content .report-header:has(> p) {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+}
+
+body .dashboard-content .dashboard-title-card:has(> p) > p,
+body .dashboard-content .dashboard-welcome-card:has(> p) > p,
+body .dashboard-content .ticket-hero:has(> p) > p,
+body .dashboard-content .banner-card:has(> p) > p,
+body .dashboard-content .account-page > .page-heading:has(> p) > p,
+body .dashboard-content .password-page > .page-heading:has(> p) > p,
+body .dashboard-content .parking-header:has(> p) > p,
+body .dashboard-content .report-header:has(> p) > p {
+    margin-top: 0;
+}
+
+body .dashboard-content .dashboard-title-card > div:first-child,
+body .dashboard-content .ticket-hero > div:first-child,
+body .dashboard-content .monthly-page > .page-header > div:first-child,
+body .dashboard-content .employee-header > div:first-child,
+body .dashboard-content .ticket-page > .ticket-header > div:first-child,
+body .dashboard-content .ticket-page > .ticket-titlebar > div:first-child,
+body .dashboard-content .customer-toolbar > div:first-child,
+body .dashboard-content .operation-header > div:first-child,
+body .dashboard-content .reservation-toolbar > div:first-child,
+body .dashboard-content .report-header > div:first-child,
+body .dashboard-content .parking-header > div:first-child,
+body .dashboard-content .stat-header > div:first-child,
+body .dashboard-content .booking-welcome-card > div:first-child,
+body .dashboard-content .shift-greeting > div:first-child {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+body .dashboard-content .dashboard-title-card > div:first-child > h1,
+body .dashboard-content .dashboard-title-card > div:first-child > h2,
+body .dashboard-content .ticket-hero > div:first-child > h2,
+body .dashboard-content .monthly-page > .page-header > div:first-child > h1,
+body .dashboard-content .employee-header > div:first-child > h2,
+body .dashboard-content .ticket-page > .ticket-header > div:first-child > h2,
+body .dashboard-content .ticket-page > .ticket-titlebar > div:first-child > h1,
+body .dashboard-content .customer-toolbar > div:first-child > h1,
+body .dashboard-content .operation-header > div:first-child > h2,
+body .dashboard-content .reservation-toolbar > div:first-child > h1,
+body .dashboard-content .report-header > div:first-child > h1,
+body .dashboard-content .parking-header > div:first-child > h2,
+body .dashboard-content .stat-header > div:first-child > h2,
+body .dashboard-content .booking-welcome-card > div:first-child > h2,
+body .dashboard-content .shift-greeting > div:first-child > h2,
+body .dashboard-content .dashboard-title-card > div:first-child > p,
+body .dashboard-content .ticket-hero > div:first-child > p,
+body .dashboard-content .monthly-page > .page-header > div:first-child > p,
+body .dashboard-content .employee-header > div:first-child > p,
+body .dashboard-content .ticket-page > .ticket-header > div:first-child > p,
+body .dashboard-content .ticket-page > .ticket-titlebar > div:first-child > p,
+body .dashboard-content .customer-toolbar > div:first-child > p,
+body .dashboard-content .operation-header > div:first-child > p,
+body .dashboard-content .reservation-toolbar > div:first-child > p,
+body .dashboard-content .report-header > div:first-child > p,
+body .dashboard-content .parking-header > div:first-child > p,
+body .dashboard-content .stat-header > div:first-child > p,
+body .dashboard-content .booking-welcome-card > div:first-child > p,
+body .dashboard-content .shift-greeting > div:first-child > p {
+    margin: 0;
+}
+
+body .dashboard-content .dashboard-welcome-card,
+body .dashboard-content .banner-card,
+body .dashboard-content .account-page > .page-heading,
+body .dashboard-content .password-page > .page-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+}
+
+body .dashboard-content .dashboard-welcome-card > h1,
+body .dashboard-content .dashboard-welcome-card > h2,
+body .dashboard-content .banner-card > h1,
+body .dashboard-content .banner-card > h2,
+body .dashboard-content .account-page > .page-heading > h1,
+body .dashboard-content .password-page > .page-heading > h1,
+body .dashboard-content .dashboard-welcome-card > p,
+body .dashboard-content .banner-card > p,
+body .dashboard-content .account-page > .page-heading > p,
+body .dashboard-content .password-page > .page-heading > p {
+    margin: 0;
 }
 
 @media (max-width: 900px) {

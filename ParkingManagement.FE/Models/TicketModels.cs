@@ -116,6 +116,8 @@ namespace ParkingManagement.FE.Models
         public decimal? OneMonth { get; set; }
         public decimal? ThreeMonth { get; set; }
         public decimal? SixMonth { get; set; }
+        public decimal? ThreeMonthDiscountPercent { get; set; }
+        public decimal? SixMonthDiscountPercent { get; set; }
     }
 
     public class PricingInputModel
@@ -125,15 +127,21 @@ namespace ParkingManagement.FE.Models
         public decimal MotorcycleMonthlyOneMonth { get; set; }
         public decimal MotorcycleMonthlyThreeMonth { get; set; }
         public decimal MotorcycleMonthlySixMonth { get; set; }
+        public decimal MotorcycleMonthlyThreeMonthDiscountPercent { get; set; }
+        public decimal MotorcycleMonthlySixMonthDiscountPercent { get; set; }
         public decimal SmallCarHourlyRate { get; set; }
         public decimal SmallCarMaxDailyFee { get; set; }
         public decimal SmallCarMonthlyOneMonth { get; set; }
         public decimal SmallCarMonthlyThreeMonth { get; set; }
         public decimal SmallCarMonthlySixMonth { get; set; }
+        public decimal SmallCarMonthlyThreeMonthDiscountPercent { get; set; }
+        public decimal SmallCarMonthlySixMonthDiscountPercent { get; set; }
         public decimal LargeCarHourlyRate { get; set; }
         public decimal LargeCarMaxDailyFee { get; set; }
         public decimal LargeCarMonthlyOneMonth { get; set; }
         public decimal LargeCarMonthlyThreeMonth { get; set; }
         public decimal LargeCarMonthlySixMonth { get; set; }
+        public decimal LargeCarMonthlyThreeMonthDiscountPercent { get; set; }
+        public decimal LargeCarMonthlySixMonthDiscountPercent { get; set; }
     }
 }

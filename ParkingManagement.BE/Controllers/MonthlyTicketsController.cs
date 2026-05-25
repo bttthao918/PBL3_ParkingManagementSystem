@@ -244,10 +244,22 @@ namespace ParkingManagement.Web.Controllers.Api
                 Packages = new List<PackagePriceDto>
                 {
                     new() { Package = "1 tháng", Price = monthlyPrice.OneMonth },
-                    new() { Package = "3 tháng", Price = monthlyPrice.ThreeMonth, Discount = "11%" },
-                    new() { Package = "6 tháng", Price = monthlyPrice.SixMonth, Discount = "17%" }
+                    new() { Package = "3 tháng", Price = monthlyPrice.ThreeMonth, Discount = FormatDiscount(monthlyPrice.OneMonth, monthlyPrice.ThreeMonth, 3) },
+                    new() { Package = "6 tháng", Price = monthlyPrice.SixMonth, Discount = FormatDiscount(monthlyPrice.OneMonth, monthlyPrice.SixMonth, 6) }
                 }
             });
+        }
+
+        private static string FormatDiscount(decimal oneMonthPrice, decimal packagePrice, int months)
+        {
+            var fullPrice = oneMonthPrice * months;
+            if (fullPrice <= 0 || packagePrice <= 0 || packagePrice >= fullPrice)
+            {
+                return "0%";
+            }
+
+            var discount = (1m - packagePrice / fullPrice) * 100m;
+            return $"{Math.Round(discount, 2, MidpointRounding.AwayFromZero):0.##}%";
         }
 
         private static bool IsValidPackage(string packageType)

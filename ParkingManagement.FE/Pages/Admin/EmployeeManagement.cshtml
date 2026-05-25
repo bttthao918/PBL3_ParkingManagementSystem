@@ -292,7 +292,12 @@
                                                 </a>
                                                 @if (isDeleted)
                                                 {
-                                                    <form method="post" asp-page-handler="RestoreEmployee" class="emp-inline-form">
+                                                    <form method="post"
+                                                          asp-page-handler="RestoreEmployee"
+                                                          class="emp-inline-form"
+                                                          data-confirm-title="Khôi phục nhân viên"
+                                                          data-confirm-message="Bạn có chắc muốn khôi phục nhân viên @emp.Code?"
+                                                          data-confirm-type="info">
                                                         <input type="hidden" name="employeeId" value="@emp.Id" />
                                                         <input type="hidden" name="Keyword" value="@Model.Keyword" />
                                                         <input type="hidden" name="Status" value="@Model.Status" />
@@ -514,8 +519,11 @@
                                                         <span class="emp-shift-state @statusClass">@schedule.Status</span>
                                                         @if (EmployeeManagementModel.CanDeleteSchedule(schedule.Status))
                                                         {
-                                                            <form method="post" asp-page-handler="DeleteShift"
-                                                                  onsubmit="return confirm('Xóa ca @schedule.ShiftType ngày @day.WorkDate.ToString("dd/MM")?');">
+                                                            <form method="post"
+                                                                  asp-page-handler="DeleteShift"
+                                                                  data-confirm-title="Xóa ca làm"
+                                                                  data-confirm-message="Bạn có chắc muốn xóa ca @schedule.ShiftType ngày @day.WorkDate.ToString("dd/MM")?"
+                                                                  data-confirm-type="danger">
                                                                 <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
                                                                 <input type="hidden" name="scheduleId" value="@schedule.ScheduleId" />
                                                                 <input type="hidden" name="Keyword" value="@Model.Keyword" />
@@ -577,7 +585,11 @@
                 <div class="emp-detail-actions">
                     @if (detailIsDeleted)
                     {
-                        <form method="post" asp-page-handler="RestoreEmployee">
+                        <form method="post"
+                              asp-page-handler="RestoreEmployee"
+                              data-confirm-title="Khôi phục nhân viên"
+                              data-confirm-message="Bạn có chắc muốn khôi phục nhân viên @detail.EmployeeCode?"
+                              data-confirm-type="info">
                             <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
                             <input type="hidden" name="Keyword" value="@Model.Keyword" />
                             <input type="hidden" name="Status" value="@Model.Status" />

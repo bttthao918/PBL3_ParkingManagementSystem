@@ -191,6 +191,8 @@ namespace ParkingManagement.BLL.DTOs
         public decimal? OneMonth { get; set; }
         public decimal? ThreeMonth { get; set; }
         public decimal? SixMonth { get; set; }
+        public decimal? ThreeMonthDiscountPercent { get; set; }
+        public decimal? SixMonthDiscountPercent { get; set; }
     }
 
     // ── Employee Ticket Management DTOs ──────────────────────
