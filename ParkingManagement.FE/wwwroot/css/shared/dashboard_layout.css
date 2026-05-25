@@ -646,3 +646,202 @@ small {
     color: white;
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
 }
+
+/* Unified title bars for role feature screens */
+.topbar .search-box {
+    flex-direction: row-reverse;
+}
+
+body .dashboard-content .dashboard-title-card,
+body .dashboard-content .dashboard-welcome-card,
+body .dashboard-content .ticket-hero,
+body .dashboard-content .monthly-page > .page-header,
+body .dashboard-content .employee-header,
+body .dashboard-content .ticket-page > .ticket-header,
+body .dashboard-content .ticket-page > .ticket-titlebar,
+body .dashboard-content .customer-toolbar,
+body .dashboard-content .operation-header,
+body .dashboard-content .reservation-toolbar,
+body .dashboard-content .report-header,
+body .dashboard-content .parking-header,
+body .dashboard-content .stat-header,
+body .dashboard-content .booking-welcome-card,
+body .dashboard-content .banner-card,
+body .dashboard-content .account-page > .page-heading,
+body .dashboard-content .password-page > .page-heading,
+body .dashboard-content .shift-greeting {
+    width: 100%;
+    min-height: 104px;
+    margin: 0 0 24px;
+    padding: 26px 24px;
+    border: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0d6efd 0%, #087cff 100%);
+    color: #ffffff;
+    box-shadow: 0 18px 34px rgba(13, 110, 253, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+body .dashboard-content .dashboard-title-card h1,
+body .dashboard-content .dashboard-title-card h2,
+body .dashboard-content .dashboard-welcome-card h2,
+body .dashboard-content .ticket-hero h2,
+body .dashboard-content .monthly-page > .page-header h1,
+body .dashboard-content .employee-header h2,
+body .dashboard-content .ticket-page > .ticket-header h2,
+body .dashboard-content .ticket-page > .ticket-titlebar h1,
+body .dashboard-content .customer-toolbar h1,
+body .dashboard-content .operation-header h2,
+body .dashboard-content .reservation-toolbar h1,
+body .dashboard-content .report-header h1,
+body .dashboard-content .parking-header h2,
+body .dashboard-content .stat-header h2,
+body .dashboard-content .booking-welcome-card h2,
+body .dashboard-content .banner-card h2,
+body .dashboard-content .account-page > .page-heading h1,
+body .dashboard-content .password-page > .page-heading h1,
+body .dashboard-content .shift-greeting h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 25px;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+body .dashboard-content .dashboard-title-card p,
+body .dashboard-content .dashboard-welcome-card p,
+body .dashboard-content .ticket-hero p,
+body .dashboard-content .monthly-page > .page-header p,
+body .dashboard-content .employee-header p,
+body .dashboard-content .ticket-page > .ticket-header p,
+body .dashboard-content .ticket-page > .ticket-titlebar p,
+body .dashboard-content .customer-toolbar p,
+body .dashboard-content .operation-header p,
+body .dashboard-content .reservation-toolbar p,
+body .dashboard-content .report-header p,
+body .dashboard-content .parking-header p,
+body .dashboard-content .stat-header p,
+body .dashboard-content .booking-welcome-card p,
+body .dashboard-content .banner-card p,
+body .dashboard-content .account-page > .page-heading p,
+body .dashboard-content .password-page > .page-heading p,
+body .dashboard-content .shift-greeting p {
+    margin: 8px 0 0;
+    color: rgba(255, 255, 255, 0.94);
+    line-height: 1.5;
+}
+
+body .dashboard-content .banner-card::after,
+body .dashboard-content .booking-welcome-card::after {
+    display: none;
+}
+
+body .dashboard-content .operation-header.card,
+body .dashboard-content .ticket-hero.card,
+body .dashboard-content .dashboard-welcome-card.card,
+body .dashboard-content .banner-card.card {
+    border: 0;
+}
+
+body .dashboard-content .ticket-header-actions,
+body .dashboard-content .emp-header-actions,
+body .dashboard-content .toolbar-actions,
+body .dashboard-content .operation-header-actions,
+body .dashboard-content .stat-date-filter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+body .dashboard-content .ticket-header-actions .ticket-btn-outline,
+body .dashboard-content .emp-header-actions .emp-btn-outline,
+body .dashboard-content .emp-header-actions .emp-btn-primary,
+body .dashboard-content .toolbar-actions .secondary-btn,
+body .dashboard-content .operation-header-actions .stat-pill,
+body .dashboard-content .booking-welcome-card .main-create-btn,
+body .dashboard-content .monthly-page > .page-header .secondary-btn,
+body .dashboard-content .ticket-page > .ticket-titlebar .secondary-btn,
+body .dashboard-content .shift-date-badge,
+body .dashboard-content .stat-date-filter a,
+body .dashboard-content .stat-date-filter .stat-date-range {
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    box-shadow: none;
+}
+
+body .dashboard-content .ticket-header-actions .ticket-btn-outline:hover,
+body .dashboard-content .emp-header-actions .emp-btn-outline:hover,
+body .dashboard-content .emp-header-actions .emp-btn-primary:hover,
+body .dashboard-content .toolbar-actions .secondary-btn:hover,
+body .dashboard-content .booking-welcome-card .main-create-btn:hover,
+body .dashboard-content .monthly-page > .page-header .secondary-btn:hover,
+body .dashboard-content .ticket-page > .ticket-titlebar .secondary-btn:hover,
+body .dashboard-content .stat-date-filter a:hover,
+body .dashboard-content .stat-date-filter a.active {
+    background: #ffffff;
+    color: #0d6efd;
+}
+
+body .dashboard-content .operation-header-actions .stat-pill i,
+body .dashboard-content .operation-header-actions .stat-pill strong,
+body .dashboard-content .shift-date-badge i,
+body .dashboard-content .stat-date-filter .stat-date-range i {
+    color: inherit;
+}
+
+body .dashboard-content .stat-header .stat-date-filter a {
+    text-decoration: none;
+}
+
+body .dashboard-content .stat-header .stat-date-filter {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+body .dashboard-content .stat-header .stat-date-range {
+    border-right: 0;
+}
+
+@media (max-width: 900px) {
+    body .dashboard-content .dashboard-title-card,
+    body .dashboard-content .dashboard-welcome-card,
+    body .dashboard-content .ticket-hero,
+    body .dashboard-content .monthly-page > .page-header,
+    body .dashboard-content .employee-header,
+    body .dashboard-content .ticket-page > .ticket-header,
+    body .dashboard-content .ticket-page > .ticket-titlebar,
+    body .dashboard-content .customer-toolbar,
+    body .dashboard-content .operation-header,
+    body .dashboard-content .reservation-toolbar,
+    body .dashboard-content .report-header,
+    body .dashboard-content .parking-header,
+    body .dashboard-content .stat-header,
+    body .dashboard-content .booking-welcome-card,
+    body .dashboard-content .banner-card,
+    body .dashboard-content .account-page > .page-heading,
+    body .dashboard-content .password-page > .page-heading,
+    body .dashboard-content .shift-greeting {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    body .dashboard-content .ticket-header-actions,
+    body .dashboard-content .emp-header-actions,
+    body .dashboard-content .toolbar-actions,
+    body .dashboard-content .operation-header-actions,
+    body .dashboard-content .stat-date-filter {
+        justify-content: flex-start;
+        width: 100%;
+    }
+}
