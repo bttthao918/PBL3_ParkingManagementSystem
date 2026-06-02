@@ -174,7 +174,7 @@ namespace ParkingManagement.FE.Pages.Employee
         {
             var result = await _service.CancelAsync(monthlyTicketId);
             ActionSuccess = result?.Success ?? false;
-            ActionMessage = result?.Message ?? "Hủy vé tháng thất bại.";
+            ActionMessage = result?.Message ?? "Hủy tự động gia hạn thất bại.";
 
             return RedirectToPage(new { Search, StatusFilter, VehicleTypeFilter, PageNumber, PageSize });
         }

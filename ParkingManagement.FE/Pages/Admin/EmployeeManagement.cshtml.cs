@@ -245,6 +245,20 @@ namespace ParkingManagement.FE.Pages.Admin
             var result = await _shiftService.CreateAsync(employeeId, workDate, shiftType, note);
             ActionSuccess = result?.Success ?? false;
             ActionMessage = result?.Message ?? "Không thể tạo ca.";
+
+            if (IsAjaxRequest())
+            {
+                return new JsonResult(new
+                {
+                    success = ActionSuccess,
+                    message = ActionMessage,
+                    employeeId
+                })
+                {
+                    StatusCode = ActionSuccess ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest
+                };
+            }
+
             return RedirectToPage(BuildRouteValues(employeeId));
         }
 
@@ -371,6 +385,11 @@ namespace ParkingManagement.FE.Pages.Admin
                 PageSize,
                 SelectedEmployeeId = selectedEmployeeId ?? SelectedEmployeeId
             };
+        }
+
+        private bool IsAjaxRequest()
+        {
+            return string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
         }
 
         public static string GetStatusClass(string? status)

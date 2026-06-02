@@ -122,7 +122,7 @@
     <div class="page-header">
         <div>
             <h1>Quản lý vé tháng</h1>
-            <p>Xem danh sách và điều chỉnh bảng giá vé tháng</p>
+            <p>Xem danh sách, tự động gia hạn và điều chỉnh bảng giá vé tháng</p>
         </div>
         <button type="button" class="secondary-btn" onclick="document.getElementById('monthlyPricingPanel').classList.toggle('open')">
             <i class="fa-solid fa-tags"></i> Bảng giá & Cập nhật
@@ -353,6 +353,7 @@
                         <th>Gói</th>
                         <th>Ngày bắt đầu</th>
                         <th>Ngày hết hạn</th>
+                        <th>Tự gia hạn</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
@@ -397,6 +398,7 @@
                                         <span class="expiring-badge">@ticket.DaysRemaining ngày</span>
                                     }
                                 </td>
+                                <td>@(ticket.AutoRenew ? "Đang bật" : "Đã tắt")</td>
                                 <td>
                                     <span class="status-badge @statusClass">@ticket.Status</span>
                                 </td>
@@ -420,7 +422,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="9" class="empty-state">
+                            <td colspan="10" class="empty-state">
                                 <i class="fa-solid fa-inbox"></i>
                                 <p>Không có vé tháng nào</p>
                             </td>
@@ -548,6 +550,10 @@
                 <div class="info-row">
                     <span>Còn lại</span>
                     <strong>@Model.SelectedTicket.DaysRemaining ngày</strong>
+                </div>
+                <div class="info-row">
+                    <span>Tự động gia hạn</span>
+                    <strong>@(Model.SelectedTicket.AutoRenew ? "Đang bật" : "Đã tắt")</strong>
                 </div>
             </div>
 

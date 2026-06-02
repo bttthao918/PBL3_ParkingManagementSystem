@@ -291,7 +291,8 @@ namespace ParkingManagement.Web.Controllers.Api
             EndDate = ticket.EndDate,
             TotalFee = ticket.TotalFee,
             Status = ticket.Status,
-            DaysRemaining = ticket.DaysRemaining
+            DaysRemaining = ticket.DaysRemaining,
+            AutoRenew = ticket.AutoRenew
         };
     }
 

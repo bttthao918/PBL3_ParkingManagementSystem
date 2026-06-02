@@ -92,14 +92,14 @@ namespace ParkingManagement.Web.Controllers.Api
                     OrderType = "billpayment"
                 }, clientIp);
 
-                _logger.LogInformation("VNPay payment created: PaymentId={PaymentId}, TxnRef={TxnRef}", paymentId, txnRef);
+                _logger.LogInformation("VNPay payment created: PaymentId={PaymentId}, TxnRef={TxnRef}", payment.PaymentId, txnRef);
 
                 return Ok(new CreateVnPayPaymentResponse
                 {
                     Success = true,
                     Message = "Tạo thanh toán thành công.",
                     PaymentUrl = paymentUrl,
-                    PaymentId = paymentId,
+                    PaymentId = payment.PaymentId,
                     TxnRef = txnRef
                 });
             }

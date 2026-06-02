@@ -34,8 +34,9 @@ namespace ParkingManagement.FE.Pages.Customer
         public string? SuccessMessage { get; set; }
 
         public int TotalBooking { get; set; }
-        public int ActiveBooking { get; set; }
-        public int CompletedBooking { get; set; }
+        public int WaitingBooking { get; set; }
+        public int ReceivedBooking { get; set; }
+        public int ExpiredBooking { get; set; }
         public int CancelledBooking { get; set; }
 
         public List<BookingVm> Bookings { get; set; } = new();
@@ -154,8 +155,9 @@ catch (Exception ex)
                     Bookings = reservations.Items.Select((r, index) => MapToBookingVm(r, index + 1)).ToList();
 
                     TotalBooking = reservations.TotalItems > 0 ? reservations.TotalItems : reservations.Items.Count;
-                    ActiveBooking = reservations.Items.Count(r => IsActive(r.Status));
-                    CompletedBooking = reservations.Items.Count(r => IsCompleted(r.Status));
+                    WaitingBooking = reservations.Items.Count(r => IsWaiting(r.Status));
+                    ReceivedBooking = reservations.Items.Count(r => IsReceived(r.Status));
+                    ExpiredBooking = reservations.Items.Count(r => IsExpired(r.Status));
                     CancelledBooking = reservations.Items.Count(r => IsCancelled(r.Status));
                 }
 
@@ -194,7 +196,7 @@ catch (Exception ex)
             var statusClass = GetStatusClass(r.Status);
             var vehicleClass = GetVehicleClass(r.VehicleType);
             var icon = GetVehicleIcon(r.VehicleType);
-            var canCancel = IsActive(r.Status);
+            var canCancel = IsWaiting(r.Status) && r.ExpectedTime >= DateTime.Now;
 
             return new BookingVm
             {
@@ -220,16 +222,15 @@ catch (Exception ex)
 
         private static string GetStatusClass(string status)
         {
-            var normalized = status.ToLower().Trim();
-            if (normalized.Contains("chờ") || normalized.Contains("pending") || normalized.Contains("waiting"))
-                return "pending";
-            if (normalized.Contains("xác nhận") || normalized.Contains("confirmed") || normalized.Contains("active"))
-                return "confirmed";
-            if (normalized.Contains("hoàn thành") || normalized.Contains("completed") || normalized.Contains("done"))
-                return "completed";
-            if (normalized.Contains("hủy") || normalized.Contains("cancel"))
+            if (IsWaiting(status))
+                return "waiting";
+            if (IsReceived(status))
+                return "received";
+            if (IsExpired(status))
+                return "expired";
+            if (IsCancelled(status))
                 return "cancelled";
-            return "pending";
+            return "neutral";
         }
 
         private static string FormatSlotPosition(string? slotId, string? slotLocation)
@@ -245,46 +246,54 @@ catch (Exception ex)
 
         private static string GetVehicleClass(string vehicleType)
         {
-            var normalized = vehicleType.ToLower().Trim();
-            if (normalized.Contains("máy") || normalized.Contains("motorcycle"))
+            var normalized = NormalizeVehicleType(vehicleType);
+            if (normalized == "motorcycle")
                 return "green";
-            if (normalized.Contains("nhỏ") || normalized.Contains("small") || normalized.Contains("ô tô") && !normalized.Contains("lớn"))
+            if (normalized == "small-car")
                 return "blue";
-            if (normalized.Contains("lớn") || normalized.Contains("large") || normalized.Contains("van"))
+            if (normalized == "large-car")
                 return "purple";
             return "green";
         }
 
         private static string GetVehicleIcon(string vehicleType)
         {
-            var normalized = vehicleType.ToLower().Trim();
-            if (normalized.Contains("máy") || normalized.Contains("motorcycle"))
-                return "fa-solid fa-motorcycle";
-            if (normalized.Contains("lớn") || normalized.Contains("large") || normalized.Contains("van"))
-                return "fa-solid fa-van-shuttle";
-            if (normalized.Contains("ô tô") || normalized.Contains("car"))
-                return "fa-solid fa-car-side";
-            return "fa-solid fa-motorcycle";
+            return NormalizeVehicleType(vehicleType) switch
+            {
+                "small-car" => "fa-solid fa-car-side",
+                "large-car" => "fa-solid fa-van-shuttle",
+                _ => "fa-solid fa-motorcycle"
+            };
         }
 
-        private static bool IsActive(string status)
+        private static bool IsWaiting(string status)
         {
-            var normalized = status.ToLower().Trim();
-            return normalized.Contains("chờ") || normalized.Contains("pending")
-                || normalized.Contains("xác nhận") || normalized.Contains("confirmed")
-                || normalized.Contains("active") || normalized.Contains("waiting");
+            var normalized = NormalizeVietnameseText(status);
+            return normalized.Contains("cho") ||
+                normalized.Contains("pending") ||
+                normalized.Contains("waiting");
         }
 
-        private static bool IsCompleted(string status)
+        private static bool IsReceived(string status)
         {
-            var normalized = status.ToLower().Trim();
-            return normalized.Contains("hoàn thành") || normalized.Contains("completed") || normalized.Contains("done");
+            var normalized = NormalizeVietnameseText(status);
+            return normalized.Contains("da nhan") ||
+                normalized.Contains("received") ||
+                normalized.Contains("confirmed") ||
+                normalized.Contains("completed") ||
+                normalized.Contains("done");
+        }
+
+        private static bool IsExpired(string status)
+        {
+            var normalized = NormalizeVietnameseText(status);
+            return normalized.Contains("het han") || normalized.Contains("expired");
         }
 
         private static bool IsCancelled(string status)
         {
-            var normalized = status.ToLower().Trim();
-            return normalized.Contains("hủy") || normalized.Contains("cancel");
+            var normalized = NormalizeVietnameseText(status);
+            return normalized.Contains("huy") || normalized.Contains("cancel");
         }
 
         private static bool IsEmptySlotStatus(string? status)
@@ -335,7 +344,7 @@ catch (Exception ex)
             var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
             var chars = normalized
                 .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
-                .Select(c => c == 'đ' ? 'd' : c == 'Đ' ? 'd' : c);
+                .Select(c => c == '\u0111' || c == '\u0110' ? 'd' : c);
 
             return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
         }

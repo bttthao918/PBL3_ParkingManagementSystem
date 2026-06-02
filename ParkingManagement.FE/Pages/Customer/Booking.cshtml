@@ -37,29 +37,38 @@
 
     <div class="summary-grid">
         <div class="summary-card blue">
-            <div class="summary-icon"><i class="fa-solid fa-list"></i></div>
+            <div class="summary-icon"><i class="fa-solid fa-calendar-days"></i></div>
             <div>
-                <p>Tổng đơn đặt chỗ</p>
+                <p>Tổng đơn</p>
                 <h3>@Model.TotalBooking</h3>
-                <span>Tất cả đơn</span>
+                <span>Tất cả đặt chỗ</span>
+            </div>
+        </div>
+
+        <div class="summary-card gold">
+            <div class="summary-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div>
+                <p>Đang chờ</p>
+                <h3>@Model.WaitingBooking</h3>
+                <span>Cần theo dõi</span>
             </div>
         </div>
 
         <div class="summary-card green">
-            <div class="summary-icon"><i class="fa-solid fa-clock"></i></div>
+            <div class="summary-icon"><i class="fa-solid fa-circle-check"></i></div>
             <div>
-                <p>Đang hoạt động</p>
-                <h3>@Model.ActiveBooking</h3>
-                <span>Đang chờ hoặc đã xác nhận</span>
+                <p>Đã nhận</p>
+                <h3>@Model.ReceivedBooking</h3>
+                <span>Đã check-in</span>
             </div>
         </div>
 
         <div class="summary-card orange">
-            <div class="summary-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="summary-icon"><i class="fa-solid fa-clock"></i></div>
             <div>
-                <p>Đã hoàn thành</p>
-                <h3>@Model.CompletedBooking</h3>
-                <span>Đơn đã sử dụng</span>
+                <p>Hết hạn</p>
+                <h3>@Model.ExpiredBooking</h3>
+                <span>Quá giờ hẹn</span>
             </div>
         </div>
 
@@ -68,7 +77,7 @@
             <div>
                 <p>Đã hủy</p>
                 <h3>@Model.CancelledBooking</h3>
-                <span>Đơn đã hủy</span>
+                <span>Khách hủy</span>
             </div>
         </div>
     </div>
@@ -150,7 +159,10 @@
                                 <td>@item.BookingTime</td>
                                 <td>@item.TimeRange</td>
                                 <td>
-                                    <span class="status-badge @item.StatusClass">@item.Status</span>
+                                    <span class="status-badge @item.StatusClass">
+                                        <i class="fa-solid fa-circle"></i>
+                                        @item.Status
+                                    </span>
                                 </td>
                             </tr>
                         }

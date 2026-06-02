@@ -154,8 +154,8 @@
                                     <td><strong>@item.VehiclePlate</strong></td>
 
                                     <td>
-                                        <span class="vehicle-type">
-                                            <i class="fa-solid @(item.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
+                                        <span class="vehicle-type @item.VehicleClass">
+                                            <i class="@item.VehicleIcon"></i>
                                             @item.VehicleType
                                         </span>
                                     </td>
@@ -406,7 +406,10 @@
 
                     <div class="info-row">
                         <span>Loại xe</span>
-                        <strong>@Model.SelectedReservation.VehicleType</strong>
+                        <span class="vehicle-type @Model.SelectedReservation.VehicleClass">
+                            <i class="@Model.SelectedReservation.VehicleIcon"></i>
+                            @Model.SelectedReservation.VehicleType
+                        </span>
                     </div>
                 </div>
 

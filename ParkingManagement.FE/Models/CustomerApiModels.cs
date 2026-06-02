@@ -156,6 +156,7 @@ namespace ParkingManagement.FE.Models
         public decimal TotalFee { get; set; }
         public string Status { get; set; } = "";
         public int DaysRemaining { get; set; }
+        public bool AutoRenew { get; set; }
     }
 
     public class ListCustomerMonthlyTicketDto

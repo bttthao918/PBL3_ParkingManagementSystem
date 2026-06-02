@@ -17,7 +17,7 @@
     <div class="page-header">
         <div>
             <h1>Quản lý vé tháng</h1>
-            <p>Xem, gia hạn và hủy vé tháng cho khách hàng</p>
+            <p>Xem, gia hạn và hủy tự động gia hạn vé tháng cho khách hàng</p>
         </div>
         <button type="button" class="secondary-btn" onclick="document.getElementById('monthlyPricingPanel').classList.toggle('open')">
             <i class="fa-solid fa-tags"></i> Bảng giá
@@ -198,6 +198,7 @@
                         <th>Gói</th>
                         <th>Ngày bắt đầu</th>
                         <th>Ngày hết hạn</th>
+                        <th>Tự gia hạn</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
@@ -242,6 +243,7 @@
                                         <span class="expiring-badge">@ticket.DaysRemaining ngày</span>
                                     }
                                 </td>
+                                <td>@(ticket.AutoRenew ? "Đang bật" : "Đã tắt")</td>
                                 <td>
                                     <span class="status-badge @statusClass">@ticket.Status</span>
                                 </td>
@@ -259,13 +261,13 @@
                                         </a>
 
 
-                                        @if (ticket.Status == "Hoạt động")
+                                        @if (ticket.Status == "Hoạt động" && ticket.AutoRenew)
                                         {
                                             <form method="post" asp-page-handler="Cancel" style="display:inline;">
                                                 <input type="hidden" name="monthlyTicketId" value="@ticket.MonthlyTicketId" />
-                                                <button type="submit" class="icon-btn cancel-btn" title="Hủy vé"
-                                                        onclick="return confirmSubmit(this.form, 'Hủy vé tháng', 'Bạn có chắc muốn hủy vé tháng @ticket.MonthlyTicketId?', 'danger')">
-                                                    <i class="fa-solid fa-ban"></i>
+                                                <button type="submit" class="icon-btn cancel-btn" title="Hủy tự động gia hạn"
+                                                        onclick="return confirmSubmit(this.form, 'Hủy tự động gia hạn', 'Vé vẫn có hiệu lực tới ngày @ticket.EndDate.ToString("dd/MM/yyyy"). Bạn có chắc muốn tắt tự động gia hạn cho vé @ticket.MonthlyTicketId?', 'warning')">
+                                                    <i class="fa-solid fa-bell-slash"></i>
                                                 </button>
                                             </form>
                                         }
@@ -277,7 +279,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="9" class="empty-state">
+                            <td colspan="10" class="empty-state">
                                 <i class="fa-solid fa-inbox"></i>
                                 <p>Không có vé tháng nào</p>
                             </td>
@@ -406,6 +408,10 @@
                     <span>Còn lại</span>
                     <strong>@Model.SelectedTicket.DaysRemaining ngày</strong>
                 </div>
+                <div class="info-row">
+                    <span>Tự động gia hạn</span>
+                    <strong>@(Model.SelectedTicket.AutoRenew ? "Đang bật" : "Đã tắt")</strong>
+                </div>
             </div>
 
             <div class="detail-section">
@@ -429,14 +435,14 @@
                 }
             </div>
 
-            @if (Model.SelectedTicket.Status == "Hoạt động")
+            @if (Model.SelectedTicket.Status == "Hoạt động" && Model.SelectedTicket.AutoRenew)
             {
                 <div class="panel-actions">
                         <form method="post" asp-page-handler="Cancel" style="display:inline;">
                             <input type="hidden" name="monthlyTicketId" value="@Model.SelectedTicket.MonthlyTicketId" />
                             <button type="submit" class="danger-btn"
-                                    onclick="return confirmSubmit(this.form, 'Hủy vé tháng', 'Bạn có chắc muốn hủy vé tháng này? Hành động không thể hoàn tác.', 'danger')">
-                                <i class="fa-solid fa-ban"></i> Hủy vé
+                                    onclick="return confirmSubmit(this.form, 'Hủy tự động gia hạn', 'Vé vẫn có hiệu lực tới ngày @Model.SelectedTicket.EndDate.ToString("dd/MM/yyyy"). Bạn có chắc muốn tắt tự động gia hạn?', 'warning')">
+                                <i class="fa-solid fa-bell-slash"></i> Hủy tự động gia hạn
                             </button>
                         </form>
                 </div>

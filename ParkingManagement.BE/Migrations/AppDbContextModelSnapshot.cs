@@ -960,6 +960,9 @@ namespace BackendAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("bit");
+
                     b.Property<string>("CustomerId")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -2468,7 +2471,6 @@ namespace BackendAPI.Migrations
                     b.HasIndex("CollectedByEmployeeId");
 
                     b.HasIndex("MonthlyTicketId")
-                        .IsUnique()
                         .HasFilter("[MonthlyTicketId] IS NOT NULL");
 
                     b.HasIndex("TicketId")
@@ -4192,7 +4194,7 @@ namespace BackendAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ParkingManagement.DAL.Models.MonthlyTicket", "MonthlyTicket")
-                        .WithOne("Payment")
+                        .WithMany("Payments")
                         .HasForeignKey("ParkingManagement.DAL.Models.Payment", "MonthlyTicketId");
 
                     b.HasOne("ParkingManagement.DAL.Models.Ticket", "Ticket")
@@ -4315,7 +4317,7 @@ namespace BackendAPI.Migrations
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.MonthlyTicket", b =>
                 {
-                    b.Navigation("Payment");
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.ParkingSlot", b =>

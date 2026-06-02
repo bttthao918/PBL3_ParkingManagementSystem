@@ -24,7 +24,6 @@ namespace ParkingManagement.FE.Pages.Admin
         }
 
         public DashboardSummaryDto Summary { get; set; } = new();
-        public string RevenueChartPoints { get; set; } = BuildSvgPoints(Array.Empty<decimal>());
         public List<ManagerEmployeeListDto> Employees { get; set; } = new();
         public List<EmployeeTicketListDto> RecentTickets { get; set; } = new();
 
@@ -35,19 +34,12 @@ namespace ParkingManagement.FE.Pages.Admin
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Manager";
 
             var dashboardTask = _reportService.GetManagerDashboardAsync();
-            var revenueTask = _reportService.GetManagerRevenueReportAsync(new RevenueReportFilterDto { Period = "7days" });
             var ticketsTask = _ticketService.SearchTicketsAsync(new EmployeeTicketSearchDto { PageNumber = 1, PageSize = 5 });
             var employeesTask = _employeeService.GetEmployeesAsync(new ManagerEmployeeFilterDto { PageNumber = 1, PageSize = 5 });
 
-            await Task.WhenAll(dashboardTask, revenueTask, ticketsTask, employeesTask);
+            await Task.WhenAll(dashboardTask, ticketsTask, employeesTask);
 
             Summary = await dashboardTask ?? new DashboardSummaryDto();
-
-            var revenue = await revenueTask;
-            if (revenue != null)
-            {
-                RevenueChartPoints = BuildSvgPoints(revenue.DailyBreakdown.Select(x => x.Revenue).ToList());
-            }
 
             var tickets = await ticketsTask;
             RecentTickets = tickets?.Items
@@ -69,24 +61,6 @@ namespace ParkingManagement.FE.Pages.Admin
             return status.Contains("Đang", StringComparison.OrdinalIgnoreCase)
                 ? "status-warning"
                 : "status-success";
-        }
-
-        private static string BuildSvgPoints(IReadOnlyCollection<decimal> values)
-        {
-            var series = values.Count == 0 ? new List<decimal> { 0, 0, 0, 0, 0, 0, 0 } : values.ToList();
-            if (series.Count == 1)
-            {
-                series.Add(series[0]);
-            }
-
-            var max = series.Max();
-            var step = 1000d / Math.Max(1, series.Count - 1);
-            return string.Join(" ", series.Select((value, index) =>
-            {
-                var x = Math.Round(index * step);
-                var y = max <= 0 ? 210 : 220 - (double)(value / max) * 150;
-                return $"{x},{Math.Round(y)}";
-            }));
         }
     }
 }

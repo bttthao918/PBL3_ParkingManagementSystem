@@ -382,6 +382,19 @@
     content: "Tôi đã thanh toán";
 }
 
+.payment-check-btn:disabled {
+    cursor: not-allowed;
+    opacity: .72;
+}
+
+.payment-check-btn.is-loading i {
+    animation: payment-spin 1.1s linear infinite;
+}
+
+.payment-check-btn.is-loading::after {
+    content: "Đang kiểm tra";
+}
+
 .payment-progress {
     display: inline-flex;
     align-items: center;
@@ -1277,6 +1290,25 @@
 .ticket-header p {
     margin-top: 6px;
     color: #64748b;
+}
+
+.ticket-header .package-note {
+    margin-top: 4px;
+}
+
+.package-note,
+.package-cell small {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.package-cell strong {
+    display: block;
+    color: #0f172a;
 }
 
 .ticket-row {

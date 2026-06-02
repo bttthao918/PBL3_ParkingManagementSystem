@@ -86,7 +86,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const status = document.getElementById("detailStatus");
         if (status) {
-            status.textContent = row.dataset.status;
+            status.innerHTML = "";
+            const dot = document.createElement("i");
+            dot.className = "fa-solid fa-circle";
+            status.appendChild(dot);
+            status.appendChild(document.createTextNode(row.dataset.status || "-"));
             status.className = "status-badge " + row.dataset.statusClass;
         }
 

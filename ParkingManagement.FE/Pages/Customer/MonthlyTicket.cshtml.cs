@@ -87,7 +87,7 @@ public class MonthlyTicketModel : PageModel
         }
         else
         {
-            TempData["Error"] = "Chưa nhận được mã QR thanh toán từ BE. Vui lòng thử lại sau ít phút.";
+            TempData["Error"] = "Chưa nhận được mã thanh toán. Vui lòng thử lại sau ít phút.";
         }
 
         return RedirectToPage();
@@ -170,7 +170,7 @@ public class MonthlyTicketModel : PageModel
     {
         if (string.IsNullOrWhiteSpace(ticketId))
         {
-            TempData["Error"] = "Không xác định được vé cần hủy.";
+            TempData["Error"] = "Không xác định được vé cần hủy tự động gia hạn.";
             return RedirectToPage();
         }
 
@@ -239,6 +239,23 @@ public class MonthlyTicketModel : PageModel
         }
 
         return "Đã hết hạn";
+    }
+
+    public string GetAutoRenewText(CustomerMonthlyTicketDto ticket)
+    {
+        return ticket.AutoRenew ? "Đang bật" : "Đã tắt";
+    }
+
+    public string GetPackageDisplayText(CustomerMonthlyTicketDto ticket)
+    {
+        return string.IsNullOrWhiteSpace(ticket.PackageType)
+            ? "Không rõ"
+            : ticket.PackageType.Trim();
+    }
+
+    public string? GetPackageSubText(CustomerMonthlyTicketDto ticket)
+    {
+        return null;
     }
 
     private async Task LoadDataAsync()

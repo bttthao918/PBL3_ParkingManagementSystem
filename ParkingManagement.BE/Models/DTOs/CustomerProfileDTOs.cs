@@ -86,6 +86,7 @@ namespace ParkingManagement.BLL.DTOs
         public decimal TotalFee { get; set; }
         public string Status { get; set; } = string.Empty;       // "Hoạt động", "Hết hạn", "Chờ thanh toán"
         public int DaysRemaining { get; set; }
+        public bool AutoRenew { get; set; }
     }
 
     public class ListMonthlyTicketsDto

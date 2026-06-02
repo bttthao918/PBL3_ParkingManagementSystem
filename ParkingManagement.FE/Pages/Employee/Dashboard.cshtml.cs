@@ -28,7 +28,6 @@ namespace ParkingManagement.FE.Pages.Employee
 
         public Models.EmployeeDashboardDto Stats { get; set; } = CreateFallbackStats();
         public List<Models.EmployeeTicketListDto> RecentTickets { get; set; } = new();
-        public string RevenueChartPoints { get; set; } = BuildSvgPoints(Array.Empty<decimal>());
 
         // Work Log
         public Services.WorkLogStatusResponse? WorkStatus { get; set; }
@@ -79,11 +78,6 @@ namespace ParkingManagement.FE.Pages.Employee
                     Stats = stats;
                 }
 
-                var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, "7days");
-                if (revenueReport != null)
-                {
-                    RevenueChartPoints = BuildSvgPoints(revenueReport.DailyBreakdown.Select(x => x.TotalRevenue).ToList());
-                }
             }
 
             // Recent tickets
@@ -132,24 +126,6 @@ namespace ParkingManagement.FE.Pages.Employee
                 AverageRevenuePerTicket = 0,
                 AverageTicketsPerDay = 0
             };
-        }
-
-        private static string BuildSvgPoints(IReadOnlyCollection<decimal> values)
-        {
-            var series = values.Count == 0 ? new List<decimal> { 0, 0, 0, 0, 0, 0, 0 } : values.ToList();
-            if (series.Count == 1)
-            {
-                series.Add(series[0]);
-            }
-
-            var max = series.Max();
-            var step = 1000d / Math.Max(1, series.Count - 1);
-            return string.Join(" ", series.Select((value, index) =>
-            {
-                var x = Math.Round(index * step);
-                var y = max <= 0 ? 210 : 220 - (double)(value / max) * 150;
-                return $"{x},{Math.Round(y)}";
-            }));
         }
 
         private bool IsNowInShiftWindow()

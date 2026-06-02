@@ -73,7 +73,7 @@
             {
                 <div class="payment-qr-box">
                     <img src="@Model.PendingPayment.QrImageUrl"
-                         alt="QR thanh toán payOS"
+                         alt="QR thanh toán vé tháng"
                          data-payment-qr
                          data-checkout-url="@Model.PendingPayment.CheckoutUrl" />
                 </div>
@@ -135,7 +135,7 @@
 
 <div class="card banner-card">
     <h2>Quản lý vé tháng</h2>
-    <p>Đăng ký, gia hạn hoặc hủy vé tháng một cách dễ dàng và nhanh chóng.</p>
+    <p>Đăng ký vé tháng, theo dõi tự động gia hạn và tắt gia hạn khi không còn nhu cầu.</p>
 </div>
 
 <section class="card monthly-vip-card">
@@ -408,6 +408,7 @@
         }
         else
         {
+            var currentPackageSubText = Model.GetPackageSubText(Model.CurrentTicket);
             <div class="current-ticket">
                 <div class="ticket-status">
                     <i class="fa-solid fa-circle-check"></i>
@@ -421,8 +422,12 @@
                         </div>
 
                         <div>
-                            <h4>@Model.CurrentTicket.PackageType</h4>
+                            <h4>@Model.GetPackageDisplayText(Model.CurrentTicket)</h4>
                             <p>Mã vé: @Model.CurrentTicket.MonthlyTicketId</p>
+                            @if (!string.IsNullOrWhiteSpace(currentPackageSubText))
+                            {
+                                <p class="package-note">@currentPackageSubText</p>
+                            }
                         </div>
                     </div>
 
@@ -451,29 +456,26 @@
                         <strong>@Model.CurrentTicket.TotalFee.ToString("N0") đ</strong>
                     </div>
 
-                    <form method="post" asp-page-handler="Renew">
-                        <input type="hidden" name="ticketId" value="@Model.CurrentTicket.MonthlyTicketId" />
-                        <input type="hidden" name="packageType" value="1 tháng" />
-                        <input type="hidden" name="paymentMethod" value="Chuyển khoản" />
+                    <div class="ticket-row">
+                        <span>Tự động gia hạn</span>
+                        <strong class="@(Model.CurrentTicket.AutoRenew ? "green-text" : "")">@Model.GetAutoRenewText(Model.CurrentTicket)</strong>
+                    </div>
 
-                        <button type="submit" class="primary-btn">
-                            <i class="fa-solid fa-rotate"></i>
-                            Gia hạn vé
-                        </button>
-                    </form>
+                    @if (Model.CurrentTicket.AutoRenew)
+                    {
+                        <form method="post"
+                              asp-page-handler="Cancel"
+                              data-confirm-title="Hủy tự động gia hạn"
+                              data-confirm-message="Vé vẫn dùng được đến @Model.CurrentTicket.EndDate.ToString("dd/MM/yyyy"). Bạn có chắc muốn tắt tự động gia hạn cho vé @Model.CurrentTicket.MonthlyTicketId?"
+                              data-confirm-type="warning">
+                            <input type="hidden" name="ticketId" value="@Model.CurrentTicket.MonthlyTicketId" />
 
-                    <form method="post"
-                          asp-page-handler="Cancel"
-                          data-confirm-title="Hủy vé tháng"
-                          data-confirm-message="Bạn có chắc muốn hủy vé tháng @Model.CurrentTicket.MonthlyTicketId? Hành động này không thể hoàn tác."
-                          data-confirm-type="danger">
-                        <input type="hidden" name="ticketId" value="@Model.CurrentTicket.MonthlyTicketId" />
-
-                        <button type="submit" class="danger-btn">
-                            <i class="fa-solid fa-circle-xmark"></i>
-                            Hủy vé
-                        </button>
-                    </form>
+                            <button type="submit" class="danger-btn">
+                                <i class="fa-solid fa-bell-slash"></i>
+                                Hủy tự động gia hạn
+                            </button>
+                        </form>
+                    }
                 </div>
             </div>
         }
@@ -492,6 +494,7 @@
                 <th>Thời gian</th>
                 <th>Hiệu lực</th>
                 <th>Giá trị</th>
+                <th>Tự gia hạn</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
@@ -504,10 +507,17 @@
                 {
                     var isActive = Model.IsActive(ticket);
                     var isPending = Model.IsPending(ticket);
+                    var packageSubText = Model.GetPackageSubText(ticket);
                     <tr>
                         <td>@ticket.MonthlyTicketId</td>
                         <td>@ticket.VehiclePlate</td>
-                        <td>@ticket.PackageType</td>
+                        <td class="package-cell">
+                            <strong>@Model.GetPackageDisplayText(ticket)</strong>
+                            @if (!string.IsNullOrWhiteSpace(packageSubText))
+                            {
+                                <small>@packageSubText</small>
+                            }
+                        </td>
                         <td>
                             @ticket.StartDate.ToString("dd/MM/yyyy")
                             -
@@ -519,6 +529,8 @@
                         </td>
 
                         <td>@ticket.TotalFee.ToString("N0") đ</td>
+
+                        <td>@Model.GetAutoRenewText(ticket)</td>
 
                         <td>
                             <span class="status-badge @(isActive ? "active" : isPending ? "pending" : "expired")">
@@ -540,27 +552,20 @@
 
                             else if (isActive)
                             {
-                                <form method="post" asp-page-handler="Renew">
-                                <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
-                                <input type="hidden" name="packageType" value="1 tháng" />
-                                <input type="hidden" name="paymentMethod" value="Chuyển khoản" />
+                                @if (ticket.AutoRenew)
+                                {
+                                    <form method="post"
+                                          asp-page-handler="Cancel"
+                                          data-confirm-title="Hủy tự động gia hạn"
+                                          data-confirm-message="Vé vẫn dùng được đến @ticket.EndDate.ToString("dd/MM/yyyy"). Bạn có chắc muốn tắt tự động gia hạn cho vé @ticket.MonthlyTicketId?"
+                                          data-confirm-type="warning">
+                                        <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
 
-                                <button type="submit" class="icon-btn blue" title="Gia hạn 1 tháng">
-                                    <i class="fa-solid fa-rotate"></i>
-                                </button>
-                            </form>
-
-                                <form method="post"
-                                      asp-page-handler="Cancel"
-                                      data-confirm-title="Hủy vé tháng"
-                                      data-confirm-message="Bạn có chắc muốn hủy vé tháng @ticket.MonthlyTicketId? Hành động này không thể hoàn tác."
-                                      data-confirm-type="danger">
-                                    <input type="hidden" name="ticketId" value="@ticket.MonthlyTicketId" />
-
-                                    <button type="submit" class="icon-btn red" title="Hủy vé">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </form>
+                                        <button type="submit" class="icon-btn red" title="Hủy tự động gia hạn">
+                                            <i class="fa-solid fa-bell-slash"></i>
+                                        </button>
+                                    </form>
+                                }
                             }
                             else
                             {
@@ -581,7 +586,7 @@
             else
             {
                 <tr>
-                    <td colspan="8">Chưa có lịch sử vé tháng.</td>
+                    <td colspan="9">Chưa có lịch sử vé tháng.</td>
                 </tr>
             }
         </tbody>
@@ -676,6 +681,21 @@
         let paymentAutoCheckInterval;
 
 
+        function dismissToast(toast) {
+            if (!toast) {
+                return;
+            }
+
+            const stack = toast.closest(".toast-stack");
+            toast.classList.add("is-hidden");
+            window.setTimeout(() => {
+                toast.remove();
+                if (stack && !stack.querySelector(".app-toast")) {
+                    stack.remove();
+                }
+            }, 220);
+        }
+
         function closePaymentNotice() {
             const notice = document.getElementById("paymentNotice");
             if (!notice) {
@@ -698,21 +718,24 @@
             document.getElementById("registerModal").classList.add("hidden");
         }
 
-        document.querySelectorAll(".app-toast").forEach((toast) => {
-            const closeButton = toast.querySelector(".app-toast-close");
-            const hideToast = () => toast.classList.add("is-hidden");
-
-            closeButton?.addEventListener("click", hideToast);
-
-            if (toast.dataset.autoDismiss === "true") {
-                window.setTimeout(hideToast, 5200);
+        document.addEventListener("click", (event) => {
+            const toastCloseButton = event.target.closest(".app-toast-close");
+            if (toastCloseButton) {
+                dismissToast(toastCloseButton.closest(".app-toast"));
+                return;
             }
+
+            if (event.target.closest(".payment-notice-close")) {
+                closePaymentNotice();
+            }
+        });
+
+        document.querySelectorAll(".app-toast[data-auto-dismiss='true']").forEach((toast) => {
+            window.setTimeout(() => dismissToast(toast), 5200);
         });
 
         const paymentNotice = document.getElementById("paymentNotice");
         if (paymentNotice) {
-            paymentNotice.querySelector(".payment-notice-close")?.addEventListener("click", closePaymentNotice);
-
             window.setTimeout(() => paymentNotice.classList.add("is-soft"), 7000);
         }
 
@@ -728,27 +751,47 @@
         const payOsConfirmForm = document.querySelector("[data-auto-confirm='true']");
         if (payOsConfirmForm) {
             const statusElement = document.querySelector(".payment-progress span");
+            const statusIcon = document.querySelector(".payment-progress i");
+            const submitButton = payOsConfirmForm.querySelector(".payment-check-btn");
+            const submitButtonDefaultHtml = submitButton?.innerHTML;
             let isCheckingPayment = false;
 
             async function confirmPayOsPayment(showPendingText) {
                 if (isCheckingPayment) {
+                    if (showPendingText && statusElement) {
+                        statusElement.textContent = "Đang kiểm tra trạng thái thanh toán...";
+                    }
                     return;
                 }
 
                 isCheckingPayment = true;
+                if (submitButton && showPendingText) {
+                    submitButton.disabled = true;
+                    submitButton.classList.add("is-loading");
+                    submitButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Đang kiểm tra';
+                }
+                statusIcon?.classList.remove("fa-circle-info", "fa-triangle-exclamation");
+                statusIcon?.classList.add("fa-circle-notch");
                 if (showPendingText && statusElement) {
                     statusElement.textContent = "Đang kiểm tra trạng thái thanh toán...";
                 }
+
+                const controller = new AbortController();
+                const timeoutId = window.setTimeout(() => controller.abort(), 9000);
 
                 try {
                     const response = await fetch(payOsConfirmForm.action, {
                         method: "POST",
                         body: new FormData(payOsConfirmForm),
+                        signal: controller.signal,
                         headers: {
                             "X-Requested-With": "XMLHttpRequest"
                         }
                     });
-                    const result = await response.json();
+                    const result = await response.json().catch(() => ({
+                        success: false,
+                        message: "Chưa kiểm tra được trạng thái thanh toán. Vui lòng thử lại."
+                    }));
 
                     if (result.success) {
                         if (statusElement) {
@@ -761,14 +804,28 @@
                     }
 
                     if (showPendingText && statusElement) {
-                        statusElement.textContent = result.message || "payOS chưa xác nhận thanh toán.";
+                        statusElement.textContent = result.message || "Chưa ghi nhận thanh toán. Vui lòng thanh toán rồi kiểm tra lại.";
+                        statusIcon?.classList.remove("fa-circle-notch");
+                        statusIcon?.classList.add("fa-circle-info");
                     }
-                } catch {
+                } catch (error) {
                     if (showPendingText && statusElement) {
-                        statusElement.textContent = "Chưa kiểm tra được payOS, vui lòng thử lại.";
+                        statusElement.textContent = error?.name === "AbortError"
+                            ? "Kiểm tra hơi lâu. Vui lòng thử lại sau vài giây."
+                            : "Chưa kiểm tra được trạng thái thanh toán. Vui lòng thử lại.";
+                        statusIcon?.classList.remove("fa-circle-notch");
+                        statusIcon?.classList.add("fa-triangle-exclamation");
                     }
                 } finally {
+                    window.clearTimeout(timeoutId);
                     isCheckingPayment = false;
+                    if (submitButton && showPendingText) {
+                        submitButton.disabled = false;
+                        submitButton.classList.remove("is-loading");
+                        if (submitButtonDefaultHtml) {
+                            submitButton.innerHTML = submitButtonDefaultHtml;
+                        }
+                    }
                 }
             }
 

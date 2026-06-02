@@ -278,8 +278,76 @@ using (var scope = app.Services.CreateScope())
     try
     {
         db.Database.ExecuteSqlRaw("""
+            IF EXISTS (
+                SELECT 1
+                FROM sys.indexes
+                WHERE [name] = N'IX_Payments_MonthlyTicketId'
+                  AND object_id = OBJECT_ID(N'[dbo].[Payments]')
+                  AND is_unique = 1
+            )
+            BEGIN
+                DROP INDEX [IX_Payments_MonthlyTicketId] ON [dbo].[Payments];
+            END
+
+            IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[Payments]', N'MonthlyTicketId') IS NOT NULL
+               AND NOT EXISTS (
+                    SELECT 1
+                    FROM sys.indexes
+                    WHERE [name] = N'IX_Payments_MonthlyTicketId'
+                      AND object_id = OBJECT_ID(N'[dbo].[Payments]')
+               )
+            BEGIN
+                CREATE INDEX [IX_Payments_MonthlyTicketId]
+                ON [dbo].[Payments] ([MonthlyTicketId])
+                WHERE [MonthlyTicketId] IS NOT NULL;
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Payments monthly-ticket index repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
+            IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NULL
+            BEGIN
+                ALTER TABLE [dbo].[MonthlyTickets]
+                ADD [AutoRenew] bit NOT NULL
+                    CONSTRAINT [DF_MonthlyTickets_AutoRenew] DEFAULT(1) WITH VALUES;
+            END
+
+            IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+               AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NOT NULL
+            BEGIN
+                EXEC(N'UPDATE [dbo].[MonthlyTickets]
+                       SET [AutoRenew] = 0
+                       WHERE [Status] IN (N''Đã hủy'', N''Hết hạn'');');
+            END
+            """);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"MonthlyTickets AutoRenew schema repair was skipped. {ex.Message}");
+    }
+
+    try
+    {
+        db.Database.ExecuteSqlRaw("""
             IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
             BEGIN
+                IF COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NULL
+                    ALTER TABLE [dbo].[MonthlyTickets]
+                    ADD [AutoRenew] bit NOT NULL
+                        CONSTRAINT [DF_MonthlyTickets_AutoRenew] DEFAULT(1) WITH VALUES;
+
+                EXEC(N'UPDATE [dbo].[MonthlyTickets]
+                       SET [AutoRenew] = 0
+                       WHERE [Status] IN (N''Đã hủy'', N''Hết hạn'');');
+
                 IF EXISTS (
                     SELECT 1
                     FROM sys.check_constraints

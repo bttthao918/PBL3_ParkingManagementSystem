@@ -23,6 +23,7 @@ namespace ParkingManagement.FE.Models
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = "";
         public int DaysRemaining { get; set; }
+        public bool AutoRenew { get; set; }
         public decimal TotalFee { get; set; }
         public DateTime CreatedAt { get; set; }
     }
@@ -49,6 +50,7 @@ namespace ParkingManagement.FE.Models
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = "";
         public int DaysRemaining { get; set; }
+        public bool AutoRenew { get; set; }
         public decimal TotalFee { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<EmployeeMonthlyTicketPayment> Payments { get; set; } = new();

@@ -282,28 +282,50 @@ namespace ParkingManagement.DAL.Implementations
     // ── MonthlyTicketRepository ──────────────────────────────
     public class MonthlyTicketRepository : IMonthlyTicketRepository
     {
+        private static readonly SemaphoreSlim SchemaRepairSemaphore = new(1, 1);
+        private static bool _autoRenewColumnChecked;
+
         private readonly AppDbContext _db;
         public MonthlyTicketRepository(AppDbContext db) => _db = db;
 
-        public Task<MonthlyTicket?> GetByIdAsync(string id) =>
-            _db.MonthlyTickets.FirstOrDefaultAsync(m => m.MonthlyTicketId == id);
+        public async Task<MonthlyTicket?> GetByIdAsync(string id)
+        {
+            await EnsureAutoRenewColumnAsync();
+            return await _db.MonthlyTickets.FirstOrDefaultAsync(m => m.MonthlyTicketId == id);
+        }
 
-        public Task<List<MonthlyTicket>> GetByCustomerIdAsync(string customerId) =>
-            _db.MonthlyTickets.Where(m => m.CustomerId == customerId).ToListAsync();
+        public async Task<List<MonthlyTicket>> GetByCustomerIdAsync(string customerId)
+        {
+            await EnsureAutoRenewColumnAsync();
+            return await _db.MonthlyTickets.Where(m => m.CustomerId == customerId).ToListAsync();
+        }
 
-        public Task<List<MonthlyTicket>> GetAllAsync() =>
-            _db.MonthlyTickets.ToListAsync();
+        public async Task<List<MonthlyTicket>> GetAllAsync()
+        {
+            await EnsureAutoRenewColumnAsync();
+            return await _db.MonthlyTickets.ToListAsync();
+        }
 
-        public Task<MonthlyTicket?> GetActiveByPlateAsync(string plate) =>
-            _db.MonthlyTickets.FirstOrDefaultAsync(m => m.VehiclePlate == plate && m.Status == MonthlyTicketStatuses.ACTIVE);
+        public async Task<MonthlyTicket?> GetActiveByPlateAsync(string plate)
+        {
+            await EnsureAutoRenewColumnAsync();
+            return await _db.MonthlyTickets.FirstOrDefaultAsync(m =>
+                m.VehiclePlate == plate &&
+                m.Status == MonthlyTicketStatuses.ACTIVE &&
+                m.EndDate.Date >= DateTime.Today);
+        }
 
-        public Task<List<MonthlyTicket>> GetExpiringSoonAsync(int days) =>
-            _db.MonthlyTickets
+        public async Task<List<MonthlyTicket>> GetExpiringSoonAsync(int days)
+        {
+            await EnsureAutoRenewColumnAsync();
+            return await _db.MonthlyTickets
                .Where(m => m.Status == MonthlyTicketStatuses.ACTIVE && m.EndDate <= DateTime.Now.AddDays(days))
                .ToListAsync();
+        }
 
         public async Task<string> GenerateIdAsync()
         {
+            await EnsureAutoRenewColumnAsync();
             var ids = await _db.MonthlyTickets.Select(m => m.MonthlyTicketId).ToListAsync();
             var num = RepositoryIdGenerator.GetNextNumber(ids, "MTK");
             return $"MTK{num:D3}";
@@ -311,14 +333,53 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task AddAsync(MonthlyTicket monthlyTicket)
         {
+            await EnsureAutoRenewColumnAsync();
             _db.MonthlyTickets.Add(monthlyTicket);
             await _db.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(MonthlyTicket monthlyTicket)
         {
+            await EnsureAutoRenewColumnAsync();
             _db.MonthlyTickets.Update(monthlyTicket);
             await _db.SaveChangesAsync();
+        }
+
+        private async Task EnsureAutoRenewColumnAsync()
+        {
+            if (_autoRenewColumnChecked)
+                return;
+
+            await SchemaRepairSemaphore.WaitAsync();
+            try
+            {
+                if (_autoRenewColumnChecked)
+                    return;
+
+                await _db.Database.ExecuteSqlRawAsync("""
+                    IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+                       AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NULL
+                    BEGIN
+                        ALTER TABLE [dbo].[MonthlyTickets]
+                        ADD [AutoRenew] bit NOT NULL
+                            CONSTRAINT [DF_MonthlyTickets_AutoRenew] DEFAULT(1) WITH VALUES;
+                    END
+
+                    IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+                       AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NOT NULL
+                    BEGIN
+                        EXEC(N'UPDATE [dbo].[MonthlyTickets]
+                               SET [AutoRenew] = 0
+                               WHERE [Status] IN (N''Đã hủy'', N''Hết hạn'');');
+                    END
+                    """);
+
+                _autoRenewColumnChecked = true;
+            }
+            finally
+            {
+                SchemaRepairSemaphore.Release();
+            }
         }
     }
 
@@ -373,6 +434,8 @@ namespace ParkingManagement.DAL.Implementations
     // ── PaymentRepository ────────────────────────────────────
     public class PaymentRepository : IPaymentRepository
     {
+        private static readonly SemaphoreSlim PaymentWriteSemaphore = new(1, 1);
+
         private readonly AppDbContext _db;
         public PaymentRepository(AppDbContext db) => _db = db;
 
@@ -392,16 +455,36 @@ namespace ParkingManagement.DAL.Implementations
 
         public async Task<string> GenerateIdAsync()
         {
-            var ids = await _db.Payments.Select(p => p.PaymentId).ToListAsync();
-            var num = RepositoryIdGenerator.GetNextNumber(ids, "PAY");
-            return $"PAY{num:D3}";
+            await PaymentWriteSemaphore.WaitAsync();
+            try
+            {
+                return await GenerateUniquePaymentIdCoreAsync();
+            }
+            finally
+            {
+                PaymentWriteSemaphore.Release();
+            }
         }
 
         public async Task AddAsync(Payment payment)
         {
-            NormalizePaymentReferences(payment);
-            _db.Payments.Add(payment);
-            await _db.SaveChangesAsync();
+            await PaymentWriteSemaphore.WaitAsync();
+            try
+            {
+                NormalizePaymentReferences(payment);
+                if (string.IsNullOrWhiteSpace(payment.PaymentId) ||
+                    await _db.Payments.AnyAsync(p => p.PaymentId == payment.PaymentId))
+                {
+                    payment.PaymentId = await GenerateUniquePaymentIdCoreAsync();
+                }
+
+                _db.Payments.Add(payment);
+                await _db.SaveChangesAsync();
+            }
+            finally
+            {
+                PaymentWriteSemaphore.Release();
+            }
         }
 
         public Task<Payment?> GetByVnpTxnRefAsync(string vnpTxnRef) =>
@@ -418,6 +501,20 @@ namespace ParkingManagement.DAL.Implementations
         {
             payment.TicketId = string.IsNullOrWhiteSpace(payment.TicketId) ? null : payment.TicketId.Trim();
             payment.MonthlyTicketId = string.IsNullOrWhiteSpace(payment.MonthlyTicketId) ? null : payment.MonthlyTicketId.Trim();
+        }
+
+        private async Task<string> GenerateUniquePaymentIdCoreAsync()
+        {
+            for (var attempt = 0; attempt < 20; attempt++)
+            {
+                var id = $"PAY{DateTime.UtcNow:yyyyMMddHHmmss}{Random.Shared.Next(100, 1000)}";
+                if (!await _db.Payments.AnyAsync(p => p.PaymentId == id))
+                {
+                    return id;
+                }
+            }
+
+            return $"PAY{Guid.NewGuid():N}"[..20].ToUpperInvariant();
         }
     }
 

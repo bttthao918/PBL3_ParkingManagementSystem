@@ -117,16 +117,6 @@
             </div>
         </div>
 
-        <div class="card emp-kpi-card">
-            <div class="emp-kpi-icon purple">
-                <i class="fa-solid fa-calendar-days"></i>
-            </div>
-            <div>
-                <p>Trang hiện tại</p>
-                <h2>@Model.PageNumber/@(Model.TotalPages == 0 ? 1 : Model.TotalPages)</h2>
-                <span>Phân trang từ database</span>
-            </div>
-        </div>
     </div>
 
     <div class="card emp-filter-card">
@@ -182,10 +172,6 @@
                 Xóa bộ lọc
             </a>
 
-            <button class="emp-btn-outline" type="button" onclick="window.print()">
-                <i class="fa-solid fa-download"></i>
-                Export
-            </button>
         </div>
     </div>
 
@@ -202,7 +188,6 @@
                     <button type="button" disabled>Vô hiệu hóa</button>
                     <button type="button" disabled>Xóa</button>
                     <button type="button" disabled>Phân ca</button>
-                    <button type="button" onclick="window.print()">Xuất dữ liệu</button>
                 </div>
             </div>
 
@@ -541,7 +526,12 @@
                                                 }
                                             }
 
-                                            <form method="post" asp-page-handler="CreateShift" class="emp-add-shift-row">
+                                            <form method="post"
+                                                  asp-page-handler="CreateShift"
+                                                  class="emp-add-shift-row"
+                                                  data-ajax-create-shift="true"
+                                                  data-shift-date="@day.WorkDate.ToString("dd/MM")"
+                                                  data-employee-name="@detail.FullName">
                                                 <input type="hidden" name="employeeId" value="@detail.EmployeeId" />
                                                 <input type="hidden" name="workDate" value="@day.WorkDate.ToString("yyyy-MM-dd")" />
                                                 <input type="hidden" name="Keyword" value="@Model.Keyword" />
@@ -813,6 +803,118 @@
                 submitButton.className = isDelete || isDisable ? "emp-btn-danger" : "emp-btn-primary";
                 document.getElementById("employeeStatusModal").classList.add("show");
             });
+        });
+
+        function showEmployeeAjaxMessage(message, success) {
+            const page = document.querySelector(".employee-page");
+            if (!page || !message) {
+                return;
+            }
+
+            let box = document.getElementById("employeeAjaxMessage");
+            if (!box) {
+                box = document.createElement("div");
+                box.id = "employeeAjaxMessage";
+                box.className = "card emp-ajax-message";
+                box.innerHTML = "<p></p>";
+                page.insertBefore(box, page.firstElementChild);
+            }
+
+            box.classList.toggle("success", success);
+            box.classList.toggle("error", !success);
+            box.querySelector("p").textContent = message;
+            window.clearTimeout(box.dismissTimer);
+            box.dismissTimer = window.setTimeout(() => box.remove(), 4200);
+        }
+
+        function buildEmployeePageUrl(form) {
+            const data = new FormData(form);
+            const url = new URL(window.location.pathname, window.location.origin);
+            ["Keyword", "Status", "Shift", "PageNumber", "PageSize", "SelectedEmployeeId"].forEach((key) => {
+                const value = data.get(key);
+                if (value) {
+                    url.searchParams.set(key, value);
+                }
+            });
+            url.hash = "shift";
+            return url;
+        }
+
+        async function refreshEmployeeShiftSection(form) {
+            const url = buildEmployeePageUrl(form);
+            const response = await fetch(url.toString(), {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const nextShiftSection = doc.querySelector("#empShiftTab .emp-shift-section");
+            const currentShiftSection = document.querySelector("#empShiftTab .emp-shift-section");
+
+            if (nextShiftSection && currentShiftSection) {
+                currentShiftSection.replaceWith(nextShiftSection);
+                showEmpTab("shift");
+                window.history.replaceState({}, "", url.toString());
+            }
+        }
+
+        async function submitCreateShiftAjax(form) {
+            if (form.dataset.loading === "true") {
+                return;
+            }
+
+            const button = form.querySelector("button[type='submit']");
+            form.dataset.loading = "true";
+            button?.setAttribute("disabled", "disabled");
+            button?.classList.add("is-loading");
+
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    body: new FormData(form),
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+                const result = await response.json().catch(() => ({
+                    success: false,
+                    message: "Không nhận được phản hồi khi thêm ca."
+                }));
+
+                showEmployeeAjaxMessage(result.message || (result.success ? "Đã thêm ca." : "Không thể thêm ca."), result.success);
+
+                if (result.success) {
+                    await refreshEmployeeShiftSection(form);
+                }
+            } catch {
+                showEmployeeAjaxMessage("Không thể thêm ca lúc này. Vui lòng thử lại.", false);
+            } finally {
+                form.dataset.loading = "";
+                button?.removeAttribute("disabled");
+                button?.classList.remove("is-loading");
+            }
+        }
+
+        document.addEventListener("submit", (event) => {
+            const form = event.target.closest("form[data-ajax-create-shift='true']");
+            if (!form) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const data = new FormData(form);
+            const shiftType = data.get("shiftType") || "ca";
+            const shiftDate = form.dataset.shiftDate || data.get("workDate") || "";
+            const employeeName = form.dataset.employeeName || "nhân viên này";
+            const message = `Xác nhận thêm ca ${shiftType} ngày ${shiftDate} cho ${employeeName}?`;
+
+            if (typeof window.confirmAction === "function") {
+                window.confirmAction("Thêm ca làm", message, () => submitCreateShiftAjax(form), "info");
+            } else if (window.confirm(message)) {
+                submitCreateShiftAjax(form);
+            }
         });
 
         const rowChecks = Array.from(document.querySelectorAll(".emp-row-check"));

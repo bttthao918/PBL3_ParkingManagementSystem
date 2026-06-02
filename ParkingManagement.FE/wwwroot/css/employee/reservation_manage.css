@@ -341,8 +341,60 @@
     white-space: nowrap;
 }
 
+.vehicle-type {
+    min-height: 34px;
+    padding: 4px 11px 4px 5px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 800;
+}
+
 .vehicle-type i {
-    color: #24476f;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.vehicle-type.green {
+    background: #f0fdf4;
+    color: #16a34a;
+    border-color: #86efac;
+}
+
+.vehicle-type.green i {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.vehicle-type.blue {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #93c5fd;
+}
+
+.vehicle-type.blue i {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.vehicle-type.purple {
+    background: #faf5ff;
+    color: #7c3aed;
+    border-color: #c4b5fd;
+}
+
+.vehicle-type.purple i {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.info-row .vehicle-type {
+    justify-self: end;
 }
 
 .slot-pill {

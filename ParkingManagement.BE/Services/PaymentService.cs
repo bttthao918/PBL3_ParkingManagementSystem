@@ -165,7 +165,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var result = new PaymentCompletedDto
                 {
                     Success = true,
-                    PaymentId = paymentId,
+                    PaymentId = payment.PaymentId,
                     TicketId = confirmDto.TicketId,
                     MonthlyTicketId = confirmDto.MonthlyTicketId,
                     PaymentMethod = payment.Method,

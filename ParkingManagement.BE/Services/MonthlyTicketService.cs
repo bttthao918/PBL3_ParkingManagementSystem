@@ -13,6 +13,7 @@ namespace ParkingManagement.BLL.Services.Implementations
     public class MonthlyTicketService : IMonthlyTicketService
     {
         private static readonly ConcurrentDictionary<long, PayOsPaymentLinkDto> PayOsPaymentSnapshots = new();
+        private static readonly SemaphoreSlim AutoRenewSemaphore = new(1, 1);
 
         private readonly IMonthlyTicketRepository _repo;
         private readonly ICustomerRepository _customerRepo;
@@ -39,12 +40,14 @@ namespace ParkingManagement.BLL.Services.Implementations
 
         public async Task<List<MonthlyTicketDto>> GetAllAsync()
         {
+            await ProcessDueAutoRenewalsAsync();
             var list = await _repo.GetAllAsync();
             return list.Select(MapToDto).ToList();
         }
 
         public async Task<List<MonthlyTicketDto>> GetByCustomerIdAsync(string customerId)
         {
+            await ProcessDueAutoRenewalsAsync(customerId);
             var list = await _repo.GetByCustomerIdAsync(customerId);
             foreach (var ticket in list.Where(IsPendingPaymentTicket))
             {
@@ -63,6 +66,12 @@ namespace ParkingManagement.BLL.Services.Implementations
         public async Task<MonthlyTicketDto?> GetByIdAsync(string id)
         {
             var ticket = await _repo.GetByIdAsync(id);
+            if (ticket != null)
+            {
+                await ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+                ticket = await _repo.GetByIdAsync(id);
+            }
+
             return ticket == null ? null : MapToDto(ticket);
         }
 
@@ -80,6 +89,8 @@ namespace ParkingManagement.BLL.Services.Implementations
             var customerId = dto.CustomerId!.Trim();
             var vehicleType = dto.VehicleType!;
             dto.CustomerId = customerId;
+
+            await ProcessDueAutoRenewalsAsync(customerId, dto.VehiclePlate);
 
             var existing = (await _repo.GetAllAsync())
                 .FirstOrDefault(ticket =>
@@ -144,6 +155,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 PackageType = dto.PackageType,
                 TotalFee = fee,
                 Status = MonthlyTicketStatuses.PENDING_PAYMENT,
+                AutoRenew = true,
                 CreatedAt = DateTime.Now
             };
 
@@ -180,7 +192,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             resultDto.CheckoutUrl = paymentLink.Data.CheckoutUrl;
             resultDto.QrCode = paymentLink.Data.QrCode;
 
-            return ServiceResult<MonthlyTicketDto>.Ok(resultDto, "Đã tạo QR thanh toán. Vé tháng sẽ hoạt động sau khi payOS xác nhận đã nhận tiền.");
+            return ServiceResult<MonthlyTicketDto>.Ok(resultDto, "Đã tạo mã thanh toán. Vui lòng quét QR hoặc mở link để thanh toán. Vé tháng sẽ được kích hoạt sau khi thanh toán thành công.");
         }
 
         private async Task<string?> SyncMonthlyTicketVehicleAsync(RegisterMonthlyTicketDto dto)
@@ -226,11 +238,20 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (ticket == null)
                 return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy vé tháng.");
 
+            await ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+            ticket = await _repo.GetByIdAsync(monthlyTicketId);
+            if (ticket == null)
+                return ServiceResult<MonthlyTicketDto>.Fail("Không tìm thấy vé tháng.");
+
             if (ticket.Status == MonthlyTicketStatuses.CANCELLED)
                 return ServiceResult<MonthlyTicketDto>.Fail("Vé tháng đã hủy không thể gia hạn.");
 
             if (ticket.Status == MonthlyTicketStatuses.PENDING_PAYMENT)
                 return ServiceResult<MonthlyTicketDto>.Fail("Vé tháng đang chờ thanh toán nên chưa thể gia hạn.");
+
+            if (MonthlyTicketStatuses.IsActive(ticket.Status) && ticket.EndDate.Date >= DateTime.Today)
+                return ServiceResult<MonthlyTicketDto>.Fail(
+                    $"Vé tháng vẫn còn hiệu lực đến {ticket.EndDate:dd/MM/yyyy}. Chỉ gia hạn khi vé đã hết hạn; nếu tự gia hạn đang bật, hệ thống sẽ tự gia hạn sau ngày hết hạn.");
 
             if (string.IsNullOrWhiteSpace(dto.PackageType))
                 return ServiceResult<MonthlyTicketDto>.Fail("Gói vé tháng không được để trống.");
@@ -247,6 +268,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             ticket.PackageType = dto.PackageType;
             ticket.TotalFee += fee;
             ticket.Status = MonthlyTicketStatuses.ACTIVE;
+            ticket.AutoRenew = true;
 
             await _repo.UpdateAsync(ticket);
             await AddPaymentAsync(ticket.MonthlyTicketId, fee, dto.PaymentMethod);
@@ -273,13 +295,21 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (ticket == null)
                 return ServiceResult<string>.Fail("Không tìm thấy vé tháng.");
 
-            if (ticket.Status != MonthlyTicketStatuses.ACTIVE)
-                return ServiceResult<string>.Fail("Vé tháng đã không còn hoạt động.");
+            await ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+            ticket = await _repo.GetByIdAsync(id);
+            if (ticket == null)
+                return ServiceResult<string>.Fail("Không tìm thấy vé tháng.");
 
-            ticket.Status = MonthlyTicketStatuses.CANCELLED;
+            if (!MonthlyTicketStatuses.IsActive(ticket.Status))
+                return ServiceResult<string>.Fail("Chỉ có thể hủy tự động gia hạn cho vé tháng đang hoạt động.");
+
+            if (!ticket.AutoRenew)
+                return ServiceResult<string>.Ok(id, "Tự động gia hạn đã được tắt trước đó.");
+
+            ticket.AutoRenew = false;
             await _repo.UpdateAsync(ticket);
 
-            return ServiceResult<string>.Ok(id, "Hủy vé tháng thành công.");
+            return ServiceResult<string>.Ok(id, $"Đã hủy tự động gia hạn. Vé vẫn có hiệu lực đến {ticket.EndDate:dd/MM/yyyy}.");
         }
 
         public async Task<ServiceResult<string>> ConfirmPayOsPaymentAsync(long orderCode, int amount, string? paymentLinkId, string? bankReference)
@@ -292,7 +322,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return ServiceResult<string>.Ok(payment.MonthlyTicketId ?? "", "Thanh toán đã được xử lý trước đó.");
 
             if (decimal.ToInt32(payment.Amount) != amount)
-                return ServiceResult<string>.Fail("Số tiền payOS xác nhận không khớp với đơn vé tháng.");
+                return ServiceResult<string>.Fail("Số tiền thanh toán không khớp với đơn vé tháng.");
 
             if (string.IsNullOrWhiteSpace(payment.MonthlyTicketId))
                 return ServiceResult<string>.Fail("Payment payOS không gắn với vé tháng.");
@@ -305,6 +335,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return ServiceResult<string>.Fail("Vé tháng đã bị hủy nên không thể kích hoạt.");
 
             ticket.Status = MonthlyTicketStatuses.ACTIVE;
+            ticket.AutoRenew = true;
             payment.Status = PaymentStatuses.SUCCESS;
             payment.PaymentTime = DateTime.Now;
 
@@ -324,7 +355,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 }
             }
 
-            return ServiceResult<string>.Ok(ticket.MonthlyTicketId, "Đã kích hoạt vé tháng sau khi payOS xác nhận thanh toán.");
+            return ServiceResult<string>.Ok(ticket.MonthlyTicketId, "Thanh toán thành công. Vé tháng đã được kích hoạt.");
         }
 
         public async Task<ServiceResult<string>> ConfirmPayOsReturnAsync(long orderCode)
@@ -332,12 +363,15 @@ namespace ParkingManagement.BLL.Services.Implementations
             var paymentInfo = await _payOsService.GetPaymentLinkInformationAsync(orderCode);
             if (!paymentInfo.Success || paymentInfo.Data == null)
             {
-                return ServiceResult<string>.Fail(paymentInfo.Message ?? "Không kiểm tra được trạng thái thanh toán payOS.");
+                return ServiceResult<string>.Fail(paymentInfo.Message ?? "Không kiểm tra được trạng thái thanh toán. Vui lòng thử lại.");
             }
 
             if (!string.Equals(paymentInfo.Data.Status, "PAID", StringComparison.OrdinalIgnoreCase))
             {
-                return ServiceResult<string>.Fail($"payOS chưa xác nhận thanh toán. Trạng thái hiện tại: {paymentInfo.Data.Status}.");
+                var statusText = string.Equals(paymentInfo.Data.Status, "PENDING", StringComparison.OrdinalIgnoreCase)
+                    ? "đang chờ thanh toán"
+                    : paymentInfo.Data.Status;
+                return ServiceResult<string>.Fail($"Chưa ghi nhận thanh toán, hiện vẫn {statusText}. Vui lòng thanh toán rồi kiểm tra lại.");
             }
 
             return await ConfirmPayOsPaymentAsync(
@@ -377,6 +411,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (!MonthlyTicketStatuses.IsActive(ticket.Status))
                 {
                     ticket.Status = MonthlyTicketStatuses.ACTIVE;
+                    ticket.AutoRenew = true;
                     await _repo.UpdateAsync(ticket);
                 }
 
@@ -428,7 +463,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var storedPayment = await BuildStoredPayOsPaymentDtoAsync(ticket);
             if (storedPayment != null)
             {
-                return ServiceResult<MonthlyTicketDto>.Ok(storedPayment, "Đã mở lại QR thanh toán cho vé tháng đang chờ thanh toán.");
+                return ServiceResult<MonthlyTicketDto>.Ok(storedPayment, "Đã mở lại mã thanh toán cho vé tháng đang chờ. Vui lòng hoàn tất thanh toán để kích hoạt vé.");
             }
 
             if (await FindPayOsPaymentAsync(ticket.MonthlyTicketId) != null)
@@ -467,13 +502,88 @@ namespace ParkingManagement.BLL.Services.Implementations
             dto.CheckoutUrl = paymentLink.Data.CheckoutUrl;
             dto.QrCode = paymentLink.Data.QrCode;
 
-            return ServiceResult<MonthlyTicketDto>.Ok(dto, "Đã tạo lại QR thanh toán cho vé tháng đang chờ thanh toán.");
+            return ServiceResult<MonthlyTicketDto>.Ok(dto, "Đã tạo lại mã thanh toán cho vé tháng đang chờ. Vui lòng hoàn tất thanh toán để kích hoạt vé.");
         }
 
         public async Task<List<MonthlyTicketDto>> GetExpiringSoonAsync(int days = 7)
         {
+            await ProcessDueAutoRenewalsAsync();
             var list = await _repo.GetExpiringSoonAsync(days);
             return list.Select(MapToDto).ToList();
+        }
+
+        public async Task<int> ProcessDueAutoRenewalsAsync(string? customerId = null, string? vehiclePlate = null)
+        {
+            var normalizedCustomerId = string.IsNullOrWhiteSpace(customerId) ? null : customerId.Trim();
+            var normalizedVehiclePlate = string.IsNullOrWhiteSpace(vehiclePlate)
+                ? null
+                : MonthlyTicketValidator.NormalizeVehiclePlate(vehiclePlate);
+
+            await AutoRenewSemaphore.WaitAsync();
+            try
+            {
+                var today = DateTime.Today;
+                var tickets = await _repo.GetAllAsync();
+                var dueTickets = tickets
+                    .Where(ticket => MonthlyTicketStatuses.IsActive(ticket.Status) && ticket.EndDate.Date < today)
+                    .Where(ticket => normalizedCustomerId == null ||
+                        string.Equals(ticket.CustomerId, normalizedCustomerId, StringComparison.OrdinalIgnoreCase))
+                    .Where(ticket => normalizedVehiclePlate == null ||
+                        string.Equals(ticket.VehiclePlate, normalizedVehiclePlate, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                var processed = 0;
+                foreach (var ticket in dueTickets)
+                {
+                    if (!ticket.AutoRenew)
+                    {
+                        ticket.Status = MonthlyTicketStatuses.EXPIRED;
+                        await _repo.UpdateAsync(ticket);
+                        continue;
+                    }
+
+                    var months = GetPackageMonths(ticket.PackageType);
+                    if (months <= 0)
+                    {
+                        ticket.AutoRenew = false;
+                        ticket.Status = MonthlyTicketStatuses.EXPIRED;
+                        await _repo.UpdateAsync(ticket);
+                        continue;
+                    }
+
+                    var renewalCount = 0;
+                    while (ticket.EndDate.Date < today && renewalCount < 24)
+                    {
+                        var renewalFee = await CalculateFeeAsync(ticket.VehicleType, ticket.PackageType, ticket.CustomerId);
+                        if (renewalFee <= 0)
+                        {
+                            ticket.AutoRenew = false;
+                            ticket.Status = MonthlyTicketStatuses.EXPIRED;
+                            break;
+                        }
+
+                        var extensionStart = ticket.EndDate.Date.AddDays(1);
+                        ticket.EndDate = extensionStart.AddMonths(months).AddDays(-1);
+                        ticket.TotalFee += renewalFee;
+                        ticket.Status = MonthlyTicketStatuses.ACTIVE;
+
+                        await AddPaymentAsync(ticket.MonthlyTicketId, renewalFee, PaymentMethods.BANK_TRANSFER);
+                        renewalCount++;
+                    }
+
+                    await _repo.UpdateAsync(ticket);
+                    if (renewalCount > 0)
+                    {
+                        processed++;
+                    }
+                }
+
+                return processed;
+            }
+            finally
+            {
+                AutoRenewSemaphore.Release();
+            }
         }
 
         public async Task<decimal> CalculateFeeAsync(string vehicleType, string packageType, string? customerId = null)
@@ -731,6 +841,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             EndDate = ticket.EndDate,
             TotalFee = ticket.TotalFee,
             Status = ticket.Status,
+            AutoRenew = ticket.AutoRenew,
             DaysRemaining = MonthlyTicketStatuses.IsActive(ticket.Status)
                 ? Math.Max(0, (int)(ticket.EndDate.Date - DateTime.Today).TotalDays)
                 : 0

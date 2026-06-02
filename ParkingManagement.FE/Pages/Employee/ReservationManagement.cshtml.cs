@@ -191,6 +191,8 @@ namespace ParkingManagement.FE.Pages.Employee
                     CustomerName = customerName,
                     VehiclePlate = reservation.VehiclePlate,
                     VehicleType = string.IsNullOrWhiteSpace(reservation.VehicleType) ? "Chưa rõ" : reservation.VehicleType,
+                    VehicleClass = GetVehicleClass(reservation.VehicleType),
+                    VehicleIcon = GetVehicleIcon(reservation.VehicleType),
                     SlotId = reservation.SlotId,
                     SlotText = slotText,
                     ExpectedTime = reservation.ExpectedTime,
@@ -228,6 +230,8 @@ namespace ParkingManagement.FE.Pages.Employee
                 CustomerName = selected.CustomerName,
                 VehiclePlate = selected.VehiclePlate,
                 VehicleType = selected.VehicleType,
+                VehicleClass = selected.VehicleClass,
+                VehicleIcon = selected.VehicleIcon,
                 SlotId = selected.SlotId,
                 SlotText = selected.SlotText,
                 ExpectedTime = selected.ExpectedTime,
@@ -287,6 +291,62 @@ namespace ParkingManagement.FE.Pages.Employee
             };
         }
 
+        private static string GetVehicleClass(string? vehicleType)
+        {
+            return NormalizeVehicleType(vehicleType) switch
+            {
+                "small-car" => "blue",
+                "large-car" => "purple",
+                _ => "green"
+            };
+        }
+
+        private static string GetVehicleIcon(string? vehicleType)
+        {
+            return NormalizeVehicleType(vehicleType) switch
+            {
+                "small-car" => "fa-solid fa-car-side",
+                "large-car" => "fa-solid fa-van-shuttle",
+                _ => "fa-solid fa-motorcycle"
+            };
+        }
+
+        private static string NormalizeVehicleType(string? value)
+        {
+            var normalized = NormalizeVietnameseText(value);
+            if (normalized.Contains("may") || normalized.Contains("motor"))
+            {
+                return "motorcycle";
+            }
+
+            if (normalized.Contains("nho") || normalized.Contains("small"))
+            {
+                return "small-car";
+            }
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+            {
+                return "large-car";
+            }
+
+            return normalized;
+        }
+
+        private static string NormalizeVietnameseText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var chars = normalized
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                .Select(c => c == '\u0111' || c == '\u0110' ? 'd' : c);
+
+            return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
+        }
+
         private static string BuildTimeLabel(DateTime expectedTime, string status)
         {
             if (!IsWaiting(status))
@@ -322,6 +382,8 @@ namespace ParkingManagement.FE.Pages.Employee
         public string CustomerName { get; set; } = "";
         public string VehiclePlate { get; set; } = "";
         public string VehicleType { get; set; } = "";
+        public string VehicleClass { get; set; } = "";
+        public string VehicleIcon { get; set; } = "";
         public string? SlotId { get; set; }
         public string SlotText { get; set; } = "";
         public DateTime ExpectedTime { get; set; }

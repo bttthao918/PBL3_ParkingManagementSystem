@@ -339,12 +339,14 @@ namespace ParkingManagement.Web.Controllers.Api
                     {
                         MonthlyTicketId = x.MonthlyTicketId,
                         VehiclePlate = x.VehiclePlate,
+                        VehicleType = x.VehicleType,
                         PackageType = x.PackageType,
                         StartDate = x.StartDate,
                         EndDate = x.EndDate,
                         TotalFee = x.TotalFee,
                         Status = x.Status,
-                        DaysRemaining = (x.EndDate - DateTime.Now).Days
+                        DaysRemaining = x.DaysRemaining,
+                        AutoRenew = x.AutoRenew
                     }).ToList(),
                     ActiveCount = activeCount,
                     ExpiredCount = expiredCount
@@ -415,7 +417,8 @@ namespace ParkingManagement.Web.Controllers.Api
                         EndDate = monthlyTicket.EndDate,
                         TotalFee = monthlyTicket.TotalFee,
                         Status = monthlyTicket.Status,
-                        DaysRemaining = (monthlyTicket.EndDate - DateTime.Now).Days
+                        DaysRemaining = monthlyTicket.DaysRemaining,
+                        AutoRenew = monthlyTicket.AutoRenew
                     }
                 };
 
@@ -489,7 +492,8 @@ namespace ParkingManagement.Web.Controllers.Api
                         EndDate = renewedTicket.EndDate,
                         TotalFee = renewedTicket.TotalFee,
                         Status = renewedTicket.Status,
-                        DaysRemaining = renewedTicket.DaysRemaining
+                        DaysRemaining = renewedTicket.DaysRemaining,
+                        AutoRenew = renewedTicket.AutoRenew
                     }
                 };
 

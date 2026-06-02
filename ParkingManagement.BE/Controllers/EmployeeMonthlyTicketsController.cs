@@ -11,7 +11,7 @@ namespace ParkingManagement.Web.Controllers.Api
 {
     /// <summary>
     /// API quản lý vé tháng dành cho Nhân viên
-    /// Nhân viên có thể: xem danh sách, tạo mới, gia hạn, hủy vé tháng
+    /// Nhân viên có thể: xem danh sách, tạo mới, gia hạn, hủy tự động gia hạn vé tháng
     /// (Không có chỉnh sửa giá - chức năng đó chỉ dành cho Quản lý)
     /// </summary>
     [ApiController]
@@ -22,15 +22,18 @@ namespace ParkingManagement.Web.Controllers.Api
     {
         private readonly AppDbContext _db;
         private readonly IPricingService _pricingService;
+        private readonly IMonthlyTicketService _monthlyTicketService;
         private readonly ILogger<EmployeeMonthlyTicketsController> _logger;
 
         public EmployeeMonthlyTicketsController(
             AppDbContext db,
             IPricingService pricingService,
+            IMonthlyTicketService monthlyTicketService,
             ILogger<EmployeeMonthlyTicketsController> logger)
         {
             _db = db;
             _pricingService = pricingService;
+            _monthlyTicketService = monthlyTicketService;
             _logger = logger;
         }
 
@@ -47,6 +50,8 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync();
+
                 var query = _db.MonthlyTickets
                     .Include(t => t.Customer)
                     .AsQueryable();
@@ -93,6 +98,7 @@ namespace ParkingManagement.Web.Controllers.Api
                         StartDate = t.StartDate,
                         EndDate = t.EndDate,
                         t.Status,
+                        t.AutoRenew,
                         DaysRemaining = t.Status == "Hoạt động" ? Math.Max(0, (t.EndDate - today).Days) : 0,
                         t.TotalFee,
                         t.CreatedAt
@@ -136,6 +142,8 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync();
+
                 var ticket = await _db.MonthlyTickets
                     .Include(t => t.Customer)
                     .FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
@@ -162,6 +170,7 @@ namespace ParkingManagement.Web.Controllers.Api
                     StartDate = ticket.StartDate,
                     EndDate = ticket.EndDate,
                     ticket.Status,
+                    ticket.AutoRenew,
                     DaysRemaining = ticket.Status == "Hoạt động" ? Math.Max(0, (ticket.EndDate - today).Days) : 0,
                     ticket.TotalFee,
                     CreatedAt = ticket.CreatedAt,
@@ -190,6 +199,8 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync();
+
                 if (string.IsNullOrWhiteSpace(model.VehiclePlate))
                     return BadRequest(new { success = false, message = "Biển số xe không được để trống" });
 
@@ -254,6 +265,7 @@ namespace ParkingManagement.Web.Controllers.Api
                     PackageType = model.DurationMonths + " tháng",
                     TotalFee = fee,
                     Status = "Hoạt động",
+                    AutoRenew = true,
                     CreatedAt = DateTime.Now
                 };
 
@@ -316,6 +328,11 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (ticket == null)
                     return NotFound(new { success = false, message = "Không tìm thấy vé tháng" });
 
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+                ticket = await _db.MonthlyTickets.FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
+                if (ticket == null)
+                    return NotFound(new { success = false, message = "Không tìm thấy vé tháng" });
+
                 // Tính phí gia hạn
                 decimal renewFee = await CalculateFeeAsync(ticket.VehicleType, model.MonthsToAdd);
                 if (renewFee == 0)
@@ -327,6 +344,7 @@ namespace ParkingManagement.Web.Controllers.Api
 
                 ticket.EndDate = newEndDate;
                 ticket.Status = "Hoạt động";
+                ticket.AutoRenew = true;
                 ticket.TotalFee += renewFee;
 
                 // Tạo payment record
@@ -369,7 +387,7 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Hủy vé tháng
+        /// Hủy tự động gia hạn vé tháng
         /// </summary>
         [HttpPost("{id}/cancel")]
         public async Task<IActionResult> Cancel(string id)
@@ -380,18 +398,26 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (ticket == null)
                     return NotFound(new { success = false, message = "Không tìm thấy vé tháng" });
 
-                if (ticket.Status == "Đã hủy")
-                    return BadRequest(new { success = false, message = "Vé đã được hủy trước đó" });
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+                ticket = await _db.MonthlyTickets.FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
+                if (ticket == null)
+                    return NotFound(new { success = false, message = "Không tìm thấy vé tháng" });
 
-                ticket.Status = "Đã hủy";
+                if (ticket.Status != "Hoạt động")
+                    return BadRequest(new { success = false, message = "Chỉ có thể hủy tự động gia hạn cho vé đang hoạt động" });
+
+                if (!ticket.AutoRenew)
+                    return Ok(new { success = true, message = "Tự động gia hạn đã được tắt trước đó." });
+
+                ticket.AutoRenew = false;
                 await _db.SaveChangesAsync();
 
-                _logger.LogInformation("Employee cancelled monthly ticket {TicketId}", id);
+                _logger.LogInformation("Employee disabled auto-renewal for monthly ticket {TicketId}", id);
 
                 return Ok(new
                 {
                     success = true,
-                    message = "Hủy vé tháng thành công!"
+                    message = $"Đã hủy tự động gia hạn. Vé vẫn có hiệu lực đến {ticket.EndDate:dd/MM/yyyy}."
                 });
             }
             catch (Exception ex)
@@ -409,6 +435,8 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             try
             {
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync();
+
                 var today = DateTime.Today;
                 var tickets = await _db.MonthlyTickets
                     .Include(t => t.Customer)

@@ -40,7 +40,10 @@ namespace ParkingManagement.DAL.Models
 
         [Required]
         [MaxLength(20)]
-        public string Status { get; set; } = "Hoạt động"; // Hoạt động / Hết hạn / Đã hủy
+        public string Status { get; set; } = "Hoạt động"; // Hoạt động / Hết hạn / Đã hủy / Chờ thanh toán
+
+        /// <summary>Tự động gia hạn khi hết hạn. Tắt cờ này không làm mất hiệu lực kỳ hiện tại.</summary>
+        public bool AutoRenew { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -51,6 +54,6 @@ namespace ParkingManagement.DAL.Models
         [ForeignKey("VehiclePlate")]
         public Vehicle Vehicle { get; set; } = null!;
 
-        public Payment? Payment { get; set; }
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

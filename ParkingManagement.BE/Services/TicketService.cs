@@ -13,6 +13,7 @@ namespace ParkingManagement.BLL.Services.Implementations
     {
         private readonly ITicketRepository _ticketRepository;
         private readonly IMonthlyTicketRepository _monthlyTicketRepository;
+        private readonly IMonthlyTicketService _monthlyTicketService;
         private readonly IReservationRepository _reservationRepository;
         private readonly IParkingSlotRepository _slotRepo;
         private readonly IVehicleRepository _vehicleRepo;
@@ -27,6 +28,7 @@ namespace ParkingManagement.BLL.Services.Implementations
         public TicketService(
             ITicketRepository ticketRepository,
             IMonthlyTicketRepository monthlyTicketRepository,
+            IMonthlyTicketService monthlyTicketService,
             IReservationRepository reservationRepository,
             IParkingSlotRepository slotRepo,
             IVehicleRepository vehicleRepo,
@@ -38,6 +40,7 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             _ticketRepository = ticketRepository;
             _monthlyTicketRepository = monthlyTicketRepository;
+            _monthlyTicketService = monthlyTicketService;
             _reservationRepository = reservationRepository;
             _slotRepo = slotRepo;
             _vehicleRepo = vehicleRepo;
@@ -134,6 +137,14 @@ namespace ParkingManagement.BLL.Services.Implementations
             return (await _customerRepository.GetByIdAsync(customerId))?.FullName;
         }
 
+        private Task ProcessMonthlyTicketAutoRenewalAsync(string? customerId, string? vehiclePlate)
+        {
+            if (string.IsNullOrWhiteSpace(vehiclePlate))
+                return Task.CompletedTask;
+
+            return _monthlyTicketService.ProcessDueAutoRenewalsAsync(customerId, vehiclePlate);
+        }
+
         public async Task<TicketSummaryDto> GetTicketSummaryAsync()
         {
             var tickets = await _ticketRepository.GetAllAsync();
@@ -171,6 +182,7 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             if (ticket.CustomerId != null)
             {
+                await ProcessMonthlyTicketAutoRenewalAsync(ticket.CustomerId, ticket.VehiclePlate);
                 var monthlyTicket = await _monthlyTicketRepository.GetActiveByPlateAsync(ticket.VehiclePlate);
                 if (monthlyTicket != null)
                 {
@@ -419,6 +431,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     durationMinutes = (int)(ticket.CheckOutTime.Value - ticket.CheckInTime).TotalMinutes;
 
                 var payment = await _paymentRepo.GetByTicketIdAsync(ticketId);
+                await ProcessMonthlyTicketAutoRenewalAsync(customerId, ticket.VehiclePlate);
                 var monthlyTicket = await _monthlyTicketRepository.GetActiveByPlateAsync(ticket.VehiclePlate);
 
                 return new CustomerTicketDetailDto
@@ -536,6 +549,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var vehiclePlate = correctedVehiclePlate ?? originalVehiclePlate;
             var wasPlateAutoCorrected = !string.Equals(originalVehiclePlate, vehiclePlate, StringComparison.OrdinalIgnoreCase);
 
+            await ProcessMonthlyTicketAutoRenewalAsync(input.CustomerId, vehiclePlate);
             var activeTicket = await _ticketRepository.GetActiveByPlateAsync(vehiclePlate);
             if (activeTicket != null)
             {
@@ -561,6 +575,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                 foundCustomerName = customer?.FullName;
             }
 
+            await ProcessMonthlyTicketAutoRenewalAsync(foundCustomerId ?? input.CustomerId, vehiclePlate);
             var monthlyTicket = await _monthlyTicketRepository.GetActiveByPlateAsync(vehiclePlate);
             bool hasMonthlyTicket = monthlyTicket != null;
 
@@ -641,6 +656,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             var originalVehiclePlate = NormalizeVehiclePlate(input.VehiclePlate);
             var vehiclePlate = await ResolveLikelyVehiclePlateAsync(originalVehiclePlate) ?? originalVehiclePlate;
 
+            await ProcessMonthlyTicketAutoRenewalAsync(input.CustomerId, vehiclePlate);
             var activeTicket = await _ticketRepository.GetActiveByPlateAsync(vehiclePlate);
             if (activeTicket != null)
                 return new CheckInResultDto { Success = false, Message = "Xe này đang trong bãi rồi." };
@@ -852,6 +868,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (ticket.CheckOutTime != null)
                 return new CheckOutValidationDto { Success = false, Message = $"Vé này đã được check-out vào lúc {ticket.CheckOutTime:dd/MM/yyyy HH:mm}." };
 
+            await ProcessMonthlyTicketAutoRenewalAsync(ticket.CustomerId, ticket.VehiclePlate);
             var monthlyTicket = ticket.CustomerId != null 
                 ? await _monthlyTicketRepository.GetActiveByPlateAsync(ticket.VehiclePlate) 
                 : null;

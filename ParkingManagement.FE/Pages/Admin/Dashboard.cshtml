@@ -61,21 +61,8 @@
         <a asp-page="/Admin/EmployeeManagement"><i class="fa-solid fa-user-plus"></i> Thêm nhân viên</a>
         <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-tags"></i> Giá vé</a>
         <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-ticket"></i> Tìm vé</a>
-        <a asp-page="/Admin/RevenueStatistics"><i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu</a>
-        <a asp-page="/Admin/ParkingSlotManagement"><i class="fa-solid fa-square-parking"></i> Báo cáo chỗ đỗ</a>
+        <a asp-page="/Admin/ParkingSlotManagement"><i class="fa-solid fa-square-parking"></i> Quản lý chỗ đỗ</a>
     </div>
-</div>
-
-<div class="card chart-card">
-    <h3>Doanh thu 7 ngày gần đây</h3>
-
-    <svg viewBox="0 0 1000 260" preserveAspectRatio="none">
-        <polyline
-            points="@Model.RevenueChartPoints"
-            fill="none"
-            stroke="#0d8bff"
-            stroke-width="4" />
-    </svg>
 </div>
 
 <div class="bottom-grid admin-dashboard-bottom-grid">

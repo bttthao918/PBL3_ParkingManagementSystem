@@ -13,11 +13,16 @@ namespace ParkingManagement.Web.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IPricingService _pricingService;
+        private readonly IMonthlyTicketService _monthlyTicketService;
 
-        public TicketManageController(AppDbContext db, IPricingService pricingService)
+        public TicketManageController(
+            AppDbContext db,
+            IPricingService pricingService,
+            IMonthlyTicketService monthlyTicketService)
         {
             _db = db;
             _pricingService = pricingService;
+            _monthlyTicketService = monthlyTicketService;
         }
 
         // ==================== TRANG CHÍNH ====================
@@ -34,6 +39,8 @@ namespace ParkingManagement.Web.Controllers
         [Route("get-stats")]
         public async Task<IActionResult> GetStats()
         {
+            await _monthlyTicketService.ProcessDueAutoRenewalsAsync();
+
             var today = DateTime.Today;
             var successfulStatuses = PaymentStatuses.SuccessfulStatuses;
 
@@ -223,6 +230,8 @@ namespace ParkingManagement.Web.Controllers
         [Route("monthly/list")]
         public async Task<IActionResult> GetMonthlyTickets(string search = "", string status = "", int page = 1, int pageSize = 10)
         {
+            await _monthlyTicketService.ProcessDueAutoRenewalsAsync();
+
             var query = _db.MonthlyTickets
                 .Include(t => t.Customer)
                     .ThenInclude(c => c.Account)
@@ -232,7 +241,7 @@ namespace ParkingManagement.Web.Controllers
             {
                 query = query.Where(t => t.VehiclePlate.Contains(search) ||
                                           (t.Customer != null && t.Customer.FullName.Contains(search)) ||
-                                          (t.Customer != null && t.Customer.PhoneNumber.Contains(search)));
+                                          (t.Customer != null && t.Customer.PhoneNumber != null && t.Customer.PhoneNumber.Contains(search)));
             }
 
             if (!string.IsNullOrEmpty(status))
@@ -257,6 +266,7 @@ namespace ParkingManagement.Web.Controllers
                     StartDate = t.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = t.EndDate.ToString("dd/MM/yyyy"),
                     Status = t.Status,
+                    AutoRenew = t.AutoRenew,
                     DaysRemaining = (t.EndDate - today).Days,
                     Price = t.TotalFee
                 })
@@ -269,6 +279,12 @@ namespace ParkingManagement.Web.Controllers
         [Route("monthly/detail/{id}")]
         public async Task<IActionResult> GetMonthlyTicketDetail(string id)
         {
+            var current = await _db.MonthlyTickets.FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
+            if (current != null)
+            {
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync(current.CustomerId, current.VehiclePlate);
+            }
+
             var ticket = await _db.MonthlyTickets
                 .Include(t => t.Customer)
                     .ThenInclude(c => c.Account)
@@ -290,6 +306,7 @@ namespace ParkingManagement.Web.Controllers
                 StartDate = ticket.StartDate.ToString("dd/MM/yyyy"),
                 EndDate = ticket.EndDate.ToString("dd/MM/yyyy"),
                 Status = ticket.Status,
+                AutoRenew = ticket.AutoRenew,
                 CreatedAt = ticket.CreatedAt.ToString("dd/MM/yyyy HH:mm"),
                 PricePlan = new
                 {
@@ -354,6 +371,7 @@ namespace ParkingManagement.Web.Controllers
                     PackageType = model.DurationMonths + " tháng",
                     TotalFee = totalFee,
                     Status = "Hoạt động",
+                    AutoRenew = true,
                     CreatedAt = DateTime.Now
                 };
 
@@ -410,9 +428,17 @@ namespace ParkingManagement.Web.Controllers
                     return Json(new { success = false, message = "Không tìm thấy vé!" });
                 }
 
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+                ticket = await _db.MonthlyTickets.FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
+                if (ticket == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy vé!" });
+                }
+
                 var newEndDate = ticket.EndDate.AddMonths(model.MonthsToAdd);
                 ticket.EndDate = newEndDate;
                 ticket.Status = "Hoạt động";
+                ticket.AutoRenew = true;
                 
                 decimal renewAmount = await _pricingService.GetMonthlyTicketPriceAsync(ticket.VehicleType, model.MonthsToAdd);
                 if (renewAmount <= 0)
@@ -446,29 +472,30 @@ namespace ParkingManagement.Web.Controllers
                     return Json(new { success = false, message = "Không tìm thấy vé!" });
                 }
 
-                if (ticket.Status == "Đã hủy")
+                await _monthlyTicketService.ProcessDueAutoRenewalsAsync(ticket.CustomerId, ticket.VehiclePlate);
+                ticket = await _db.MonthlyTickets.FirstOrDefaultAsync(t => t.MonthlyTicketId == id);
+                if (ticket == null)
                 {
-                    return Json(new { success = false, message = "Vé đã được hủy trước đó!" });
+                    return Json(new { success = false, message = "Không tìm thấy vé!" });
                 }
 
-                var today = DateTime.Today;
-                var daysUsed = (today - ticket.StartDate).Days;
-                var totalDays = (ticket.EndDate - ticket.StartDate).Days;
-
-                decimal refundPercent = 0;
-                if (totalDays > 0 && daysUsed < totalDays)
+                if (ticket.Status != "Hoạt động")
                 {
-                    refundPercent = (decimal)(totalDays - daysUsed) / totalDays * 100;
+                    return Json(new { success = false, message = "Chỉ có thể hủy tự động gia hạn cho vé đang hoạt động!" });
                 }
 
-                ticket.Status = "Đã hủy";
+                if (!ticket.AutoRenew)
+                {
+                    return Json(new { success = true, message = "Tự động gia hạn đã được tắt trước đó." });
+                }
+
+                ticket.AutoRenew = false;
                 await _db.SaveChangesAsync();
 
                 return Json(new
                 {
                     success = true,
-                    message = $"Đã hủy vé thành công! Hoàn trả khoảng {refundPercent:F0}% giá trị vé.",
-                    refundPercent = refundPercent
+                    message = $"Đã hủy tự động gia hạn. Vé vẫn có hiệu lực đến {ticket.EndDate:dd/MM/yyyy}."
                 });
             }
             catch (Exception ex)
@@ -560,22 +587,22 @@ namespace ParkingManagement.Web.Controllers
     // Models
     public class CreateLaneTicketModel
     {
-        public string LicensePlate { get; set; }
+        public string LicensePlate { get; set; } = string.Empty;
     }
 
     public class CreateMonthlyTicketModel
     {
-        public string CustomerName { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string LicensePlate { get; set; }
-        public string VehicleType { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string LicensePlate { get; set; } = string.Empty;
+        public string VehicleType { get; set; } = string.Empty;
         public int DurationMonths { get; set; } = 1;
     }
 
     public class UpdateMonthlyTicketModel
     {
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public DateTime? NewEndDate { get; set; }
     }
 
