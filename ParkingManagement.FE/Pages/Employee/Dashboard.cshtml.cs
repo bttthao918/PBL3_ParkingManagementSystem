@@ -95,6 +95,18 @@ namespace ParkingManagement.FE.Pages.Employee
             // Work status
             WorkStatus = await _workLogService.GetCurrentStatusAsync();
             MonthlySummary = await _workLogService.GetMonthlySummaryAsync();
+            if (MonthlySummary != null &&
+                MonthlySummary.TotalDays == 0 &&
+                MonthlySummary.TotalMinutes == 0 &&
+                (Stats.WorkDaysThisMonth > 0 || Stats.WorkMinutesThisMonth > 0))
+            {
+                MonthlySummary.TotalDays = Stats.WorkDaysThisMonth;
+                MonthlySummary.TotalMinutes = Stats.WorkMinutesThisMonth;
+                MonthlySummary.TotalHours = Stats.WorkMinutesThisMonth / 60;
+                MonthlySummary.AverageHoursPerDay = Stats.WorkDaysThisMonth > 0
+                    ? Math.Round(Stats.WorkMinutesThisMonth / 60.0 / Stats.WorkDaysThisMonth, 1)
+                    : 0;
+            }
             TodayShift = await _shiftService.GetMyTodayShiftAsync();
             MyWeekShifts = await _shiftService.GetMyWeekAsync() ?? new List<Services.ShiftMyWeekItem>();
         }

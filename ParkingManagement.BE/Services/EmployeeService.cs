@@ -215,6 +215,7 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .ToList();
 
                 var itemEmployeeIds = items.Select(e => e.EmployeeId).ToList();
+                var ticketStatsByEmployee = await BuildTicketStatsByEmployeeAsync(itemEmployeeIds);
                 var workMinutesByEmployee = await _db.WorkLogs
                     .Where(w => itemEmployeeIds.Contains(w.EmployeeId) && w.TotalMinutes.HasValue)
                     .GroupBy(w => w.EmployeeId)
@@ -225,18 +226,25 @@ namespace ParkingManagement.BLL.Services.Implementations
                     })
                     .ToDictionaryAsync(x => x.EmployeeId, x => x.TotalWorkMinutes);
 
-                var employeeDtos = items.Select(e => new ManagerEmployeeListDto
+                var employeeDtos = items.Select(e =>
                 {
-                    EmployeeId = e.EmployeeId,
-                    EmployeeCode = e.EmployeeCode,
-                    FullName = e.FullName,
-                    Email = e.Account?.Email ?? "",
-                    PhoneNumber = e.PhoneNumber ?? "",
-                    Shift = e.Shift,
-                    Status = GetManagerStatus(e),
-                    CreatedAt = e.Account?.CreatedAt ?? DateTime.Now,
-                    LastLoginAt = null,
-                    TotalWorkMinutes = workMinutesByEmployee.GetValueOrDefault(e.EmployeeId)
+                    var ticketStats = ticketStatsByEmployee.GetValueOrDefault(e.EmployeeId) ?? new EmployeeTicketStats();
+                    return new ManagerEmployeeListDto
+                    {
+                        EmployeeId = e.EmployeeId,
+                        EmployeeCode = e.EmployeeCode,
+                        FullName = e.FullName,
+                        Email = e.Account?.Email ?? "",
+                        PhoneNumber = e.PhoneNumber ?? "",
+                        Shift = e.Shift,
+                        Status = GetManagerStatus(e),
+                        CreatedAt = e.Account?.CreatedAt ?? DateTime.Now,
+                        LastLoginAt = null,
+                        TotalWorkMinutes = workMinutesByEmployee.GetValueOrDefault(e.EmployeeId),
+                        TotalTicketsProcessed = ticketStats.TotalTicketsProcessed,
+                        TicketsProcessedToday = ticketStats.TicketsProcessedToday,
+                        TicketsProcessedThisMonth = ticketStats.TicketsProcessedThisMonth
+                    };
                 }).ToList();
 
                 return new ListManagerEmployeeDto
@@ -276,16 +284,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (employee == null)
                     throw new Exception("Nhân viên không tồn tại");
 
-                var allTickets = (await _ticketRepo.GetAllAsync()).ToList();
+                var ticketStats = (await BuildTicketStatsByEmployeeAsync(new[] { employeeId }))
+                    .GetValueOrDefault(employeeId) ?? new EmployeeTicketStats();
                 var completedWorkLogs = await _db.WorkLogs
                     .Where(w => w.EmployeeId == employeeId && w.TotalMinutes.HasValue)
                     .ToListAsync();
-
-                var totalTickets = allTickets.Count();
-                var todayTickets = allTickets.Count(t => t.CheckInTime.Date == DateTime.Now.Date);
-                var thisMonthTickets = allTickets.Count(t => 
-                    t.CheckInTime.Year == DateTime.Now.Year && 
-                    t.CheckInTime.Month == DateTime.Now.Month);
 
                 var firstWorkDay = completedWorkLogs.Count > 0
                     ? completedWorkLogs.Min(w => w.WorkDate)
@@ -308,9 +311,9 @@ namespace ParkingManagement.BLL.Services.Implementations
                     Status = GetManagerStatus(employee),
                     CreatedAt = employee.Account?.CreatedAt ?? DateTime.Now,
                     LastLoginAt = null,
-                    TotalTicketsProcessed = totalTickets,
-                    TicketsProcessedToday = todayTickets,
-                    TicketsProcessedThisMonth = thisMonthTickets,
+                    TotalTicketsProcessed = ticketStats.TotalTicketsProcessed,
+                    TicketsProcessedToday = ticketStats.TicketsProcessedToday,
+                    TicketsProcessedThisMonth = ticketStats.TicketsProcessedThisMonth,
                     FirstWorkDay = firstWorkDay,
                     WorkDaysCount = uniqueWorkDays,
                     TotalWorkMinutes = totalWorkMinutes
@@ -319,6 +322,118 @@ namespace ParkingManagement.BLL.Services.Implementations
             catch (Exception ex)
             {
                 throw new Exception($"Lỗi lấy chi tiết nhân viên: {ex.Message}");
+            }
+        }
+
+        private async Task<Dictionary<string, EmployeeTicketStats>> BuildTicketStatsByEmployeeAsync(IEnumerable<string> employeeIds)
+        {
+            var employeeIdSet = employeeIds
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var result = employeeIdSet.ToDictionary(
+                id => id,
+                _ => new EmployeeTicketStats(),
+                StringComparer.OrdinalIgnoreCase);
+
+            if (employeeIdSet.Count == 0)
+                return result;
+
+            var ticketPayments = (await _db.Payments
+                    .Where(p => p.TicketId != null)
+                    .ToListAsync())
+                .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                .ToList();
+
+            var hasExplicitAttribution = ticketPayments
+                .Any(p => !string.IsNullOrWhiteSpace(p.CollectedByEmployeeId));
+
+            var workLogs = await _db.WorkLogs
+                .Where(w => employeeIdSet.Contains(w.EmployeeId))
+                .ToListAsync();
+
+            foreach (var payment in ticketPayments)
+            {
+                var assignedEmployeeId = ResolvePaymentEmployeeId(payment, employeeIdSet, workLogs);
+                if (assignedEmployeeId == null)
+                    continue;
+
+                result[assignedEmployeeId].Add(payment.PaymentTime);
+            }
+
+            if (!hasExplicitAttribution && !result.Values.Any(s => s.TotalTicketsProcessed > 0))
+            {
+                var fallbackStats = new EmployeeTicketStats();
+                var tickets = await _db.Tickets.ToListAsync();
+                foreach (var ticket in tickets)
+                {
+                    fallbackStats.Add(ticket.CheckOutTime ?? ticket.CheckInTime);
+                }
+
+                foreach (var employeeId in employeeIdSet)
+                {
+                    result[employeeId] = fallbackStats.Clone();
+                }
+            }
+
+            return result;
+        }
+
+        private static string? ResolvePaymentEmployeeId(
+            Payment payment,
+            HashSet<string> employeeIdSet,
+            List<WorkLog> workLogs)
+        {
+            if (!string.IsNullOrWhiteSpace(payment.CollectedByEmployeeId) &&
+                employeeIdSet.Contains(payment.CollectedByEmployeeId))
+            {
+                return payment.CollectedByEmployeeId;
+            }
+
+            return workLogs
+                .Where(w => w.StartTime <= payment.PaymentTime && GetWorkLogEndTime(w) >= payment.PaymentTime)
+                .OrderByDescending(w => w.StartTime)
+                .FirstOrDefault()
+                ?.EmployeeId;
+        }
+
+        private static DateTime GetWorkLogEndTime(WorkLog log)
+        {
+            if (log.EndTime.HasValue)
+                return log.EndTime.Value;
+
+            if (log.TotalMinutes.HasValue)
+                return log.StartTime.AddMinutes(Math.Max(0, log.TotalMinutes.Value));
+
+            return log.StartTime.AddHours(12);
+        }
+
+        private sealed class EmployeeTicketStats
+        {
+            public int TotalTicketsProcessed { get; private set; }
+            public int TicketsProcessedToday { get; private set; }
+            public int TicketsProcessedThisMonth { get; private set; }
+
+            public void Add(DateTime occurredAt)
+            {
+                var today = DateTime.Now.Date;
+                TotalTicketsProcessed++;
+
+                if (occurredAt.Date == today)
+                    TicketsProcessedToday++;
+
+                if (occurredAt.Year == today.Year && occurredAt.Month == today.Month)
+                    TicketsProcessedThisMonth++;
+            }
+
+            public EmployeeTicketStats Clone()
+            {
+                return new EmployeeTicketStats
+                {
+                    TotalTicketsProcessed = TotalTicketsProcessed,
+                    TicketsProcessedToday = TicketsProcessedToday,
+                    TicketsProcessedThisMonth = TicketsProcessedThisMonth
+                };
             }
         }
 

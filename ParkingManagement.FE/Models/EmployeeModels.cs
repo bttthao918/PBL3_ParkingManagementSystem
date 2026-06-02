@@ -21,6 +21,9 @@ namespace ParkingManagement.FE.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
         public int TotalWorkMinutes { get; set; }
+        public int TotalTicketsProcessed { get; set; }
+        public int TicketsProcessedToday { get; set; }
+        public int TicketsProcessedThisMonth { get; set; }
     }
 
     public class ListManagerEmployeeDto

@@ -984,21 +984,21 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (employee == null)
                     throw new Exception("Nhân viên không tồn tại");
 
-                var allPayments = (await _paymentRepo.GetAllAsync()).ToList();
-                var employeePayments = allPayments
-                    .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
-                    .Where(p => PaymentStatuses.IsSuccessful(p.Status))
-                    .ToList();
-
                 var now = DateTime.Now;
                 var today = now.Date;
                 var thisWeekStart = today.AddDays(-(int)today.DayOfWeek);
                 var thisMonthStart = new DateTime(today.Year, today.Month, 1);
                 var workLogFrom = thisWeekStart < thisMonthStart ? thisWeekStart : thisMonthStart;
 
-                var employeeWorkLogs = await _db.WorkLogs
-                    .Where(w => w.EmployeeId == employeeId && w.WorkDate >= workLogFrom && w.WorkDate <= today)
+                var employeeWorkLogsAll = await _db.WorkLogs
+                    .Where(w => w.EmployeeId == employeeId)
                     .ToListAsync();
+
+                var employeeWorkLogs = employeeWorkLogsAll
+                    .Where(w => w.WorkDate >= workLogFrom && w.WorkDate <= today)
+                    .ToList();
+
+                var ticketMetrics = await BuildEmployeeTicketMetricsAsync(employeeId, employeeWorkLogsAll);
 
                 var todaySchedules = await _db.ShiftSchedules
                     .Where(s => s.EmployeeId == employeeId && s.WorkDate == today)
@@ -1012,19 +1012,19 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .FirstOrDefault()
                     ?.ShiftType ?? "Chưa phân ca";
 
-                var ticketsToday = employeePayments.Count(p => p.PaymentTime.Date == today);
-                var revenueToday = employeePayments
-                    .Where(p => p.PaymentTime.Date == today)
-                    .Sum(p => p.Amount);
+                var ticketsToday = ticketMetrics.Count(t => t.OccurredAt.Date == today);
+                var revenueToday = ticketMetrics
+                    .Where(t => t.OccurredAt.Date == today)
+                    .Sum(t => t.Amount);
 
                 var workMinutesToday = employeeWorkLogs
                     .Where(w => w.WorkDate.Date == today)
                     .Sum(w => GetWorkedMinutes(w, now));
 
-                var ticketsThisWeek = employeePayments.Count(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today);
-                var revenueThisWeek = employeePayments
-                    .Where(p => p.PaymentTime.Date >= thisWeekStart && p.PaymentTime.Date <= today)
-                    .Sum(p => p.Amount);
+                var ticketsThisWeek = ticketMetrics.Count(t => t.OccurredAt.Date >= thisWeekStart && t.OccurredAt.Date <= today);
+                var revenueThisWeek = ticketMetrics
+                    .Where(t => t.OccurredAt.Date >= thisWeekStart && t.OccurredAt.Date <= today)
+                    .Sum(t => t.Amount);
 
                 var workLogsThisWeek = employeeWorkLogs
                     .Where(w => w.WorkDate.Date >= thisWeekStart && w.WorkDate.Date <= today)
@@ -1038,10 +1038,11 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .Distinct()
                     .Count();
 
-                var ticketsThisMonth = employeePayments.Count(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today.AddDays(1).AddTicks(-1));
-                var revenueThisMonth = employeePayments
-                    .Where(p => p.PaymentTime >= thisMonthStart && p.PaymentTime <= today.AddDays(1).AddTicks(-1))
-                    .Sum(p => p.Amount);
+                var monthEnd = today.AddDays(1).AddTicks(-1);
+                var ticketsThisMonth = ticketMetrics.Count(t => t.OccurredAt >= thisMonthStart && t.OccurredAt <= monthEnd);
+                var revenueThisMonth = ticketMetrics
+                    .Where(t => t.OccurredAt >= thisMonthStart && t.OccurredAt <= monthEnd)
+                    .Sum(t => t.Amount);
 
                 var workLogsThisMonth = employeeWorkLogs
                     .Where(w => w.WorkDate.Date >= thisMonthStart && w.WorkDate.Date <= today)
@@ -1055,8 +1056,33 @@ namespace ParkingManagement.BLL.Services.Implementations
                     .Distinct()
                     .Count();
 
+                if (ticketsThisMonth == 0 && ticketMetrics.Count > 0)
+                {
+                    ticketsThisMonth = ticketMetrics.Count;
+                    revenueThisMonth = ticketMetrics.Sum(t => t.Amount);
+                }
+
+                if (workMinutesThisMonth == 0)
+                {
+                    var workedLogsAll = employeeWorkLogsAll
+                        .Where(w => GetWorkedMinutes(w, now) > 0)
+                        .ToList();
+
+                    if (workedLogsAll.Count > 0)
+                    {
+                        workMinutesThisMonth = workedLogsAll.Sum(w => GetWorkedMinutes(w, now));
+                        workDaysThisMonth = workedLogsAll
+                            .Select(w => w.WorkDate.Date)
+                            .Distinct()
+                            .Count();
+                    }
+                }
+
+                var effectiveTicketDays = workDaysThisMonth > 0
+                    ? workDaysThisMonth
+                    : ticketMetrics.Select(t => t.OccurredAt.Date).Distinct().Count();
                 var avgRevenuePerTicket = ticketsThisMonth > 0 ? revenueThisMonth / ticketsThisMonth : 0;
-                var avgTicketsPerDay = workDaysThisMonth > 0 ? (double)ticketsThisMonth / workDaysThisMonth : 0;
+                var avgTicketsPerDay = effectiveTicketDays > 0 ? (double)ticketsThisMonth / effectiveTicketDays : 0;
 
                 return new EmployeeDashboardDto
                 {
@@ -1081,6 +1107,54 @@ namespace ParkingManagement.BLL.Services.Implementations
                 return new EmployeeDashboardDto();
             }
         }
+
+        private async Task<List<EmployeeTicketMetric>> BuildEmployeeTicketMetricsAsync(string employeeId, List<WorkLog> employeeWorkLogs)
+        {
+            var ticketPayments = (await _paymentRepo.GetAllAsync())
+                .Where(p => !string.IsNullOrWhiteSpace(p.TicketId))
+                .Where(p => PaymentStatuses.IsSuccessful(p.Status))
+                .ToList();
+
+            var metrics = ticketPayments
+                .Where(p => string.Equals(p.CollectedByEmployeeId, employeeId, StringComparison.OrdinalIgnoreCase))
+                .Select(p => new EmployeeTicketMetric(p.PaymentTime, p.Amount))
+                .ToList();
+
+            if (metrics.Count == 0)
+            {
+                metrics = ticketPayments
+                    .Where(p => string.IsNullOrWhiteSpace(p.CollectedByEmployeeId))
+                    .Where(p => employeeWorkLogs.Any(w => w.StartTime <= p.PaymentTime && GetWorkLogEndTime(w) >= p.PaymentTime))
+                    .Select(p => new EmployeeTicketMetric(p.PaymentTime, p.Amount))
+                    .ToList();
+            }
+
+            var hasAnyExplicitAttribution = ticketPayments
+                .Any(p => !string.IsNullOrWhiteSpace(p.CollectedByEmployeeId));
+
+            if (metrics.Count == 0 && !hasAnyExplicitAttribution)
+            {
+                var tickets = await _ticketRepo.GetAllAsync();
+                metrics = tickets
+                    .Select(t => new EmployeeTicketMetric(t.CheckOutTime ?? t.CheckInTime, t.Fee))
+                    .ToList();
+            }
+
+            return metrics;
+        }
+
+        private static DateTime GetWorkLogEndTime(WorkLog log)
+        {
+            if (log.EndTime.HasValue)
+                return log.EndTime.Value;
+
+            if (log.TotalMinutes.HasValue)
+                return log.StartTime.AddMinutes(Math.Max(0, log.TotalMinutes.Value));
+
+            return log.StartTime.AddHours(12);
+        }
+
+        private sealed record EmployeeTicketMetric(DateTime OccurredAt, decimal Amount);
 
         private static int GetWorkedMinutes(WorkLog log, DateTime now)
         {

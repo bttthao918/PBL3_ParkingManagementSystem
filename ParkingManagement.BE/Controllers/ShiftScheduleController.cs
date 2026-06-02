@@ -211,6 +211,13 @@ namespace ParkingManagement.Web.Controllers.Api
                 .ToListAsync();
 
             if (!todayShiftEntities.Any())
+            {
+                var fallbackShift = await BuildDefaultTodayShiftAsync(employeeId);
+                if (fallbackShift != null)
+                    return Ok(new { hasShift = true, shift = fallbackShift });
+            }
+
+            if (!todayShiftEntities.Any())
                 return Ok(new { hasShift = false, message = "Hôm nay bạn chưa được phân ca" });
 
             var todayShiftEntity = todayShiftEntities
@@ -292,6 +299,28 @@ namespace ParkingManagement.Web.Controllers.Api
         {
             return string.Equals(status, ShiftConstants.CompletedStatus, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(status, ShiftConstants.AbsentStatus, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private async Task<object?> BuildDefaultTodayShiftAsync(string employeeId)
+        {
+            var employee = await _db.Employees.FindAsync(employeeId);
+            if (employee == null ||
+                string.IsNullOrWhiteSpace(employee.Shift) ||
+                !ShiftConstants.TryGetShiftWindow(employee.Shift, out var shiftType, out var startTime, out var endTime))
+            {
+                return null;
+            }
+
+            var window = ShiftConstants.GetEffectiveWindow(shiftType, startTime, endTime);
+            return new
+            {
+                ScheduleId = "",
+                ShiftType = shiftType,
+                StartTime = window.Start.ToString(@"hh\:mm"),
+                EndTime = window.End.ToString(@"hh\:mm"),
+                Status = ShiftConstants.ScheduledStatus,
+                Note = "Default employee shift"
+            };
         }
 
     }

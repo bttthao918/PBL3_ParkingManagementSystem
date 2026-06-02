@@ -369,7 +369,40 @@ namespace ParkingManagement.Web.Controllers.Api
                 .FirstOrDefault()
                 ?.Schedule;
 
+            if (startableSchedule == null && schedules.Count == 0)
+            {
+                startableSchedule = await BuildDefaultScheduleAsync(employeeId, now);
+            }
+
             return startableSchedule;
+        }
+
+        private async Task<ShiftSchedule?> BuildDefaultScheduleAsync(string employeeId, DateTime now)
+        {
+            var employee = await _db.Employees.FindAsync(employeeId);
+            if (employee == null ||
+                string.IsNullOrWhiteSpace(employee.Shift) ||
+                !ShiftConstants.TryGetShiftWindow(employee.Shift, out var shiftType, out var startTime, out var endTime))
+            {
+                return null;
+            }
+
+            var schedule = new ShiftSchedule
+            {
+                ScheduleId = "SCH" + now.ToString("yyyyMMddHHmmss") + Random.Shared.Next(100, 999),
+                EmployeeId = employeeId,
+                WorkDate = now.Date,
+                ShiftType = shiftType,
+                StartTime = startTime,
+                EndTime = endTime,
+                Status = ScheduledStatus,
+                Note = "Default employee shift",
+                CreatedBy = User.FindFirst("accountId")?.Value ?? employee.AccountId ?? employeeId,
+                CreatedAt = now
+            };
+
+            _db.ShiftSchedules.Add(schedule);
+            return schedule;
         }
 
         private static string AppendNote(string? current, string note)
