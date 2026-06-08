@@ -132,6 +132,7 @@ namespace ParkingManagement.FE.Pages.Customer
             var icon = GetVehicleIcon(ticket.VehicleType);
             var iconClass = GetVehicleIconClass(ticket.VehicleType);
             var fee = ticket.Fee ?? 0m;
+            var status = MapStatus(ticket.Status);
 
             return new TicketVm
             {
@@ -149,7 +150,8 @@ namespace ParkingManagement.FE.Pages.Customer
                 ParkingFee = fee,
                 Discount = 0m,
                 TotalAmount = fee,
-                Status = MapStatus(ticket.Status),
+                Status = status,
+                StatusClass = GetStatusClass(status),
                 PaymentMethod = fee > 0m ? "Đã thanh toán" : "-",
                 CreatedBy = "-",
                 Note = "-"
@@ -253,6 +255,22 @@ namespace ParkingManagement.FE.Pages.Customer
             return string.IsNullOrWhiteSpace(status) ? "-" : status;
         }
 
+        private static string GetStatusClass(string status)
+        {
+            var normalized = NormalizeText(status);
+            if (normalized.Contains("dang"))
+            {
+                return "active";
+            }
+
+            if (normalized.Contains("chua") || normalized.Contains("unpaid"))
+            {
+                return "unpaid";
+            }
+
+            return "paid";
+        }
+
         private static string NormalizeText(string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -320,6 +338,8 @@ namespace ParkingManagement.FE.Pages.Customer
         public decimal TotalAmount { get; set; }
 
         public string Status { get; set; } = string.Empty;
+
+        public string StatusClass { get; set; } = "paid";
 
         public string PaymentMethod { get; set; } = string.Empty;
 

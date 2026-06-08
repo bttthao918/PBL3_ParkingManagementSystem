@@ -5,6 +5,7 @@ namespace ParkingManagement.BLL.DTOs
     {
         public string MonthlyTicketId { get; set; } = null!;
         public string CustomerName { get; set; } = null!;
+        public string? CustomerId { get; set; }
         public string VehiclePlate { get; set; } = null!;
         public string VehicleType { get; set; } = null!;
         public string PackageType { get; set; } = null!;

@@ -53,11 +53,38 @@
             border-color: #bdd7f4;
         }
 
-        .stat-date-filter a.active {
-            background: #006bff;
-            border-color: #006bff;
-            color: white;
-        }
+    .stat-date-filter a.active {
+        background: #006bff;
+        border-color: #006bff;
+        color: white;
+    }
+
+.stat-month-form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+    .stat-month-form .month-picker,
+    .stat-month-form .month-picker-trigger {
+        min-width: 154px;
+    }
+
+    .stat-month-form .month-picker-trigger {
+        height: 34px;
+        border-radius: 10px;
+        padding: 0 10px;
+        font-size: 14px;
+    }
+
+    .stat-month-form .month-picker-trigger i:first-child {
+        display: none;
+    }
+
+    .stat-month-form.active .month-picker-trigger {
+        border-color: #006bff;
+        box-shadow: 0 0 0 3px rgba(0, 107, 255, 0.12);
+    }
 
 .stat-date-range {
     min-height: 34px;
@@ -363,8 +390,7 @@
     }
 
 .stat-view-btn,
-.stat-view-table-btn,
-.stat-download-btn {
+.stat-view-table-btn {
     height: 42px;
     border-radius: 12px;
     border: 1px solid #d7e2f2;
@@ -374,8 +400,7 @@
     cursor: pointer;
 }
 
-.stat-view-btn,
-.stat-download-btn {
+.stat-view-btn {
     width: 100%;
     margin-top: 16px;
 }
@@ -437,4 +462,27 @@
         justify-content: flex-start;
         overflow-x: auto;
     }
+}
+
+body .dashboard-content .stat-header {
+    position: relative;
+    z-index: 40;
+    overflow: visible;
+}
+
+body .dashboard-content .stat-header .stat-date-filter,
+body .dashboard-content .stat-header .stat-month-form,
+body .dashboard-content .stat-header .month-picker {
+    position: relative;
+    z-index: 45;
+    overflow: visible;
+}
+
+body .dashboard-content .stat-header .month-picker[open],
+body .dashboard-content .stat-header .month-picker[open] .month-picker-menu {
+    z-index: 80;
+}
+
+body .dashboard-content .stat-header .stat-date-filter:has(.month-picker[open]) {
+    overflow: visible;
 }

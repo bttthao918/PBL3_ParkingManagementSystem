@@ -332,12 +332,11 @@
                     <div class="active-list">
                         <h4><i class="fa-solid fa-car-side"></i> Xe đang trong bãi <span class="count-badge">@Model.ActiveCount</span></h4>
                         <div class="active-table-wrap">
-                            <table class="active-table">
+                            <table class="active-table lean-active-table">
                                 <thead>
                                     <tr>
                                         <th>Mã vé</th>
                                         <th>Biển số</th>
-                                        <th>Loại xe</th>
                                         <th>Chỗ đỗ</th>
                                         <th>Giờ vào</th>
                                         <th>Thời gian</th>
@@ -351,7 +350,6 @@
                                         <tr>
                                             <td><strong>@t.TicketId</strong></td>
                                             <td><strong>@t.VehiclePlate</strong></td>
-                                            <td><span class="vehicle-badge">@t.VehicleType</span></td>
                                             <td>@(t.SlotId ?? "-")</td>
                                             <td>@t.CheckInTime.ToString("HH:mm")</td>
                                             <td><span class="duration-text">@FormatDuration(dur)</span></td>

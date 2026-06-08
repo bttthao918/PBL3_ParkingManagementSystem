@@ -170,7 +170,7 @@ public class MonthlyTicketModel : PageModel
     {
         if (string.IsNullOrWhiteSpace(ticketId))
         {
-            TempData["Error"] = "Không xác định được vé cần hủy tự động gia hạn.";
+            TempData["Error"] = "Không xác định được vé cần hủy.";
             return RedirectToPage();
         }
 

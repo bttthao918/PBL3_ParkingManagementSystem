@@ -3188,6 +3188,10 @@ namespace BackendAPI.Migrations
                     b.Property<DateTime?>("CheckOutTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CheckedOutByEmployeeId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("CustomerId")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -3215,6 +3219,8 @@ namespace BackendAPI.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("TicketId");
+
+                    b.HasIndex("CheckedOutByEmployeeId");
 
                     b.HasIndex("CustomerId");
 
@@ -4244,6 +4250,11 @@ namespace BackendAPI.Migrations
 
             modelBuilder.Entity("ParkingManagement.DAL.Models.Ticket", b =>
                 {
+                    b.HasOne("ParkingManagement.DAL.Models.Employee", "CheckedOutByEmployee")
+                        .WithMany()
+                        .HasForeignKey("CheckedOutByEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ParkingManagement.DAL.Models.Customer", "Customer")
                         .WithMany("Tickets")
                         .HasForeignKey("CustomerId");
@@ -4257,6 +4268,8 @@ namespace BackendAPI.Migrations
                         .HasForeignKey("VehiclePlate")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CheckedOutByEmployee");
 
                     b.Navigation("Customer");
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models;
 using ParkingManagement.FE.Models.ViewModels;
 using ParkingManagement.FE.Services;
+using System.Globalization;
 using System.Text.Json;
 
 namespace ParkingManagement.FE.Pages.Admin
@@ -21,6 +22,9 @@ namespace ParkingManagement.FE.Pages.Admin
         [BindProperty(SupportsGet = true)]
         public string Period { get; set; } = "30days";
 
+        [BindProperty(SupportsGet = true)]
+        public string? Month { get; set; }
+
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
         public StatisticsTableViewModel Table { get; set; } = new();
@@ -30,7 +34,17 @@ namespace ParkingManagement.FE.Pages.Admin
         public async Task OnGetAsync()
         {
             Period = NormalizePeriod(Period);
-            var data = await _reportService.GetManagerCustomerReportAsync(Period);
+            DateTime? fromDate = null;
+            DateTime? toDate = null;
+            var hasSelectedMonth = TryGetMonthRange(Month, out var monthFrom, out var monthTo);
+            if (hasSelectedMonth)
+            {
+                Period = "month";
+                fromDate = monthFrom;
+                toDate = monthTo;
+            }
+
+            var data = await _reportService.GetManagerCustomerReportAsync(Period, fromDate, toDate);
 
             if (data == null)
             {
@@ -40,27 +54,31 @@ namespace ParkingManagement.FE.Pages.Admin
                     Title = "Thống kê khách hàng",
                     Description = "Không thể tải dữ liệu khách hàng từ backend.",
                     DateRangeText = "",
-                    ActivePeriod = Period
+                    ActivePeriod = Period,
+                    ShowMonthPicker = true,
+                    SelectedMonth = ResolveSelectedMonth(Month, DateTime.Today)
                 };
 
                 return;
             }
 
             Report = data;
-            Period = NormalizePeriod(data.Period);
+            Period = hasSelectedMonth ? "month" : NormalizePeriod(data.Period);
 
             Header = new StatisticsHeaderViewModel
             {
                 Title = "Thống kê khách hàng",
                 Description = "Báo cáo số lượng và cơ cấu khách hàng theo dữ liệu thực tế",
                 DateRangeText = BuildDateRangeText(data),
-                ActivePeriod = Period
+                ActivePeriod = Period,
+                ShowMonthPicker = true,
+                SelectedMonth = ResolveSelectedMonth(hasSelectedMonth ? Month : null, data.From == default ? DateTime.Today : data.From)
             };
 
             Kpis = new()
             {
                 new() { Title = "Tổng khách hàng", Value = $"{data.TotalCustomers:N0}", ChangeText = "Tính đến hiện tại", Icon = "fa-solid fa-users", ColorClass = "blue" },
-                new() { Title = $"Khách hàng mới ({BuildPeriodLabel(Period)})", Value = $"{data.NewCustomersInPeriod:N0}", ChangeText = $"{data.NewCustomersThisMonth:N0} trong tháng này", Icon = "fa-solid fa-user-plus", ColorClass = "green" },
+                new() { Title = $"Khách hàng mới ({BuildPeriodLabel(Period)})", Value = $"{data.NewCustomersInPeriod:N0}", ChangeText = BuildNewCustomerChangeText(Period, data.NewCustomersThisMonth), Icon = "fa-solid fa-user-plus", ColorClass = "green" },
                 new() { Title = "Vé tháng đang active", Value = $"{data.ActiveMonthlyTickets:N0}", ChangeText = "Theo trạng thái vé hiện tại", Icon = "fa-solid fa-id-card", ColorClass = "purple" },
                 new() { Title = "Vé tháng hết hạn", Value = $"{data.ExpiredMonthlyTickets:N0}", ChangeText = "Đã quá hạn hoặc hết hạn", Icon = "fa-solid fa-user-minus", ColorClass = "red" },
                 new() { Title = "Khách vãng lai", Value = $"{data.OneTimeCustomers:N0}", ChangeText = $"{data.WalkInTickets:N0} vé không gắn tài khoản", Icon = "fa-solid fa-car", ColorClass = "cyan" }
@@ -116,6 +134,7 @@ namespace ParkingManagement.FE.Pages.Admin
             {
                 "today" => "today",
                 "7days" => "7days",
+                "month" => "month",
                 "30days" => "30days",
                 _ => "30days"
             };
@@ -127,8 +146,37 @@ namespace ParkingManagement.FE.Pages.Admin
             {
                 "today" => "hôm nay",
                 "7days" => "7 ngày",
+                "month" => "tháng đang chọn",
                 _ => "30 ngày"
             };
+        }
+
+        private static string BuildNewCustomerChangeText(string period, int newCustomersThisMonth)
+        {
+            return period == "month"
+                ? "Theo tháng đang chọn"
+                : $"{newCustomersThisMonth:N0} trong tháng này";
+        }
+
+        private static bool TryGetMonthRange(string? month, out DateTime from, out DateTime to)
+        {
+            if (DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                from = new DateTime(parsed.Year, parsed.Month, 1);
+                to = from.AddMonths(1).AddDays(-1);
+                return true;
+            }
+
+            from = default;
+            to = default;
+            return false;
+        }
+
+        private static string ResolveSelectedMonth(string? month, DateTime fallback)
+        {
+            return DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
+                ? parsed.ToString("yyyy-MM", CultureInfo.InvariantCulture)
+                : fallback.ToString("yyyy-MM", CultureInfo.InvariantCulture);
         }
 
         private static string BuildDateRangeText(CustomerReportDto data)

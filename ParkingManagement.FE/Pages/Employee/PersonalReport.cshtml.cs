@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Globalization;
 
 namespace ParkingManagement.FE.Pages.Employee
 {
@@ -18,8 +19,14 @@ namespace ParkingManagement.FE.Pages.Employee
         [BindProperty(SupportsGet = true)]
         public string Period { get; set; } = "month";
 
+        [BindProperty(SupportsGet = true)]
+        public string? Month { get; set; }
+
         public string FromDate { get; set; } = DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy");
         public string ToDate { get; set; } = DateTime.Now.ToString("dd/MM/yyyy");
+        public string SelectedMonth { get; set; } = DateTime.Now.ToString("yyyy-MM");
+        public string? DetailMonth => Period == "month" ? SelectedMonth : null;
+        public bool HasSelectedMonthFilter { get; set; }
 
         public int TotalTickets { get; set; }
         public decimal TotalRevenue { get; set; }
@@ -41,10 +48,25 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
 
             Period = NormalizePeriod(Period);
+            DateTime? fromDate = null;
+            DateTime? toDate = null;
+            var calendarMonth = DateTime.Now;
+            var hasSelectedMonth = TryGetMonthRange(Month, out var monthFrom, out var monthTo);
+            if (hasSelectedMonth)
+            {
+                Period = "month";
+                fromDate = monthFrom;
+                toDate = monthTo;
+                calendarMonth = monthFrom;
+            }
+
+            HasSelectedMonthFilter = hasSelectedMonth;
+            SelectedMonth = ResolveSelectedMonth(hasSelectedMonth ? Month : null, calendarMonth);
+
             var employeeId = User.FindFirst("related_id")?.Value;
             if (!string.IsNullOrWhiteSpace(employeeId))
             {
-                var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, Period);
+                var revenueReport = await _reportService.GetEmployeeRevenueReportAsync(employeeId, Period, fromDate, toDate);
                 if (revenueReport != null)
                 {
                     var attendanceReport = await _reportService.GetShiftAttendanceReportAsync(
@@ -54,6 +76,8 @@ namespace ParkingManagement.FE.Pages.Employee
 
                     FromDate = revenueReport.PeriodStart.ToString("dd/MM/yyyy");
                     ToDate = revenueReport.PeriodEnd.ToString("dd/MM/yyyy");
+                    calendarMonth = revenueReport.PeriodStart == default ? calendarMonth : revenueReport.PeriodStart;
+                    SelectedMonth = ResolveSelectedMonth(hasSelectedMonth ? Month : null, calendarMonth);
                     TotalTickets = revenueReport.TotalTickets;
                     TotalRevenue = revenueReport.TotalRevenue;
 
@@ -95,12 +119,12 @@ namespace ParkingManagement.FE.Pages.Employee
                 }
             }
 
-            CalendarDays = Enumerable.Range(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
+            CalendarDays = Enumerable.Range(1, DateTime.DaysInMonth(calendarMonth.Year, calendarMonth.Month))
                 .Select(day => new CalendarDayVM
                 {
                     Day = day,
-                    IsToday = day == DateTime.Now.Day,
-                    HasWorked = Shifts.Any(shift => shift.WorkDate.StartsWith($"{day:00}/"))
+                    IsToday = new DateTime(calendarMonth.Year, calendarMonth.Month, day).Date == DateTime.Today,
+                    HasWorked = Shifts.Any(shift => shift.WorkDate.StartsWith($"{day:00}/{calendarMonth.Month:00}/"))
                 })
                 .ToList();
         }
@@ -114,6 +138,27 @@ namespace ParkingManagement.FE.Pages.Employee
                 "month" => "month",
                 _ => "month"
             };
+        }
+
+        private static bool TryGetMonthRange(string? month, out DateTime from, out DateTime to)
+        {
+            if (DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                from = new DateTime(parsed.Year, parsed.Month, 1);
+                to = from.AddMonths(1).AddDays(-1);
+                return true;
+            }
+
+            from = default;
+            to = default;
+            return false;
+        }
+
+        private static string ResolveSelectedMonth(string? month, DateTime fallback)
+        {
+            return DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
+                ? parsed.ToString("yyyy-MM", CultureInfo.InvariantCulture)
+                : fallback.ToString("yyyy-MM", CultureInfo.InvariantCulture);
         }
 
         private static string GetDayName(DayOfWeek dayOfWeek)

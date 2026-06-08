@@ -351,7 +351,7 @@ namespace ParkingManagement.FE.Pages.Employee
         {
             if (!IsWaiting(status))
             {
-                return status;
+                return string.Empty;
             }
 
             var remaining = expectedTime - DateTime.Now;

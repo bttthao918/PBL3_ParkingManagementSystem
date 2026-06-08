@@ -33,6 +33,31 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Get revenue report for manager/admin statistics page.
+        /// </summary>
+        [HttpPost("manager/revenue")]
+        [ProducesResponseType(typeof(RevenueReportDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetManagerRevenueReport([FromBody] RevenueReportFilterDto filter)
+        {
+            var result = await _reportService.GetRevenueReportAsync(filter ?? new RevenueReportFilterDto());
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get customer statistics report for manager/admin statistics page.
+        /// </summary>
+        [HttpGet("manager/customers")]
+        [ProducesResponseType(typeof(CustomerReportDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetManagerCustomerReport(
+            [FromQuery] string period = "30days",
+            [FromQuery] DateTime? fromDate = null,
+            [FromQuery] DateTime? toDate = null)
+        {
+            var result = await _reportService.GetCustomerReportAsync(period, fromDate, toDate);
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Get personal dashboard - Employee view
         /// </summary>
         [HttpGet("employee/{employeeId}/dashboard")]
@@ -41,6 +66,35 @@ namespace ParkingManagement.Web.Controllers.Api
         public async Task<IActionResult> GetEmployeeDashboard(string employeeId)
         {
             var result = await _reportService.GetEmployeeDashboardAsync(employeeId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get attendance report for employee statistics pages.
+        /// </summary>
+        [HttpGet("employee/{employeeId}/attendance")]
+        [ProducesResponseType(typeof(ShiftAttendanceReportDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEmployeeAttendanceReport(
+            string employeeId,
+            [FromQuery] DateTime? fromDate = null,
+            [FromQuery] DateTime? toDate = null)
+        {
+            var result = await _reportService.GetShiftAttendanceReportAsync(employeeId, fromDate, toDate);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get revenue report for employee statistics pages.
+        /// </summary>
+        [HttpGet("employee/{employeeId}/revenue")]
+        [ProducesResponseType(typeof(EmployeeRevenueReportDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEmployeeRevenueReport(
+            string employeeId,
+            [FromQuery] string period = "month",
+            [FromQuery] DateTime? fromDate = null,
+            [FromQuery] DateTime? toDate = null)
+        {
+            var result = await _reportService.GetEmployeeRevenueReportAsync(employeeId, period, fromDate, toDate);
             return Ok(result);
         }
     }

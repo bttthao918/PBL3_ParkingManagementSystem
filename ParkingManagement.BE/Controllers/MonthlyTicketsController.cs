@@ -68,6 +68,9 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (ticket == null)
                     return NotFound(new { message = "Monthly ticket not found" });
 
+                if (!string.Equals(ticket.CustomerId, customerId, StringComparison.OrdinalIgnoreCase))
+                    return Forbid();
+
                 return Ok(ToDetailDto(ticket));
             }
             catch (Exception ex)
@@ -211,6 +214,13 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (string.IsNullOrEmpty(customerId))
                     return Unauthorized(new { message = "Invalid token" });
 
+                var ticket = await _monthlyTicketService.GetByIdAsync(monthlyTicketId);
+                if (ticket == null)
+                    return NotFound(new { message = "Monthly ticket not found" });
+
+                if (!string.Equals(ticket.CustomerId, customerId, StringComparison.OrdinalIgnoreCase))
+                    return Forbid();
+
                 var result = await _monthlyTicketService.CancelAsync(monthlyTicketId);
                 if (!result.Success)
                     return BadRequest(result);
@@ -284,6 +294,7 @@ namespace ParkingManagement.Web.Controllers.Api
         private static MonthlyTicketDetailDto ToDetailDto(MonthlyTicketDto ticket) => new()
         {
             MonthlyTicketId = ticket.MonthlyTicketId,
+            CustomerId = ticket.CustomerId,
             VehiclePlate = ticket.VehiclePlate,
             VehicleType = ticket.VehicleType,
             PackageType = ticket.PackageType,

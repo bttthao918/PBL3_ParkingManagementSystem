@@ -226,8 +226,12 @@ if (!selectedSlotCode) {
     const cancelNewVehicleBtn = document.getElementById("cancelNewVehicleBtn");
     const newVehiclePlate = document.getElementById("newVehiclePlate");
     const newVehicleType = document.getElementById("newVehicleType");
-    const savedVehiclesStorageKey = "parking.customer.savedVehicles";
+    const legacySavedVehiclesStorageKey = "parking.customer.savedVehicles";
+    const savedVehiclesStorageKey = savedVehicleSelect
+        ? (savedVehicleSelect.dataset.storageKey || "parking.customer.savedVehicles.anonymous")
+        : "parking.customer.savedVehicles.anonymous";
 
+    removeLegacySavedVehicles();
     loadSavedVehiclesFromStorage();
 
     if (savedVehicleSelect) {
@@ -331,6 +335,16 @@ if (!selectedSlotCode) {
         });
     }
 
+    function removeLegacySavedVehicles() {
+        if (savedVehiclesStorageKey === legacySavedVehiclesStorageKey) return;
+
+        try {
+            localStorage.removeItem(legacySavedVehiclesStorageKey);
+        } catch {
+            // Ignore storage access errors; the scoped key still protects new writes.
+        }
+    }
+
     function saveVehicleToStorage(plate, type) {
         const normalizedPlate = (plate || "").trim().toUpperCase();
         const normalizedType = (type || "").trim();
@@ -345,7 +359,11 @@ if (!selectedSlotCode) {
             type: normalizedType
         });
 
-        localStorage.setItem(savedVehiclesStorageKey, JSON.stringify(vehicles.slice(0, 10)));
+        try {
+            localStorage.setItem(savedVehiclesStorageKey, JSON.stringify(vehicles.slice(0, 10)));
+        } catch {
+            // Browser storage can be unavailable in private mode.
+        }
     }
 
     function getStoredVehicles() {

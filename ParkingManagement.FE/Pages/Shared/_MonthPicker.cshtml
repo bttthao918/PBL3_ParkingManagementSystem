@@ -1,0 +1,100 @@
+@model string
+@using System.Globalization
+
+@{
+    var today = DateTime.Today;
+    var currentMonth = new DateTime(today.Year, today.Month, 1);
+    var selectedValue = string.IsNullOrWhiteSpace(Model)
+        ? currentMonth.ToString("yyyy-MM", CultureInfo.InvariantCulture)
+        : Model;
+
+    var selectedMonth = DateTime.TryParseExact(
+        selectedValue,
+        "yyyy-MM",
+        CultureInfo.InvariantCulture,
+        DateTimeStyles.None,
+        out var parsed)
+            ? new DateTime(parsed.Year, parsed.Month, 1)
+            : currentMonth;
+
+    if (selectedMonth > currentMonth)
+    {
+        selectedMonth = currentMonth;
+    }
+
+    var firstYear = Math.Min(today.Year - 4, selectedMonth.Year);
+    var lastYear = Math.Max(today.Year, selectedMonth.Year);
+    var selectedLabel = $"Tháng {selectedMonth:MM/yyyy}";
+    var selectedOptionValue = selectedMonth.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+}
+
+<details class="month-picker"
+         data-month-picker
+         data-selected-month="@selectedMonth.Month"
+         data-selected-year="@selectedMonth.Year"
+         data-committed-month="@selectedMonth.Month"
+         data-committed-year="@selectedMonth.Year"
+         data-current-month="@currentMonth.Month"
+         data-current-year="@currentMonth.Year">
+    <summary class="month-picker-trigger" aria-label="Chọn tháng">
+        <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+        <span data-month-picker-label>@selectedLabel</span>
+        <i class="fa-solid fa-chevron-down month-picker-chevron" aria-hidden="true"></i>
+    </summary>
+
+    <div class="month-picker-menu">
+        <div class="month-picker-heading">
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+            <span>Chọn tháng/năm</span>
+        </div>
+
+        <input type="hidden" name="month" value="@selectedOptionValue" data-month-picker-value />
+
+        <div class="month-picker-columns">
+            <div class="month-picker-column">
+                <span class="month-picker-column-label">Tháng</span>
+                <div class="month-picker-list month-picker-month-list">
+                    @for (var monthNumber = 1; monthNumber <= 12; monthNumber++)
+                    {
+                        var isSelected = monthNumber == selectedMonth.Month;
+                        var isFuture = selectedMonth.Year == currentMonth.Year && monthNumber > currentMonth.Month;
+
+                        <button type="button"
+                                class="month-picker-list-item @(isSelected ? "active" : "")"
+                                data-month-option
+                                data-month-value="@monthNumber"
+                                disabled="@isFuture"
+                                aria-pressed="@(isSelected ? "true" : "false")">
+                            <span>@($"{monthNumber:00} · Tháng {monthNumber}")</span>
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="month-picker-column">
+                <span class="month-picker-column-label">Năm</span>
+                <div class="month-picker-list month-picker-year-list">
+                    @for (var year = firstYear; year <= lastYear; year++)
+                    {
+                        var isSelected = year == selectedMonth.Year;
+
+                        <button type="button"
+                                class="month-picker-list-item @(isSelected ? "active" : "")"
+                                data-year-option
+                                data-year-value="@year"
+                                aria-pressed="@(isSelected ? "true" : "false")">
+                            <span>@year</span>
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="month-picker-footer">
+            <button type="button" class="month-picker-cancel" data-month-picker-cancel>Hủy</button>
+            <button type="submit" class="month-picker-apply">Áp dụng</button>
+        </div>
+    </div>
+</details>

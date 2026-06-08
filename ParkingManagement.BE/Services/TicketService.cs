@@ -951,6 +951,7 @@ namespace ParkingManagement.BLL.Services.Implementations
             ticket.CheckOutTime = currentTime;
             ticket.Fee = finalFee;
             ticket.Status = "Đã ra";
+            ticket.CheckedOutByEmployeeId = input.CollectedByEmployeeId;
             await _ticketRepository.UpdateAsync(ticket);
 
             if (!string.IsNullOrEmpty(ticket.SlotId))

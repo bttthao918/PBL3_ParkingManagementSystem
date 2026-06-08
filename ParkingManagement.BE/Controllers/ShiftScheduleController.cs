@@ -220,19 +220,29 @@ namespace ParkingManagement.Web.Controllers.Api
             if (!todayShiftEntities.Any())
                 return Ok(new { hasShift = false, message = "Hôm nay bạn chưa được phân ca" });
 
+            var now = DateTime.Now;
             var todayShiftEntity = todayShiftEntities
                 .Select(s =>
                 {
                     var window = ShiftConstants.GetEffectiveWindow(s.ShiftType, s.StartTime, s.EndTime);
-                    var order = string.Equals(s.Status, ShiftConstants.WorkingStatus, StringComparison.OrdinalIgnoreCase) ? 0
-                        : string.Equals(s.Status, ShiftConstants.ScheduledStatus, StringComparison.OrdinalIgnoreCase) ? 1
-                        : !IsInactiveStatus(s.Status) ? 2
-                        : 3;
+                    var shiftStart = today.Add(window.Start);
+                    var shiftEnd = window.Start <= window.End
+                        ? today.Add(window.End)
+                        : today.AddDays(1).Add(window.End);
+                    var isCurrentShift = now >= shiftStart && now < shiftEnd;
+                    var isUpcomingShift = now < shiftStart;
 
-                    return new { Schedule = s, Window = window, Order = order };
+                    var order = string.Equals(s.Status, ShiftConstants.WorkingStatus, StringComparison.OrdinalIgnoreCase) ? 0
+                        : isCurrentShift && !IsInactiveStatus(s.Status) ? 1
+                        : isUpcomingShift && string.Equals(s.Status, ShiftConstants.ScheduledStatus, StringComparison.OrdinalIgnoreCase) ? 2
+                        : string.Equals(s.Status, ShiftConstants.ScheduledStatus, StringComparison.OrdinalIgnoreCase) ? 3
+                        : !IsInactiveStatus(s.Status) ? 4
+                        : 5;
+
+                    return new { Schedule = s, Window = window, ShiftStart = shiftStart, Order = order };
                 })
                 .OrderBy(x => x.Order)
-                .ThenBy(x => x.Window.Start)
+                .ThenBy(x => x.Order == 3 ? -x.ShiftStart.Ticks : x.ShiftStart.Ticks)
                 .First()
                 .Schedule;
 

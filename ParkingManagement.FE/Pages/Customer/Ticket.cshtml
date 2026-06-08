@@ -96,6 +96,7 @@
 
                 <select id="ticketStatusFilter">
                     <option value="">Tất cả trạng thái</option>
+                    <option value="Đang gửi">Đang gửi</option>
                     <option value="Đã thanh toán">Đã thanh toán</option>
                     <option value="Chưa thanh toán">Chưa thanh toán</option>
                 </select>
@@ -112,16 +113,15 @@
             </div>
 
             <div class="table-wrap">
-                <table class="ticket-table">
+                <table class="ticket-table customer-ticket-table">
                     <thead>
                         <tr>
                             <th>Mã vé</th>
                             <th>Biển số xe</th>
                             <th>Loại xe</th>
                             <th>Giờ vào</th>
-                            <th>Giờ ra</th>
-                            <th>Thành tiền</th>
                             <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
 
@@ -145,23 +145,35 @@
                                     data-discount="@ticket.Discount.ToString("N0") đ"
                                     data-total="@ticket.TotalAmount.ToString("N0") đ"
                                     data-status="@ticket.Status"
+                                    data-status-class="@ticket.StatusClass"
                                     data-payment-method="@ticket.PaymentMethod"
                                     data-created-by="@ticket.CreatedBy"
                                     data-note="@ticket.Note">
 
-                                    <td>@ticket.Code</td>
-                                    <td>@ticket.VehiclePlate</td>
-                                    <td>
+                                    <td class="ticket-code-cell">
+                                        <strong>@ticket.Code</strong>
+                                        <span>@ticket.CheckInTime.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td class="ticket-plate-cell">
+                                        <strong>@ticket.VehiclePlate</strong>
+                                    </td>
+                                    <td class="ticket-vehicle-cell">
                                         <span class="vehicle-pill @ticket.IconClass">
                                             <i class="@ticket.Icon"></i>
                                             @ticket.VehicleType
                                         </span>
                                     </td>
-                                    <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@(ticket.CheckOutTime?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
-                                    <td>@ticket.TotalAmount.ToString("N0") đ</td>
-                                    <td>
-                                        <span class="status-badge @(ticket.Status.Contains("Đang") ? "active" : "paid")">@ticket.Status</span>
+                                    <td class="ticket-time-cell">
+                                        <strong>@ticket.CheckInTime.ToString("HH:mm")</strong>
+                                        <span>@ticket.CheckInTime.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td class="ticket-status-cell">
+                                        <span class="status-badge @ticket.StatusClass">@ticket.Status</span>
+                                    </td>
+                                    <td class="ticket-action-cell">
+                                        <button type="button" class="ticket-action-btn" title="Xem chi tiết" aria-label="Xem chi tiết vé @ticket.Code">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             }
@@ -169,13 +181,13 @@
                         else
                         {
                             <tr>
-                                <td colspan="7" style="text-align:center; padding: 2rem; color: #888;">
+                                <td colspan="6" style="text-align:center; padding: 2rem; color: #888;">
                                     Chưa có vé nào. Dữ liệu sẽ hiển thị khi bạn sử dụng dịch vụ gửi xe.
                                 </td>
                             </tr>
                         }
                         <tr id="ticketNoResults" class="hidden">
-                            <td colspan="7">Không có vé phù hợp với bộ lọc hiện tại.</td>
+                            <td colspan="6">Không có vé phù hợp với bộ lọc hiện tại.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -195,7 +207,7 @@
             </div>
 
             <div class="detail-status">
-                <span id="detailStatus">Đã thanh toán</span>
+                <span id="detailStatus" class="status-badge">Đã thanh toán</span>
             </div>
 
             <div class="detail-vehicle">
@@ -261,11 +273,6 @@
             </div>
 
             <div class="detail-actions">
-                <button type="button" class="outline-btn">
-                    <i class="fa-solid fa-download"></i>
-                    Tải vé PDF
-                </button>
-
                 <button type="button" id="bottomCloseDetailBtn" class="primary-btn">
                     Đóng
                 </button>

@@ -36,6 +36,21 @@
         Quản lý chỗ đỗ
     </a>
 
+    <p>THỐNG KÊ VÀ BÁO CÁO</p>
+    <a asp-page="/Admin/RevenueStatistics"
+           class="@(currentPath.Contains("/Admin/RevenueStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu
+    </a>
+    <a asp-page="/Admin/CustomerStatistics"
+           class="@(currentPath.Contains("/Admin/CustomerStatistics", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <i class="fa-solid fa-users-viewfinder"></i> Thống kê khách hàng
+    </a>
+    <a asp-page="/Admin/Dashboard"
+           asp-route-view="summary"
+           class="@(isDashboardPath && isSummaryView ? "active" : "")">
+        <i class="fa-solid fa-chart-pie"></i> Báo cáo tổng hợp
+    </a>
+
     <p>TÀI KHOẢN</p>
     <a asp-page="/Account/Profile"
            class="@(currentPath.Contains("/Account/Profile", StringComparison.OrdinalIgnoreCase) ? "active" : "")">

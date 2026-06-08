@@ -300,8 +300,27 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (ticket == null)
                 return ServiceResult<string>.Fail("Không tìm thấy vé tháng.");
 
+            if (IsPendingPaymentTicket(ticket))
+            {
+                await TrySyncPayOsPaymentAsync(ticket);
+                ticket = await _repo.GetByIdAsync(id);
+                if (ticket == null)
+                    return ServiceResult<string>.Fail("Không tìm thấy vé tháng.");
+
+                if (IsPendingPaymentTicket(ticket))
+                {
+                    ticket.Status = MonthlyTicketStatuses.CANCELLED;
+                    ticket.AutoRenew = false;
+                    await _repo.UpdateAsync(ticket);
+
+                    await CancelPendingPaymentAsync(ticket.MonthlyTicketId);
+
+                    return ServiceResult<string>.Ok(id, "Đã hủy vé tháng đang chờ thanh toán. Bạn có thể đăng ký vé mới bất cứ lúc nào.");
+                }
+            }
+
             if (!MonthlyTicketStatuses.IsActive(ticket.Status))
-                return ServiceResult<string>.Fail("Chỉ có thể hủy tự động gia hạn cho vé tháng đang hoạt động.");
+                return ServiceResult<string>.Fail("Chỉ có thể hủy vé đang chờ thanh toán hoặc hủy tự động gia hạn cho vé đang hoạt động.");
 
             if (!ticket.AutoRenew)
                 return ServiceResult<string>.Ok(id, "Tự động gia hạn đã được tắt trước đó.");
@@ -310,6 +329,23 @@ namespace ParkingManagement.BLL.Services.Implementations
             await _repo.UpdateAsync(ticket);
 
             return ServiceResult<string>.Ok(id, $"Đã hủy tự động gia hạn. Vé vẫn có hiệu lực đến {ticket.EndDate:dd/MM/yyyy}.");
+        }
+
+        private async Task CancelPendingPaymentAsync(string monthlyTicketId)
+        {
+            var payment = await FindPayOsPaymentAsync(monthlyTicketId);
+            if (payment == null || PaymentStatuses.IsSuccessful(payment.Status))
+            {
+                return;
+            }
+
+            payment.Status = PaymentStatuses.CANCELLED;
+            await _paymentRepo.UpdateAsync(payment);
+
+            if (TryGetPayOsOrderCode(payment.VnpTxnRef, out var orderCode))
+            {
+                PayOsPaymentSnapshots.TryRemove(orderCode, out _);
+            }
         }
 
         public async Task<ServiceResult<string>> ConfirmPayOsPaymentAsync(long orderCode, int amount, string? paymentLinkId, string? bankReference)
@@ -834,6 +870,7 @@ namespace ParkingManagement.BLL.Services.Implementations
         {
             MonthlyTicketId = ticket.MonthlyTicketId,
             CustomerName = ticket.Customer?.FullName ?? "",
+            CustomerId = ticket.CustomerId,
             VehiclePlate = ticket.VehiclePlate,
             VehicleType = ticket.VehicleType,
             PackageType = ticket.PackageType,

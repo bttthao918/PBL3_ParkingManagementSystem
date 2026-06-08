@@ -1,0 +1,787 @@
+Using launch settings from ParkingManagement.BE\Properties\launchSettings.json...
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (205ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[Accounts]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[Customers]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[Employees]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[ParkingSlots]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[PricingConfigurations]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[Tickets]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
+      BEGIN
+          IF OBJECT_ID(N'[dbo].[__EFMigrationsHistory]', N'U') IS NULL
+          BEGIN
+              CREATE TABLE [dbo].[__EFMigrationsHistory] (
+                  [MigrationId] nvarchar(150) NOT NULL,
+                  [ProductVersion] nvarchar(32) NOT NULL,
+                  CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+              );
+          END;
+      
+          IF NOT EXISTS (
+              SELECT 1
+              FROM [dbo].[__EFMigrationsHistory]
+              WHERE [MigrationId] = N'20260514054735_InitialCreate'
+          )
+          BEGIN
+              INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+              VALUES (N'20260514054735_InitialCreate', N'10.0.6');
+          END;
+      END;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Migrations[20411]
+      Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (82ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @result int;
+      EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+      SELECT @result
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+      BEGIN
+          CREATE TABLE [__EFMigrationsHistory] (
+              [MigrationId] nvarchar(150) NOT NULL,
+              [ProductVersion] nvarchar(32) NOT NULL,
+              CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+          );
+      END;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [MigrationId], [ProductVersion]
+      FROM [__EFMigrationsHistory]
+      ORDER BY [MigrationId];
+info: Microsoft.EntityFrameworkCore.Migrations[20405]
+      No migrations were applied. The database is already up to date.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (30ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @result int;
+      EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+      SELECT @result
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (124ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[PricingConfigurations]', N'U') IS NOT NULL
+      BEGIN
+          IF NOT EXISTS (
+              SELECT 1 FROM [dbo].[PricingConfigurations]
+              WHERE [VehicleType] = N'Xe máy' AND [RateType] = N'Monthly6M'
+          )
+              INSERT INTO [dbo].[PricingConfigurations] ([PricingId], [VehicleType], [RateType], [Amount], [UpdatedAt], [UpdatedBy])
+              VALUES (N'PRICE-XM-M6', N'Xe máy', N'Monthly6M', 2000000, SYSUTCDATETIME(), N'SYSTEM');
+          ELSE
+              UPDATE [dbo].[PricingConfigurations]
+              SET [Amount] = 2000000, [UpdatedAt] = SYSUTCDATETIME(), [UpdatedBy] = N'SYSTEM'
+              WHERE [VehicleType] = N'Xe máy'
+                AND [RateType] = N'Monthly6M'
+                AND [Amount] <= ISNULL((
+                    SELECT TOP 1 [Amount] FROM [dbo].[PricingConfigurations]
+                    WHERE [VehicleType] = N'Xe máy' AND [RateType] = N'Monthly3M'
+                ), 0);
+      
+          IF NOT EXISTS (
+              SELECT 1 FROM [dbo].[PricingConfigurations]
+              WHERE [VehicleType] = N'Ô tô nhỏ' AND [RateType] = N'Monthly6M'
+          )
+              INSERT INTO [dbo].[PricingConfigurations] ([PricingId], [VehicleType], [RateType], [Amount], [UpdatedAt], [UpdatedBy])
+              VALUES (N'PRICE-OTON-M6', N'Ô tô nhỏ', N'Monthly6M', 6000000, SYSUTCDATETIME(), N'SYSTEM');
+          ELSE
+              UPDATE [dbo].[PricingConfigurations]
+              SET [Amount] = 6000000, [UpdatedAt] = SYSUTCDATETIME(), [UpdatedBy] = N'SYSTEM'
+              WHERE [VehicleType] = N'Ô tô nhỏ'
+                AND [RateType] = N'Monthly6M'
+                AND [Amount] <= ISNULL((
+                    SELECT TOP 1 [Amount] FROM [dbo].[PricingConfigurations]
+                    WHERE [VehicleType] = N'Ô tô nhỏ' AND [RateType] = N'Monthly3M'
+                ), 0);
+      
+          IF NOT EXISTS (
+              SELECT 1 FROM [dbo].[PricingConfigurations]
+              WHERE [VehicleType] = N'Ô tô lớn' AND [RateType] = N'Monthly6M'
+          )
+              INSERT INTO [dbo].[PricingConfigurations] ([PricingId], [VehicleType], [RateType], [Amount], [UpdatedAt], [UpdatedBy])
+              VALUES (N'PRICE-OTOL-M6', N'Ô tô lớn', N'Monthly6M', 10000000, SYSUTCDATETIME(), N'SYSTEM');
+          ELSE
+              UPDATE [dbo].[PricingConfigurations]
+              SET [Amount] = 10000000, [UpdatedAt] = SYSUTCDATETIME(), [UpdatedBy] = N'SYSTEM'
+              WHERE [VehicleType] = N'Ô tô lớn'
+                AND [RateType] = N'Monthly6M'
+                AND [Amount] <= ISNULL((
+                    SELECT TOP 1 [Amount] FROM [dbo].[PricingConfigurations]
+                    WHERE [VehicleType] = N'Ô tô lớn' AND [RateType] = N'Monthly3M'
+                ), 0);
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (253ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SET QUOTED_IDENTIFIER ON;
+      
+      IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
+      BEGIN
+          UPDATE [dbo].[Payments]
+          SET [TicketId] = NULL
+          WHERE [TicketId] IS NOT NULL
+            AND LTRIM(RTRIM([TicketId])) = N''
+            AND [MonthlyTicketId] IS NOT NULL
+            AND LTRIM(RTRIM([MonthlyTicketId])) <> N'';
+      
+          UPDATE [dbo].[Payments]
+          SET [MonthlyTicketId] = NULL
+          WHERE [MonthlyTicketId] IS NOT NULL
+            AND LTRIM(RTRIM([MonthlyTicketId])) = N''
+            AND [TicketId] IS NOT NULL
+            AND LTRIM(RTRIM([TicketId])) <> N'';
+      
+          IF COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NULL
+              ALTER TABLE [dbo].[Payments] ADD [CollectedByEmployeeId] nvarchar(20) NULL;
+      
+          IF COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NOT NULL
+             AND NOT EXISTS (
+                 SELECT 1
+                 FROM sys.indexes
+                 WHERE [name] = N'IX_Payments_CollectedByEmployeeId'
+                   AND [object_id] = OBJECT_ID(N'[dbo].[Payments]')
+             )
+              CREATE INDEX [IX_Payments_CollectedByEmployeeId]
+                  ON [dbo].[Payments] ([CollectedByEmployeeId]);
+      
+          IF OBJECT_ID(N'[dbo].[Employees]', N'U') IS NOT NULL
+             AND COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NOT NULL
+             AND NOT EXISTS (
+                 SELECT 1
+                 FROM sys.foreign_keys
+                 WHERE [name] = N'FK_Payments_Employees_CollectedByEmployeeId'
+             )
+              ALTER TABLE [dbo].[Payments] WITH CHECK ADD CONSTRAINT [FK_Payments_Employees_CollectedByEmployeeId]
+                  FOREIGN KEY ([CollectedByEmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId]);
+      
+          IF OBJECT_ID(N'[dbo].[__EFMigrationsHistory]', N'U') IS NOT NULL
+             AND COL_LENGTH(N'[dbo].[Payments]', N'CollectedByEmployeeId') IS NOT NULL
+             AND NOT EXISTS (
+                 SELECT 1
+                 FROM [dbo].[__EFMigrationsHistory]
+                 WHERE [MigrationId] = N'20260515180000_AddPaymentEmployeeAttribution'
+             )
+              INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+              VALUES (N'20260515180000_AddPaymentEmployeeAttribution', N'10.0.6');
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (62ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF EXISTS (
+          SELECT 1
+          FROM sys.indexes
+          WHERE [name] = N'IX_Payments_MonthlyTicketId'
+            AND object_id = OBJECT_ID(N'[dbo].[Payments]')
+            AND is_unique = 1
+      )
+      BEGIN
+          DROP INDEX [IX_Payments_MonthlyTicketId] ON [dbo].[Payments];
+      END
+      
+      IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[Payments]', N'MonthlyTicketId') IS NOT NULL
+         AND NOT EXISTS (
+              SELECT 1
+              FROM sys.indexes
+              WHERE [name] = N'IX_Payments_MonthlyTicketId'
+                AND object_id = OBJECT_ID(N'[dbo].[Payments]')
+         )
+      BEGIN
+          CREATE INDEX [IX_Payments_MonthlyTicketId]
+          ON [dbo].[Payments] ([MonthlyTicketId])
+          WHERE [MonthlyTicketId] IS NOT NULL;
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (44ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NULL
+      BEGIN
+          ALTER TABLE [dbo].[MonthlyTickets]
+          ADD [AutoRenew] bit NOT NULL
+              CONSTRAINT [DF_MonthlyTickets_AutoRenew] DEFAULT(1) WITH VALUES;
+      END
+      
+      IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NOT NULL
+      BEGIN
+          EXEC(N'UPDATE [dbo].[MonthlyTickets]
+                 SET [AutoRenew] = 0
+                 WHERE [Status] IN (N''Đã hủy'', N''Hết hạn'');');
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (175ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+      BEGIN
+          IF COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NULL
+              ALTER TABLE [dbo].[MonthlyTickets]
+              ADD [AutoRenew] bit NOT NULL
+                  CONSTRAINT [DF_MonthlyTickets_AutoRenew] DEFAULT(1) WITH VALUES;
+      
+          EXEC(N'UPDATE [dbo].[MonthlyTickets]
+                 SET [AutoRenew] = 0
+                 WHERE [Status] IN (N''Đã hủy'', N''Hết hạn'');');
+      
+          IF EXISTS (
+              SELECT 1
+              FROM sys.check_constraints
+              WHERE [name] = N'CK_MonthlyTicket_Status'
+                AND parent_object_id = OBJECT_ID(N'[dbo].[MonthlyTickets]')
+          )
+              ALTER TABLE [dbo].[MonthlyTickets] DROP CONSTRAINT [CK_MonthlyTicket_Status];
+      
+          ALTER TABLE [dbo].[MonthlyTickets] WITH CHECK ADD CONSTRAINT [CK_MonthlyTicket_Status]
+              CHECK ([Status] IN (N'Hoạt động', N'Hết hạn', N'Đã hủy', N'Chờ thanh toán'));
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (118ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NULL
+      BEGIN
+          CREATE TABLE [dbo].[WorkLogs] (
+              [WorkLogId] nvarchar(20) NOT NULL,
+              [EmployeeId] nvarchar(20) NOT NULL,
+              [WorkDate] datetime2 NOT NULL,
+              [StartTime] datetime2 NOT NULL,
+              [EndTime] datetime2 NULL,
+              [TotalMinutes] int NULL,
+              [ScheduleId] nvarchar(20) NULL,
+              [Note] nvarchar(200) NULL,
+              [Status] nvarchar(20) NOT NULL,
+              CONSTRAINT [PK_WorkLogs] PRIMARY KEY ([WorkLogId]),
+              CONSTRAINT [FK_WorkLogs_Employees_EmployeeId]
+                  FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId]) ON DELETE CASCADE
+          );
+      
+          CREATE INDEX [IX_WorkLogs_EmployeeId] ON [dbo].[WorkLogs] ([EmployeeId]);
+      END
+      
+      IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NULL
+      BEGIN
+          ALTER TABLE [dbo].[WorkLogs] ADD [ScheduleId] nvarchar(20) NULL;
+      END
+      
+      IF OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
+         AND NOT EXISTS (
+              SELECT 1 FROM sys.indexes
+              WHERE name = N'IX_WorkLogs_ScheduleId'
+                AND object_id = OBJECT_ID(N'[dbo].[WorkLogs]')
+         )
+      BEGIN
+          CREATE INDEX [IX_WorkLogs_ScheduleId] ON [dbo].[WorkLogs] ([ScheduleId]);
+      END
+      
+      IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+         AND EXISTS (
+              SELECT 1
+              FROM sys.foreign_keys
+              WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+                AND delete_referential_action_desc <> N'NO_ACTION'
+         )
+      BEGIN
+          ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId];
+      END
+      
+      IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+         AND NOT EXISTS (
+              SELECT 1
+              FROM sys.foreign_keys
+              WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+         )
+      BEGIN
+          ALTER TABLE [dbo].[WorkLogs]
+          ADD CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId]
+              FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE NO ACTION;
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (48ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NULL
+      BEGIN
+          CREATE TABLE [dbo].[ShiftSchedules] (
+              [ScheduleId] nvarchar(20) NOT NULL,
+              [EmployeeId] nvarchar(20) NOT NULL,
+              [WorkDate] datetime2 NOT NULL,
+              [ShiftType] nvarchar(20) NOT NULL,
+              [StartTime] time NOT NULL,
+              [EndTime] time NOT NULL,
+              [Status] nvarchar(20) NOT NULL,
+              [Note] nvarchar(200) NULL,
+              [CreatedBy] nvarchar(20) NOT NULL,
+              [CreatedAt] datetime2 NOT NULL,
+              CONSTRAINT [PK_ShiftSchedules] PRIMARY KEY ([ScheduleId]),
+              CONSTRAINT [FK_ShiftSchedules_Employees_EmployeeId]
+                  FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[Employees] ([EmployeeId]) ON DELETE CASCADE
+          );
+      
+          CREATE INDEX [IX_ShiftSchedules_EmployeeId] ON [dbo].[ShiftSchedules] ([EmployeeId]);
+      END
+      
+      IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
+         AND EXISTS (
+              SELECT 1
+              FROM sys.foreign_keys
+              WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+                AND delete_referential_action_desc <> N'NO_ACTION'
+         )
+      BEGIN
+          ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId];
+      END
+      
+      IF OBJECT_ID(N'[dbo].[ShiftSchedules]', N'U') IS NOT NULL
+         AND OBJECT_ID(N'[dbo].[WorkLogs]', N'U') IS NOT NULL
+         AND COL_LENGTH(N'[dbo].[WorkLogs]', N'ScheduleId') IS NOT NULL
+         AND NOT EXISTS (
+              SELECT 1
+              FROM sys.foreign_keys
+              WHERE name = N'FK_WorkLogs_ShiftSchedules_ScheduleId'
+         )
+      BEGIN
+          ALTER TABLE [dbo].[WorkLogs]
+          ADD CONSTRAINT [FK_WorkLogs_ShiftSchedules_ScheduleId]
+              FOREIGN KEY ([ScheduleId]) REFERENCES [dbo].[ShiftSchedules] ([ScheduleId]) ON DELETE NO ACTION;
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (30ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel]
+      FROM [Customers] AS [c]
+      WHERE [c].[FullName] = N'Bùi Thị Thu Thảo'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (43ms) [Parameters=[@plate='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM [Vehicles] AS [v]
+      WHERE [v].[VehiclePlate] = @plate
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@plate='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM [Vehicles] AS [v]
+      WHERE [v].[VehiclePlate] = @plate
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@plate='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM [Vehicles] AS [v]
+      WHERE [v].[VehiclePlate] = @plate
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (29ms) [Parameters=[@monthlyTicketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [MonthlyTickets] AS [m]
+              WHERE [m].[MonthlyTicketId] = @monthlyTicketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (16ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[@monthlyTicketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [MonthlyTickets] AS [m]
+              WHERE [m].[MonthlyTicketId] = @monthlyTicketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@monthlyTicketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [MonthlyTickets] AS [m]
+              WHERE [m].[MonthlyTicketId] = @monthlyTicketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (19ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@paymentId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Payments] AS [p]
+              WHERE [p].[PaymentId] = @paymentId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@ticketId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Tickets] AS [t]
+              WHERE [t].[TicketId] = @ticketId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[@slotId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [ParkingSlots] AS [p]
+      WHERE [p].[SlotId] = @slotId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (15ms) [Parameters=[@reservationId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Reservations] AS [r]
+              WHERE [r].[ReservationId] = @reservationId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@slotId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [ParkingSlots] AS [p]
+      WHERE [p].[SlotId] = @slotId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@reservationId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Reservations] AS [r]
+              WHERE [r].[ReservationId] = @reservationId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@reservationId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Reservations] AS [r]
+              WHERE [r].[ReservationId] = @reservationId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@reservationId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [Reservations] AS [r]
+              WHERE [r].[ReservationId] = @reservationId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5188
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\pbl3\PBL3_ParkingManagementSystem\ParkingManagement.BE
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (47ms) [Parameters=[@email='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [a].[AccountId], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+      FROM [Accounts] AS [a]
+      WHERE [a].[Email] = @email
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (49ms) [Parameters=[@accountId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [a].[AccountId], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+      FROM [Customers] AS [c]
+      INNER JOIN [Accounts] AS [a] ON [c].[AccountId] = [a].[AccountId]
+      WHERE [c].[AccountId] = @accountId AND [c].[IsDeleted] = CAST(0 AS bit)
+info: ParkingManagement.BLL.Services.Implementations.AuthService[0]
+      Login successful for Customer: minhanh.nguyen@example.com
+info: ParkingManagement.BLL.Services.JwtTokenProvider[0]
+      Token generated for ACC101 (Customer)
+info: ParkingManagement.Web.Controllers.Api.ApiAuthController[0]
+      Login successful for minhanh.nguyen@example.com
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (84ms) [Parameters=[@id='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[CustomerId], [s].[AccountId], [s].[FullName], [s].[Gender], [s].[IsDeleted], [s].[MemberSince], [s].[PhoneNumber], [s].[TotalSpent], [s].[TotalTickets], [s].[VipLevel], [s].[AccountId0], [s].[CreatedAt], [s].[Email], [s].[IsActive], [s].[PasswordHash], [s].[RequirePasswordChange], [s].[Role], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM (
+          SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [a].[AccountId] AS [AccountId0], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+          FROM [Customers] AS [c]
+          INNER JOIN [Accounts] AS [a] ON [c].[AccountId] = [a].[AccountId]
+          WHERE [c].[CustomerId] = @id AND [c].[IsDeleted] = CAST(0 AS bit)
+      ) AS [s]
+      LEFT JOIN [Vehicles] AS [v] ON [s].[CustomerId] = [v].[CustomerId]
+      ORDER BY [s].[CustomerId], [s].[AccountId0]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[@id='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[CustomerId], [s].[AccountId], [s].[FullName], [s].[Gender], [s].[IsDeleted], [s].[MemberSince], [s].[PhoneNumber], [s].[TotalSpent], [s].[TotalTickets], [s].[VipLevel], [s].[AccountId0], [s].[CreatedAt], [s].[Email], [s].[IsActive], [s].[PasswordHash], [s].[RequirePasswordChange], [s].[Role], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM (
+          SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [a].[AccountId] AS [AccountId0], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+          FROM [Customers] AS [c]
+          INNER JOIN [Accounts] AS [a] ON [c].[AccountId] = [a].[AccountId]
+          WHERE [c].[CustomerId] = @id AND [c].[IsDeleted] = CAST(0 AS bit)
+      ) AS [s]
+      LEFT JOIN [Vehicles] AS [v] ON [s].[CustomerId] = [v].[CustomerId]
+      ORDER BY [s].[CustomerId], [s].[AccountId0]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [t].[TicketId], [t].[CheckInTime], [t].[CheckOutTime], [t].[CheckedOutByEmployeeId], [t].[CustomerId], [t].[Fee], [t].[SlotId], [t].[Status], [t].[VehiclePlate], [t].[VehicleType]
+      FROM [Tickets] AS [t]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (44ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[MonthlyTickets]
+    ADD [AutoRenew] bit NOT NULL
+        CONSTRAINT [DF_MonthlyTickets_AutoRenew] DEFAULT(1) WITH VALUES;
+END
+
+IF OBJECT_ID(N'[dbo].[MonthlyTickets]', N'U') IS NOT NULL
+   AND COL_LENGTH(N'[dbo].[MonthlyTickets]', N'AutoRenew') IS NOT NULL
+BEGIN
+    EXEC(N'UPDATE [dbo].[MonthlyTickets]
+           SET [AutoRenew] = 0
+           WHERE [Status] IN (N''Đã hủy'', N''Hết hạn'');');
+END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (9ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [m].[MonthlyTicketId], [m].[AutoRenew], [m].[CreatedAt], [m].[CustomerId], [m].[EndDate], [m].[PackageType], [m].[StartDate], [m].[Status], [m].[TotalFee], [m].[VehiclePlate], [m].[VehicleType]
+      FROM [MonthlyTickets] AS [m]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (18ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [t].[TicketId], [t].[CheckInTime], [t].[CheckOutTime], [t].[CheckedOutByEmployeeId], [t].[CustomerId], [t].[Fee], [t].[SlotId], [t].[Status], [t].[VehiclePlate], [t].[VehicleType]
+      FROM [Tickets] AS [t]
+      WHERE [t].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (41ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [r].[ReservationId], [r].[CreatedAt], [r].[CustomerId], [r].[ExpectedTime], [r].[SlotId], [r].[Status], [r].[VehiclePlate], [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType], [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [Reservations] AS [r]
+      INNER JOIN [Customers] AS [c] ON [r].[CustomerId] = [c].[CustomerId]
+      LEFT JOIN [Vehicles] AS [v] ON [r].[VehiclePlate] = [v].[VehiclePlate]
+      LEFT JOIN [ParkingSlots] AS [p] ON [r].[SlotId] = [p].[SlotId]
+      WHERE [r].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [r].[ReservationId], [r].[CreatedAt], [r].[CustomerId], [r].[ExpectedTime], [r].[SlotId], [r].[Status], [r].[VehiclePlate], [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType], [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [Reservations] AS [r]
+      INNER JOIN [Customers] AS [c] ON [r].[CustomerId] = [c].[CustomerId]
+      LEFT JOIN [Vehicles] AS [v] ON [r].[VehiclePlate] = [v].[VehiclePlate]
+      LEFT JOIN [ParkingSlots] AS [p] ON [r].[SlotId] = [p].[SlotId]
+      WHERE [r].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (90ms) [Parameters=[@id='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[CustomerId], [s].[AccountId], [s].[FullName], [s].[Gender], [s].[IsDeleted], [s].[MemberSince], [s].[PhoneNumber], [s].[TotalSpent], [s].[TotalTickets], [s].[VipLevel], [s].[AccountId0], [s].[CreatedAt], [s].[Email], [s].[IsActive], [s].[PasswordHash], [s].[RequirePasswordChange], [s].[Role], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM (
+          SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [a].[AccountId] AS [AccountId0], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+          FROM [Customers] AS [c]
+          INNER JOIN [Accounts] AS [a] ON [c].[AccountId] = [a].[AccountId]
+          WHERE [c].[CustomerId] = @id AND [c].[IsDeleted] = CAST(0 AS bit)
+      ) AS [s]
+      LEFT JOIN [Vehicles] AS [v] ON [s].[CustomerId] = [v].[CustomerId]
+      ORDER BY [s].[CustomerId], [s].[AccountId0]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[CustomerId], [s].[AccountId], [s].[FullName], [s].[Gender], [s].[IsDeleted], [s].[MemberSince], [s].[PhoneNumber], [s].[TotalSpent], [s].[TotalTickets], [s].[VipLevel], [s].[AccountId0], [s].[CreatedAt], [s].[Email], [s].[IsActive], [s].[PasswordHash], [s].[RequirePasswordChange], [s].[Role], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM (
+          SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [a].[AccountId] AS [AccountId0], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+          FROM [Customers] AS [c]
+          INNER JOIN [Accounts] AS [a] ON [c].[AccountId] = [a].[AccountId]
+          WHERE [c].[CustomerId] = @id AND [c].[IsDeleted] = CAST(0 AS bit)
+      ) AS [s]
+      LEFT JOIN [Vehicles] AS [v] ON [s].[CustomerId] = [v].[CustomerId]
+      ORDER BY [s].[CustomerId], [s].[AccountId0]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (16ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [t].[TicketId], [t].[CheckInTime], [t].[CheckOutTime], [t].[CheckedOutByEmployeeId], [t].[CustomerId], [t].[Fee], [t].[SlotId], [t].[Status], [t].[VehiclePlate], [t].[VehicleType]
+      FROM [Tickets] AS [t]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (15ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [m].[MonthlyTicketId], [m].[AutoRenew], [m].[CreatedAt], [m].[CustomerId], [m].[EndDate], [m].[PackageType], [m].[StartDate], [m].[Status], [m].[TotalFee], [m].[VehiclePlate], [m].[VehicleType]
+      FROM [MonthlyTickets] AS [m]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (14ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [t].[TicketId], [t].[CheckInTime], [t].[CheckOutTime], [t].[CheckedOutByEmployeeId], [t].[CustomerId], [t].[Fee], [t].[SlotId], [t].[Status], [t].[VehiclePlate], [t].[VehicleType]
+      FROM [Tickets] AS [t]
+      WHERE [t].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (44ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [r].[ReservationId], [r].[CreatedAt], [r].[CustomerId], [r].[ExpectedTime], [r].[SlotId], [r].[Status], [r].[VehiclePlate], [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType], [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [Reservations] AS [r]
+      INNER JOIN [Customers] AS [c] ON [r].[CustomerId] = [c].[CustomerId]
+      LEFT JOIN [Vehicles] AS [v] ON [r].[VehiclePlate] = [v].[VehiclePlate]
+      LEFT JOIN [ParkingSlots] AS [p] ON [r].[SlotId] = [p].[SlotId]
+      WHERE [r].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (57ms) [Parameters=[@p6='?' (Size = 20), @p0='?' (DbType = DateTime2), @p1='?' (Size = 20), @p2='?' (DbType = DateTime2), @p3='?' (Size = 20), @p4='?' (Size = 20), @p5='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      UPDATE [Reservations] SET [CreatedAt] = @p0, [CustomerId] = @p1, [ExpectedTime] = @p2, [SlotId] = @p3, [Status] = @p4, [VehiclePlate] = @p5
+      OUTPUT 1
+      WHERE [ReservationId] = @p6;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (10ms) [Parameters=[@id='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [ParkingSlots] AS [p]
+      WHERE [p].[SlotId] = @id
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (26ms) [Parameters=[@p4='?' (Size = 20), @p0='?' (DbType = DateTime2), @p1='?' (Size = 50), @p2='?' (Size = 30), @p3='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      UPDATE [ParkingSlots] SET [LastUpdated] = @p0, [Location] = @p1, [Status] = @p2, [VehicleType] = @p3
+      OUTPUT 1
+      WHERE [SlotId] = @p4;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (32ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [r].[ReservationId], [r].[CreatedAt], [r].[CustomerId], [r].[ExpectedTime], [r].[SlotId], [r].[Status], [r].[VehiclePlate], [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType], [p].[SlotId], [p].[LastUpdated], [p].[Location], [p].[Status], [p].[VehicleType]
+      FROM [Reservations] AS [r]
+      INNER JOIN [Customers] AS [c] ON [r].[CustomerId] = [c].[CustomerId]
+      LEFT JOIN [Vehicles] AS [v] ON [r].[VehiclePlate] = [v].[VehiclePlate]
+      LEFT JOIN [ParkingSlots] AS [p] ON [r].[SlotId] = [p].[SlotId]
+      WHERE [r].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [m].[MonthlyTicketId], [m].[AutoRenew], [m].[CreatedAt], [m].[CustomerId], [m].[EndDate], [m].[PackageType], [m].[StartDate], [m].[Status], [m].[TotalFee], [m].[VehiclePlate], [m].[VehicleType]
+      FROM [MonthlyTickets] AS [m]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (16ms) [Parameters=[@customerId='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [m].[MonthlyTicketId], [m].[AutoRenew], [m].[CreatedAt], [m].[CustomerId], [m].[EndDate], [m].[PackageType], [m].[StartDate], [m].[Status], [m].[TotalFee], [m].[VehiclePlate], [m].[VehicleType]
+      FROM [MonthlyTickets] AS [m]
+      WHERE [m].[CustomerId] = @customerId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (28ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [p].[PaymentId], [p].[Amount], [p].[CollectedByEmployeeId], [p].[Method], [p].[MonthlyTicketId], [p].[PaymentTime], [p].[Status], [p].[TicketId], [p].[VnpTxnRef]
+      FROM [Payments] AS [p]
+info: System.Net.Http.HttpClient.IPayOsService.LogicalHandler[100]
+      Start processing HTTP request GET https://api-merchant.payos.vn/v2/payment-requests/26060319143695
+info: System.Net.Http.HttpClient.IPayOsService.ClientHandler[100]
+      Sending HTTP request GET https://api-merchant.payos.vn/v2/payment-requests/26060319143695
+info: System.Net.Http.HttpClient.IPayOsService.ClientHandler[101]
+      Received HTTP response headers after 368.4628ms - 200
+info: System.Net.Http.HttpClient.IPayOsService.LogicalHandler[101]
+      End processing HTTP request after 385.1187ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [p].[PaymentId], [p].[Amount], [p].[CollectedByEmployeeId], [p].[Method], [p].[MonthlyTicketId], [p].[PaymentTime], [p].[Status], [p].[TicketId], [p].[VnpTxnRef]
+      FROM [Payments] AS [p]
+info: System.Net.Http.HttpClient.IPayOsService.LogicalHandler[100]
+      Start processing HTTP request GET https://api-merchant.payos.vn/v2/payment-requests/26060408294775
+info: System.Net.Http.HttpClient.IPayOsService.ClientHandler[100]
+      Sending HTTP request GET https://api-merchant.payos.vn/v2/payment-requests/26060408294775
+info: System.Net.Http.HttpClient.IPayOsService.ClientHandler[101]
+      Received HTTP response headers after 71.9654ms - 200
+info: System.Net.Http.HttpClient.IPayOsService.LogicalHandler[101]
+      End processing HTTP request after 72.1598ms - 200
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (43ms) [Parameters=[@id='?' (Size = 20)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[CustomerId], [s].[AccountId], [s].[FullName], [s].[Gender], [s].[IsDeleted], [s].[MemberSince], [s].[PhoneNumber], [s].[TotalSpent], [s].[TotalTickets], [s].[VipLevel], [s].[AccountId0], [s].[CreatedAt], [s].[Email], [s].[IsActive], [s].[PasswordHash], [s].[RequirePasswordChange], [s].[Role], [v].[VehiclePlate], [v].[CustomerId], [v].[VehicleType]
+      FROM (
+          SELECT TOP(1) [c].[CustomerId], [c].[AccountId], [c].[FullName], [c].[Gender], [c].[IsDeleted], [c].[MemberSince], [c].[PhoneNumber], [c].[TotalSpent], [c].[TotalTickets], [c].[VipLevel], [a].[AccountId] AS [AccountId0], [a].[CreatedAt], [a].[Email], [a].[IsActive], [a].[PasswordHash], [a].[RequirePasswordChange], [a].[Role]
+          FROM [Customers] AS [c]
+          INNER JOIN [Accounts] AS [a] ON [c].[AccountId] = [a].[AccountId]
+          WHERE [c].[CustomerId] = @id AND [c].[IsDeleted] = CAST(0 AS bit)
+      ) AS [s]
+      LEFT JOIN [Vehicles] AS [v] ON [s].[CustomerId] = [v].[CustomerId]
+      ORDER BY [s].[CustomerId], [s].[AccountId0]

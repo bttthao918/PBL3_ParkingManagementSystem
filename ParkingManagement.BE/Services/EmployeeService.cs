@@ -339,22 +339,46 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (employeeIdSet.Count == 0)
                 return result;
 
+            var workLogs = await _db.WorkLogs
+                .Where(w => employeeIdSet.Contains(w.EmployeeId))
+                .ToListAsync();
+
+            var checkedOutTickets = await _db.Tickets
+                .Where(t => t.CheckOutTime.HasValue)
+                .ToListAsync();
+
+            var attributedTicketIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var ticket in checkedOutTickets)
+            {
+                if (string.IsNullOrWhiteSpace(ticket.CheckedOutByEmployeeId) ||
+                    !employeeIdSet.Contains(ticket.CheckedOutByEmployeeId))
+                {
+                    continue;
+                }
+
+                result[ticket.CheckedOutByEmployeeId].Add(ticket.CheckOutTime!.Value);
+                attributedTicketIds.Add(ticket.TicketId);
+            }
+
             var ticketPayments = (await _db.Payments
                     .Where(p => p.TicketId != null)
                     .ToListAsync())
                 .Where(p => PaymentStatuses.IsSuccessful(p.Status))
                 .ToList();
 
-            var hasExplicitAttribution = ticketPayments
-                .Any(p => !string.IsNullOrWhiteSpace(p.CollectedByEmployeeId));
-
-            var workLogs = await _db.WorkLogs
-                .Where(w => employeeIdSet.Contains(w.EmployeeId))
-                .ToListAsync();
+            var hasExplicitAttribution = checkedOutTickets.Any(t => !string.IsNullOrWhiteSpace(t.CheckedOutByEmployeeId)) ||
+                ticketPayments.Any(p => !string.IsNullOrWhiteSpace(p.CollectedByEmployeeId));
 
             foreach (var payment in ticketPayments)
             {
-                var assignedEmployeeId = ResolvePaymentEmployeeId(payment, employeeIdSet, workLogs);
+                if (payment.TicketId != null && attributedTicketIds.Contains(payment.TicketId))
+                    continue;
+
+                var assignedEmployeeId = ResolvePaymentEmployeeId(
+                    payment,
+                    employeeIdSet,
+                    workLogs,
+                    allowWorkLogFallback: !hasExplicitAttribution);
                 if (assignedEmployeeId == null)
                     continue;
 
@@ -363,16 +387,13 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             if (!hasExplicitAttribution && !result.Values.Any(s => s.TotalTicketsProcessed > 0))
             {
-                var fallbackStats = new EmployeeTicketStats();
-                var tickets = await _db.Tickets.ToListAsync();
-                foreach (var ticket in tickets)
+                foreach (var ticket in checkedOutTickets)
                 {
-                    fallbackStats.Add(ticket.CheckOutTime ?? ticket.CheckInTime);
-                }
+                    var assignedEmployeeId = ResolveTicketEmployeeId(ticket, employeeIdSet, workLogs);
+                    if (assignedEmployeeId == null)
+                        continue;
 
-                foreach (var employeeId in employeeIdSet)
-                {
-                    result[employeeId] = fallbackStats.Clone();
+                    result[assignedEmployeeId].Add(ticket.CheckOutTime!.Value);
                 }
             }
 
@@ -382,16 +403,43 @@ namespace ParkingManagement.BLL.Services.Implementations
         private static string? ResolvePaymentEmployeeId(
             Payment payment,
             HashSet<string> employeeIdSet,
-            List<WorkLog> workLogs)
+            List<WorkLog> workLogs,
+            bool allowWorkLogFallback)
         {
-            if (!string.IsNullOrWhiteSpace(payment.CollectedByEmployeeId) &&
-                employeeIdSet.Contains(payment.CollectedByEmployeeId))
+            if (!string.IsNullOrWhiteSpace(payment.CollectedByEmployeeId))
             {
-                return payment.CollectedByEmployeeId;
+                return employeeIdSet.Contains(payment.CollectedByEmployeeId)
+                    ? payment.CollectedByEmployeeId
+                    : null;
             }
+
+            if (!allowWorkLogFallback)
+                return null;
 
             return workLogs
                 .Where(w => w.StartTime <= payment.PaymentTime && GetWorkLogEndTime(w) >= payment.PaymentTime)
+                .OrderByDescending(w => w.StartTime)
+                .FirstOrDefault()
+                ?.EmployeeId;
+        }
+
+        private static string? ResolveTicketEmployeeId(
+            Ticket ticket,
+            HashSet<string> employeeIdSet,
+            List<WorkLog> workLogs)
+        {
+            if (!string.IsNullOrWhiteSpace(ticket.CheckedOutByEmployeeId))
+            {
+                return employeeIdSet.Contains(ticket.CheckedOutByEmployeeId)
+                    ? ticket.CheckedOutByEmployeeId
+                    : null;
+            }
+
+            if (!ticket.CheckOutTime.HasValue)
+                return null;
+
+            return workLogs
+                .Where(w => w.StartTime <= ticket.CheckOutTime.Value && GetWorkLogEndTime(w) >= ticket.CheckOutTime.Value)
                 .OrderByDescending(w => w.StartTime)
                 .FirstOrDefault()
                 ?.EmployeeId;

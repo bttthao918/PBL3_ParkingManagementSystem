@@ -116,13 +116,12 @@
             </form>
 
             <div class="table-wrapper">
-                <table class="reservation-table">
+                <table class="reservation-table lean-reservation-table">
                     <thead>
                         <tr>
                             <th>Mã đơn</th>
                             <th>Khách hàng</th>
                             <th>Biển số</th>
-                            <th>Loại xe</th>
                             <th>Chỗ đặt</th>
                             <th>Giờ hẹn</th>
                             <th>Trạng thái</th>
@@ -154,13 +153,6 @@
                                     <td><strong>@item.VehiclePlate</strong></td>
 
                                     <td>
-                                        <span class="vehicle-type @item.VehicleClass">
-                                            <i class="@item.VehicleIcon"></i>
-                                            @item.VehicleType
-                                        </span>
-                                    </td>
-
-                                    <td>
                                         <span class="slot-pill">
                                             <i class="fa-solid fa-square-parking"></i>
                                             @item.SlotText
@@ -169,7 +161,13 @@
 
                                     <td>
                                         <strong>@item.ExpectedTimeText</strong>
-                                        <span>@item.ExpectedDateText - @item.TimeLabel</span>
+                                        <span>
+                                            @item.ExpectedDateText
+                                            @if (!string.IsNullOrWhiteSpace(item.TimeLabel))
+                                            {
+                                                <text> - @item.TimeLabel</text>
+                                            }
+                                        </span>
                                     </td>
 
                                     <td>
@@ -246,7 +244,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="8" class="empty-row">Không có đơn đặt chỗ phù hợp.</td>
+                                <td colspan="7" class="empty-row">Không có đơn đặt chỗ phù hợp.</td>
                             </tr>
                         }
                     </tbody>
@@ -341,7 +339,10 @@
                         <i class="fa-solid fa-circle"></i>
                         @Model.SelectedReservation.Status
                     </span>
-                    <span>@Model.SelectedReservation.TimeLabel</span>
+                    @if (!string.IsNullOrWhiteSpace(Model.SelectedReservation.TimeLabel))
+                    {
+                        <span>@Model.SelectedReservation.TimeLabel</span>
+                    }
                 </div>
 
                 <div class="detail-actions">

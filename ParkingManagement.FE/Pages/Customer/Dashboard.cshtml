@@ -40,6 +40,9 @@
         };
     }
 
+    private static string DisplayVipLevel(string? vipLevel)
+        => NormalizeVipLevel(vipLevel).ToUpper(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
+
     private static string GetVipCssClass(string? vipLevel)
         => NormalizeVipLevel(vipLevel) switch
         {
@@ -148,11 +151,11 @@
         <div class="vip-card-header">
             <div>
                 <span class="vip-eyebrow">Hạng khách hàng</span>
-                <h3>@Model.Dashboard.VipLevel</h3>
+                <h3>@DisplayVipLevel(Model.Dashboard.VipLevel)</h3>
             </div>
             <span class="vip-badge @GetVipCssClass(Model.Dashboard.VipLevel)">
                 <i class="fa-solid @GetVipIcon(Model.Dashboard.VipLevel)"></i>
-                @Model.Dashboard.VipLevel
+                @DisplayVipLevel(Model.Dashboard.VipLevel)
             </span>
         </div>
 
@@ -195,7 +198,7 @@
                         <i class="fa-solid @tier.Icon"></i>
                     </div>
                     <div>
-                        <strong>@tier.Name</strong>
+                        <strong>@DisplayVipLevel(tier.Name)</strong>
                         <span>@tier.ThresholdLabel</span>
                     </div>
                     <b>@tier.DiscountPercent%</b>

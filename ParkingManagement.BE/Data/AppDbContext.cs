@@ -74,6 +74,12 @@ namespace ParkingManagement.DAL.Data
                 .HasForeignKey(p => p.MonthlyTicketId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Ticket>()
+                .HasOne(t => t.CheckedOutByEmployee)
+                .WithMany()
+                .HasForeignKey(t => t.CheckedOutByEmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // ── Manager → Employee (1-N) ──────────────────────────────
             modelBuilder.Entity<Manager>()
                 .HasMany(m => m.Employees)

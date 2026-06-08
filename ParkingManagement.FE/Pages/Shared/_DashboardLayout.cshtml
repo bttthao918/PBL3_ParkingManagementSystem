@@ -1,7 +1,11 @@
+@inject INotificationService NotificationService
 @{
     var role = ViewData["Role"]?.ToString() ?? "";
     var userName = ViewData["UserName"]?.ToString() ?? "User";
     var pageTitle = ViewData["Title"]?.ToString() ?? "Dashboard";
+    var notificationCenter = User.Identity?.IsAuthenticated == true
+        ? await NotificationService.GetNotificationsAsync(User)
+        : new NotificationCenterViewModel();
 }
 
 <!DOCTYPE html>
@@ -50,6 +54,7 @@
         @@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
     </style>
     @RenderSection("Styles", required: false)
+    <link rel="stylesheet" href="~/css/shared/dashboard_readability.css" asp-append-version="true" />
 </head>
 <body>
     <div class="dashboard-layout">
@@ -92,20 +97,50 @@
 
                 <div class="topbar-right">
 
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input placeholder="Tìm kiếm nhanh..." />
-                    </div>
+                    <div class="notification-menu" id="notificationMenu">
+                        <button class="notification"
+                                id="notificationBtn"
+                                type="button"
+                                aria-label="Thông báo"
+                                aria-expanded="false"
+                                aria-controls="notificationBox">
+                            <i class="fa-regular fa-bell"></i>
+                            @if (notificationCenter.HasItems)
+                            {
+                                <span class="notification-badge">@notificationCenter.Count</span>
+                            }
+                        </button>
 
-                    <div class="notification" onclick="toggleNotification()">
-                        <i class="fa-regular fa-bell"></i>
-                    </div>
+                        <div class="notification-box" id="notificationBox" role="menu" aria-label="Thông báo">
+                            <div class="notification-head">
+                                <h4>Thông báo</h4>
+                                <span>@(notificationCenter.HasItems ? $"{notificationCenter.Count} mới" : "Đã cập nhật")</span>
+                            </div>
 
-                    <div class="notification-box" id="notificationBox">
-                        <h4>Thông báo</h4>
-                        <div class="notification-item">
-                            <strong>Không có thông báo mới</strong>
-                            <p>Hệ thống hoạt động bình thường</p>
+                            @if (notificationCenter.HasItems)
+                            {
+                                @foreach (var item in notificationCenter.Items)
+                                {
+                                    <a class="notification-item @item.Type" href="@item.Url" role="menuitem">
+                                        <span class="notification-icon @item.Type">
+                                            <i class="@item.Icon"></i>
+                                        </span>
+                                        <span>
+                                            <strong>@item.Title</strong>
+                                            <p>@item.Message</p>
+                                            <small>@item.TimeText</small>
+                                        </span>
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                <div class="notification-empty">
+                                    <i class="fa-regular fa-circle-check"></i>
+                                    <strong>Không có thông báo mới</strong>
+                                    <p>Hệ thống hoạt động bình thường.</p>
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -152,27 +187,138 @@
     </div>
 
     <script>
+        const notificationMenu = document.getElementById("notificationMenu");
+        const notificationBtn = document.getElementById("notificationBtn");
+        const notificationBox = document.getElementById("notificationBox");
+        const userProfileBtn = document.getElementById("userProfileBtn");
+        const userDropdown = document.getElementById("userDropdown");
+
+        function closeNotification() {
+            notificationBox?.classList.remove("show");
+            notificationBtn?.setAttribute("aria-expanded", "false");
+        }
+
         function toggleNotification() {
-            document.getElementById("notificationBox").classList.toggle("show");
-            document.getElementById("userDropdown").classList.remove("open");
+            const shouldOpen = !notificationBox?.classList.contains("show");
+            userDropdown?.classList.remove("open");
+            notificationBox?.classList.toggle("show", shouldOpen);
+            notificationBtn?.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
         }
 
         function toggleUserDropdown() {
-            document.getElementById("userDropdown").classList.toggle("open");
-            document.getElementById("notificationBox").classList.remove("show");
+            userDropdown?.classList.toggle("open");
+            closeNotification();
         }
+
+        notificationBtn?.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleNotification();
+        });
+
+        notificationBox?.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
 
         // Đóng dropdown khi click ra ngoài
         document.addEventListener("click", function (e) {
-            const userBtn = document.getElementById("userProfileBtn");
-            const notifBtn = document.querySelector(".notification");
-            if (!userBtn?.contains(e.target)) {
-                document.getElementById("userDropdown")?.classList.remove("open");
+            if (!userProfileBtn?.contains(e.target)) {
+                userDropdown?.classList.remove("open");
             }
-            if (!notifBtn?.contains(e.target)) {
-                document.getElementById("notificationBox")?.classList.remove("show");
+            if (!notificationMenu?.contains(e.target)) {
+                closeNotification();
             }
+            document.querySelectorAll(".month-picker[open]").forEach(function (picker) {
+                if (!picker.contains(e.target)) {
+                    picker.removeAttribute("open");
+                }
+            });
         });
+
+        function padMonth(month) {
+            return String(month).padStart(2, "0");
+        }
+
+        function updateMonthPicker(picker) {
+            const currentYear = Number(picker.dataset.currentYear || new Date().getFullYear());
+            const currentMonth = Number(picker.dataset.currentMonth || (new Date().getMonth() + 1));
+            let selectedYear = Number(picker.dataset.selectedYear || currentYear);
+            let selectedMonth = Number(picker.dataset.selectedMonth || currentMonth);
+
+            if (selectedYear > currentYear) {
+                selectedYear = currentYear;
+            }
+
+            if (selectedYear === currentYear && selectedMonth > currentMonth) {
+                selectedMonth = currentMonth;
+            }
+
+            picker.dataset.selectedYear = selectedYear;
+            picker.dataset.selectedMonth = selectedMonth;
+
+            picker.querySelectorAll("[data-month-option]").forEach(function (button) {
+                const month = Number(button.dataset.monthValue);
+                const isFuture = selectedYear > currentYear || (selectedYear === currentYear && month > currentMonth);
+                const isActive = month === selectedMonth;
+                button.disabled = isFuture;
+                button.classList.toggle("active", isActive);
+                button.setAttribute("aria-pressed", isActive ? "true" : "false");
+            });
+
+            picker.querySelectorAll("[data-year-option]").forEach(function (button) {
+                const isActive = Number(button.dataset.yearValue) === selectedYear;
+                button.classList.toggle("active", isActive);
+                button.setAttribute("aria-pressed", isActive ? "true" : "false");
+            });
+
+            const value = `${selectedYear}-${padMonth(selectedMonth)}`;
+            const hiddenValue = picker.querySelector("[data-month-picker-value]");
+            if (hiddenValue) hiddenValue.value = value;
+            picker.querySelector("[data-month-picker-label]")?.replaceChildren(`Tháng ${padMonth(selectedMonth)}/${selectedYear}`);
+        }
+
+        function resetMonthPicker(picker) {
+            picker.dataset.selectedYear = picker.dataset.committedYear || picker.dataset.currentYear || new Date().getFullYear();
+            picker.dataset.selectedMonth = picker.dataset.committedMonth || picker.dataset.currentMonth || (new Date().getMonth() + 1);
+            updateMonthPicker(picker);
+        }
+
+        function setupMonthPicker(picker) {
+            if (picker.dataset.bound === "true") return;
+            picker.dataset.bound = "true";
+
+            updateMonthPicker(picker);
+
+            picker.querySelectorAll("[data-month-option]").forEach(function (button) {
+                button.addEventListener("click", function () {
+                    picker.dataset.selectedMonth = button.dataset.monthValue;
+                    updateMonthPicker(picker);
+                });
+            });
+
+            picker.querySelectorAll("[data-year-option]").forEach(function (button) {
+                button.addEventListener("click", function () {
+                    picker.dataset.selectedYear = button.dataset.yearValue;
+                    updateMonthPicker(picker);
+                });
+            });
+
+            picker.querySelector("[data-month-picker-cancel]")?.addEventListener("click", function () {
+                resetMonthPicker(picker);
+                picker.removeAttribute("open");
+            });
+
+            picker.addEventListener("toggle", function () {
+                if (!picker.open) return;
+                resetMonthPicker(picker);
+                document.querySelectorAll(".month-picker[open]").forEach(function (otherPicker) {
+                    if (otherPicker !== picker) {
+                        otherPicker.removeAttribute("open");
+                    }
+                });
+            });
+        }
+
+        document.querySelectorAll("[data-month-picker]").forEach(setupMonthPicker);
 
         // Sidebar toggle (mobile)
         document.getElementById("sidebarToggle")?.addEventListener("click", function () {

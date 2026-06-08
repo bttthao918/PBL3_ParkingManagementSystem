@@ -37,6 +37,9 @@ namespace ParkingManagement.FE.Models.ViewModels
         public string Description { get; set; } = "";
         public string DateRangeText { get; set; } = "";
         public string ActivePeriod { get; set; } = "30days";
+        public bool ShowMonthPicker { get; set; }
+        public string SelectedMonth { get; set; } = "";
+        public Dictionary<string, string> RouteValues { get; set; } = new();
     }
 
     public class StatisticsBreakdownItemViewModel

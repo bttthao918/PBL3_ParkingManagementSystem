@@ -203,19 +203,16 @@
             </form>
 
             <div class="table-wrapper">
-                <table class="ticket-table">
+                <table class="ticket-table lean-ticket-table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" /></th>
-                            <th>Mã vé</th>
-                            <th>Khách hàng</th>
-                            <th>Biển số</th>
-                            <th>Loại xe</th>
-                            <th>Khu vực</th>
-                            <th>Check-in</th>
-                            <th>Trạng thái</th>
-                            <th>Tiền phải trả</th>
-                            <th>Thao tác</th>
+                            <th class="col-code">Mã vé</th>
+                            <th class="col-customer">Khách hàng</th>
+                            <th class="col-plate">Biển số</th>
+                            <th class="col-area">Vị trí</th>
+                            <th class="col-time">Check-in</th>
+                            <th class="col-state">Trạng thái</th>
+                            <th class="col-actions">Thao tác</th>
                         </tr>
                     </thead>
 
@@ -223,14 +220,12 @@
                         @foreach (var item in Model.Tickets)
                         {
                             <tr class="@(Model.SelectedTicket?.Id == item.Id ? "selected" : "")">
-                                <td><input type="checkbox" /></td>
-
-                                <td>
+                                <td class="ticket-code-cell">
                                     <strong>@item.TicketCode</strong>
                                     <span>@item.CreatedAt</span>
                                 </td>
 
-                                <td>
+                                <td class="customer-table-cell">
                                     <div class="customer-info">
                                         <div class="avatar">
                                             @item.AvatarLetter
@@ -242,44 +237,30 @@
                                     </div>
                                 </td>
 
-                                <td>@item.PlateNumber</td>
+                                <td class="plate-table-cell">
+                                    <strong>@item.PlateNumber</strong>
+                                </td>
 
-                                <td>
-                                    <span class="vehicle-type">
-                                        <i class="fa-solid @(item.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
-                                        @item.VehicleType
+                                <td class="area-table-cell">
+                                    <span class="area-pill">
+                                        <span class="area-dot @item.AreaClass"></span>
+                                        @item.Area
                                     </span>
                                 </td>
 
-                                <td>
-                                    <span class="area-dot @item.AreaClass"></span>
-                                    @item.Area
-                                </td>
-
-                                <td>
+                                <td class="checkin-table-cell">
                                     <strong>@item.CheckInTime</strong>
                                     <span>@item.CheckInDate</span>
                                 </td>
 
-                                <td>
+                                <td class="state-price-cell">
                                     <span class="status-badge @item.StatusClass">
                                         <i class="fa-solid fa-circle"></i>
                                         @item.StatusText
                                     </span>
                                 </td>
 
-                                <td>
-                                    @if (item.TotalPrice.HasValue)
-                                    {
-                                        <strong>@item.TotalPrice.Value.ToString("N0") đ</strong>
-                                    }
-                                    else
-                                    {
-                                        <span>Chưa tính</span>
-                                    }
-                                </td>
-
-                                <td>
+                                <td class="actions-table-cell">
                                     <div class="table-actions">
                                         <a asp-page="./TicketManagement"
                                                asp-route-selectedId="@item.Id"

@@ -294,6 +294,12 @@
         font-size: 16px;
     }
 
+.shift-month-form {
+    margin: 0 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+}
+
 .week-shift-strip {
     padding: 16px;
     display: grid;
@@ -328,6 +334,14 @@
         color: #fff;
         background: #0d8bff;
     }
+
+.week-shift-stack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    min-height: 34px;
+}
 
 .week-shift-dot {
     width: 34px;
@@ -495,4 +509,19 @@
         overflow-x: auto;
         grid-template-columns: repeat(7, 56px);
     }
+
+    .shift-panel-head {
+        flex-wrap: wrap;
+        padding: 10px 16px;
+    }
+
+    .shift-month-form {
+        width: 100%;
+        margin-left: 0;
+    }
+
+        .shift-month-form .month-picker {
+            flex: 1;
+            min-width: 0;
+        }
 }

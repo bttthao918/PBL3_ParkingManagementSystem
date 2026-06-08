@@ -222,13 +222,13 @@ namespace ParkingManagement.FE.Pages.Admin
             if (string.IsNullOrWhiteSpace(employeeId))
             {
                 ActionSuccess = false;
-                ActionMessage = "Không tìm thấy nhân viên cần khôi phục.";
+                ActionMessage = "Không tìm thấy nhân viên cần kích hoạt.";
                 return RedirectToPage(BuildRouteValues());
             }
 
             var result = await _employeeService.RestoreEmployeeAsync(employeeId);
             ActionSuccess = result?.Success == true;
-            ActionMessage = result?.Message ?? (ActionSuccess ? "Đã khôi phục nhân viên." : "Không thể khôi phục nhân viên.");
+            ActionMessage = result?.Message ?? (ActionSuccess ? "Đã kích hoạt nhân viên." : "Không thể kích hoạt nhân viên.");
 
             if (ActionSuccess)
             {
@@ -238,6 +238,69 @@ namespace ParkingManagement.FE.Pages.Admin
             }
 
             return RedirectToPage(BuildRouteValues(employeeId));
+        }
+
+        public async Task<IActionResult> OnPostBulkEmployeeActionAsync(List<string> employeeIds, string bulkAction)
+        {
+            var selectedIds = employeeIds
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Select(id => id.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (selectedIds.Count == 0)
+            {
+                ActionSuccess = false;
+                ActionMessage = "Vui lòng chọn ít nhất một nhân viên.";
+                return RedirectToPage(BuildRouteValues());
+            }
+
+            var successCount = 0;
+            var failureCount = 0;
+
+            foreach (var employeeId in selectedIds)
+            {
+                var success = bulkAction switch
+                {
+                    "restore" => (await _employeeService.RestoreEmployeeAsync(employeeId))?.Success == true,
+                    "disable" => (await _employeeService.UpdateEmployeeAsync(employeeId, new UpdateEmployeeByManagerDto
+                    {
+                        Status = DisabledStatus
+                    }))?.Success == true,
+                    "delete" => (await _employeeService.DeleteEmployeeAsync(new DeleteEmployeeDto
+                    {
+                        EmployeeId = employeeId
+                    }))?.Success == true,
+                    _ => false
+                };
+
+                if (success)
+                {
+                    successCount++;
+                }
+                else
+                {
+                    failureCount++;
+                }
+            }
+
+            ActionSuccess = successCount > 0 && failureCount == 0;
+            ActionMessage = BuildBulkActionMessage(bulkAction, successCount, failureCount);
+
+            if (successCount > 0)
+            {
+                Status = bulkAction switch
+                {
+                    "restore" => null,
+                    "disable" => DisabledStatus,
+                    "delete" => DeletedStatus,
+                    _ => Status
+                };
+                PageNumber = 1;
+                SelectedEmployeeId = selectedIds.FirstOrDefault();
+            }
+
+            return RedirectToPage(BuildRouteValues(SelectedEmployeeId));
         }
 
         public async Task<IActionResult> OnPostCreateShiftAsync(string employeeId, DateTime workDate, string shiftType, string? note)
@@ -385,6 +448,29 @@ namespace ParkingManagement.FE.Pages.Admin
                 PageSize,
                 SelectedEmployeeId = selectedEmployeeId ?? SelectedEmployeeId
             };
+        }
+
+        private static string BuildBulkActionMessage(string bulkAction, int successCount, int failureCount)
+        {
+            var actionText = bulkAction switch
+            {
+                "restore" => "kích hoạt",
+                "disable" => "vô hiệu hóa",
+                "delete" => "xóa",
+                _ => "cập nhật"
+            };
+
+            if (successCount == 0)
+            {
+                return $"Không thể {actionText} các nhân viên đã chọn.";
+            }
+
+            if (failureCount == 0)
+            {
+                return $"Đã {actionText} {successCount} nhân viên.";
+            }
+
+            return $"Đã {actionText} {successCount} nhân viên, {failureCount} nhân viên chưa xử lý được.";
         }
 
         private bool IsAjaxRequest()

@@ -102,9 +102,9 @@ body {
     }
 
 .features {
-    margin-top: 34px;
+    margin-top: 26px;
     display: grid;
-    gap: 23px;
+    gap: 14px;
 }
 
 .feature-item {
@@ -128,8 +128,8 @@ body {
 }
 
 .support-box {
-    margin-top: 34px;
-    width: 520px;
+    margin-top: 26px;
+    width: 560px;
     padding: 20px 24px;
     border-radius: 16px;
     background: rgba(8, 25, 48, 0.78);
@@ -139,13 +139,13 @@ body {
 }
 
     .support-box h3 {
-        font-size: 17px;
+        font-size: 18px;
         font-weight: 900;
     }
 
     .support-box > p {
         margin-top: 5px;
-        font-size: 13px;
+        font-size: 14px;
         color: rgba(255, 255, 255, 0.78);
     }
 
@@ -175,14 +175,14 @@ body {
 
     .support-item strong {
         display: block;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 800;
     }
 
     .support-item span {
         display: block;
         margin-top: 3px;
-        font-size: 12px;
+        font-size: 13px;
         line-height: 1.35;
         color: rgba(255, 255, 255, 0.85);
     }

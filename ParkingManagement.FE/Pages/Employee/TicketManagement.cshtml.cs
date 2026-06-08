@@ -358,6 +358,13 @@ namespace ParkingManagement.FE.Pages.Employee
         public string Phone { get; set; } = "";
         public string PlateNumber { get; set; } = "";
         public string VehicleType { get; set; } = "";
+        public string VehicleClass => ResolveVehicleClass(VehicleType);
+        public string VehicleIcon => VehicleClass switch
+        {
+            "motorcycle" => "fa-solid fa-motorcycle",
+            "large-car" => "fa-solid fa-van-shuttle",
+            _ => "fa-solid fa-car-side"
+        };
         public string Area { get; set; } = "";
         public string AreaClass { get; set; } = "";
         public string CheckInTime { get; set; } = "";
@@ -369,6 +376,31 @@ namespace ParkingManagement.FE.Pages.Employee
         public decimal? TotalPrice { get; set; }
         public bool CanCheckOut { get; set; }
         public string AvatarLetter => string.IsNullOrWhiteSpace(CustomerName) ? "?" : CustomerName[..1].ToUpperInvariant();
+
+        private static string ResolveVehicleClass(string? vehicleType)
+        {
+            var normalized = NormalizeVietnameseText(vehicleType);
+            if (normalized.Contains("may") || normalized.Contains("motor"))
+                return "motorcycle";
+
+            if (normalized.Contains("lon") || normalized.Contains("large") || normalized.Contains("van"))
+                return "large-car";
+
+            return "small-car";
+        }
+
+        private static string NormalizeVietnameseText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            var normalized = value.Trim().ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var chars = normalized
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                .Select(c => c == '\u0111' || c == '\u0110' ? 'd' : c);
+
+            return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
+        }
     }
 
     public class TicketDetailVM : TicketItemVM

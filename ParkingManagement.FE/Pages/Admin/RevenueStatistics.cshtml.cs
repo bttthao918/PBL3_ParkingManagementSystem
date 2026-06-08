@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models;
 using ParkingManagement.FE.Models.ViewModels;
 using ParkingManagement.FE.Services;
+using System.Globalization;
 
 namespace ParkingManagement.FE.Pages.Admin
 {
@@ -19,6 +20,9 @@ namespace ParkingManagement.FE.Pages.Admin
 
         [BindProperty(SupportsGet = true)]
         public string Period { get; set; } = "30days";
+
+        [BindProperty(SupportsGet = true)]
+        public string? Month { get; set; }
 
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
@@ -38,7 +42,15 @@ namespace ParkingManagement.FE.Pages.Admin
             Period = NormalizePeriod(Period);
             var filter = new RevenueReportFilterDto { Period = Period };
 
-            if (DateTime.TryParse(fromDate, out var from))
+            var hasSelectedMonth = TryGetMonthRange(Month, out var monthFrom, out var monthTo);
+            if (hasSelectedMonth)
+            {
+                Period = "month";
+                filter.Period = Period;
+                filter.FromDate = monthFrom;
+                filter.ToDate = monthTo;
+            }
+            else if (DateTime.TryParse(fromDate, out var from))
             {
                 filter.FromDate = from;
             }
@@ -61,7 +73,9 @@ namespace ParkingManagement.FE.Pages.Admin
                 Title = "Báo cáo doanh thu",
                 Description = "Thống kê doanh thu toàn bộ hệ thống theo dữ liệu thực tế",
                 DateRangeText = $"{data.From:dd/MM/yyyy} - {data.To:dd/MM/yyyy}",
-                ActivePeriod = Period
+                ActivePeriod = Period,
+                ShowMonthPicker = true,
+                SelectedMonth = ResolveSelectedMonth(hasSelectedMonth ? Month : null, data.From)
             };
 
             Kpis = new()
@@ -120,14 +134,24 @@ namespace ParkingManagement.FE.Pages.Admin
 
         private void SetEmptyState()
         {
+            var today = DateTime.Today;
             Header = new StatisticsHeaderViewModel
             {
                 Title = "Báo cáo doanh thu",
                 Description = "Không thể tải dữ liệu doanh thu từ backend.",
-                DateRangeText = "",
-                ActivePeriod = Period
+                DateRangeText = Period == "today" ? today.ToString("dd/MM/yyyy") : "",
+                ActivePeriod = Period,
+                ShowMonthPicker = true,
+                SelectedMonth = ResolveSelectedMonth(Month, today)
             };
-            Kpis = new();
+            Kpis = new()
+            {
+                new() { Title = "Tổng doanh thu", Value = "0 đ", ChangeText = "Chưa tải được dữ liệu", Icon = "fa-solid fa-sack-dollar", ColorClass = "blue" },
+                new() { Title = "Doanh thu vé lượt", Value = "0 đ", ChangeText = "0 lượt thanh toán", Icon = "fa-solid fa-money-bill", ColorClass = "green" },
+                new() { Title = "Doanh thu vé tháng", Value = "0 đ", ChangeText = "0 vé tháng", Icon = "fa-solid fa-credit-card", ColorClass = "purple" },
+                new() { Title = "Tổng giao dịch", Value = "0", ChangeText = "Vé lượt + vé tháng", Icon = "fa-solid fa-ticket", ColorClass = "orange" },
+                new() { Title = "Trung bình/ngày", Value = "0 đ", ChangeText = "Chưa có dữ liệu", Icon = "fa-solid fa-clock", ColorClass = "cyan" }
+            };
             Table = new StatisticsTableViewModel
             {
                 Headers = new() { "Ngày", "Tổng doanh thu", "Số giao dịch" },
@@ -149,6 +173,27 @@ namespace ParkingManagement.FE.Pages.Admin
                 "30days" => "30days",
                 _ => "30days"
             };
+        }
+
+        private static bool TryGetMonthRange(string? month, out DateTime from, out DateTime to)
+        {
+            if (DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                from = new DateTime(parsed.Year, parsed.Month, 1);
+                to = from.AddMonths(1).AddDays(-1);
+                return true;
+            }
+
+            from = default;
+            to = default;
+            return false;
+        }
+
+        private static string ResolveSelectedMonth(string? month, DateTime fallback)
+        {
+            return DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
+                ? parsed.ToString("yyyy-MM", CultureInfo.InvariantCulture)
+                : fallback.ToString("yyyy-MM", CultureInfo.InvariantCulture);
         }
 
         private static decimal AveragePerDay(RevenueReportDto data)

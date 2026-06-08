@@ -92,7 +92,6 @@
 
     function renderDetail(row) {
         setText("detailCode", row.dataset.code);
-        setText("detailStatus", row.dataset.status);
         setText("detailVehicleType", row.dataset.type);
         setText("detailPlate", row.dataset.plate);
         setText("detailCheckIn", row.dataset.checkin);
@@ -108,6 +107,12 @@
         const iconBox = document.getElementById("detailVehicleIcon");
         iconBox.className = `detail-vehicle-icon ${row.dataset.iconClass}`;
         iconBox.innerHTML = `<i class="${row.dataset.icon}"></i>`;
+
+        const statusBadge = document.getElementById("detailStatus");
+        if (statusBadge) {
+            statusBadge.textContent = row.dataset.status || "-";
+            statusBadge.className = `status-badge ${row.dataset.statusClass || "paid"}`;
+        }
     }
 
     function setText(id, value) {

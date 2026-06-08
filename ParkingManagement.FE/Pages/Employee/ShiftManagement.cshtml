@@ -137,21 +137,32 @@
             <div class="week-shift-strip">
                 @foreach (var day in Model.WeekDays)
                 {
-                    var shift = day.Shift;
-                    var hasShift = shift != null;
-                    var shiftClass = hasShift ? Model.GetShiftClass(shift!.ShiftType, shift.Status) : "off";
+                    var hasShift = day.Shifts.Any();
                     <div class="week-day @(day.WorkDate.Date == DateTime.Today ? "today" : "")">
                         <span>@day.DayLabel</span>
                         <strong>@day.WorkDate.Day</strong>
-                        <div class="week-shift-dot @shiftClass"
-                             title="@(hasShift ? $"{shift!.ShiftType} · {shift.StartTime}-{shift.EndTime}" : "Nghỉ")">
-                            @if (hasShift && Model.IsCompleted(shift!.Status))
+                        <div class="week-shift-stack">
+                            @if (hasShift)
                             {
-                                <i class="fa-solid fa-check"></i>
+                                foreach (var shift in day.Shifts)
+                                {
+                                    var shiftClass = Model.GetShiftClass(shift.ShiftType, shift.Status);
+                                    <div class="week-shift-dot @shiftClass"
+                                         title="@($"{shift.ShiftType} · {shift.StartTime}-{shift.EndTime}")">
+                                        @if (Model.IsCompleted(shift.Status))
+                                        {
+                                            <i class="fa-solid fa-check"></i>
+                                        }
+                                        else
+                                        {
+                                            @Model.GetShiftInitial(shift.ShiftType)
+                                        }
+                                    </div>
+                                }
                             }
                             else
                             {
-                                @Model.GetShiftInitial(shift?.ShiftType)
+                                <div class="week-shift-dot off" title="Nghỉ">-</div>
                             }
                         </div>
                     </div>
@@ -168,7 +179,10 @@
         <section class="shift-panel">
             <div class="shift-panel-head">
                 <i class="fa-solid fa-chart-simple"></i>
-                <h3>Thống kê tháng này</h3>
+                <h3>Thống kê tháng @Model.SummaryMonthLabel</h3>
+                <form method="get" class="shift-month-form">
+                    <partial name="/Pages/Shared/_MonthPicker.cshtml" model="Model.SelectedMonth" />
+                </form>
             </div>
             <div class="shift-mini-stats">
                 <div>

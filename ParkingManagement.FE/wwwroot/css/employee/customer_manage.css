@@ -205,7 +205,7 @@
 
 .customer-table {
     width: 100%;
-    min-width: 760px;
+    min-width: 716px;
     border-collapse: separate;
     border-spacing: 0;
     border: 1px solid #e3ebf6;
@@ -238,10 +238,6 @@
     .customer-table tbody tr.selected {
         background: #f1f7ff;
     }
-
-.checkbox-col {
-    width: 44px;
-}
 
 .customer-info {
     display: flex;

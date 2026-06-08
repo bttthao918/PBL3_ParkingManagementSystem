@@ -287,6 +287,54 @@
     background: #f1f7ff;
 }
 
+.reservation-table.lean-reservation-table {
+    min-width: 1060px;
+    table-layout: fixed;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(1),
+.reservation-table.lean-reservation-table td:nth-child(1) {
+    width: 150px;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(2),
+.reservation-table.lean-reservation-table td:nth-child(2) {
+    width: 245px;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(3),
+.reservation-table.lean-reservation-table td:nth-child(3) {
+    width: 150px;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(4),
+.reservation-table.lean-reservation-table td:nth-child(4) {
+    width: 150px;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(5),
+.reservation-table.lean-reservation-table td:nth-child(5) {
+    width: 165px;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(6),
+.reservation-table.lean-reservation-table td:nth-child(6) {
+    width: 150px;
+    text-align: center;
+}
+
+.reservation-table.lean-reservation-table th:nth-child(7),
+.reservation-table.lean-reservation-table td:nth-child(7) {
+    width: 110px;
+    text-align: center;
+}
+
+.reservation-table.lean-reservation-table td:nth-child(1),
+.reservation-table.lean-reservation-table td:nth-child(2),
+.reservation-table.lean-reservation-table td:nth-child(3) {
+    overflow: hidden;
+}
+
 .empty-row {
     text-align: center;
     color: #71809a;

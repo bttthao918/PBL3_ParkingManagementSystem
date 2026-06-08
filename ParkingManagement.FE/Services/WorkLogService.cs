@@ -8,7 +8,7 @@ namespace ParkingManagement.FE.Services
         Task<WorkLogStatusResponse?> GetCurrentStatusAsync();
         Task<WorkLogActionResponse?> StartShiftAsync(string? scheduleId = null, string? note = null);
         Task<WorkLogActionResponse?> EndShiftAsync(string? note = null);
-        Task<WorkLogMonthlySummaryResponse?> GetMonthlySummaryAsync();
+        Task<WorkLogMonthlySummaryResponse?> GetMonthlySummaryAsync(int? year = null, int? month = null);
     }
 
     public class WorkLogService : IWorkLogService
@@ -80,12 +80,18 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<WorkLogMonthlySummaryResponse?> GetMonthlySummaryAsync()
+        public async Task<WorkLogMonthlySummaryResponse?> GetMonthlySummaryAsync(int? year = null, int? month = null)
         {
             try
             {
                 AddAuth();
-                var response = await _httpClient.GetAsync("api/worklogs/monthly-summary");
+                var queryParams = new List<string>();
+                if (year.HasValue) queryParams.Add($"year={year.Value}");
+                if (month.HasValue) queryParams.Add($"month={month.Value}");
+                var url = "api/worklogs/monthly-summary";
+                if (queryParams.Any()) url += "?" + string.Join("&", queryParams);
+
+                var response = await _httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadFromJsonAsync<WorkLogMonthlySummaryResponse>();
                 return null;
@@ -109,6 +115,16 @@ namespace ParkingManagement.FE.Services
         public int DurationMinutes { get; set; }
         public string? Note { get; set; }
         public string? Message { get; set; }
+        public WorkLogAutoClosedShift? AutoClosedShift { get; set; }
+    }
+
+    public class WorkLogAutoClosedShift
+    {
+        public string? WorkLogId { get; set; }
+        public string? ScheduleId { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public int TotalMinutes { get; set; }
     }
 
     public class WorkLogActionResponse

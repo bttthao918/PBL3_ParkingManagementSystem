@@ -340,11 +340,13 @@
 }
 
 .payment-actions .primary-link-btn,
-.payment-actions .payment-check-form {
+.payment-actions .payment-check-form,
+.payment-actions .payment-cancel-form {
     margin-top: 0;
 }
 
-.payment-check-form {
+.payment-check-form,
+.payment-cancel-form {
     display: block;
 }
 
@@ -353,12 +355,14 @@
 }
 
 .primary-link-btn,
-.payment-check-btn {
+.payment-check-btn,
+.payment-cancel-btn {
     min-height: 44px;
     border-radius: 8px;
 }
 
-.payment-check-btn {
+.payment-check-btn,
+.payment-cancel-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -371,6 +375,13 @@
     font-size: 0;
     font-weight: 800;
     cursor: pointer;
+}
+
+.payment-cancel-btn {
+    border-color: #fecaca;
+    background: #fff7f7;
+    color: #b91c1c;
+    font-size: 14px;
 }
 
 .payment-check-btn i,
@@ -1703,13 +1714,14 @@
 
 .payment-notification .payment-actions {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
     margin-top: 14px;
 }
 
 .payment-notification .primary-link-btn,
-.payment-notification .payment-check-btn {
+.payment-notification .payment-check-btn,
+.payment-notification .payment-cancel-btn {
     width: 100%;
     min-height: 44px;
     margin: 0;
@@ -1721,7 +1733,8 @@
     justify-content: center;
 }
 
-.payment-notification .payment-check-form {
+.payment-notification .payment-check-form,
+.payment-notification .payment-cancel-form {
     display: block;
     margin: 0;
 }

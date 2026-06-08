@@ -1011,3 +1011,223 @@
     align-items: center;
     gap: 12px;
 }
+
+/* Compact monthly ticket list */
+.monthly-page .monthly-ticket-table {
+    min-width: 1040px;
+    table-layout: fixed;
+}
+
+.monthly-page .monthly-ticket-table th,
+.monthly-page .monthly-ticket-table td {
+    vertical-align: middle;
+}
+
+.monthly-page .monthly-ticket-table .col-code,
+.monthly-page .monthly-ticket-table .ticket-code-cell {
+    width: 132px;
+}
+
+.monthly-page .monthly-ticket-table .col-customer,
+.monthly-page .monthly-ticket-table .customer-table-cell {
+    width: 230px;
+}
+
+.monthly-page .monthly-ticket-table .col-vehicle,
+.monthly-page .monthly-ticket-table .vehicle-table-cell {
+    width: 220px;
+}
+
+.monthly-page .monthly-ticket-table .col-package,
+.monthly-page .monthly-ticket-table .package-table-cell {
+    width: 112px;
+}
+
+.monthly-page .monthly-ticket-table .col-expiry,
+.monthly-page .monthly-ticket-table .expiry-table-cell {
+    width: 170px;
+}
+
+.monthly-page .monthly-ticket-table .col-status,
+.monthly-page .monthly-ticket-table .status-table-cell {
+    width: 150px;
+}
+
+.monthly-page .monthly-ticket-table .col-actions,
+.monthly-page .monthly-ticket-table .actions-table-cell {
+    width: 120px;
+}
+
+.monthly-page .ticket-code-cell,
+.monthly-page .customer-table-cell,
+.monthly-page .vehicle-table-cell {
+    overflow: hidden;
+}
+
+.monthly-page .ticket-code-cell strong,
+.monthly-page .customer-cell strong,
+.monthly-page .customer-cell span,
+.monthly-page .vehicle-cell strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.monthly-page .customer-cell,
+.monthly-page .vehicle-cell {
+    min-width: 0;
+}
+
+.monthly-page .vehicle-cell {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+}
+
+.monthly-page .vehicle-cell strong {
+    color: #071b35;
+    font-size: 14px;
+}
+
+.monthly-page .vehicle-chip {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 32px;
+    min-width: 112px;
+    padding: 0 12px 0 5px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.monthly-page .vehicle-chip i {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    font-size: 12px;
+}
+
+.monthly-page .vehicle-chip.motorcycle {
+    background: #ecfdf3;
+    border: 1px solid #86efac;
+    color: #089145;
+}
+
+.monthly-page .vehicle-chip.motorcycle i {
+    background: #d1fae5;
+    color: #16a34a;
+}
+
+.monthly-page .vehicle-chip.small-car {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    color: #1264d8;
+}
+
+.monthly-page .vehicle-chip.small-car i {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.monthly-page .vehicle-chip.large-car {
+    background: #f5f3ff;
+    border: 1px solid #c4b5fd;
+    color: #6d28d9;
+}
+
+.monthly-page .vehicle-chip.large-car i {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.monthly-page .package-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #f8fbff;
+    border: 1px solid #dbeafe;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.monthly-page .expiry-table-cell {
+    white-space: nowrap;
+}
+
+.monthly-page .expiry-table-cell strong {
+    color: #071b35;
+}
+
+.monthly-page .status-table-cell,
+.monthly-page .actions-table-cell {
+    text-align: center;
+}
+
+.monthly-page .status-table-cell .status-badge {
+    min-width: 116px;
+    height: 28px;
+    justify-content: center;
+    padding: 0 12px;
+    line-height: 1;
+}
+
+.monthly-page .status-badge.pending {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #c2410c;
+}
+
+.monthly-page .actions-table-cell .table-actions {
+    align-items: center;
+    justify-content: center;
+}
+
+.monthly-page .monthly-ticket-lean-table {
+    min-width: 980px;
+}
+
+.monthly-page .monthly-ticket-lean-table .col-plate,
+.monthly-page .monthly-ticket-lean-table .plate-table-cell {
+    width: 150px;
+}
+
+.monthly-page .monthly-ticket-lean-table .col-customer,
+.monthly-page .monthly-ticket-lean-table .customer-table-cell {
+    width: 250px;
+}
+
+.monthly-page .monthly-ticket-lean-table .col-package,
+.monthly-page .monthly-ticket-lean-table .package-table-cell {
+    width: 112px;
+}
+
+.monthly-page .monthly-ticket-lean-table .col-expiry,
+.monthly-page .monthly-ticket-lean-table .expiry-table-cell {
+    width: 165px;
+}
+
+.monthly-page .monthly-ticket-lean-table .plate-table-cell {
+    overflow: hidden;
+}
+
+.monthly-page .monthly-ticket-lean-table .plate-table-cell strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #071b35;
+}

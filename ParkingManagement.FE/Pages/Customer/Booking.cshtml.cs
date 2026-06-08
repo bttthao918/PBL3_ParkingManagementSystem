@@ -42,6 +42,7 @@ namespace ParkingManagement.FE.Pages.Customer
         public List<BookingVm> Bookings { get; set; } = new();
         public List<AvailableSlotDto> AvailableSlots { get; set; } = new();
         public List<SavedVehicleOption> SavedVehicles { get; set; } = new();
+        public string SavedVehicleStorageKey { get; set; } = "parking.customer.savedVehicles.anonymous";
 
         public async Task OnGetAsync()
         {
@@ -128,7 +129,12 @@ catch (Exception ex)
         private async Task LoadDataAsync()
         {
             var fallbackName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Customer";
+            var fallbackUserKey = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? User.FindFirst("accountId")?.Value
+                ?? User.FindFirst(ClaimTypes.Email)?.Value
+                ?? fallbackName;
             UserName = fallbackName;
+            SavedVehicleStorageKey = BuildSavedVehicleStorageKey(fallbackUserKey);
 
             try
             {
@@ -147,6 +153,12 @@ catch (Exception ex)
                 if (profile != null && !string.IsNullOrWhiteSpace(profile.FullName))
                 {
                     UserName = profile.FullName;
+                }
+
+                if (profile != null)
+                {
+                    var profileStorageKey = FirstNonEmpty(profile.CustomerId, profile.Email, profile.FullName, fallbackUserKey);
+                    SavedVehicleStorageKey = BuildSavedVehicleStorageKey(profileStorageKey);
                 }
 
                 // Map reservations to BookingVm
@@ -332,6 +344,29 @@ catch (Exception ex)
             }
 
             return normalized;
+        }
+
+        private static string FirstNonEmpty(params string?[] values)
+        {
+            return values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? "anonymous";
+        }
+
+        private static string BuildSavedVehicleStorageKey(string? ownerKey)
+        {
+            var normalizedOwner = string.IsNullOrWhiteSpace(ownerKey)
+                ? "anonymous"
+                : ownerKey.Trim().ToLowerInvariant();
+            var safeOwner = new string(normalizedOwner
+                .Select(ch => char.IsLetterOrDigit(ch) ? ch : '_')
+                .ToArray())
+                .Trim('_');
+
+            if (string.IsNullOrWhiteSpace(safeOwner))
+            {
+                safeOwner = "anonymous";
+            }
+
+            return $"parking.customer.savedVehicles.{safeOwner}";
         }
 
         private static string NormalizeVietnameseText(string? value)

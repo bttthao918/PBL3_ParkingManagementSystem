@@ -31,7 +31,7 @@
             <div>
                 <span>Tổng khách hàng</span>
                 <h3>@Model.TotalCustomers</h3>
-                <small>↑ 12.5% tháng này</small>
+                <small>Theo bộ lọc hiện tại</small>
             </div>
         </div>
 
@@ -40,7 +40,7 @@
             <div>
                 <span>Đang gửi xe</span>
                 <h3>@Model.ActiveCustomers</h3>
-                <small>↑ 8.2% tháng này</small>
+                <small>Đang có vé trong bãi</small>
             </div>
         </div>
 
@@ -49,16 +49,16 @@
             <div>
                 <span>Khách VIP</span>
                 <h3>@Model.VipCustomers</h3>
-                <small>↑ 5.7% tháng này</small>
+                <small>Theo hạng hiện tại</small>
             </div>
         </div>
 
         <div class="kpi-card">
             <div class="kpi-icon green"><i class="fa-solid fa-user-plus"></i></div>
             <div>
-                <span>Khách mới</span>
+                <span>Chưa phát sinh vé</span>
                 <h3>@Model.NewCustomers</h3>
-                <small>↑ 15.3% tháng này</small>
+                <small>Chưa có lượt gửi xe</small>
             </div>
         </div>
     </div>
@@ -112,9 +112,6 @@
                 <table class="customer-table">
                     <thead>
                         <tr>
-                            <th class="checkbox-col">
-                                <input type="checkbox" />
-                            </th>
                             <th>Khách hàng</th>
                             <th>SĐT</th>
                             <th>Hạng khách hàng</th>
@@ -127,10 +124,6 @@
                         @foreach (var item in Model.Customers)
                         {
                             <tr class="@(Model.SelectedCustomer?.Id == item.Id ? "selected" : "")">
-                                <td>
-                                    <input type="checkbox" />
-                                </td>
-
                                 <td>
                                     <div class="customer-info">
                                         <div class="avatar">

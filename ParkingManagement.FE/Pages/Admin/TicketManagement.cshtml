@@ -258,17 +258,13 @@
     </div>
 
     <div class="card ticket-table-card">
-        <table class="ticket-table">
+        <table class="ticket-table lean-admin-ticket-table">
             <thead>
                 <tr>
-                    <th><input type="checkbox" /></th>
                     <th>Mã vé</th>
                     <th>Biển số xe</th>
                     <th>Khách hàng</th>
-                    <th>Loại xe</th>
-                    <th>Phí</th>
                     <th>Ngày vào</th>
-                    <th>Ngày ra</th>
                     <th>Trạng thái</th>
                     <th>Thao tác</th>
                 </tr>
@@ -278,7 +274,7 @@
                 @if (Model.Tickets.Count == 0)
                 {
                     <tr>
-                        <td colspan="10" class="ticket-empty-state">Không có vé phù hợp với bộ lọc hiện tại.</td>
+                        <td colspan="6" class="ticket-empty-state">Không có vé phù hợp với bộ lọc hiện tại.</td>
                     </tr>
                 }
                 else
@@ -286,14 +282,10 @@
                     @foreach (var ticket in Model.Tickets)
                     {
                         <tr>
-                            <td><input type="checkbox" /></td>
                             <td class="ticket-code">@ticket.Code</td>
                             <td>@ticket.PlateNumber</td>
                             <td>@ticket.CustomerName</td>
-                            <td>@ticket.Type</td>
-                            <td>@ticket.Price.ToString("N0") đ</td>
                             <td>@ticket.CheckInTime.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@(ticket.CheckOutTime != DateTime.MinValue ? ticket.CheckOutTime.ToString("dd/MM/yyyy HH:mm") : "-")</td>
                             <td>
                                 <span class="ticket-status @ticket.StatusClass">
                                     @ticket.Status

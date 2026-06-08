@@ -1,4 +1,18 @@
-﻿@model ParkingManagement.FE.Models.ViewModels.StatisticsHeaderViewModel
+@model ParkingManagement.FE.Models.ViewModels.StatisticsHeaderViewModel
+@{
+    string BuildPeriodHref(string period)
+    {
+        var query = Model.RouteValues
+            .Where(x => !string.IsNullOrWhiteSpace(x.Key)
+                && !string.Equals(x.Key, "period", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(x.Key, "month", StringComparison.OrdinalIgnoreCase))
+            .Select(x => $"{Uri.EscapeDataString(x.Key)}={Uri.EscapeDataString(x.Value ?? "")}")
+            .ToList();
+
+        query.Add($"period={Uri.EscapeDataString(period)}");
+        return "?" + string.Join("&", query);
+    }
+}
 
 <div class="stat-header">
     <div>
@@ -11,8 +25,19 @@
             <i class="fa-solid fa-calendar-days"></i>
             @Model.DateRangeText
         </span>
-        <a href="?period=today" class="@(Model.ActivePeriod == "today" ? "active" : "")" aria-current="@(Model.ActivePeriod == "today" ? "page" : null)">Hôm nay</a>
-        <a href="?period=7days" class="@(Model.ActivePeriod == "7days" ? "active" : "")" aria-current="@(Model.ActivePeriod == "7days" ? "page" : null)">7 ngày</a>
-        <a href="?period=30days" class="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "active" : "")" aria-current="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "page" : null)">30 ngày</a>
+        <a href="@BuildPeriodHref("today")" class="@(Model.ActivePeriod == "today" ? "active" : "")" aria-current="@(Model.ActivePeriod == "today" ? "page" : null)">Hôm nay</a>
+        <a href="@BuildPeriodHref("7days")" class="@(Model.ActivePeriod == "7days" ? "active" : "")" aria-current="@(Model.ActivePeriod == "7days" ? "page" : null)">7 ngày</a>
+        <a href="@BuildPeriodHref("30days")" class="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "active" : "")" aria-current="@(Model.ActivePeriod == "30days" || string.IsNullOrEmpty(Model.ActivePeriod) ? "page" : null)">30 ngày</a>
+        @if (Model.ShowMonthPicker)
+        {
+            <form method="get" class="stat-month-form @(Model.ActivePeriod == "month" ? "active" : "")">
+                @foreach (var route in Model.RouteValues.Where(x => !string.Equals(x.Key, "period", StringComparison.OrdinalIgnoreCase) && !string.Equals(x.Key, "month", StringComparison.OrdinalIgnoreCase)))
+                {
+                    <input type="hidden" name="@route.Key" value="@route.Value" />
+                }
+                <input type="hidden" name="period" value="month" />
+                <partial name="/Pages/Shared/_MonthPicker.cshtml" model="Model.SelectedMonth" />
+            </form>
+        }
     </nav>
 </div>

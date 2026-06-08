@@ -1,126 +1,391 @@
 @page
 @model ParkingManagement.FE.Pages.Admin.DashboardModel
 @{
-    ViewData["Title"] = "Tổng quan";
+    ViewData["Title"] = Model.IsSummaryView ? "Báo cáo tổng hợp" : "Tổng quan";
     ViewData["UserName"] = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "Admin";
     ViewData["Role"] = "Quản trị hệ thống";
+
+    var revenueReport = Model.RevenueReport ?? new RevenueReportDto();
+    var customerReport = Model.CustomerReport ?? new CustomerReportDto();
+    var totalReportRevenue = Model.GetTotalReportRevenue();
+    var singleTicketRevenue = Model.GetSingleTicketRevenue();
+    var monthlyTicketRevenue = Model.GetMonthlyTicketRevenue();
+    var paymentMethods = Model.GetDashboardPaymentMethods(revenueReport.RevenueByPaymentMethod);
+    var customerGroups = Model.GetDashboardCustomerGroups(customerReport.GroupBreakdown);
+    var topRevenueDays = revenueReport.TopRevenueDays.Take(5).ToList();
+    var fallbackRevenueDays = revenueReport.DailyBreakdown
+        .OrderByDescending(x => x.Revenue)
+        .Take(5)
+        .ToList();
+    var topEmployees = revenueReport.TopEmployees.Take(5).ToList();
 }
 
-<div class="dashboard-title-card">
-    <div>
-        <h2>Tổng quan quản lý</h2>
-        <p>Theo dõi doanh thu, vé, nhân sự và tình trạng chỗ đỗ trong hệ thống.</p>
-    </div>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="/css/shared/statistics.css" asp-append-version="true" />
+    <link rel="stylesheet" href="/css/admin/dashboard.css" asp-append-version="true" />
+}
 
-<div class="kpi-grid">
-    <div class="card kpi-card">
-        <div class="kpi-icon blue"><i class="fa-solid fa-dollar-sign"></i></div>
+@if (Model.IsSummaryView)
+{
+    <div class="admin-summary-page">
+        <partial name="/Pages/Shared/Statistics/_StatisticsHeader.cshtml" model="Model.Header" />
+
+        <div class="summary-kpi-grid">
+            <article class="card summary-kpi-card">
+                <div class="summary-kpi-icon blue"><i class="fa-solid fa-wallet"></i></div>
+                <div>
+                    <span>Doanh thu</span>
+                    <strong>@totalReportRevenue.ToString("N0") đ</strong>
+                    <small>Theo kỳ báo cáo</small>
+                </div>
+            </article>
+
+            <article class="card summary-kpi-card">
+                <div class="summary-kpi-icon green"><i class="fa-solid fa-receipt"></i></div>
+                <div>
+                    <span>Giao dịch</span>
+                    <strong>@Model.GetTotalReportTransactions().ToString("N0")</strong>
+                    <small>Vé lượt + vé tháng</small>
+                </div>
+            </article>
+
+            <article class="card summary-kpi-card">
+                <div class="summary-kpi-icon purple"><i class="fa-solid fa-id-card"></i></div>
+                <div>
+                    <span>Vé tháng active</span>
+                    <strong>@Model.Summary.ActiveMonthlyTickets.ToString("N0")</strong>
+                    <small>Theo trạng thái hiện tại</small>
+                </div>
+            </article>
+
+            <article class="card summary-kpi-card">
+                <div class="summary-kpi-icon orange"><i class="fa-solid fa-square-parking"></i></div>
+                <div>
+                    <span>Chỗ trống hiện tại</span>
+                    <strong>@Model.GetSlotEmptyCount()</strong>
+                    <small>@Model.Summary.OccupiedSlots.ToString("N0") / @Model.Summary.TotalSlots.ToString("N0") đang dùng</small>
+                </div>
+            </article>
+        </div>
+
+        <div class="summary-analysis-grid">
+            <section class="card summary-breakdown-card summary-payment-card">
+                <div class="summary-card-heading">
+                    <div>
+                        <span>Doanh thu</span>
+                        <h3>Cơ cấu theo nguồn thu</h3>
+                    </div>
+                    <strong>@Model.GetRateText(singleTicketRevenue + monthlyTicketRevenue, totalReportRevenue)</strong>
+                </div>
+
+                <div class="summary-stack">
+                    <span class="blue" style="width:@Model.GetRateWidth(singleTicketRevenue, totalReportRevenue)"></span>
+                    <span class="green" style="width:@Model.GetRateWidth(monthlyTicketRevenue, totalReportRevenue)"></span>
+                </div>
+
+                <div class="summary-legend-row">
+                    <span><i class="blue"></i> Vé lượt: @Model.GetRateText(singleTicketRevenue, totalReportRevenue)</span>
+                    <span><i class="green"></i> Vé tháng: @Model.GetRateText(monthlyTicketRevenue, totalReportRevenue)</span>
+                </div>
+
+                <div class="summary-bar-list">
+                    @if (paymentMethods.Count == 0)
+                    {
+                        <p class="summary-empty">Chưa có dữ liệu phương thức thanh toán.</p>
+                    }
+                    else
+                    {
+                        @for (var i = 0; i < paymentMethods.Count; i++)
+                        {
+                            var item = paymentMethods[i];
+                            <div class="summary-bar-row">
+                                <div>
+                                    <span>@item.Key</span>
+                                    <strong>@item.Value.ToString("N0") đ</strong>
+                                </div>
+                                <div class="summary-bar">
+                                    <span class="@Model.GetColorClass(i)" style="width:@Model.GetRateWidth(item.Value, totalReportRevenue)"></span>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </section>
+
+            <section class="card summary-breakdown-card summary-customer-card stat-chart-card">
+                <h3>Cơ cấu khách hàng theo nhóm/hạng</h3>
+
+                <div class="stat-donut-layout summary-stat-donut-layout">
+                    <canvas id="mainDonutChart"></canvas>
+
+                    <div class="stat-donut-legend">
+                        @if (customerGroups.Count == 0)
+                        {
+                            <p class="summary-empty">Chưa có dữ liệu cơ cấu khách hàng.</p>
+                        }
+                        else
+                        {
+                            @for (var i = 0; i < customerGroups.Count; i++)
+                            {
+                                var item = customerGroups[i];
+                                <div>
+                                    <span class="dot @Model.GetColorClass(i)"></span>
+                                    <strong>@item.Label</strong>
+                                    <p>@item.Count.ToString("N0")</p>
+                                    <small>@item.Percentage.ToString("N1")%</small>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="summary-bottom-grid">
+            <section class="card summary-list-card">
+                <h3>Ngày doanh thu nổi bật</h3>
+
+                @if (topRevenueDays.Count > 0)
+                {
+                    @for (var i = 0; i < topRevenueDays.Count; i++)
+                    {
+                        var day = topRevenueDays[i];
+                        <div class="summary-rank-row">
+                            <b>@(i + 1)</b>
+                            <span>@day.Label</span>
+                            <strong>@day.Amount.ToString("N0") đ</strong>
+                            <em>@day.Count.ToString("N0") vé</em>
+                        </div>
+                    }
+                }
+                else if (fallbackRevenueDays.Count > 0)
+                {
+                    @for (var i = 0; i < fallbackRevenueDays.Count; i++)
+                    {
+                        var day = fallbackRevenueDays[i];
+                        <div class="summary-rank-row">
+                            <b>@(i + 1)</b>
+                            <span>@day.Date.ToString("dd/MM")</span>
+                            <strong>@day.Revenue.ToString("N0") đ</strong>
+                            <em>@day.TicketCount.ToString("N0") vé</em>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="summary-empty">Chưa có dữ liệu doanh thu theo ngày.</p>
+                }
+            </section>
+
+            <section class="card summary-list-card">
+                <h3>Nhân viên doanh thu cao</h3>
+
+                @if (topEmployees.Count == 0)
+                {
+                    <p class="summary-empty">Chưa có dữ liệu xếp hạng nhân viên.</p>
+                }
+                else
+                {
+                    @for (var i = 0; i < topEmployees.Count; i++)
+                    {
+                        var employee = topEmployees[i];
+                        <div class="summary-rank-row">
+                            <b>@(i + 1)</b>
+                            <span>@employee.EmployeeName</span>
+                            <strong>@employee.TotalRevenue.ToString("N0") đ</strong>
+                            <em>@employee.PaymentCount.ToString("N0") GD</em>
+                        </div>
+                    }
+                }
+            </section>
+
+            <section class="card summary-link-card">
+                <h3>Báo cáo chi tiết</h3>
+
+                <a asp-page="/Admin/RevenueStatistics">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Báo cáo doanh thu</span>
+                    <strong>@revenueReport.DailyBreakdown.Count.ToString("N0") ngày dữ liệu</strong>
+                </a>
+                <a asp-page="/Admin/CustomerStatistics">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                    <span>Thống kê khách hàng</span>
+                    <strong>@customerReport.TotalCustomers.ToString("N0") khách hàng</strong>
+                </a>
+                <a asp-page="/Admin/Dashboard">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Tổng quan vận hành</span>
+                    <strong>@Model.Summary.EmployeesOnline.ToString("N0") online</strong>
+                </a>
+            </section>
+        </div>
+    </div>
+}
+else
+{
+    <div class="dashboard-title-card">
         <div>
-            <p>Doanh thu hôm nay</p>
-            <h2>@Model.Summary.TodayRevenue.ToString("N0") đ</h2>
-            <span class="up">Tháng: @Model.Summary.ThisMonthRevenue.ToString("N0") đ</span>
+            <h2>Tổng quan vận hành</h2>
+            <p>Theo dõi doanh thu hôm nay, vé mới, nhân sự online và tình trạng chỗ đỗ trong hệ thống.</p>
         </div>
     </div>
 
-    <div class="card kpi-card">
-        <div class="kpi-icon green"><i class="fa-solid fa-ticket"></i></div>
-        <div>
-            <p>Tổng vé hôm nay</p>
-            <h2>@Model.Summary.TodayTickets.ToString("N0")</h2>
-            <span class="up">Tháng: @Model.Summary.ThisMonthTickets.ToString("N0")</span>
-        </div>
-    </div>
-
-    <div class="card kpi-card">
-        <div class="kpi-icon purple"><i class="fa-solid fa-users"></i></div>
-        <div>
-            <p>Nhân sự & khách</p>
-            <h2>@Model.Summary.EmployeesOnline / @Model.Summary.TotalActiveEmployees NV</h2>
-            <span class="up">Khách hàng: @Model.Summary.TotalCustomers.ToString("N0")</span>
-        </div>
-    </div>
-
-    <div class="card kpi-card">
-        <div class="kpi-icon orange"><i class="fa-solid fa-square-parking"></i></div>
-        <div>
-            <p>Tổng chỗ đỗ</p>
-            <h2>@Model.Summary.OccupiedSlots / @Model.Summary.TotalSlots</h2>
-            <div style="height:8px;background:#e5ecf5;border-radius:999px;margin:8px 0;width:160px;">
-                <div style="height:100%;width:@(Model.Summary.SlotUtilizationRate.ToString(System.Globalization.CultureInfo.InvariantCulture))%;background:#0d8bff;border-radius:999px;"></div>
+    <div class="kpi-grid">
+        <div class="card kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div>
+                <p>Doanh thu hôm nay</p>
+                <h2>@Model.Summary.TodayRevenue.ToString("N0") đ</h2>
+                <span class="up">Tháng: @Model.Summary.ThisMonthRevenue.ToString("N0") đ</span>
             </div>
-            <span>@Model.Summary.SlotUtilizationRate.ToString("0.0")% đang sử dụng</span>
+        </div>
+
+        <div class="card kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-ticket"></i></div>
+            <div>
+                <p>Tổng vé hôm nay</p>
+                <h2>@Model.Summary.TodayTickets.ToString("N0")</h2>
+                <span class="up">Tháng: @Model.Summary.ThisMonthTickets.ToString("N0")</span>
+            </div>
+        </div>
+
+        <div class="card kpi-card">
+            <div class="kpi-icon purple"><i class="fa-solid fa-user-check"></i></div>
+            <div>
+                <p>Nhân viên</p>
+                <h2>@Model.Summary.TotalActiveEmployees.ToString("N0") NV</h2>
+                <span class="up">Tài khoản hoạt động: @Model.Summary.EmployeesOnline.ToString("N0")</span>
+            </div>
+        </div>
+
+        <div class="card kpi-card">
+            <div class="kpi-icon teal"><i class="fa-solid fa-user-group"></i></div>
+            <div>
+                <p>Khách hàng</p>
+                <h2>@Model.Summary.TotalCustomers.ToString("N0")</h2>
+                <span class="up">Tổng tài khoản khách hàng</span>
+            </div>
+        </div>
+
+        <div class="card kpi-card">
+            <div class="kpi-icon orange"><i class="fa-solid fa-square-parking"></i></div>
+            <div>
+                <p>Tổng chỗ đỗ</p>
+                <h2>@Model.Summary.OccupiedSlots / @Model.Summary.TotalSlots</h2>
+                <div class="slot-usage-bar">
+                    <div style="width:@Model.GetSlotUsageWidth();"></div>
+                </div>
+                <span>@Model.Summary.SlotUtilizationRate.ToString("0.0")% đang sử dụng</span>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="card quick-actions">
-    <h3>Thao tác nhanh</h3>
+    <div class="card quick-actions">
+        <h3>Thao tác trong ngày</h3>
 
-    <div class="action-grid">
-        <a asp-page="/Admin/EmployeeManagement"><i class="fa-solid fa-user-plus"></i> Thêm nhân viên</a>
-        <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-tags"></i> Giá vé</a>
-        <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-ticket"></i> Tìm vé</a>
-        <a asp-page="/Admin/ParkingSlotManagement"><i class="fa-solid fa-square-parking"></i> Quản lý chỗ đỗ</a>
+        <div class="action-grid">
+            <a asp-page="/Admin/EmployeeManagement"><i class="fa-solid fa-user-plus"></i> Thêm nhân viên</a>
+            <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-tags"></i> Giá vé</a>
+            <a asp-page="/Admin/TicketManagement"><i class="fa-solid fa-ticket"></i> Tìm vé</a>
+            <a asp-page="/Admin/ParkingSlotManagement"><i class="fa-solid fa-square-parking"></i> Quản lý chỗ đỗ</a>
+            <a asp-page="/Admin/RevenueStatistics"><i class="fa-solid fa-chart-line"></i> Báo cáo doanh thu</a>
+        </div>
     </div>
-</div>
 
-<div class="bottom-grid admin-dashboard-bottom-grid">
-    <div class="card">
-        <h3>Nhân viên trong hệ thống</h3>
+    <div class="card chart-card admin-revenue-chart">
+        <div class="admin-revenue-chart-head">
+            <div>
+                <h3>Doanh thu 7 ngày gần đây</h3>
+            </div>
+        </div>
 
-        <table>
-            <tr>
-                <th>Nhân viên</th>
-                <th>Ca</th>
-                <th>Trạng thái</th>
-            </tr>
-            @if (Model.Employees.Count == 0)
-            {
+        @if (Model.HasRevenueTrendData())
+        {
+            <div class="admin-revenue-line-wrap" role="img" aria-label="Biểu đồ đường doanh thu 7 ngày gần đây">
+                <svg class="admin-revenue-line-svg" viewBox="0 0 700 160" preserveAspectRatio="none" aria-hidden="true">
+                    <line class="admin-revenue-grid-line" x1="0" y1="34" x2="700" y2="34" />
+                    <line class="admin-revenue-grid-line" x1="0" y1="78" x2="700" y2="78" />
+                    <line class="admin-revenue-grid-line" x1="0" y1="122" x2="700" y2="122" />
+                    <polyline class="admin-revenue-line" points="@Model.GetRevenueLinePoints()" />
+                </svg>
+            </div>
+        }
+        else
+        {
+            <div class="admin-revenue-chart-empty">
+                Chưa có dữ liệu doanh thu trong 7 ngày gần đây.
+            </div>
+        }
+    </div>
+
+    <div class="bottom-grid admin-dashboard-bottom-grid">
+        <div class="card">
+            <h3>Nhân viên trong hệ thống</h3>
+
+            <table>
                 <tr>
-                    <td colspan="3">Chưa có dữ liệu nhân viên.</td>
+                    <th>Nhân viên</th>
+                    <th>Ca</th>
+                    <th>Trạng thái</th>
                 </tr>
-            }
-            else
-            {
-                @foreach (var employee in Model.Employees)
+                @if (Model.Employees.Count == 0)
                 {
                     <tr>
-                        <td>@employee.FullName<br><small>@employee.EmployeeCode</small></td>
-                        <td>@(employee.Shift ?? "-")</td>
-                        <td><span class="status-success">@employee.Status</span></td>
+                        <td colspan="3">Chưa có dữ liệu nhân viên.</td>
                     </tr>
                 }
-            }
-        </table>
-    </div>
+                else
+                {
+                    @foreach (var employee in Model.Employees)
+                    {
+                        <tr>
+                            <td>@employee.FullName<br><small>@employee.EmployeeCode</small></td>
+                            <td>@(employee.Shift ?? "-")</td>
+                            <td><span class="status-success">@employee.Status</span></td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
 
-    <div class="card">
-        <h3>Vé mới nhất</h3>
+        <div class="card">
+            <h3>Vé mới nhất</h3>
 
-        <table>
-            <tr>
-                <th>Mã vé</th>
-                <th>Khách hàng</th>
-                <th>Trạng thái</th>
-            </tr>
-            @if (Model.RecentTickets.Count == 0)
-            {
+            <table>
                 <tr>
-                    <td colspan="3">Chưa có dữ liệu vé.</td>
+                    <th>Mã vé</th>
+                    <th>Khách hàng</th>
+                    <th>Trạng thái</th>
                 </tr>
-            }
-            else
-            {
-                @foreach (var ticket in Model.RecentTickets)
+                @if (Model.RecentTickets.Count == 0)
                 {
                     <tr>
-                        <td>@ticket.TicketId</td>
-                        <td>@(ticket.CustomerName ?? ticket.VehiclePlate)</td>
-                        <td><span class="@Model.GetTicketStatusClass(ticket.Status)">@ticket.Status</span></td>
+                        <td colspan="3">Chưa có dữ liệu vé.</td>
                     </tr>
                 }
-            }
-        </table>
+                else
+                {
+                    @foreach (var ticket in Model.RecentTickets)
+                    {
+                        <tr>
+                            <td>@ticket.TicketId</td>
+                            <td>@(ticket.CustomerName ?? ticket.VehiclePlate)</td>
+                            <td><span class="@Model.GetTicketStatusClass(ticket.Status)">@ticket.Status</span></td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
     </div>
-</div>
+}
+
+@section Scripts {
+    @if (Model.IsSummaryView)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script>
+            window.statisticsConfig = @Html.Raw(Model.SummaryChartConfigJson);
+        </script>
+        <script src="/js/statistics.js" asp-append-version="true"></script>
+    }
+}

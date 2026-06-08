@@ -256,7 +256,7 @@
                 </div>
 
                 <label>Chọn xe đã lưu</label>
-                <select id="savedVehicleSelect">
+                <select id="savedVehicleSelect" data-storage-key="@Model.SavedVehicleStorageKey">
                     @if (Model.SavedVehicles.Any())
                     {
                         @foreach (var v in Model.SavedVehicles)

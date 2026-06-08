@@ -39,6 +39,9 @@ namespace ParkingManagement.DAL.Models
         [MaxLength(30)]
         public string Status { get; set; } = "Đang trong bãi"; // Đang trong bãi / Đã ra
 
+        [MaxLength(20)]
+        public string? CheckedOutByEmployeeId { get; set; }
+
         // Navigation
         [ForeignKey("CustomerId")]
         public Customer? Customer { get; set; }
@@ -48,6 +51,9 @@ namespace ParkingManagement.DAL.Models
 
         [ForeignKey("SlotId")]
         public ParkingSlot? ParkingSlot { get; set; }
+
+        [ForeignKey("CheckedOutByEmployeeId")]
+        public Employee? CheckedOutByEmployee { get; set; }
 
         public Payment? Payment { get; set; }
     }

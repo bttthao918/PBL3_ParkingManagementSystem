@@ -13,9 +13,9 @@ namespace ParkingManagement.Web.Controllers.Api
     [Produces("application/json")]
     public class WorkLogController : ControllerBase
     {
-        private const string ScheduledStatus = "Đã lên lịch";
-        private const string WorkingStatus = "Đang làm";
-        private const string CompletedStatus = "Hoàn thành";
+        private static readonly string ScheduledStatus = ShiftConstants.ScheduledStatus;
+        private static readonly string WorkingStatus = ShiftConstants.WorkingStatus;
+        private static readonly string CompletedStatus = ShiftConstants.CompletedStatus;
 
         private readonly AppDbContext _db;
         private readonly ILogger<WorkLogController> _logger;
@@ -49,26 +49,9 @@ namespace ParkingManagement.Web.Controllers.Api
             }
 
             var now = DateTime.Now;
-            var elapsed = (now - activeLog.StartTime).TotalHours;
-            var isNextDay = activeLog.StartTime.Date < now.Date;
-
-            if (elapsed > 12 || isNextDay)
+            if (TryGetAutoCloseTime(activeLog, now, out var autoEndTime, out var autoCloseNote, out var autoCloseMessage))
             {
-                var autoEndTime = isNextDay
-                    ? activeLog.StartTime.Date.AddHours(23).AddMinutes(59)
-                    : activeLog.StartTime.AddHours(12);
-
-                var totalMinutes = (int)(autoEndTime - activeLog.StartTime).TotalMinutes;
-                activeLog.EndTime = autoEndTime;
-                activeLog.TotalMinutes = totalMinutes;
-                activeLog.Status = CompletedStatus;
-                activeLog.Note = AppendNote(activeLog.Note, "Tự động đóng - quên kết thúc ca");
-
-                if (activeLog.ShiftSchedule != null)
-                {
-                    activeLog.ShiftSchedule.Status = CompletedStatus;
-                }
-
+                var totalMinutes = CloseActiveLog(activeLog, autoEndTime, autoCloseNote);
                 await _db.SaveChangesAsync();
 
                 _logger.LogWarning("Auto-closed work log {WorkLogId} for employee {EmployeeId}", activeLog.WorkLogId, employeeId);
@@ -76,7 +59,7 @@ namespace ParkingManagement.Web.Controllers.Api
                 return Ok(new
                 {
                     isWorking = false,
-                    message = $"Ca trước đã được tự động đóng. Tổng: {totalMinutes / 60}h {totalMinutes % 60}p.",
+                    message = $"{autoCloseMessage}. Tổng: {totalMinutes / 60}h {totalMinutes % 60}p.",
                     autoClosedShift = new
                     {
                         workLogId = activeLog.WorkLogId,
@@ -110,19 +93,34 @@ namespace ParkingManagement.Web.Controllers.Api
             if (employeeId == null)
                 return Unauthorized(new { message = "Không xác định được nhân viên" });
 
+            var now = DateTime.Now;
             var activeLog = await _db.WorkLogs
+                .Include(w => w.ShiftSchedule)
                 .FirstOrDefaultAsync(w => w.EmployeeId == employeeId && w.Status == WorkingStatus);
 
             if (activeLog != null)
             {
-                return BadRequest(new
+                if (TryGetAutoCloseTime(activeLog, now, out var autoEndTime, out var autoCloseNote, out _))
                 {
-                    success = false,
-                    message = $"Bạn đang trong ca làm việc bắt đầu lúc {activeLog.StartTime:HH:mm}. Vui lòng kết thúc ca trước."
-                });
+                    var totalMinutes = CloseActiveLog(activeLog, autoEndTime, autoCloseNote);
+                    await _db.SaveChangesAsync();
+
+                    _logger.LogWarning(
+                        "Auto-closed stale work log {WorkLogId} for employee {EmployeeId} before starting a new shift. Total {Minutes} min",
+                        activeLog.WorkLogId,
+                        employeeId,
+                        totalMinutes);
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = $"Bạn đang trong ca làm việc bắt đầu lúc {activeLog.StartTime:HH:mm}. Vui lòng kết thúc ca trước."
+                    });
+                }
             }
 
-            var now = DateTime.Now;
             var schedule = await FindStartableScheduleAsync(employeeId, dto?.ScheduleId, now);
             if (schedule == null)
             {
@@ -222,14 +220,26 @@ namespace ParkingManagement.Web.Controllers.Api
             }
 
             var now = DateTime.Now;
-            var totalMinutes = (int)(now - activeLog.StartTime).TotalMinutes;
+            var endTime = now;
+            var closeNote = dto?.Note;
+            string? closeMessage = null;
+            if (TryGetAutoCloseTime(activeLog, now, out var autoEndTime, out var autoCloseNote, out var autoCloseMessage))
+            {
+                endTime = autoEndTime;
+                closeNote = string.IsNullOrWhiteSpace(closeNote)
+                    ? autoCloseNote
+                    : $"{closeNote} | {autoCloseNote}";
+                closeMessage = autoCloseMessage;
+            }
 
-            activeLog.EndTime = now;
+            var totalMinutes = Math.Max(0, (int)(endTime - activeLog.StartTime).TotalMinutes);
+
+            activeLog.EndTime = endTime;
             activeLog.TotalMinutes = totalMinutes;
             activeLog.Status = CompletedStatus;
-            if (!string.IsNullOrWhiteSpace(dto?.Note))
+            if (!string.IsNullOrWhiteSpace(closeNote))
             {
-                activeLog.Note = AppendNote(activeLog.Note, dto.Note);
+                activeLog.Note = AppendNote(activeLog.Note, closeNote);
             }
 
             if (activeLog.ShiftSchedule != null)
@@ -244,11 +254,13 @@ namespace ParkingManagement.Web.Controllers.Api
             return Ok(new
             {
                 success = true,
-                message = $"Kết thúc ca lúc {now:HH:mm}. Tổng: {totalMinutes / 60} giờ {totalMinutes % 60} phút.",
+                message = closeMessage == null
+                    ? $"Kết thúc ca lúc {endTime:HH:mm}. Tổng: {totalMinutes / 60} giờ {totalMinutes % 60} phút."
+                    : $"{closeMessage}. Tổng: {totalMinutes / 60} giờ {totalMinutes % 60} phút.",
                 workLogId = activeLog.WorkLogId,
                 scheduleId = activeLog.ScheduleId,
                 startTime = activeLog.StartTime,
-                endTime = now,
+                endTime,
                 totalMinutes
             });
         }
@@ -314,17 +326,27 @@ namespace ParkingManagement.Web.Controllers.Api
         }
 
         [HttpGet("monthly-summary")]
-        public async Task<IActionResult> GetMonthlySummary()
+        public async Task<IActionResult> GetMonthlySummary(
+            [FromQuery] int? year = null,
+            [FromQuery] int? month = null)
         {
             var employeeId = GetEmployeeId();
             if (employeeId == null)
                 return Unauthorized(new { message = "Không xác định được nhân viên" });
 
-            var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var today = DateTime.Now.Date;
+            var selectedYear = year ?? today.Year;
+            var selectedMonth = month ?? today.Month;
+            if (selectedMonth < 1 || selectedMonth > 12)
+            {
+                return BadRequest(new { message = "Tháng không hợp lệ." });
+            }
+
+            var firstDayOfMonth = new DateTime(selectedYear, selectedMonth, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
             var logs = await _db.WorkLogs
-                .Where(w => w.EmployeeId == employeeId && w.WorkDate >= firstDayOfMonth && w.WorkDate <= today && w.Status == CompletedStatus)
+                .Where(w => w.EmployeeId == employeeId && w.WorkDate >= firstDayOfMonth && w.WorkDate <= lastDayOfMonth && w.Status == CompletedStatus)
                 .ToListAsync();
 
             var totalDays = logs.Select(w => w.WorkDate).Distinct().Count();
@@ -336,8 +358,8 @@ namespace ParkingManagement.Web.Controllers.Api
                 totalMinutes,
                 totalHours = totalMinutes / 60,
                 averageHoursPerDay = totalDays > 0 ? Math.Round(totalMinutes / 60.0 / totalDays, 1) : 0,
-                month = DateTime.Now.Month,
-                year = DateTime.Now.Year
+                month = selectedMonth,
+                year = selectedYear
             });
         }
 
@@ -403,6 +425,75 @@ namespace ParkingManagement.Web.Controllers.Api
 
             _db.ShiftSchedules.Add(schedule);
             return schedule;
+        }
+
+        private static bool TryGetAutoCloseTime(
+            WorkLog activeLog,
+            DateTime now,
+            out DateTime autoEndTime,
+            out string autoCloseNote,
+            out string autoCloseMessage)
+        {
+            if (TryGetScheduledEndDateTime(activeLog, out var scheduledEndTime) &&
+                scheduledEndTime > activeLog.StartTime &&
+                now >= scheduledEndTime)
+            {
+                autoEndTime = scheduledEndTime;
+                autoCloseNote = "Tự động đóng theo giờ kết thúc ca";
+                autoCloseMessage = $"Ca đã quá giờ kết thúc ({scheduledEndTime:HH:mm}) và được tự động đóng";
+                return true;
+            }
+
+            var elapsed = (now - activeLog.StartTime).TotalHours;
+            var isNextDay = activeLog.StartTime.Date < now.Date;
+            if (elapsed > 12 || isNextDay)
+            {
+                autoEndTime = isNextDay
+                    ? activeLog.StartTime.Date.AddHours(23).AddMinutes(59)
+                    : activeLog.StartTime.AddHours(12);
+                autoCloseNote = "Tự động đóng - quá thời lượng ca";
+                autoCloseMessage = "Ca trước đã được tự động đóng";
+                return true;
+            }
+
+            autoEndTime = default;
+            autoCloseNote = string.Empty;
+            autoCloseMessage = string.Empty;
+            return false;
+        }
+
+        private static bool TryGetScheduledEndDateTime(WorkLog activeLog, out DateTime scheduledEndTime)
+        {
+            scheduledEndTime = default;
+            var schedule = activeLog.ShiftSchedule;
+            if (schedule == null)
+                return false;
+
+            var window = ShiftConstants.GetEffectiveWindow(schedule.ShiftType, schedule.StartTime, schedule.EndTime);
+            var endDate = schedule.WorkDate.Date;
+            if (window.Start > window.End)
+            {
+                endDate = endDate.AddDays(1);
+            }
+
+            scheduledEndTime = endDate.Add(window.End);
+            return true;
+        }
+
+        private static int CloseActiveLog(WorkLog activeLog, DateTime endTime, string note)
+        {
+            var totalMinutes = Math.Max(0, (int)(endTime - activeLog.StartTime).TotalMinutes);
+            activeLog.EndTime = endTime;
+            activeLog.TotalMinutes = totalMinutes;
+            activeLog.Status = CompletedStatus;
+            activeLog.Note = AppendNote(activeLog.Note, note);
+
+            if (activeLog.ShiftSchedule != null)
+            {
+                activeLog.ShiftSchedule.Status = CompletedStatus;
+            }
+
+            return totalMinutes;
         }
 
         private static string AppendNote(string? current, string note)

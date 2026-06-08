@@ -21,7 +21,11 @@
 
         <a href="?period=today" class="filter-btn @(Model.Period == "today" ? "active" : "")">Hôm nay</a>
         <a href="?period=7days" class="filter-btn @(Model.Period == "7days" ? "active" : "")">7 ngày</a>
-        <a href="?period=month" class="filter-btn @(Model.Period == "month" ? "active" : "")">Tháng này</a>
+        <a href="?period=month" class="filter-btn @(Model.Period == "month" && !Model.HasSelectedMonthFilter ? "active" : "")">Tháng này</a>
+        <form method="get" class="month-filter @(Model.HasSelectedMonthFilter ? "active" : "")">
+            <input type="hidden" name="period" value="month" />
+            <partial name="/Pages/Shared/_MonthPicker.cshtml" model="Model.SelectedMonth" />
+        </form>
     </div>
 
     <div class="report-layout">
@@ -36,7 +40,7 @@
                     </div>
                 </a>
 
-                <a asp-page="/Employee/RevenueStatistics" class="kpi-card clickable">
+                <a asp-page="/Employee/RevenueStatistics" asp-route-period="@Model.Period" asp-route-month="@Model.DetailMonth" class="kpi-card clickable">
                     <div class="kpi-icon green"><i class="fa-solid fa-money-bill-wave"></i></div>
                     <div>
                         <span>Doanh thu</span>
@@ -68,7 +72,7 @@
                 <div class="report-card chart-card">
                     <div class="card-title">
                         <h3>Doanh thu theo ngày</h3>
-                        <a asp-page="/Employee/RevenueStatistics" asp-route-period="@Model.Period">Xem chi tiết</a>
+                        <a asp-page="/Employee/RevenueStatistics" asp-route-period="@Model.Period" asp-route-month="@Model.DetailMonth">Xem chi tiết</a>
                     </div>
 
                     <div class="chart-box">

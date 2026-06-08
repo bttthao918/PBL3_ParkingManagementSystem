@@ -78,6 +78,7 @@ namespace ParkingManagement.BLL.DTOs
     public class MonthlyTicketDetailDto
     {
         public string MonthlyTicketId { get; set; } = string.Empty;
+        public string? CustomerId { get; set; }
         public string VehiclePlate { get; set; } = string.Empty;
         public string? VehicleType { get; set; }
         public string PackageType { get; set; } = string.Empty;  // "1 tháng", "3 tháng", "6 tháng"

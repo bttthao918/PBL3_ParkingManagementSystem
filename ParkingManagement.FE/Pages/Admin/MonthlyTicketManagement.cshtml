@@ -343,19 +343,16 @@
 
         <!-- Table -->
         <div class="table-wrapper">
-            <table class="data-table">
+            <table class="data-table monthly-ticket-table monthly-ticket-lean-table">
                 <thead>
                     <tr>
-                        <th>Mã vé</th>
-                        <th>Khách hàng</th>
-                        <th>Biển số</th>
-                        <th>Loại xe</th>
-                        <th>Gói</th>
-                        <th>Ngày bắt đầu</th>
-                        <th>Ngày hết hạn</th>
-                        <th>Tự gia hạn</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
+                        <th class="col-code">Mã vé</th>
+                        <th class="col-customer">Khách hàng</th>
+                        <th class="col-plate">Biển số</th>
+                        <th class="col-package">Gói</th>
+                        <th class="col-expiry">Hết hạn</th>
+                        <th class="col-status">Trạng thái</th>
+                        <th class="col-actions">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -368,41 +365,38 @@
                                 "Hoạt động" => "active",
                                 "Hết hạn" => "expired",
                                 "Đã hủy" => "cancelled",
+                                "Chờ thanh toán" => "pending",
                                 _ => ""
                             };
-                            var isExpiringSoon = ticket.Status == "Hoạt động" && ticket.DaysRemaining <= 7;
+                            var isExpiringSoon = ticket.Status == "Hoạt động" && ticket.DaysRemaining >= 0 && ticket.DaysRemaining <= 7;
 
                             <tr>
-                                <td>
+                                <td class="ticket-code-cell">
                                     <strong>@ticket.MonthlyTicketId</strong>
                                 </td>
-                                <td>
+                                <td class="customer-table-cell">
                                     <div class="customer-cell">
                                         <strong>@ticket.CustomerName</strong>
                                         <span>@ticket.CustomerPhone</span>
                                     </div>
                                 </td>
-                                <td><strong>@ticket.VehiclePlate</strong></td>
-                                <td>
-                                    <span class="vehicle-badge">
-                                        <i class="fa-solid @(ticket.VehicleType == "Xe máy" ? "fa-motorcycle" : "fa-car")"></i>
-                                        @ticket.VehicleType
-                                    </span>
+                                <td class="plate-table-cell">
+                                    <strong>@ticket.VehiclePlate</strong>
                                 </td>
-                                <td>@ticket.PackageType</td>
-                                <td>@ticket.StartDate.ToString("dd/MM/yyyy")</td>
-                                <td>
-                                    @ticket.EndDate.ToString("dd/MM/yyyy")
+                                <td class="package-table-cell">
+                                    <span class="package-chip">@ticket.PackageType</span>
+                                </td>
+                                <td class="expiry-table-cell">
+                                    <strong>@ticket.EndDate.ToString("dd/MM/yyyy")</strong>
                                     @if (isExpiringSoon)
                                     {
                                         <span class="expiring-badge">@ticket.DaysRemaining ngày</span>
                                     }
                                 </td>
-                                <td>@(ticket.AutoRenew ? "Đang bật" : "Đã tắt")</td>
-                                <td>
+                                <td class="status-table-cell">
                                     <span class="status-badge @statusClass">@ticket.Status</span>
                                 </td>
-                                <td>
+                                <td class="actions-table-cell">
                                     <div class="table-actions">
                                         <a asp-page="./MonthlyTicketManagement"
                                            asp-route-selectedId="@ticket.MonthlyTicketId"
@@ -422,7 +416,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="10" class="empty-state">
+                            <td colspan="7" class="empty-state">
                                 <i class="fa-solid fa-inbox"></i>
                                 <p>Không có vé tháng nào</p>
                             </td>
@@ -499,6 +493,7 @@
                         "Hoạt động" => "active",
                         "Hết hạn" => "expired",
                         "Đã hủy" => "cancelled",
+                        "Chờ thanh toán" => "pending",
                         _ => ""
                     };
                 }

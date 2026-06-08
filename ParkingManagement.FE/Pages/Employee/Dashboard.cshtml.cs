@@ -40,6 +40,10 @@ namespace ParkingManagement.FE.Pages.Employee
             !IsCompleted(TodayShift.Shift?.Status) &&
             IsNowInShiftWindow();
 
+        public bool ShowWorkStatusNotice =>
+            WorkStatus?.AutoClosedShift != null &&
+            !string.IsNullOrWhiteSpace(WorkStatus.Message);
+
         public string StartShiftHint
         {
             get
@@ -69,6 +73,11 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["Role"] = "Nhân viên";
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Employee";
 
+            // Load current status first because the backend may auto-close an expired shift.
+            WorkStatus = await _workLogService.GetCurrentStatusAsync();
+            TodayShift = await _shiftService.GetMyTodayShiftAsync();
+            MonthlySummary = await _workLogService.GetMonthlySummaryAsync();
+
             var employeeId = User.FindFirst("related_id")?.Value;
             if (!string.IsNullOrEmpty(employeeId))
             {
@@ -92,9 +101,6 @@ namespace ParkingManagement.FE.Pages.Employee
                 RecentTickets = searchResult.Items.Take(5).ToList();
             }
 
-            // Work status
-            WorkStatus = await _workLogService.GetCurrentStatusAsync();
-            MonthlySummary = await _workLogService.GetMonthlySummaryAsync();
             if (MonthlySummary != null &&
                 MonthlySummary.TotalDays == 0 &&
                 MonthlySummary.TotalMinutes == 0 &&
@@ -107,7 +113,6 @@ namespace ParkingManagement.FE.Pages.Employee
                     ? Math.Round(Stats.WorkMinutesThisMonth / 60.0 / Stats.WorkDaysThisMonth, 1)
                     : 0;
             }
-            TodayShift = await _shiftService.GetMyTodayShiftAsync();
             MyWeekShifts = await _shiftService.GetMyWeekAsync() ?? new List<Services.ShiftMyWeekItem>();
         }
 

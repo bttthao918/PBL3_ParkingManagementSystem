@@ -26,9 +26,14 @@ namespace ParkingManagement.FE.Pages.Employee
         public List<Services.ShiftMyWeekItem> MyWeekShifts { get; set; } = new();
         public List<EmployeeShiftDayView> WeekDays { get; set; } = new();
 
+        [BindProperty(SupportsGet = true)]
+        public string? Month { get; set; }
+
         public string EmployeeName { get; set; } = "Nhân viên";
         public string EmployeeCode { get; set; } = "";
         public DateTime Today { get; set; } = DateTime.Today;
+        public string SelectedMonth { get; set; } = DateTime.Today.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+        public string SummaryMonthLabel { get; set; } = DateTime.Today.ToString("MM/yyyy", CultureInfo.InvariantCulture);
 
         public string CurrentShiftName => TodayShift?.HasShift == true
             ? TodayShift.Shift?.ShiftType ?? "Ca hôm nay"
@@ -96,8 +101,12 @@ namespace ParkingManagement.FE.Pages.Employee
             EmployeeCode = User.FindFirst("related_id")?.Value ?? User.FindFirst("employeeId")?.Value ?? "";
             ViewData["UserName"] = EmployeeName;
 
+            var summaryMonth = ResolveMonth(Month);
+            SelectedMonth = summaryMonth.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+            SummaryMonthLabel = summaryMonth.ToString("MM/yyyy", CultureInfo.InvariantCulture);
+
             WorkStatus = await _workLogService.GetCurrentStatusAsync();
-            MonthlySummary = await _workLogService.GetMonthlySummaryAsync();
+            MonthlySummary = await _workLogService.GetMonthlySummaryAsync(summaryMonth.Year, summaryMonth.Month);
             TodayShift = await _shiftService.GetMyTodayShiftAsync();
             MyWeekShifts = await _shiftService.GetMyWeekAsync() ?? new List<Services.ShiftMyWeekItem>();
             WeekDays = BuildWeekDays(MyWeekShifts);
@@ -192,12 +201,15 @@ namespace ParkingManagement.FE.Pages.Employee
                 .Select(offset =>
                 {
                     var date = start.AddDays(offset).Date;
-                    var shift = shifts.FirstOrDefault(s => s.WorkDate.Date == date);
+                    var dayShifts = shifts
+                        .Where(s => s.WorkDate.Date == date)
+                        .OrderBy(s => TryParseTime(s.StartTime, out var startTime) ? startTime : TimeSpan.MaxValue)
+                        .ToList();
                     return new EmployeeShiftDayView
                     {
                         WorkDate = date,
                         DayLabel = GetVietnameseDayLabel(date),
-                        Shift = shift
+                        Shifts = dayShifts
                     };
                 })
                 .ToList();
@@ -207,6 +219,13 @@ namespace ParkingManagement.FE.Pages.Employee
         {
             var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
             return date.AddDays(-diff).Date;
+        }
+
+        private static DateTime ResolveMonth(string? month)
+        {
+            return DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
+                ? new DateTime(parsed.Year, parsed.Month, 1)
+                : new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
         }
 
         private static string GetVietnameseDayLabel(DateTime date)
@@ -227,12 +246,18 @@ namespace ParkingManagement.FE.Pages.Employee
         {
             return date.ToString("dddd, dd/MM/yyyy", new CultureInfo("vi-VN"));
         }
+
+        private static bool TryParseTime(string? value, out TimeSpan time)
+        {
+            return TimeSpan.TryParse(value, CultureInfo.InvariantCulture, out time);
+        }
     }
 
     public class EmployeeShiftDayView
     {
         public DateTime WorkDate { get; set; }
         public string DayLabel { get; set; } = "";
-        public Services.ShiftMyWeekItem? Shift { get; set; }
+        public List<Services.ShiftMyWeekItem> Shifts { get; set; } = new();
+        public Services.ShiftMyWeekItem? Shift => Shifts.FirstOrDefault();
     }
 }

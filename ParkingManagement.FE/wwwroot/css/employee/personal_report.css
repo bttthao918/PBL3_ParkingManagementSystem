@@ -27,8 +27,7 @@
 }
 
 .date-range,
-.filter-btn,
-.download-btn {
+.filter-btn {
     height: 44px;
     border: 1px solid #dbe5f2;
     border-radius: 12px;
@@ -42,16 +41,21 @@
     text-decoration: none;
 }
 
+.month-filter {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+    .month-filter.active .month-picker-trigger {
+        border-color: #1479ff;
+        box-shadow: 0 0 0 3px rgba(20, 121, 255, 0.12);
+    }
+
     .filter-btn.active {
         background: #1479ff;
         color: white;
         border-color: #1479ff;
-    }
-
-.download-btn {
-    margin-left: auto;
-    cursor: pointer;
-    display: none;
 }
 
 .report-layout {
@@ -283,9 +287,6 @@
         flex-wrap: wrap;
     }
 
-    .download-btn {
-        margin-left: 0;
-    }
 }
 
 @media (max-width: 640px) {

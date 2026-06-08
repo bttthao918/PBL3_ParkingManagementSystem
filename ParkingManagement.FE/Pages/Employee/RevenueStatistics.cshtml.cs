@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParkingManagement.FE.Models;
 using ParkingManagement.FE.Models.ViewModels;
 using ParkingManagement.FE.Services;
+using System.Globalization;
 
 namespace ParkingManagement.FE.Pages.Employee
 {
@@ -20,6 +21,9 @@ namespace ParkingManagement.FE.Pages.Employee
 
         [BindProperty(SupportsGet = true)]
         public string Period { get; set; } = "30days";
+
+        [BindProperty(SupportsGet = true)]
+        public string? Month { get; set; }
 
         public StatisticsHeaderViewModel Header { get; set; } = new();
         public List<StatisticsKpiCardViewModel> Kpis { get; set; } = new();
@@ -41,6 +45,16 @@ namespace ParkingManagement.FE.Pages.Employee
             ViewData["UserName"] = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nhân viên";
 
             Period = NormalizePeriod(Period);
+            DateTime? fromDate = null;
+            DateTime? toDate = null;
+            var hasSelectedMonth = TryGetMonthRange(Month, out var monthFrom, out var monthTo);
+            if (hasSelectedMonth)
+            {
+                Period = "month";
+                fromDate = monthFrom;
+                toDate = monthTo;
+            }
+
             var employeeId = User.FindFirst("related_id")?.Value;
             if (string.IsNullOrWhiteSpace(employeeId))
             {
@@ -48,7 +62,7 @@ namespace ParkingManagement.FE.Pages.Employee
                 return;
             }
 
-            var report = await _reportService.GetEmployeeRevenueReportAsync(employeeId, Period);
+            var report = await _reportService.GetEmployeeRevenueReportAsync(employeeId, Period, fromDate, toDate);
             if (report == null)
             {
                 SetEmptyData();
@@ -60,7 +74,9 @@ namespace ParkingManagement.FE.Pages.Employee
                 Title = "Báo cáo doanh thu cá nhân",
                 Description = "Thống kê doanh thu theo dữ liệu xử lý thực tế",
                 DateRangeText = $"{report.PeriodStart:dd/MM/yyyy} - {report.PeriodEnd:dd/MM/yyyy}",
-                ActivePeriod = Period
+                ActivePeriod = Period,
+                ShowMonthPicker = true,
+                SelectedMonth = ResolveSelectedMonth(hasSelectedMonth ? Month : null, report.PeriodStart)
             };
 
             var changeText = report.RevenueChangePercentage >= 0
@@ -92,7 +108,6 @@ namespace ParkingManagement.FE.Pages.Employee
                 Headers = new() { "Ngày", "Tổng doanh thu", "Số vé", "Trung bình/vé" },
                 Rows = report.DailyBreakdown
                     .OrderByDescending(d => d.Date)
-                    .Take(10)
                     .Select(day => new List<string>
                     {
                         day.Date.ToString("dd/MM/yyyy"),
@@ -140,7 +155,9 @@ namespace ParkingManagement.FE.Pages.Employee
                 Title = "Báo cáo doanh thu cá nhân",
                 Description = "Không thể tải dữ liệu doanh thu.",
                 DateRangeText = "",
-                ActivePeriod = Period
+                ActivePeriod = Period,
+                ShowMonthPicker = true,
+                SelectedMonth = ResolveSelectedMonth(Month, DateTime.Today)
             };
 
             Kpis = new()
@@ -171,6 +188,27 @@ namespace ParkingManagement.FE.Pages.Employee
                 "30days" => "30days",
                 _ => "30days"
             };
+        }
+
+        private static bool TryGetMonthRange(string? month, out DateTime from, out DateTime to)
+        {
+            if (DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                from = new DateTime(parsed.Year, parsed.Month, 1);
+                to = from.AddMonths(1).AddDays(-1);
+                return true;
+            }
+
+            from = default;
+            to = default;
+            return false;
+        }
+
+        private static string ResolveSelectedMonth(string? month, DateTime fallback)
+        {
+            return DateTime.TryParseExact(month, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
+                ? parsed.ToString("yyyy-MM", CultureInfo.InvariantCulture)
+                : fallback.ToString("yyyy-MM", CultureInfo.InvariantCulture);
         }
 
         private static List<StatisticsBreakdownItemViewModel> BuildBreakdown(Dictionary<string, decimal>? values)

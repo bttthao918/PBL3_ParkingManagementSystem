@@ -7,10 +7,10 @@ namespace ParkingManagement.FE.Services
     {
         Task<EmployeeDashboardDto?> GetEmployeeDashboardAsync(string employeeId);
         Task<ShiftAttendanceReportDto?> GetShiftAttendanceReportAsync(string employeeId, DateTime? fromDate = null, DateTime? toDate = null);
-        Task<EmployeeRevenueReportDto?> GetEmployeeRevenueReportAsync(string employeeId, string period = "month");
+        Task<EmployeeRevenueReportDto?> GetEmployeeRevenueReportAsync(string employeeId, string period = "month", DateTime? fromDate = null, DateTime? toDate = null);
         Task<DashboardSummaryDto?> GetManagerDashboardAsync();
         Task<RevenueReportDto?> GetManagerRevenueReportAsync(RevenueReportFilterDto filter);
-        Task<CustomerReportDto?> GetManagerCustomerReportAsync(string period = "30days");
+        Task<CustomerReportDto?> GetManagerCustomerReportAsync(string period = "30days", DateTime? fromDate = null, DateTime? toDate = null);
     }
 
     public class ReportService : IReportService
@@ -90,12 +90,17 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<EmployeeRevenueReportDto?> GetEmployeeRevenueReportAsync(string employeeId, string period = "month")
+        public async Task<EmployeeRevenueReportDto?> GetEmployeeRevenueReportAsync(string employeeId, string period = "month", DateTime? fromDate = null, DateTime? toDate = null)
         {
             try
             {
                 AddAuthorizationHeader();
-                var response = await _httpClient.GetAsync($"api/reports/employee/{employeeId}/revenue?period={period}");
+                var safePeriod = string.IsNullOrWhiteSpace(period) ? "month" : Uri.EscapeDataString(period);
+                var queryParams = new List<string> { $"period={safePeriod}" };
+                if (fromDate.HasValue) queryParams.Add($"fromDate={fromDate.Value:yyyy-MM-dd}");
+                if (toDate.HasValue) queryParams.Add($"toDate={toDate.Value:yyyy-MM-dd}");
+
+                var response = await _httpClient.GetAsync($"api/reports/employee/{employeeId}/revenue?{string.Join("&", queryParams)}");
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadFromJsonAsync<EmployeeRevenueReportDto>();
@@ -147,13 +152,17 @@ namespace ParkingManagement.FE.Services
             }
         }
 
-        public async Task<CustomerReportDto?> GetManagerCustomerReportAsync(string period = "30days")
+        public async Task<CustomerReportDto?> GetManagerCustomerReportAsync(string period = "30days", DateTime? fromDate = null, DateTime? toDate = null)
         {
             try
             {
                 AddAuthorizationHeader();
                 var safePeriod = string.IsNullOrWhiteSpace(period) ? "30days" : Uri.EscapeDataString(period);
-                var response = await _httpClient.GetAsync($"api/reports/manager/customers?period={safePeriod}");
+                var queryParams = new List<string> { $"period={safePeriod}" };
+                if (fromDate.HasValue) queryParams.Add($"fromDate={fromDate.Value:yyyy-MM-dd}");
+                if (toDate.HasValue) queryParams.Add($"toDate={toDate.Value:yyyy-MM-dd}");
+
+                var response = await _httpClient.GetAsync($"api/reports/manager/customers?{string.Join("&", queryParams)}");
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadFromJsonAsync<CustomerReportDto>();

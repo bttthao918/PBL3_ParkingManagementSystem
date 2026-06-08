@@ -867,3 +867,48 @@
     align-items: center;
     gap: 12px;
 }
+
+.ticket-table.lean-admin-ticket-table {
+    min-width: 980px;
+    table-layout: fixed;
+}
+
+.ticket-table.lean-admin-ticket-table th:nth-child(1),
+.ticket-table.lean-admin-ticket-table td:nth-child(1) {
+    width: 140px;
+}
+
+.ticket-table.lean-admin-ticket-table th:nth-child(2),
+.ticket-table.lean-admin-ticket-table td:nth-child(2) {
+    width: 150px;
+}
+
+.ticket-table.lean-admin-ticket-table th:nth-child(3),
+.ticket-table.lean-admin-ticket-table td:nth-child(3) {
+    width: 230px;
+}
+
+.ticket-table.lean-admin-ticket-table th:nth-child(4),
+.ticket-table.lean-admin-ticket-table td:nth-child(4) {
+    width: 170px;
+}
+
+.ticket-table.lean-admin-ticket-table th:nth-child(5),
+.ticket-table.lean-admin-ticket-table td:nth-child(5) {
+    width: 145px;
+    text-align: center;
+}
+
+.ticket-table.lean-admin-ticket-table th:nth-child(6),
+.ticket-table.lean-admin-ticket-table td:nth-child(6) {
+    width: 120px;
+    text-align: center;
+}
+
+.ticket-table.lean-admin-ticket-table td:nth-child(1),
+.ticket-table.lean-admin-ticket-table td:nth-child(2),
+.ticket-table.lean-admin-ticket-table td:nth-child(3) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
