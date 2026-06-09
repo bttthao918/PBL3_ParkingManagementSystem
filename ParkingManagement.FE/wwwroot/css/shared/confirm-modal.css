@@ -91,6 +91,14 @@
     gap: 12px;
 }
 
+.confirm-overlay.notice .confirm-actions {
+    justify-content: center;
+}
+
+.confirm-overlay.notice .confirm-btn-ok {
+    flex: 0 1 180px;
+}
+
 .confirm-overlay .confirm-btn-cancel,
 .confirm-overlay .confirm-btn-ok {
     flex: 1;

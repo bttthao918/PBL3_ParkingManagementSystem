@@ -32,7 +32,7 @@
 
     let resolveCallback = null;
 
-    function showConfirm(title, message, type) {
+    function configureModal(title, message, type) {
         titleEl.textContent = title || 'Xác nhận';
         msgEl.textContent = message || 'Bạn có chắc muốn thực hiện hành động này?';
 
@@ -46,15 +46,33 @@
         };
         iconEl.innerHTML = `<i class="${iconMap[type] || iconMap.info}"></i>`;
 
-        // Button style theo type
         okBtn.className = 'confirm-btn-ok ' + (type || 'info');
-        okBtn.textContent = type === 'danger' ? 'Xác nhận' : 'Đồng ý';
+    }
 
+    function openModal() {
         modal.classList.add('open');
 
         return new Promise(resolve => {
             resolveCallback = resolve;
         });
+    }
+
+    function showConfirm(title, message, type) {
+        configureModal(title, message, type);
+        modal.classList.remove('notice');
+        cancelBtn.hidden = false;
+        okBtn.textContent = type === 'danger' ? 'Xác nhận' : 'Đồng ý';
+
+        return openModal();
+    }
+
+    function showNotice(title, message, type) {
+        configureModal(title || 'Thông báo', message, type);
+        modal.classList.add('notice');
+        cancelBtn.hidden = true;
+        okBtn.textContent = 'Đã hiểu';
+
+        return openModal();
     }
 
     okBtn.addEventListener('click', () => {
@@ -105,6 +123,12 @@
     window.confirmAction = function (title, message, callback, type) {
         showConfirm(title, message, type || 'info').then(ok => {
             if (ok && callback) callback();
+        });
+    };
+
+    window.showNotice = function (title, message, type, callback) {
+        showNotice(title, message, type || 'info').then(() => {
+            if (callback) callback();
         });
     };
 

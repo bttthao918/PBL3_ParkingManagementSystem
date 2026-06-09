@@ -67,13 +67,13 @@
 
         <div class="customer-table-card">
 
-            <form method="get" class="customer-filter-form">
+            <form method="get" class="customer-filter-form" data-auto-filter data-auto-filter-target="[data-auto-filter-results]">
 
                 <div class="filter-top">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input asp-for="Search"
-                               placeholder="Tìm theo tên, SĐT, mã khách hàng..." />
+                        <input asp-for="Search" type="search" data-auto-filter-search autocomplete="off"
+                               placeholder="Nhập thông tin khách hàng cần tìm..." />
                     </div>
 
                     <button type="submit" class="secondary-btn filter-btn">
@@ -83,14 +83,14 @@
                 </div>
 
                 <div class="filter-bottom">
-                    <select asp-for="StatusFilter">
+                    <select asp-for="StatusFilter" data-auto-filter-control>
                         <option value="">Trạng thái: Tất cả</option>
                         <option value="Parking">Đang gửi xe</option>
                         <option value="Left">Đã rời bãi</option>
                         <option value="Debt">Nợ phí</option>
                     </select>
 
-                    <select asp-for="VipFilter">
+                    <select asp-for="VipFilter" data-auto-filter-control>
                         <option value="">Hạng khách hàng: Tất cả</option>
                         <option value="member">Thành viên</option>
                         <option value="silver">Bạc</option>
@@ -98,7 +98,7 @@
                         <option value="diamond">Kim Cương</option>
                     </select>
 
-                    <input asp-for="RegisterDate" type="date" class="date-input" />
+                    <input asp-for="RegisterDate" type="date" class="date-input" data-auto-filter-control />
 
                     <a asp-page="./CustomerManagement" class="clear-filter">
                         <i class="fa-solid fa-rotate-right"></i>
@@ -108,7 +108,7 @@
 
             </form>
 
-            <div class="table-wrapper">
+            <div class="table-wrapper" data-auto-filter-results>
                 <table class="customer-table">
                     <thead>
                         <tr>
@@ -188,7 +188,7 @@
                 </table>
             </div>
 
-            <div class="pagination-row">
+            <div class="pagination-row" data-auto-filter-results>
                 <span>Hiển thị @Model.FirstItemIndex - @Model.LastItemIndex trong @Model.TotalCustomers khách hàng</span>
 
                 <div class="pagination">
@@ -241,7 +241,7 @@
                     <input type="hidden" name="VipFilter" value="@Model.VipFilter" />
                     <input type="hidden" name="RegisterDate" value="@(Model.RegisterDate?.ToString("yyyy-MM-dd"))" />
                     <input type="hidden" name="PageNumber" value="1" />
-                    <select asp-for="PageSize" onchange="this.form.submit()">
+                    <select asp-for="PageSize">
                         <option value="5">5 / trang</option>
                         <option value="10">10 / trang</option>
                         <option value="20">20 / trang</option>

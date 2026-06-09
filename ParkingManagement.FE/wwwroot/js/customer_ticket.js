@@ -13,6 +13,8 @@
     const noResultsRow = document.getElementById("ticketNoResults");
 
     let selectedTicketId = null;
+    let searchTimer;
+    let searchComposing = false;
 
     rows.forEach(row => {
         row.addEventListener("click", function () {
@@ -36,19 +38,36 @@
     closeDetailBtn.addEventListener("click", hideDetail);
     bottomCloseDetailBtn.addEventListener("click", hideDetail);
 
-    applyFilterBtn.addEventListener("click", applyFilters);
+    applyFilterBtn?.addEventListener("click", applyFilters);
+    [dateFilter, vehicleFilter, statusFilter].forEach(function (control) {
+        control?.addEventListener("change", applyFilters);
+    });
 
-    searchFilter.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            applyFilters();
+    searchFilter?.addEventListener("compositionstart", function () {
+        searchComposing = true;
+    });
+
+    searchFilter?.addEventListener("compositionend", function () {
+        searchComposing = false;
+        scheduleFilters();
+    });
+
+    searchFilter?.addEventListener("input", function () {
+        if (!searchComposing) {
+            scheduleFilters();
         }
     });
 
+    function scheduleFilters() {
+        window.clearTimeout(searchTimer);
+        searchTimer = window.setTimeout(applyFilters, 250);
+    }
+
     function applyFilters() {
-        const selectedDate = dateFilter.value;
-        const selectedVehicle = vehicleFilter.value;
-        const selectedStatus = statusFilter.value;
-        const keyword = normalize(searchFilter.value);
+        const selectedDate = dateFilter?.value || "";
+        const selectedVehicle = vehicleFilter?.value || "";
+        const selectedStatus = statusFilter?.value || "";
+        const keyword = normalize(searchFilter?.value || "");
         let visibleCount = 0;
 
         rows.forEach(row => {
@@ -56,15 +75,14 @@
             const matchesVehicle = !selectedVehicle || row.dataset.type === selectedVehicle;
             const matchesStatus = !selectedStatus || row.dataset.status === selectedStatus;
             const matchesKeyword = !keyword
-                || normalize(row.dataset.code).includes(keyword)
-                || normalize(row.dataset.plate).includes(keyword);
+                || Object.values(row.dataset).some(value => matchesSearchValue(value, keyword));
             const isVisible = matchesDate && matchesVehicle && matchesStatus && matchesKeyword;
 
             row.classList.toggle("hidden", !isVisible);
             if (isVisible) visibleCount += 1;
         });
 
-        noResultsRow.classList.toggle("hidden", visibleCount > 0);
+        noResultsRow?.classList.toggle("hidden", visibleCount > 0);
 
         if (selectedTicketId) {
             const selectedRow = rows.find(row => row.dataset.ticketId === selectedTicketId);
@@ -124,6 +142,20 @@
     }
 
     function normalize(value) {
-        return (value || "").trim().toLowerCase();
+        return (value || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D")
+            .trim()
+            .toLowerCase();
+    }
+
+    function matchesSearchValue(value, keyword) {
+        const normalizedValue = normalize(value);
+        const compactValue = normalizedValue.replace(/[^\p{L}\p{N}]/gu, "");
+        const compactKeyword = keyword.replace(/[^\p{L}\p{N}]/gu, "");
+        return normalizedValue.includes(keyword) ||
+            (compactKeyword.length > 0 && compactValue.includes(compactKeyword));
     }
 });

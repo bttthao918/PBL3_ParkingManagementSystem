@@ -90,23 +90,23 @@
             <div class="filter-bar">
                 <input type="text" value="01/05/2026 - 31/05/2026" readonly />
 
-                <select>
-                    <option>Tất cả trạng thái</option>
-                    <option>Đang chờ</option>
-                    <option>Đã xác nhận</option>
-                    <option>Đã hoàn thành</option>
-                    <option>Đã hủy</option>
+                <select id="bookingStatusFilter">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="waiting">Đang chờ</option>
+                    <option value="received">Đã nhận</option>
+                    <option value="expired">Hết hạn</option>
+                    <option value="cancelled">Đã hủy</option>
                 </select>
 
-                <select>
-                    <option>Tất cả loại xe</option>
-                    <option>Xe máy</option>
-                    <option>Ô tô nhỏ</option>
-                    <option>Ô tô lớn</option>
+                <select id="bookingVehicleFilter">
+                    <option value="">Tất cả loại xe</option>
+                    <option value="Xe máy">Xe máy</option>
+                    <option value="Ô tô nhỏ">Ô tô nhỏ</option>
+                    <option value="Ô tô lớn">Ô tô lớn</option>
                 </select>
 
                 <div class="search-box">
-                    <input type="text" placeholder="Tìm kiếm mã đơn, biển số..." />
+                    <input type="search" id="bookingSearchFilter" autocomplete="off" placeholder="Nhập thông tin đơn đặt chỗ cần tìm..." />
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
             </div>
@@ -166,6 +166,11 @@
                                 </td>
                             </tr>
                         }
+                        <tr id="bookingNoResults" class="hidden">
+                            <td colspan="7" style="text-align:center; padding: 2rem; color: #64748b;">
+                                Không có đơn đặt chỗ phù hợp với bộ lọc hiện tại.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

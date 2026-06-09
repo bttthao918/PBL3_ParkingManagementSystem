@@ -309,22 +309,22 @@
 
     <!-- Filter -->
     <div class="table-card">
-        <form method="get" class="filter-form">
+        <form method="get" class="filter-form" data-auto-filter data-auto-filter-target="[data-auto-filter-results]">
             <div class="filter-row">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input name="Search" value="@Model.Search"
-                           placeholder="Tìm theo biển số, mã vé, tên khách hàng, SĐT..." />
+                    <input name="Search" value="@Model.Search" type="search" data-auto-filter-search autocomplete="off"
+                           placeholder="Nhập thông tin vé tháng cần tìm..." />
                 </div>
 
-                <select name="StatusFilter">
+                <select name="StatusFilter" data-auto-filter-control>
                     <option value="">Trạng thái: Tất cả</option>
                     <option value="Hoạt động" selected="@(Model.StatusFilter == "Hoạt động")">Hoạt động</option>
                     <option value="Hết hạn" selected="@(Model.StatusFilter == "Hết hạn")">Hết hạn</option>
                     <option value="Đã hủy" selected="@(Model.StatusFilter == "Đã hủy")">Đã hủy</option>
                 </select>
 
-                <select name="VehicleTypeFilter">
+                <select name="VehicleTypeFilter" data-auto-filter-control>
                     <option value="">Loại xe: Tất cả</option>
                     <option value="Xe máy" selected="@(Model.VehicleTypeFilter == "Xe máy")">Xe máy</option>
                     <option value="Ô tô nhỏ" selected="@(Model.VehicleTypeFilter == "Ô tô nhỏ")">Ô tô nhỏ</option>
@@ -341,6 +341,7 @@
             </div>
         </form>
 
+        <div data-auto-filter-results>
         <!-- Table -->
         <div class="table-wrapper">
             <table class="data-table monthly-ticket-table monthly-ticket-lean-table">
@@ -463,6 +464,7 @@
                 </div>
             </div>
         }
+        </div>
     </div>
 
     <!-- Detail Panel -->

@@ -60,11 +60,21 @@ namespace ParkingManagement.Web.Controllers.Api
                 if (!string.IsNullOrWhiteSpace(search))
                 {
                     var keyword = search.Trim();
+                    var compactKeyword = keyword.Replace("-", "").Replace(".", "").Replace(" ", "");
                     query = query.Where(t =>
                         t.VehiclePlate.Contains(keyword) ||
+                        t.VehiclePlate.Replace("-", "").Replace(".", "").Replace(" ", "").Contains(compactKeyword) ||
                         t.MonthlyTicketId.Contains(keyword) ||
+                        t.CustomerId.Contains(keyword) ||
+                        t.VehicleType.Contains(keyword) ||
+                        t.PackageType.Contains(keyword) ||
+                        t.Status.Contains(keyword) ||
+                        t.TotalFee.ToString().Contains(keyword) ||
+                        t.StartDate.ToString().Contains(keyword) ||
+                        t.EndDate.ToString().Contains(keyword) ||
                         (t.Customer != null && t.Customer.FullName.Contains(keyword)) ||
-                        (t.Customer != null && t.Customer.PhoneNumber != null && t.Customer.PhoneNumber.Contains(keyword)));
+                        (t.Customer != null && t.Customer.PhoneNumber != null && t.Customer.PhoneNumber.Contains(keyword)) ||
+                        (t.Customer != null && t.Customer.Account != null && t.Customer.Account.Email.Contains(keyword)));
                 }
 
                 // Lọc theo trạng thái

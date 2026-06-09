@@ -198,17 +198,17 @@
     <div class="card ticket-search-card">
         <h3>Tìm kiếm vé lượt</h3>
 
-        <form method="get" class="ticket-filter-grid">
+        <form method="get" class="ticket-filter-grid" data-auto-filter data-auto-filter-target="[data-auto-filter-results]">
             <input type="hidden" name="PageNumber" value="1" />
             <input type="hidden" asp-for="PageSize" />
             <div class="ticket-input-group large">
                 <label>Từ khóa</label>
-                <input type="text" asp-for="Keyword" placeholder="Nhập mã vé hoặc biển số xe..." />
+                <input type="search" asp-for="Keyword" data-auto-filter-search autocomplete="off" placeholder="Nhập thông tin vé cần tìm..." />
             </div>
 
             <div class="ticket-input-group">
                 <label>Trạng thái</label>
-                <select asp-for="Status">
+                <select asp-for="Status" data-auto-filter-control>
                     <option value="">Tất cả</option>
                     <option value="Đang trong bãi">Đang trong bãi</option>
                     <option value="Đã ra">Đã ra</option>
@@ -217,7 +217,7 @@
 
             <div class="ticket-input-group">
                 <label>Loại xe</label>
-                <select asp-for="Type">
+                <select asp-for="Type" data-auto-filter-control>
                     <option value="">Tất cả</option>
                     <option value="Xe máy">Xe máy</option>
                     <option value="Ô tô nhỏ">Ô tô nhỏ</option>
@@ -227,12 +227,12 @@
 
             <div class="ticket-input-group">
                 <label>Từ ngày</label>
-                <input type="date" asp-for="FromDate" />
+                <input type="date" asp-for="FromDate" data-auto-filter-control />
             </div>
 
             <div class="ticket-input-group">
                 <label>Đến ngày</label>
-                <input type="date" asp-for="ToDate" />
+                <input type="date" asp-for="ToDate" data-auto-filter-control />
             </div>
 
             <button class="ticket-btn-primary search-btn" type="submit">
@@ -257,7 +257,7 @@
 
     </div>
 
-    <div class="card ticket-table-card">
+    <div class="card ticket-table-card" data-auto-filter-results>
         <table class="ticket-table lean-admin-ticket-table">
             <thead>
                 <tr>
@@ -646,8 +646,13 @@
                 }
             });
 
-            document.querySelectorAll(".js-ticket-view").forEach((button) => {
-                button.addEventListener("click", () => {
+            document.addEventListener("click", (event) => {
+                const button = event.target.closest(".ticket-actions button");
+                if (!button) {
+                    return;
+                }
+
+                if (button.classList.contains("js-ticket-view")) {
                     const data = getTicketData(button);
                     text("viewTicketId", data.ticketId);
                     text("viewCode", data.ticketId);
@@ -660,11 +665,10 @@
                     text("viewCheckOut", data.ticketCheckoutText);
                     text("viewStatus", data.ticketStatus);
                     openModal(viewModal);
-                });
-            });
+                    return;
+                }
 
-            document.querySelectorAll(".ticket-actions .edit").forEach((button) => {
-                button.addEventListener("click", () => {
+                if (button.classList.contains("edit")) {
                     const data = getTicketData(button);
                     document.getElementById("editTicketId").value = data.ticketId || "";
                     document.getElementById("editTicketTitle").textContent = data.ticketId || "";
@@ -676,16 +680,15 @@
                     document.getElementById("editFee").value = data.ticketFee || "0";
                     document.getElementById("editSlot").value = data.ticketSlot || "";
                     openModal(editModal);
-                });
-            });
+                    return;
+                }
 
-            document.querySelectorAll(".ticket-actions .delete").forEach((button) => {
-                button.addEventListener("click", () => {
+                if (button.classList.contains("delete")) {
                     const data = getTicketData(button);
                     document.getElementById("deleteTicketId").value = data.ticketId || "";
                     document.getElementById("deleteTicketTitle").textContent = data.ticketId || "";
                     openModal(deleteModal);
-                });
+                }
             });
         })();
     </script>

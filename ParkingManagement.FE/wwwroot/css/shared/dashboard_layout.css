@@ -170,6 +170,27 @@ body {
         font-size: 14px;
     }
 
+.dashboard-content .filter-bar > .search-box,
+.dashboard-content .filter-row > .search-box {
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    display: block;
+    gap: 0;
+}
+
+[data-auto-filter-results] {
+    transition: opacity .16s ease;
+}
+
+[data-auto-filter-results].auto-filter-loading {
+    opacity: .52;
+    pointer-events: none;
+}
+
 .notification {
     width: 44px;
     height: 44px;

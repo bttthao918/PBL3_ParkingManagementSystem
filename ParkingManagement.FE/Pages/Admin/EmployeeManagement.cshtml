@@ -102,27 +102,21 @@
     <div class="card emp-filter-card">
         <h3>Tìm kiếm nhân viên</h3>
 
-        <form method="get" class="emp-filter-grid">
+        <form method="get" class="emp-filter-grid" id="employeeFilterForm" data-auto-filter data-auto-filter-target="[data-auto-filter-results]">
             <input type="hidden" name="PageNumber" value="1" />
 
             <div class="emp-field large">
                 <label>Từ khóa</label>
-                <input asp-for="Keyword" type="text" placeholder="Nhập tên, SĐT, email, mã nhân viên..." />
-            </div>
-
-            <div class="emp-field">
-                <label>Ca làm</label>
-                <select asp-for="Shift">
-                    <option value="">Tất cả</option>
-                    <option value="Sáng">Sáng</option>
-                    <option value="Chiều">Chiều</option>
-                    <option value="Tối">Tối</option>
-                </select>
+                <input asp-for="Keyword"
+                       type="search"
+                       autocomplete="off"
+                       data-auto-filter-search
+                       placeholder="Nhập thông tin nhân viên cần tìm..." />
             </div>
 
             <div class="emp-field">
                 <label>Trạng thái</label>
-                <select asp-for="Status">
+                <select asp-for="Status" data-auto-filter-control>
                     @if (Model.IsDeletedFolder)
                     {
                         <option value="Đã xóa">Đã xóa</option>
@@ -138,7 +132,7 @@
 
             <div class="emp-field">
                 <label>Số dòng</label>
-                <select asp-for="PageSize">
+                <select asp-for="PageSize" data-auto-filter-control>
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -146,10 +140,6 @@
                 </select>
             </div>
 
-            <button class="emp-btn-primary" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Tìm kiếm
-            </button>
         </form>
 
         <div class="emp-filter-actions">
@@ -238,7 +228,7 @@
                 </div>
             </form>
 
-            <div class="card emp-table-card">
+            <div class="card emp-table-card" data-auto-filter-results>
                 <div class="emp-table-title">
                     <h3>@(Model.IsDeletedFolder ? "Thư mục nhân viên đã xóa" : "Danh sách nhân viên") (@Model.TotalEmployees.ToString("N0"))</h3>
                 </div>
@@ -251,7 +241,6 @@
                                 <th>Mã NV</th>
                                 <th>Họ tên</th>
                                 <th>Vị trí</th>
-                                <th>Ca làm</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -261,7 +250,7 @@
                             @if (Model.Employees.Count == 0)
                             {
                                 <tr>
-                                    <td colspan="7" class="emp-empty-state">
+                                    <td colspan="6" class="emp-empty-state">
                                         @(Model.IsDeletedFolder ? "Chưa có nhân viên nào trong thư mục đã xóa." : "Không có nhân viên phù hợp với bộ lọc hiện tại.")
                                     </td>
                                 </tr>
@@ -290,7 +279,6 @@
                                             </div>
                                         </td>
                                         <td>@emp.Position</td>
-                                        <td>@emp.Department</td>
                                         <td>
                                             <span class="emp-status @emp.StatusClass">
                                                 @emp.Status
@@ -303,7 +291,6 @@
                                                    asp-page="/Admin/EmployeeManagement"
                                                    asp-route-keyword="@Model.Keyword"
                                                    asp-route-status="@Model.Status"
-                                                   asp-route-shift="@Model.Shift"
                                                    asp-route-pageNumber="@Model.PageNumber"
                                                    asp-route-pageSize="@Model.PageSize"
                                                    asp-route-selectedEmployeeId="@emp.Id">
@@ -327,7 +314,6 @@
                             <a asp-page="/Admin/EmployeeManagement"
                                asp-route-keyword="@Model.Keyword"
                                asp-route-status="@Model.Status"
-                               asp-route-shift="@Model.Shift"
                                asp-route-pageSize="@Model.PageSize"
                                asp-route-pageNumber="@(Model.PageNumber - 1)"
                                asp-route-selectedEmployeeId="@Model.SelectedEmployeeId">‹</a>
@@ -343,7 +329,6 @@
                                asp-page="/Admin/EmployeeManagement"
                                asp-route-keyword="@Model.Keyword"
                                asp-route-status="@Model.Status"
-                               asp-route-shift="@Model.Shift"
                                asp-route-pageSize="@Model.PageSize"
                                asp-route-pageNumber="@pageIndex"
                                asp-route-selectedEmployeeId="@Model.SelectedEmployeeId">@pageIndex</a>
@@ -354,7 +339,6 @@
                             <a asp-page="/Admin/EmployeeManagement"
                                asp-route-keyword="@Model.Keyword"
                                asp-route-status="@Model.Status"
-                               asp-route-shift="@Model.Shift"
                                asp-route-pageSize="@Model.PageSize"
                                asp-route-pageNumber="@(Model.PageNumber + 1)"
                                asp-route-selectedEmployeeId="@Model.SelectedEmployeeId">›</a>
@@ -897,8 +881,6 @@
             }
         });
 
-        const rowChecks = Array.from(document.querySelectorAll(".emp-row-check"));
-        const headerChecks = [document.getElementById("empSelectAll"), document.getElementById("empSelectAllTable")].filter(Boolean);
         const selectedCount = document.getElementById("selectedEmployeeCount");
         const bulkForm = document.getElementById("empBulkActionForm");
         const bulkActionValue = document.getElementById("empBulkActionValue");
@@ -906,20 +888,29 @@
         const bulkActionButtons = Array.from(document.querySelectorAll(".emp-bulk-action"));
         let bulkSubmitting = false;
 
+        function getRowChecks() {
+            return Array.from(document.querySelectorAll(".emp-row-check"));
+        }
+
+        function getHeaderChecks() {
+            return [document.getElementById("empSelectAll"), document.getElementById("empSelectAllTable")].filter(Boolean);
+        }
+
         function getSelectedEmployeeIds() {
-            return rowChecks
+            return getRowChecks()
                 .filter(check => check.checked)
                 .map(check => check.value)
                 .filter(Boolean);
         }
 
         function updateSelectedCount() {
+            const rowChecks = getRowChecks();
             const count = getSelectedEmployeeIds().length;
             selectedCount.textContent = count > 0 ? `Đã chọn ${count} nhân viên` : "Chưa chọn nhân viên";
             bulkActionButtons.forEach(button => {
                 button.disabled = count === 0;
             });
-            headerChecks.forEach(check => {
+            getHeaderChecks().forEach(check => {
                 check.checked = rowChecks.length > 0 && count === rowChecks.length;
                 check.indeterminate = count > 0 && count < rowChecks.length;
             });
@@ -977,14 +968,20 @@
             });
         }
 
-        headerChecks.forEach(check => {
-            check.addEventListener("change", () => {
-                rowChecks.forEach(rowCheck => rowCheck.checked = check.checked);
+        document.addEventListener("change", (event) => {
+            const check = event.target;
+            if (check?.id === "empSelectAll" || check?.id === "empSelectAllTable") {
+                getRowChecks().forEach(rowCheck => rowCheck.checked = check.checked);
                 updateSelectedCount();
-            });
+                return;
+            }
+
+            if (check?.classList?.contains("emp-row-check")) {
+                updateSelectedCount();
+            }
         });
 
-        rowChecks.forEach(check => check.addEventListener("change", updateSelectedCount));
+        document.addEventListener("auto-filter:updated", updateSelectedCount);
         updateSelectedCount();
     </script>
 }

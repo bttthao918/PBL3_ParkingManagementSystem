@@ -10,6 +10,7 @@ using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Services.Implementations;
 using ParkingManagement.BLL.Validators;
 using ParkingManagement.BLL.Strategies;
+using ParkingManagement.Web.Realtime;
 
 namespace ParkingManagement.Web.Extensions
 {
@@ -17,13 +18,17 @@ namespace ParkingManagement.Web.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IRealtimeUpdateService, RealtimeUpdateService>();
+            services.AddSingleton<RealtimeSaveChangesInterceptor>();
+
             // 1. DbContext
-            services.AddDbContext<AppDbContext>(options =>
+            services.AddDbContext<AppDbContext>((serviceProvider, options) =>
             {
                 options.UseSqlServer(
                     configuration.GetConnectionString("DefaultConnection"),
                     sql => sql.MigrationsAssembly("BackendAPI")
                 );
+                options.AddInterceptors(serviceProvider.GetRequiredService<RealtimeSaveChangesInterceptor>());
                 options.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
             });
             services.Configure<PayOsOptions>(configuration.GetSection("PayOS"));

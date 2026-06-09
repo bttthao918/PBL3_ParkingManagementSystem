@@ -1,4 +1,5 @@
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Validators;
 using ParkingManagement.DAL.Models;
@@ -56,13 +57,16 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
+                var customers = (await _customerRepo.GetAllAsync()).ToDictionary(c => c.CustomerId, c => c);
                 filtered = filtered.Where(r =>
-                    r.ReservationId.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                    (r.VehiclePlate?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (r.Customer?.FullName?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (r.Customer?.PhoneNumber?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (r.SlotId?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (r.ParkingSlot?.Location?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false));
+                {
+                    customers.TryGetValue(r.CustomerId, out var customer);
+                    return SearchTextMatcher.Matches(keyword,
+                        r.ReservationId, r.CustomerId, r.VehiclePlate,
+                        r.Vehicle?.VehicleType, r.Customer?.FullName, r.Customer?.PhoneNumber,
+                        customer?.Account?.Email, r.SlotId, r.ParkingSlot?.Location,
+                        r.ParkingSlot?.VehicleType, r.Status, r.ExpectedTime, r.CreatedAt);
+                });
             }
 
             if (!string.IsNullOrWhiteSpace(filter.VehicleType))

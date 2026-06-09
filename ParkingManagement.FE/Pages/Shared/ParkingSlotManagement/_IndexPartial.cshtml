@@ -80,7 +80,7 @@
 
             <div class="parking-field">
                 <label>Tìm kiếm</label>
-                <input id="slotSearch" type="text" placeholder="Nhập mã chỗ đỗ: A01, B10..." />
+                <input id="slotSearch" type="search" autocomplete="off" placeholder="Nhập thông tin chỗ đỗ cần tìm..." />
             </div>
 
             <button class="parking-btn-outline" onclick="resetParkingFilter()">
@@ -127,8 +127,11 @@
 
         </div>
 
-        <aside class="card parking-detail-panel" id="detailPanel">
-            <button class="parking-close" type="button" aria-hidden="true" tabindex="-1">×</button>
+        <div class="parking-detail-overlay" id="detailOverlay" aria-hidden="true">
+        <aside class="parking-detail-panel" id="detailPanel" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+            <button class="parking-close" type="button" onclick="closeSlotDetail()" aria-label="Đóng chi tiết">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
             <div class="parking-detail-header">
                 <div id="detailSlotIcon" class="detail-slot-icon using">A01</div>
@@ -195,10 +198,10 @@
                     <option value="Bảo trì">Bảo trì</option>
                 </select>
                 <div style="display:flex; gap:8px; margin-top:8px;">
-                    <button class="parking-btn-primary" onclick="confirmUpdateStatus()" style="flex:1;">
+                    <button type="button" class="parking-btn-primary" id="btnConfirmSlotStatus" onclick="confirmUpdateStatus()" style="flex:1;">
                         <i class="fa-solid fa-check"></i> Xác nhận
                     </button>
-                    <button class="parking-btn-outline" onclick="cancelUpdateStatus()" style="flex:1;">
+                    <button type="button" class="parking-btn-outline" onclick="cancelUpdateStatus()" style="flex:1;">
                         Hủy
                     </button>
                 </div>
@@ -212,6 +215,7 @@
                 </div>
             </div>
         </aside>
+        </div>
 
     </div>
 

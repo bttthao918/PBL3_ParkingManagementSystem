@@ -93,6 +93,26 @@ namespace ParkingManagement.FE.Pages.Employee
             if (CheckInValidation != null)
             {
                 AllSlotsForMap = await _customerApiService.GetAvailableSlotsAsync(vehicleType ?? "Xe máy", true);
+
+                if (CheckInValidation.HasReservation &&
+                    !string.IsNullOrWhiteSpace(CheckInValidation.PreferredSlotId) &&
+                    AllSlotsForMap?.Any(slot => slot.SlotId == CheckInValidation.PreferredSlotId) != true)
+                {
+                    var reservedSlot = CheckInValidation.AvailableSlots
+                        .FirstOrDefault(slot => slot.SlotId == CheckInValidation.PreferredSlotId);
+
+                    if (reservedSlot != null)
+                    {
+                        AllSlotsForMap ??= new List<AvailableSlotDto>();
+                        AllSlotsForMap.Add(new AvailableSlotDto
+                        {
+                            SlotId = reservedSlot.SlotId,
+                            Location = reservedSlot.Location,
+                            VehicleType = reservedSlot.VehicleType,
+                            Status = "Đã đặt"
+                        });
+                    }
+                }
             }
             return Page();
         }

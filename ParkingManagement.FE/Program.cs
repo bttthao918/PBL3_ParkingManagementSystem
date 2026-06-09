@@ -81,6 +81,13 @@ builder.Services.AddHttpClient<IAccountProfileService, AccountProfileService>(cl
     .AddHttpMessageHandler<AuthDelegatingHandler>()
     .ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
+builder.Services.AddHttpClient("BackendRealtime", client =>
+{
+    client.BaseAddress = new Uri(backendBaseUrl);
+    client.Timeout = Timeout.InfiniteTimeSpan;
+})
+    .ConfigurePrimaryHttpMessageHandler(CreateHandler);
+
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // ── Cookie Authentication ──────────────────────────
@@ -126,5 +133,44 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapGet("/realtime/stream", async (
+    HttpContext context,
+    IHttpClientFactory httpClientFactory,
+    ILoggerFactory loggerFactory) =>
+{
+    var logger = loggerFactory.CreateLogger("RealtimeProxy");
+    context.Response.Headers.CacheControl = "no-cache";
+    context.Response.Headers.Append("X-Accel-Buffering", "no");
+    context.Response.ContentType = "text/event-stream";
+
+    try
+    {
+        var client = httpClientFactory.CreateClient("BackendRealtime");
+        using var backendResponse = await client.GetAsync(
+            "api/realtime/stream",
+            HttpCompletionOption.ResponseHeadersRead,
+            context.RequestAborted);
+
+        if (!backendResponse.IsSuccessStatusCode)
+        {
+            await context.Response.WriteAsync(
+                $"event: parking-error\ndata: {{\"status\":{(int)backendResponse.StatusCode}}}\n\n",
+                context.RequestAborted);
+            return;
+        }
+
+        await using var backendStream = await backendResponse.Content.ReadAsStreamAsync(context.RequestAborted);
+        await backendStream.CopyToAsync(context.Response.Body, context.RequestAborted);
+    }
+    catch (OperationCanceledException)
+    {
+        // The browser closed the EventSource connection.
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Realtime proxy disconnected");
+        await context.Response.WriteAsync("event: parking-error\ndata: {}\n\n");
+    }
+}).RequireAuthorization();
 
 app.Run();

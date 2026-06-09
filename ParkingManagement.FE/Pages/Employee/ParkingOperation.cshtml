@@ -147,7 +147,11 @@
                             <input type="hidden" name="customerId" value="@v.CustomerId" />
 
                             <div class="slot-section">
-                                <h4><i class="fa-solid fa-square-parking"></i> Chọn chỗ đỗ <span class="slot-count">@v.AvailableSlots.Count chỗ trống</span></h4>
+                                <h4>
+                                    <i class="fa-solid fa-square-parking"></i>
+                                    @(v.HasReservation ? "Chỗ đỗ đã đặt" : "Chọn chỗ đỗ")
+                                    <span class="slot-count">@(v.HasReservation ? v.PreferredSlotId : $"{v.AvailableSlots.Count} chỗ trống")</span>
+                                </h4>
 
                                 <div class="legend">
                                     <span><i class="dot green"></i>Trống</span>
@@ -161,8 +165,8 @@
                                     {
                                         @foreach (var slot in Model.AllSlotsForMap)
                                         {
-                                            var isSelectable = IsSlotSelectable(slot.Status);
                                             var isPref = slot.SlotId == v.PreferredSlotId;
+                                            var isSelectable = v.HasReservation ? isPref : IsSlotSelectable(slot.Status);
                                             var statusClass = GetSlotStatusClass(slot.Status);
 
                                             <label class="slot-option @(isSelectable ? "" : "disabled-slot")">
@@ -413,7 +417,13 @@
             if (method === 'QR Pay') {
                 const confirmed = form.querySelector('input[name="paymentReceivedConfirmed"]')?.checked;
                 if (!confirmed) {
-                    alert('Vui lòng kiểm tra tài khoản BIDV và tick xác nhận đã nhận tiền trước khi check-out.');
+                    const checkbox = form.querySelector('input[name="paymentReceivedConfirmed"]');
+                    showNotice(
+                        'Chưa xác nhận thanh toán',
+                        'Vui lòng kiểm tra tài khoản BIDV và xác nhận đã nhận tiền trước khi check-out.',
+                        'warning',
+                        () => checkbox?.focus()
+                    );
                     return false;
                 }
             }

@@ -64,12 +64,27 @@ namespace ParkingManagement.Web.Controllers
         [Route("lane/list")]
         public async Task<IActionResult> GetLaneTickets(string search = "", string status = "", int page = 1, int pageSize = 10)
         {
-            var query = _db.Tickets.Include(t => t.Vehicle).AsQueryable();
+            var query = _db.Tickets
+                .Include(t => t.Vehicle)
+                .Include(t => t.Customer)
+                    .ThenInclude(c => c!.Account)
+                .Include(t => t.ParkingSlot)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
+                var compactSearch = search.Replace("-", "").Replace(".", "").Replace(" ", "");
                 query = query.Where(t => t.TicketId.Contains(search) ||
-                                         t.VehiclePlate.Contains(search));
+                                         t.VehiclePlate.Contains(search) ||
+                                         t.VehiclePlate.Replace("-", "").Replace(".", "").Replace(" ", "").Contains(compactSearch) ||
+                                         t.VehicleType.Contains(search) ||
+                                         t.Status.Contains(search) ||
+                                         (t.SlotId != null && t.SlotId.Contains(search)) ||
+                                         (t.CustomerId != null && t.CustomerId.Contains(search)) ||
+                                         (t.Customer != null && t.Customer.FullName.Contains(search)) ||
+                                         (t.Customer != null && t.Customer.PhoneNumber != null && t.Customer.PhoneNumber.Contains(search)) ||
+                                         (t.Customer != null && t.Customer.Account.Email.Contains(search)) ||
+                                         (t.ParkingSlot != null && t.ParkingSlot.Location.Contains(search)));
             }
 
             if (!string.IsNullOrEmpty(status))
@@ -239,9 +254,17 @@ namespace ParkingManagement.Web.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(t => t.VehiclePlate.Contains(search) ||
+                var compactSearch = search.Replace("-", "").Replace(".", "").Replace(" ", "");
+                query = query.Where(t => t.MonthlyTicketId.Contains(search) ||
+                                          t.CustomerId.Contains(search) ||
+                                          t.VehiclePlate.Contains(search) ||
+                                          t.VehiclePlate.Replace("-", "").Replace(".", "").Replace(" ", "").Contains(compactSearch) ||
+                                          t.VehicleType.Contains(search) ||
+                                          t.PackageType.Contains(search) ||
+                                          t.Status.Contains(search) ||
                                           (t.Customer != null && t.Customer.FullName.Contains(search)) ||
-                                          (t.Customer != null && t.Customer.PhoneNumber != null && t.Customer.PhoneNumber.Contains(search)));
+                                          (t.Customer != null && t.Customer.PhoneNumber != null && t.Customer.PhoneNumber.Contains(search)) ||
+                                          (t.Customer != null && t.Customer.Account.Email.Contains(search)));
             }
 
             if (!string.IsNullOrEmpty(status))

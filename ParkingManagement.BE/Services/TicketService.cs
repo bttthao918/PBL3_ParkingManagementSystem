@@ -1,5 +1,6 @@
 using ParkingManagement.BLL.DTOs;
 using ParkingManagement.BLL.Constants;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Validators;
 using ParkingManagement.BLL.Strategies;
@@ -78,14 +79,18 @@ namespace ParkingManagement.BLL.Services.Implementations
             {
                 var customers = await _customerRepository.GetAllAsync();
                 customerLookup = customers.ToDictionary(c => c.CustomerId, c => c);
+                var slots = (await _slotRepo.GetAllAsync()).ToDictionary(s => s.SlotId, s => s);
                 var keyword = filter.SearchKeyword.Trim();
                 filtered = filtered.Where(t =>
-                    t.VehiclePlate.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                    t.TicketId.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                    (t.CustomerId != null &&
-                     customerLookup.TryGetValue(t.CustomerId, out var customer) &&
-                     (customer.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                      (customer.PhoneNumber?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false))));
+                {
+                    customerLookup.TryGetValue(t.CustomerId ?? "", out var customer);
+                    slots.TryGetValue(t.SlotId ?? "", out var slot);
+                    return SearchTextMatcher.Matches(keyword,
+                        t.TicketId, t.VehiclePlate, t.VehicleType, t.Status, t.SlotId,
+                        t.CustomerId, customer?.FullName ?? "Khách vãng lai",
+                        customer?.PhoneNumber, customer?.Account?.Email,
+                        slot?.Location, t.CheckInTime, t.CheckOutTime, t.Fee);
+                });
             }
 
             var sorted = filtered.OrderByDescending(t => t.CheckInTime).ToList();
@@ -304,9 +309,18 @@ namespace ParkingManagement.BLL.Services.Implementations
                 if (!string.IsNullOrWhiteSpace(search.SearchKeyword))
                 {
                     var keyword = search.SearchKeyword.Trim();
+                    var customers = (await _customerRepository.GetAllAsync()).ToDictionary(c => c.CustomerId, c => c);
+                    var slots = (await _slotRepo.GetAllAsync()).ToDictionary(s => s.SlotId, s => s);
                     searched = searched.Where(t =>
-                        t.VehiclePlate.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
-                        t.TicketId.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                    {
+                        customers.TryGetValue(t.CustomerId ?? "", out var customer);
+                        slots.TryGetValue(t.SlotId ?? "", out var slot);
+                        return SearchTextMatcher.Matches(keyword,
+                            t.TicketId, t.VehiclePlate, t.VehicleType, t.Status, t.SlotId,
+                            t.CustomerId, customer?.FullName ?? "Khách vãng lai",
+                            customer?.PhoneNumber, customer?.Account?.Email,
+                            slot?.Location, t.CheckInTime, t.CheckOutTime, t.Fee);
+                    });
                 }
 
                 var sorted = searched.OrderByDescending(t => t.CheckInTime).ToList();
@@ -584,21 +598,56 @@ namespace ParkingManagement.BLL.Services.Implementations
 
             List<AvailableSlotDto> availableSlots = new();
 
-            if (hasReservation && reservation?.SlotId != null)
+            if (hasReservation)
             {
-                var reservedSlot = await _slotRepo.GetByIdAsync(reservation.SlotId);
-                if (reservedSlot != null && reservedSlot.Status == "Đã đặt")
+                if (string.IsNullOrWhiteSpace(reservation!.SlotId))
                 {
-                    availableSlots.Add(new AvailableSlotDto
+                    return new CheckInValidationDto
                     {
-                        SlotId = reservedSlot.SlotId,
-                        Location = reservedSlot.Location,
-                        VehicleType = reservedSlot.VehicleType
-                    });
+                        VehiclePlate = vehiclePlate,
+                        OriginalVehiclePlate = originalVehiclePlate,
+                        WasPlateAutoCorrected = wasPlateAutoCorrected,
+                        HasVehicleRecord = vehicle != null,
+                        CustomerId = foundCustomerId,
+                        CustomerName = foundCustomerName,
+                        HasMonthlyTicket = hasMonthlyTicket,
+                        MonthlyTicketId = monthlyTicket?.MonthlyTicketId,
+                        MonthlyTicketExpiryDate = monthlyTicket?.EndDate,
+                        HasReservation = true,
+                        ReservationId = reservation.ReservationId,
+                        Message = "Đơn đặt chỗ không có vị trí đỗ hợp lệ. Vui lòng kiểm tra lại đơn đặt chỗ."
+                    };
                 }
-            }
 
-            if (!availableSlots.Any())
+                var reservedSlot = await _slotRepo.GetByIdAsync(reservation.SlotId);
+                if (reservedSlot == null || reservedSlot.Status != "Đã đặt")
+                {
+                    return new CheckInValidationDto
+                    {
+                        VehiclePlate = vehiclePlate,
+                        OriginalVehiclePlate = originalVehiclePlate,
+                        WasPlateAutoCorrected = wasPlateAutoCorrected,
+                        HasVehicleRecord = vehicle != null,
+                        CustomerId = foundCustomerId,
+                        CustomerName = foundCustomerName,
+                        HasMonthlyTicket = hasMonthlyTicket,
+                        MonthlyTicketId = monthlyTicket?.MonthlyTicketId,
+                        MonthlyTicketExpiryDate = monthlyTicket?.EndDate,
+                        HasReservation = true,
+                        ReservationId = reservation.ReservationId,
+                        PreferredSlotId = reservation.SlotId,
+                        Message = $"Chỗ đã đặt {reservation.SlotId} hiện không còn sẵn sàng. Không thể tự chuyển sang chỗ khác."
+                    };
+                }
+
+                availableSlots.Add(new AvailableSlotDto
+                {
+                    SlotId = reservedSlot.SlotId,
+                    Location = reservedSlot.Location,
+                    VehicleType = reservedSlot.VehicleType
+                });
+            }
+            else
             {
                 availableSlots = await _slotStrategy.FindAvailableSlotsAsync(input.VehicleType);
             }
@@ -661,9 +710,45 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (activeTicket != null)
                 return new CheckInResultDto { Success = false, Message = "Xe này đang trong bãi rồi." };
 
+            var reservation = await _reservationRepository.GetActiveByPlateAsync(vehiclePlate);
             var slot = await _slotRepo.GetByIdAsync(input.SlotId);
-            if (slot == null || (slot.Status != "Trống" && slot.Status != "Đã đặt"))
+
+            if (reservation != null)
+            {
+                if (string.IsNullOrWhiteSpace(reservation.SlotId) ||
+                    !string.Equals(input.SlotId, reservation.SlotId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = $"Xe đã đặt chỗ {reservation.SlotId ?? "không xác định"} và chỉ được check-in vào đúng chỗ đó."
+                    };
+                }
+
+                if (slot == null || slot.Status != "Đã đặt")
+                {
+                    return new CheckInResultDto
+                    {
+                        Success = false,
+                        Message = $"Chỗ đã đặt {reservation.SlotId} hiện không còn sẵn sàng."
+                    };
+                }
+            }
+            else if (slot == null || slot.Status != "Trống")
+            {
                 return new CheckInResultDto { Success = false, Message = "Chỗ đỗ không còn trống hoặc không hợp lệ." };
+            }
+
+            var resolvedVehicleType = reservation != null ? slot.VehicleType : input.VehicleType;
+            if (reservation == null &&
+                !string.Equals(slot.VehicleType, input.VehicleType, StringComparison.OrdinalIgnoreCase))
+            {
+                return new CheckInResultDto
+                {
+                    Success = false,
+                    Message = $"Chỗ {slot.SlotId} chỉ dành cho {slot.VehicleType}."
+                };
+            }
 
             var vehicle = await _vehicleRepo.GetByPlateAsync(vehiclePlate);
             if (vehicle == null)
@@ -671,13 +756,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                 vehicle = new Vehicle
                 {
                     VehiclePlate = vehiclePlate,
-                    VehicleType = input.VehicleType,
+                    VehicleType = resolvedVehicleType,
                     CustomerId = input.CustomerId
                 };
                 await _vehicleRepo.AddAsync(vehicle);
             }
 
-            var reservation = await _reservationRepository.GetActiveByPlateAsync(vehiclePlate);
             if (reservation != null)
             {
                 reservation.Status = "Đã nhận";
@@ -688,9 +772,9 @@ namespace ParkingManagement.BLL.Services.Implementations
             var ticket = new Ticket
             {
                 TicketId = ticketId,
-                CustomerId = input.CustomerId,
+                CustomerId = input.CustomerId ?? reservation?.CustomerId,
                 VehiclePlate = vehiclePlate,
-                VehicleType = input.VehicleType,
+                VehicleType = resolvedVehicleType,
                 SlotId = input.SlotId,
                 CheckInTime = DateTime.Now,
                 CheckOutTime = null,

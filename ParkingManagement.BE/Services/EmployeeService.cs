@@ -2,6 +2,7 @@ using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using ParkingManagement.BLL.Constants;
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.DAL.Data;
 using ParkingManagement.DAL.Models;
@@ -178,10 +179,12 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 if (!string.IsNullOrWhiteSpace(filter.SearchKeyword))
                 {
-                    var keyword = filter.SearchKeyword.Trim().ToLower();
+                    var keyword = filter.SearchKeyword.Trim();
                     filtered = filtered.Where(e =>
-                        e.FullName.ToLower().Contains(keyword) ||
-                        e.Account?.Email.ToLower().Contains(keyword) == true);
+                        SearchTextMatcher.Matches(keyword,
+                            e.EmployeeId, e.EmployeeCode, e.FullName, e.PhoneNumber,
+                            e.Gender, e.Shift, e.Account?.Email, e.Account?.Role,
+                            "Nhân viên bãi xe", GetManagerStatus(e), e.Account?.CreatedAt));
                 }
 
                 var totalActive = filtered.Count(e => !e.IsDeleted && e.Account?.IsActive == true);

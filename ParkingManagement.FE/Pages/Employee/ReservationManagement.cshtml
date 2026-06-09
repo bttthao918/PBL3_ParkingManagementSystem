@@ -77,11 +77,11 @@
 
     <div class="reservation-layout @(Model.SelectedReservation != null ? "has-detail" : "full-width")">
         <section class="reservation-table-card">
-            <form method="get" class="reservation-filter-form">
+            <form method="get" class="reservation-filter-form" data-auto-filter data-auto-filter-target="[data-auto-filter-results]">
                 <div class="filter-top">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input asp-for="Search" placeholder="Tìm mã đơn, biển số, khách hàng, vị trí..." />
+                        <input asp-for="Search" type="search" data-auto-filter-search autocomplete="off" placeholder="Nhập thông tin đơn đặt chỗ cần tìm..." />
                     </div>
 
                     <button type="submit" class="secondary-btn">
@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="filter-bottom">
-                    <select asp-for="StatusFilter">
+                    <select asp-for="StatusFilter" data-auto-filter-control>
                         <option value="">Trạng thái: Tất cả</option>
                         <option value="Chờ">Chờ</option>
                         <option value="Đã nhận">Đã nhận</option>
@@ -99,14 +99,14 @@
                         <option value="Hết hạn">Hết hạn</option>
                     </select>
 
-                    <select asp-for="VehicleFilter">
+                    <select asp-for="VehicleFilter" data-auto-filter-control>
                         <option value="">Loại xe: Tất cả</option>
                         <option value="Xe máy">Xe máy</option>
                         <option value="Ô tô nhỏ">Ô tô nhỏ</option>
                         <option value="Ô tô lớn">Ô tô lớn</option>
                     </select>
 
-                    <input asp-for="ExpectedDate" type="date" class="date-input" />
+                    <input asp-for="ExpectedDate" type="date" class="date-input" data-auto-filter-control />
 
                     <a asp-page="./ReservationManagement" class="clear-filter">
                         <i class="fa-solid fa-rotate-right"></i>
@@ -115,7 +115,7 @@
                 </div>
             </form>
 
-            <div class="table-wrapper">
+            <div class="table-wrapper" data-auto-filter-results>
                 <table class="reservation-table lean-reservation-table">
                     <thead>
                         <tr>
@@ -251,7 +251,7 @@
                 </table>
             </div>
 
-            <div class="pagination-row">
+            <div class="pagination-row" data-auto-filter-results>
                 <span>Hiển thị @Model.FirstItemIndex - @Model.LastItemIndex trong @Model.FilteredReservations đơn</span>
 
                 <div class="pagination">
@@ -304,7 +304,7 @@
                     <input type="hidden" name="VehicleFilter" value="@Model.VehicleFilter" />
                     <input type="hidden" name="ExpectedDate" value="@(Model.ExpectedDate?.ToString("yyyy-MM-dd"))" />
                     <input type="hidden" name="PageNumber" value="1" />
-                    <select asp-for="PageSize" onchange="this.form.submit()">
+                    <select asp-for="PageSize">
                         <option value="10">10 / trang</option>
                         <option value="20">20 / trang</option>
                         <option value="50">50 / trang</option>

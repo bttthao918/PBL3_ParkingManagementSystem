@@ -156,12 +156,12 @@
 
         <section class="ticket-table-card">
 
-            <form method="get" class="ticket-filter-form">
+            <form method="get" class="ticket-filter-form" data-auto-filter data-auto-filter-target="[data-auto-filter-results]">
                 <div class="filter-top">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input asp-for="Search"
-                               placeholder="Tìm vé theo mã vé, biển số, khách hàng, số điện thoại..." />
+                        <input asp-for="Search" type="search" data-auto-filter-search autocomplete="off"
+                               placeholder="Nhập thông tin vé cần tìm..." />
                     </div>
 
                     <button type="submit" class="secondary-btn">
@@ -171,27 +171,27 @@
                 </div>
 
                 <div class="filter-bottom">
-                    <select asp-for="StatusFilter">
+                    <select asp-for="StatusFilter" data-auto-filter-control>
                         <option value="">Trạng thái: Tất cả</option>
                         <option value="Đang trong bãi">Đang gửi</option>
                         <option value="Đã ra">Đã thanh toán / Đã ra</option>
                     </select>
 
-                    <select asp-for="VehicleFilter">
+                    <select asp-for="VehicleFilter" data-auto-filter-control>
                         <option value="">Loại xe: Tất cả</option>
                         <option value="Ô tô nhỏ">Ô tô nhỏ</option>
                         <option value="Ô tô lớn">Ô tô lớn</option>
                         <option value="Xe máy">Xe máy</option>
                     </select>
 
-                    <select asp-for="AreaFilter">
+                    <select asp-for="AreaFilter" data-auto-filter-control>
                         <option value="">Khu vực: Tất cả</option>
                         <option value="A">Khu A</option>
                         <option value="B">Khu B</option>
                         <option value="C">Khu C</option>
                     </select>
 
-                    <input name="CreatedDate" type="text" class="flatpickr-date" placeholder="dd/mm/yyyy"
+                    <input name="CreatedDate" type="text" class="flatpickr-date" data-auto-filter-control placeholder="dd/mm/yyyy"
                            value="@(Model.CreatedDate?.ToString("dd/MM/yyyy"))"
                            data-iso-value="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))" />
 
@@ -202,7 +202,7 @@
                 </div>
             </form>
 
-            <div class="table-wrapper">
+            <div class="table-wrapper" data-auto-filter-results>
                 <table class="ticket-table lean-ticket-table">
                     <thead>
                         <tr>
@@ -317,7 +317,7 @@
                 </table>
             </div>
 
-            <div class="pagination-row">
+            <div class="pagination-row" data-auto-filter-results>
                 <span>Hiển thị @Model.FirstItemIndex - @Model.LastItemIndex trong @Model.FilteredTickets vé</span>
 
                 <div class="pagination">
@@ -374,7 +374,7 @@
                     <input type="hidden" name="AreaFilter" value="@Model.AreaFilter" />
                     <input type="hidden" name="CreatedDate" value="@(Model.CreatedDate?.ToString("yyyy-MM-dd"))" />
                     <input type="hidden" name="PageNumber" value="1" />
-                    <select asp-for="PageSize" onchange="this.form.submit()">
+                    <select asp-for="PageSize">
                         <option value="10">10 / trang</option>
                         <option value="20">20 / trang</option>
                         <option value="50">50 / trang</option>

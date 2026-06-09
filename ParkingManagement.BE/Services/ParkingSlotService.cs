@@ -1,4 +1,5 @@
 using ParkingManagement.BLL.DTOs;
+using ParkingManagement.BLL.Helpers;
 using ParkingManagement.BLL.Services.Interfaces;
 using ParkingManagement.BLL.Validators;
 using ParkingManagement.DAL.Models;
@@ -295,8 +296,15 @@ namespace ParkingManagement.BLL.Services.Implementations
 
                 if (!string.IsNullOrEmpty(filter.SearchKeyword))
                 {
-                    var keyword = filter.SearchKeyword.ToLower();
-                    filtered = filtered.Where(s => s.SlotId.ToLower().Contains(keyword));
+                    var keyword = filter.SearchKeyword;
+                    filtered = filtered.Where(s =>
+                    {
+                        var currentTicket = tickets.FirstOrDefault(t =>
+                            t.SlotId == s.SlotId && t.CheckOutTime == null);
+                        return SearchTextMatcher.Matches(keyword,
+                            s.SlotId, s.Location, s.VehicleType, s.Status, s.LastUpdated,
+                            currentTicket?.TicketId, currentTicket?.VehiclePlate);
+                    });
                 }
 
                 var sorted = filtered.OrderBy(s => s.SlotId).ToList();

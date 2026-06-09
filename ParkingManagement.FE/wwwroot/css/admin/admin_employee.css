@@ -152,7 +152,7 @@
 
 .emp-filter-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1.4fr auto;
+    grid-template-columns: minmax(280px, 2fr) minmax(180px, 1fr) minmax(120px, .6fr);
     gap: 16px;
     align-items: end;
 }
@@ -1205,7 +1205,7 @@
 }
 
 .emp-table.lean-emp-table {
-    min-width: 980px;
+    min-width: 820px;
     table-layout: fixed;
 }
 
@@ -1226,12 +1226,13 @@
 
 .emp-table.lean-emp-table th:nth-child(4),
 .emp-table.lean-emp-table td:nth-child(4) {
-    width: 170px;
+    width: 190px;
 }
 
 .emp-table.lean-emp-table th:nth-child(5),
 .emp-table.lean-emp-table td:nth-child(5) {
-    width: 140px;
+    width: 150px;
+    text-align: center;
 }
 
 .emp-table.lean-emp-table th:nth-child(6),
@@ -1240,15 +1241,8 @@
     text-align: center;
 }
 
-.emp-table.lean-emp-table th:nth-child(7),
-.emp-table.lean-emp-table td:nth-child(7) {
-    width: 180px;
-    text-align: center;
-}
-
 .emp-table.lean-emp-table td:nth-child(3),
-.emp-table.lean-emp-table td:nth-child(4),
-.emp-table.lean-emp-table td:nth-child(5) {
+.emp-table.lean-emp-table td:nth-child(4) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

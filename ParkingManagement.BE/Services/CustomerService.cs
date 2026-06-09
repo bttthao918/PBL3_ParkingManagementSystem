@@ -157,10 +157,18 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var filtered = allCustomers
                     .Where(c =>
                         string.IsNullOrEmpty(keyword) ||
-                        c.FullName.ToLower().Contains(keyword) ||
-                        (c.PhoneNumber != null && c.PhoneNumber.ToLower().Contains(keyword)) ||
-                        (c.Account?.Email != null && c.Account.Email.ToLower().Contains(keyword)) ||
-                        allTickets.Any(t => t.CustomerId == c.CustomerId && t.VehiclePlate.ToLower().Contains(keyword))
+                        SearchTextMatcher.Matches(keyword,
+                            c.CustomerId, c.FullName, c.PhoneNumber, c.Account?.Email,
+                            c.Gender, c.VipLevel, c.TotalSpent, c.TotalTickets, c.MemberSince,
+                            c.IsDeleted ? "Đã xóa" : "Hoạt động") ||
+                        allTickets.Any(t => t.CustomerId == c.CustomerId &&
+                            SearchTextMatcher.Matches(keyword,
+                                t.TicketId, t.VehiclePlate, t.VehicleType, t.Status, t.SlotId,
+                                t.CheckInTime, t.CheckOutTime, t.Fee)) ||
+                        allMonthlyTickets.Any(t => t.CustomerId == c.CustomerId &&
+                            SearchTextMatcher.Matches(keyword,
+                                t.MonthlyTicketId, t.VehiclePlate, t.VehicleType, t.PackageType,
+                                t.Status, t.StartDate, t.EndDate, t.TotalFee))
                     )
                     .ToList();
 

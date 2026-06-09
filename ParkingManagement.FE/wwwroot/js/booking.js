@@ -4,12 +4,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // ═══════════════════════════════════════════════════════
     const bookingContent = document.getElementById("bookingContent");
     const detailPanel = document.getElementById("bookingDetailPanel");
-    const bookingRows = document.querySelectorAll(".booking-row");
+    const bookingRows = Array.from(document.querySelectorAll(".booking-row"));
     const closeDetailBtn = document.getElementById("closeDetailBtn");
     const bottomCloseDetailBtn = document.getElementById("bottomCloseDetailBtn");
     const cancelBookingBtn = document.getElementById("cancelBookingBtn");
+    const bookingStatusFilter = document.getElementById("bookingStatusFilter");
+    const bookingVehicleFilter = document.getElementById("bookingVehicleFilter");
+    const bookingSearchFilter = document.getElementById("bookingSearchFilter");
+    const bookingNoResults = document.getElementById("bookingNoResults");
 
     let selectedBookingId = null;
+    let bookingSearchTimer;
+    let bookingSearchComposing = false;
 
     bookingRows.forEach(row => {
         row.addEventListener("click", function (event) {
@@ -31,6 +37,74 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (closeDetailBtn) closeDetailBtn.addEventListener("click", hideDetail);
     if (bottomCloseDetailBtn) bottomCloseDetailBtn.addEventListener("click", hideDetail);
+    [bookingStatusFilter, bookingVehicleFilter].forEach(function (control) {
+        control?.addEventListener("change", applyBookingFilters);
+    });
+
+    bookingSearchFilter?.addEventListener("compositionstart", function () {
+        bookingSearchComposing = true;
+    });
+
+    bookingSearchFilter?.addEventListener("compositionend", function () {
+        bookingSearchComposing = false;
+        scheduleBookingFilters();
+    });
+
+    bookingSearchFilter?.addEventListener("input", function () {
+        if (!bookingSearchComposing) {
+            scheduleBookingFilters();
+        }
+    });
+
+    function scheduleBookingFilters() {
+        window.clearTimeout(bookingSearchTimer);
+        bookingSearchTimer = window.setTimeout(applyBookingFilters, 250);
+    }
+
+    function normalizeFilterValue(value) {
+        return (value || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D")
+            .toLowerCase()
+            .trim();
+    }
+
+    function applyBookingFilters() {
+        const selectedStatus = bookingStatusFilter?.value || "";
+        const selectedVehicle = bookingVehicleFilter?.value || "";
+        const keyword = normalizeFilterValue(bookingSearchFilter?.value);
+        let visibleCount = 0;
+
+        bookingRows.forEach(function (row) {
+            const matchesStatus = !selectedStatus || row.dataset.statusClass === selectedStatus;
+            const matchesVehicle = !selectedVehicle || row.dataset.vehicle === selectedVehicle;
+            const matchesKeyword = !keyword
+                || Object.values(row.dataset).some(value => matchesBookingSearchValue(value, keyword));
+            const visible = matchesStatus && matchesVehicle && matchesKeyword;
+
+            row.classList.toggle("hidden", !visible);
+            if (visible) {
+                visibleCount += 1;
+            }
+        });
+
+        bookingNoResults?.classList.toggle("hidden", visibleCount > 0);
+
+        const selectedRow = bookingRows.find(row => row.dataset.id === selectedBookingId);
+        if (selectedBookingId && (!selectedRow || selectedRow.classList.contains("hidden"))) {
+            hideDetail();
+        }
+    }
+
+    function matchesBookingSearchValue(value, keyword) {
+        const normalizedValue = normalizeFilterValue(value);
+        const compactValue = normalizedValue.replace(/[^\p{L}\p{N}]/gu, "");
+        const compactKeyword = keyword.replace(/[^\p{L}\p{N}]/gu, "");
+        return normalizedValue.includes(keyword) ||
+            (compactKeyword.length > 0 && compactValue.includes(compactKeyword));
+    }
 
     // Cancel booking with confirm dialog
     if (cancelBookingBtn) {

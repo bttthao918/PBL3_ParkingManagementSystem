@@ -21,7 +21,7 @@
     function renderSlots() {
         const grid = document.getElementById("slotGrid");
         const statusFilter = document.getElementById("statusFilter").value;
-        const keyword = document.getElementById("slotSearch").value.toLowerCase();
+        const keyword = normalizeSlotSearch(document.getElementById("slotSearch").value);
 
         grid.innerHTML = "";
         grid.className = currentZone === "C"
@@ -31,7 +31,8 @@
         const filteredSlots = slots.filter(slot => {
             const matchZone = slot.slotId.startsWith(currentZone);
             const matchStatus = !statusFilter || slot.status === statusFilter;
-            const matchKeyword = !keyword || slot.slotId.toLowerCase().includes(keyword);
+            const matchKeyword = !keyword || Object.values(slot)
+                .some(value => matchesSlotSearchValue(value, keyword));
             return matchZone && matchStatus && matchKeyword;
         });
 
@@ -41,7 +42,7 @@
             const item = document.createElement("button");
             item.className = `parking-slot ${statusClass}`;
             item.dataset.slotId = slot.slotId;
-            item.onclick = () => showDetail(slot);
+            item.onclick = () => openSlotDetail(slot);
 
             item.innerHTML = `
                 <strong>${slot.slotId}</strong>
@@ -53,7 +54,9 @@
         });
 
         if (filteredSlots.length === 0) {
-            showEmptyDetail();
+            currentSlot = null;
+            highlightSelectedSlot("");
+            closeSlotDetail();
             return;
         }
 
@@ -61,7 +64,29 @@
             ? filteredSlots.find(slot => slot.slotId === currentSlot.slotId)
             : null;
 
-        showDetail(visibleSelectedSlot || filteredSlots[0]);
+        if (!visibleSelectedSlot) {
+            currentSlot = null;
+            highlightSelectedSlot("");
+            closeSlotDetail();
+        }
+    }
+
+    function normalizeSlotSearch(value) {
+        return String(value ?? "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D")
+            .trim()
+            .toLowerCase();
+    }
+
+    function matchesSlotSearchValue(value, keyword) {
+        const normalizedValue = normalizeSlotSearch(value);
+        const compactValue = normalizedValue.replace(/[^\p{L}\p{N}]/gu, "");
+        const compactKeyword = keyword.replace(/[^\p{L}\p{N}]/gu, "");
+        return normalizedValue.includes(keyword) ||
+            (compactKeyword.length > 0 && compactValue.includes(compactKeyword));
     }
 
     function changeZone(zone) {
@@ -78,9 +103,25 @@
         renderSlots();
     }
 
+    function openSlotDetail(slot) {
+        showDetail(slot);
+        const overlay = document.getElementById("detailOverlay");
+        overlay.classList.add("open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.classList.add("parking-modal-open");
+    }
+
+    function closeSlotDetail() {
+        const overlay = document.getElementById("detailOverlay");
+        overlay.classList.remove("open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("parking-modal-open");
+        cancelUpdateStatus();
+        document.getElementById("slotHistorySection").style.display = "none";
+    }
+
     function showDetail(slot) {
         currentSlot = slot;
-        document.getElementById('detailPanel').style.display = 'block';
         highlightSelectedSlot(slot.slotId);
 
         const statusClass = getStatusClass(slot.status);
@@ -129,7 +170,6 @@
 
     function showEmptyDetail() {
         currentSlot = null;
-        document.getElementById('detailPanel').style.display = 'block';
         document.getElementById("detailSlotIcon").textContent = "-";
         document.getElementById("detailSlotIcon").className = "detail-slot-icon maintenance";
         document.getElementById("detailTitle").textContent = "Không có chỗ đỗ";
@@ -158,9 +198,30 @@
 
     function confirmUpdateStatus() {
         if (!currentSlot) return;
-        var newStatus = document.getElementById("newStatusSelect").value;
-        
-        fetch(`${beApiUrl}/api/parking-slots/${currentSlot.slotId}/status?employeeId=EMP001`, {
+        const slotId = currentSlot.slotId;
+        const oldStatus = currentSlot.status;
+        const newStatus = document.getElementById("newStatusSelect").value;
+
+        if (newStatus === oldStatus) {
+            cancelUpdateStatus();
+            return;
+        }
+
+        confirmAction(
+            "C\u1eadp nh\u1eadt tr\u1ea1ng th\u00e1i ch\u1ed7 \u0111\u1ed7",
+            `B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n \u0111\u1ed5i ch\u1ed7 ${slotId} t\u1eeb "${oldStatus}" sang "${newStatus}"?`,
+            () => updateSlotStatusRequest(slotId, newStatus),
+            newStatus === "B\u1ea3o tr\u00ec" ? "warning" : "info"
+        );
+    }
+
+    function updateSlotStatusRequest(slotId, newStatus) {
+        const confirmButton = document.getElementById("btnConfirmSlotStatus");
+        if (confirmButton) {
+            confirmButton.disabled = true;
+        }
+
+        fetch(`${beApiUrl}/api/parking-slots/${slotId}/status?employeeId=EMP001`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })
@@ -169,7 +230,7 @@
         .then(data => {
             if (data.success !== false) {
                 // Update local data
-                var s = slots.find(x => x.slotId === currentSlot.slotId);
+                var s = slots.find(x => x.slotId === slotId);
                 if (s) {
                     s.status = newStatus;
                     s.lastUpdatedFull = new Date().toLocaleString('vi-VN');
@@ -179,12 +240,17 @@
                 showDetail(s || currentSlot);
                 cancelUpdateStatus();
             } else {
-                alert(data.message || 'Cập nhật thất bại');
+                showNotice('Không thể cập nhật', data.message || 'Cập nhật thất bại', 'danger');
             }
         })
         .catch(() => {
             // Fallback: reload page
             location.reload();
+        })
+        .finally(() => {
+            if (confirmButton) {
+                confirmButton.disabled = false;
+            }
         });
     }
 
@@ -227,6 +293,16 @@
 
     document.getElementById("statusFilter").addEventListener("change", renderSlots);
     document.getElementById("slotSearch").addEventListener("input", renderSlots);
+    document.getElementById("detailOverlay").addEventListener("click", function (event) {
+        if (event.target === this) {
+            closeSlotDetail();
+        }
+    });
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && document.getElementById("detailOverlay").classList.contains("open")) {
+            closeSlotDetail();
+        }
+    });
 
     renderSlots();
 </script>
