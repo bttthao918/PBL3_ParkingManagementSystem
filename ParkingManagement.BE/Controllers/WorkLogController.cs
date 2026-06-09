@@ -355,6 +355,7 @@ namespace ParkingManagement.Web.Controllers.Api
             return Ok(new
             {
                 totalDays,
+                totalShifts = logs.Count,
                 totalMinutes,
                 totalHours = totalMinutes / 60,
                 averageHoursPerDay = totalDays > 0 ? Math.Round(totalMinutes / 60.0 / totalDays, 1) : 0,

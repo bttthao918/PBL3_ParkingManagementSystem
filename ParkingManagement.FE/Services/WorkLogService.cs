@@ -141,6 +141,7 @@ namespace ParkingManagement.FE.Services
     public class WorkLogMonthlySummaryResponse
     {
         public int TotalDays { get; set; }
+        public int TotalShifts { get; set; }
         public int TotalMinutes { get; set; }
         public int TotalHours { get; set; }
         public double AverageHoursPerDay { get; set; }

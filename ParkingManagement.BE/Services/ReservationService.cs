@@ -281,8 +281,12 @@ namespace ParkingManagement.BLL.Services.Implementations
             if (!string.IsNullOrWhiteSpace(filter.Status))
                 query = query.Where(r => r.Status == filter.Status).ToList();
 
-            if (!string.IsNullOrWhiteSpace(filter.VehiclePlate))
-                query = query.Where(r => r.VehiclePlate.Contains(filter.VehiclePlate, StringComparison.OrdinalIgnoreCase)).ToList();
+            var vehiclePlate = filter.VehiclePlate;
+            if (!string.IsNullOrWhiteSpace(vehiclePlate))
+                query = query
+                    .Where(r => r.VehiclePlate != null &&
+                                r.VehiclePlate.Contains(vehiclePlate, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
             if (filter.FromDate.HasValue)
                 query = query.Where(r => r.CreatedAt.Date >= filter.FromDate.Value.Date).ToList();

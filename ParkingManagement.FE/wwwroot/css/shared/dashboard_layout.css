@@ -1133,9 +1133,18 @@ body .dashboard-content .password-page > .page-heading > p {
     min-width: 172px;
 }
 
-    .month-picker[open] {
-        z-index: 120;
-    }
+.month-picker[open] {
+    z-index: 3000;
+}
+
+.month-picker-open-host {
+    overflow: visible !important;
+}
+
+.month-picker-open-layer {
+    position: relative;
+    z-index: 2990 !important;
+}
 
 .month-picker-trigger {
     height: 44px;
@@ -1201,14 +1210,31 @@ body .dashboard-content .password-page > .page-heading > p {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    z-index: 130;
+    z-index: 3010;
     width: 392px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
     padding: 16px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     border: 1px solid #d7e2f2;
     border-radius: 16px;
     background: #ffffff;
     box-shadow: 0 24px 56px rgba(15, 35, 65, 0.2);
+}
+
+.month-picker.month-picker-open-up .month-picker-menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+}
+
+.month-picker.month-picker-align-left .month-picker-menu {
+    right: auto;
+    left: 0;
+}
+
+.flatpickr-calendar {
+    z-index: 3020 !important;
 }
 
 .month-picker-heading {

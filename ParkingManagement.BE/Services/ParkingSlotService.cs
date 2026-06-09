@@ -373,17 +373,16 @@ namespace ParkingManagement.BLL.Services.Implementations
                 var allTickets = (await _ticketRepo.GetAllAsync()).ToList();
                 var slotTickets = allTickets.Where(t => t.SlotId == slotId).ToList();
 
-                var today = DateTime.Now.Date;
                 var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
                 var usageThisMonth = slotTickets.Count(t => t.CheckInTime >= monthStart);
                 var usageThisWeek = slotTickets.Count(t => t.CheckInTime >= DateTime.Now.AddDays(-7));
-                var avgOccupancyTime = slotTickets.Count > 0
-                    ? slotTickets.Where(t => t.CheckOutTime.HasValue)
-                        .Average(t => (t.CheckOutTime.Value - t.CheckInTime).TotalMinutes)
+                var completedTickets = slotTickets.Where(t => t.CheckOutTime.HasValue).ToList();
+                var avgOccupancyTime = completedTickets.Count > 0
+                    ? completedTickets.Average(t => (t.CheckOutTime.GetValueOrDefault() - t.CheckInTime).TotalMinutes)
                     : 0;
 
-                var currentTicket = slotTickets.FirstOrDefault(t => string.IsNullOrEmpty(t.CheckOutTime.ToString()));
+                var currentTicket = slotTickets.FirstOrDefault(t => !t.CheckOutTime.HasValue);
                 var occupancyMinutes = currentTicket != null
                     ? (int)(DateTime.Now - currentTicket.CheckInTime).TotalMinutes
                     : (int?)null;
@@ -658,12 +657,12 @@ namespace ParkingManagement.BLL.Services.Implementations
                     ? slotTickets.Max(t => t.CheckOutTime ?? t.CheckInTime)
                     : (DateTime?)null;
 
-                var avgOccupancyTime = slotTickets.Count > 0
-                    ? slotTickets.Where(t => t.CheckOutTime.HasValue)
-                        .Average(t => (t.CheckOutTime.Value - t.CheckInTime).TotalMinutes)
+                var completedTickets = slotTickets.Where(t => t.CheckOutTime.HasValue).ToList();
+                var avgOccupancyTime = completedTickets.Count > 0
+                    ? completedTickets.Average(t => (t.CheckOutTime.GetValueOrDefault() - t.CheckInTime).TotalMinutes)
                     : 0;
 
-                var currentTicket = slotTickets.FirstOrDefault(t => string.IsNullOrEmpty(t.CheckOutTime.ToString()));
+                var currentTicket = slotTickets.FirstOrDefault(t => !t.CheckOutTime.HasValue);
                 var occupancyMinutes = currentTicket != null
                     ? (int)(DateTime.Now - currentTicket.CheckInTime).TotalMinutes
                     : (int?)null;

@@ -194,8 +194,8 @@
                     <span>Tổng giờ làm</span>
                 </div>
                 <div>
-                    <strong>@Model.MyWeekShifts.Count</strong>
-                    <span>Ca tuần này</span>
+                    <strong>@(Model.MonthlySummary?.TotalShifts ?? 0)</strong>
+                    <span>Ca đã làm</span>
                 </div>
                 <div>
                     <strong>@((Model.MonthlySummary?.AverageHoursPerDay ?? 0).ToString("0.0"))h</strong>

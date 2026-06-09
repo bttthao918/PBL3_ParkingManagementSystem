@@ -238,6 +238,8 @@
             return String(month).padStart(2, "0");
         }
 
+        let monthPickerLayerId = 0;
+
         function updateMonthPicker(picker) {
             const currentYear = Number(picker.dataset.currentYear || new Date().getFullYear());
             const currentMonth = Number(picker.dataset.currentMonth || (new Date().getMonth() + 1));
@@ -282,9 +284,62 @@
             updateMonthPicker(picker);
         }
 
+        function clearMonthPickerLayer(picker) {
+            const owner = picker.dataset.monthPickerLayerOwner;
+            picker.classList.remove("month-picker-open-up", "month-picker-align-left");
+            document.querySelectorAll("[data-month-picker-open-host]").forEach(function (host) {
+                if (host.getAttribute("data-month-picker-open-host") !== owner) return;
+                host.classList.remove("month-picker-open-host", "month-picker-open-layer");
+                host.removeAttribute("data-month-picker-open-host");
+            });
+        }
+
+        function prepareMonthPickerLayer(picker) {
+            clearMonthPickerLayer(picker);
+            const owner = picker.dataset.monthPickerLayerOwner;
+
+            let host = picker.parentElement;
+            while (host && host !== document.body) {
+                const style = window.getComputedStyle(host);
+                if (style.overflow !== "visible" || style.overflowX !== "visible" || style.overflowY !== "visible") {
+                    host.classList.add("month-picker-open-host");
+                }
+
+                host.classList.add("month-picker-open-layer");
+                host.setAttribute("data-month-picker-open-host", owner);
+                if (host.classList.contains("dashboard-content")) {
+                    break;
+                }
+                host = host.parentElement;
+            }
+        }
+
+        function positionMonthPicker(picker) {
+            const menu = picker.querySelector(".month-picker-menu");
+            const trigger = picker.querySelector(".month-picker-trigger");
+            if (!menu || !trigger || !picker.open) return;
+
+            picker.classList.remove("month-picker-open-up", "month-picker-align-left");
+            const triggerRect = trigger.getBoundingClientRect();
+            const menuRect = menu.getBoundingClientRect();
+            const viewportGap = 16;
+
+            const spaceBelow = window.innerHeight - triggerRect.bottom - viewportGap;
+            const spaceAbove = triggerRect.top - viewportGap;
+            if (menuRect.height > spaceBelow && spaceAbove > spaceBelow) {
+                picker.classList.add("month-picker-open-up");
+            }
+
+            const rightAlignedLeft = triggerRect.right - menuRect.width;
+            if (rightAlignedLeft < viewportGap) {
+                picker.classList.add("month-picker-align-left");
+            }
+        }
+
         function setupMonthPicker(picker) {
             if (picker.dataset.bound === "true") return;
             picker.dataset.bound = "true";
+            picker.dataset.monthPickerLayerOwner = `month-picker-${++monthPickerLayerId}`;
 
             updateMonthPicker(picker);
 
@@ -308,17 +363,31 @@
             });
 
             picker.addEventListener("toggle", function () {
-                if (!picker.open) return;
+                if (!picker.open) {
+                    clearMonthPickerLayer(picker);
+                    return;
+                }
+
                 resetMonthPicker(picker);
                 document.querySelectorAll(".month-picker[open]").forEach(function (otherPicker) {
                     if (otherPicker !== picker) {
                         otherPicker.removeAttribute("open");
                     }
                 });
+                prepareMonthPickerLayer(picker);
+                window.requestAnimationFrame(function () {
+                    positionMonthPicker(picker);
+                });
             });
         }
 
         document.querySelectorAll("[data-month-picker]").forEach(setupMonthPicker);
+        window.addEventListener("resize", function () {
+            document.querySelectorAll(".month-picker[open]").forEach(positionMonthPicker);
+        });
+        window.addEventListener("scroll", function () {
+            document.querySelectorAll(".month-picker[open]").forEach(positionMonthPicker);
+        }, true);
 
         // Sidebar toggle (mobile)
         document.getElementById("sidebarToggle")?.addEventListener("click", function () {

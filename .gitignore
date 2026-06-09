@@ -1,7 +1,9 @@
 .vs/
 bin/
 obj/
+artifacts/
+*.log
 *.user
 *.suo
+App_Data/DataProtectionKeys/
 ParkingManagement.FE/App_Data/DataProtectionKeys/
-artifacts/*.log

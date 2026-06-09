@@ -548,6 +548,7 @@
                     locale: 'vn',
                     dateFormat: 'd/m/Y',
                     allowInput: true,
+                    appendTo: document.body,
                     onClose: function (selectedDates, dateStr, instance) {
                         // Khi chọn ngày, convert sang yyyy-MM-dd để server parse đúng
                         if (selectedDates.length > 0) {
